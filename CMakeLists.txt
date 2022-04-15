@@ -4,6 +4,11 @@ project(ofs VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
+set (CMAKE_CXX_STANDARD 20)
+set (CMAKE_CXX_STANDARD_REQUIRED YES)
+
+list (APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/SDL2)
+
 include_directories(src)
 add_subdirectory(src)
 
