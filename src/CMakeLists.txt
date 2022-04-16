@@ -6,13 +6,16 @@ find_package(fmt REQUIRED)
 #find_package(ZLIB REQUIRED)
 
 set(OFS_CPP_SRCS
+    engine/object.cpp
     main/app.cpp
 )
 
 set(OFS_H_SRCS
+    engine/object.h
     main/sdl/app.h
     main/app.h
     main/core.h
+    main/math.h
 )
 
 set(OFSGL_CPP_SRCS

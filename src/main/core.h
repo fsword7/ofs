@@ -16,6 +16,7 @@
 #include <fstream>
 #include <filesystem>
 #include <string>
+#include <vector>
 
 
 #include <fmt/printf.h>
@@ -26,3 +27,4 @@ typedef const std::string   cstr_t;
 
 namespace fs = std::filesystem;
 
+#include "main/math.h"
