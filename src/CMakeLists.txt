@@ -10,15 +10,18 @@ set(OFS_CPP_SRCS
 )
 
 set(OFS_H_SRCS
+    main/sdl/app.h
     main/app.h
     main/core.h
 )
 
 set(OFSGL_CPP_SRCS
     main/sdl/maingl.cpp
+    osd/gl/context.cpp
 )
 
 set(OFSGL_H_SRCS
+    osd/gl/context.h
 )
 
 add_executable(ofs ${OFS_CPP_SRCS} ${OFSGL_CPP_SRCS} ${OFS_H_SRCS} ${OFSGL_H_SRCS})
