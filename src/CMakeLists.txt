@@ -10,6 +10,8 @@ set(OFS_CPP_SRCS
     engine/object.cpp
     main/app.cpp
     render/scene.cpp
+    universe/body.cpp
+    universe/star.cpp
 )
 
 set(OFS_H_SRCS
@@ -20,6 +22,8 @@ set(OFS_H_SRCS
     main/core.h
     main/math.h
     render/scene.h
+    universe/body.h
+    universe/star.h
 )
 
 set(OFSGL_CPP_SRCS
