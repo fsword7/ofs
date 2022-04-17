@@ -7,6 +7,7 @@
 
 class Context;
 class Engine;
+class Player;
 class Scene;
 
 class CoreApp
@@ -26,9 +27,11 @@ public:
     void render();
 
 protected:
+    Engine  *engine = nullptr;
+    Player  *player = nullptr;
     Context *ctx = nullptr;
-    Scene *scene = nullptr;
-    Engine *engine = nullptr;
+    Scene   *scene = nullptr;
+
     int width, height;
 
     bool stateKey[512];

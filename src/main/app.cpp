@@ -4,9 +4,10 @@
 // Date:    Apr 15, 2022
 
 #include "main/core.h"
-#include "main/app.h"
 #include "engine/engine.h"
+#include "engine/player.h"
 #include "render/scene.h"
+#include "main/app.h"
 
 CoreApp::CoreApp()
 : width(SCR_WIDTH), height(SCR_HEIGHT)
@@ -27,6 +28,8 @@ void CoreApp::initEngine()
     engine->init(ctx, width, height);
 
     scene = engine->getScene();
+    player = engine->getPlayer();
+    // camera = player->getCamera();
 }
 
 void CoreApp::update()

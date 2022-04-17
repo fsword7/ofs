@@ -8,6 +8,7 @@ find_package(fmt REQUIRED)
 set(OFS_CPP_SRCS
     engine/engine.cpp
     engine/object.cpp
+    engine/player.cpp
     main/app.cpp
     render/scene.cpp
     universe/body.cpp
@@ -17,6 +18,7 @@ set(OFS_CPP_SRCS
 set(OFS_H_SRCS
     engine/engine.h
     engine/object.h
+    engine/player.h
     main/sdl/app.h
     main/app.h
     main/core.h
