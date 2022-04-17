@@ -8,6 +8,7 @@
 class Context;
 class Engine;
 class Player;
+class Camera;
 class Scene;
 
 class CoreApp
@@ -29,6 +30,7 @@ public:
 protected:
     Engine  *engine = nullptr;
     Player  *player = nullptr;
+    Camera  *camera = nullptr;
     Context *ctx = nullptr;
     Scene   *scene = nullptr;
 

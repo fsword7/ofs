@@ -14,6 +14,7 @@ void Engine::init(Context *ctx, int width, int height)
     scene->init();
 
     player = new Player();
+    player->getCamera()->setViewport(width, height);
 }
 
 void Engine::update(double dt)

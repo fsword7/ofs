@@ -29,7 +29,7 @@ void CoreApp::initEngine()
 
     scene = engine->getScene();
     player = engine->getPlayer();
-    // camera = player->getCamera();
+    camera = player->getCamera();
 }
 
 void CoreApp::update()

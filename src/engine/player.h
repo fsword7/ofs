@@ -61,10 +61,12 @@ public:
     Player();
     ~Player();
 
-    vec3d_t getuPosition()    { return upos; }
-    quatd_t getuOrientation() { return urot; }
-    vec3d_t getlPosition()    { return lpos; }
-    quatd_t getlOrientation() { return lrot; }
+    inline Camera *getCamera(int idx = 0) { return (idx >= 0 && idx < cameras.size() ? cameras[idx] : nullptr); }
+
+    inline vec3d_t getuPosition()    { return upos; }
+    inline quatd_t getuOrientation() { return urot; }
+    inline vec3d_t getlPosition()    { return lpos; }
+    inline quatd_t getlOrientation() { return lrot; }
 
     void move(Object *object, double altitude, goMode mode);
 
