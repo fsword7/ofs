@@ -6,6 +6,8 @@
 #pragma once
 
 class Context;
+class Engine;
+class Scene;
 
 class CoreApp
 {
@@ -18,8 +20,15 @@ public:
     virtual void cleanup() = 0;
     virtual void run() = 0;
 
+    void initEngine();
+
+    void update();
+    void render();
+
 protected:
     Context *ctx = nullptr;
+    Scene *scene = nullptr;
+    Engine *engine = nullptr;
     int width, height;
 
     bool stateKey[512];

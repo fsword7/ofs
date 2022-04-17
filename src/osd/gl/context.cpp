@@ -69,3 +69,15 @@ void Context::resize(int w, int h)
     fmt::printf("Resize: width %d height %d aspect %lf\n",
         width, height, aspect);
 }
+
+void Context::start()
+{
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+}
+
+void Context::finish()
+{
+
+}

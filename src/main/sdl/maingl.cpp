@@ -45,6 +45,8 @@ void sdlCoreApp::run()
             }
         }
 
+        update();
+        render();
         SDL_GL_SwapWindow(window);
     }
 }
@@ -56,6 +58,8 @@ int main(int argc, char **argv)
     sdlCoreApp app;
 
     app.init();
+    app.initEngine();
+
     app.run();
     app.cleanup();
 

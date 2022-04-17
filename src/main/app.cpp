@@ -5,6 +5,8 @@
 
 #include "main/core.h"
 #include "main/app.h"
+#include "engine/engine.h"
+#include "render/scene.h"
 
 CoreApp::CoreApp()
 : width(SCR_WIDTH), height(SCR_HEIGHT)
@@ -17,4 +19,22 @@ CoreApp::CoreApp()
         ctrlStateKey[idx] = false;
         altStateKey[idx] = false;
     }
+}
+
+void CoreApp::initEngine()
+{
+    engine = new Engine();
+    engine->init(ctx, width, height);
+
+    scene = engine->getScene();
+}
+
+void CoreApp::update()
+{
+}
+
+void CoreApp::render()
+{
+    if (scene != nullptr)
+        scene->render();
 }

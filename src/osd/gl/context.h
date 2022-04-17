@@ -23,6 +23,9 @@ public:
     void init(int w, int h);
     void resize(int w, int h);
 
+    void start();
+    void finish();
+
 private:
     SDL_Window *window = nullptr;
     SDL_GLContext ctx = nullptr;
