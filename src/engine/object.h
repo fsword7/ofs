@@ -23,6 +23,8 @@ public:
         objNames[0] = name;
     }
 
+    inline double getRadius() const { return radius; }
+
 private:
     ObjectType objType = objUnknown;
     std::vector<str_t> objNames{1};

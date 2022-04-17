@@ -11,6 +11,7 @@ set(OFS_CPP_SRCS
     engine/player.cpp
     main/app.cpp
     render/scene.cpp
+    render/surface.cpp
     universe/body.cpp
     universe/star.cpp
 )
@@ -24,6 +25,7 @@ set(OFS_H_SRCS
     main/core.h
     main/math.h
     render/scene.h
+    render/surface.h
     universe/body.h
     universe/star.h
 )
@@ -31,10 +33,12 @@ set(OFS_H_SRCS
 set(OFSGL_CPP_SRCS
     main/sdl/maingl.cpp
     osd/gl/context.cpp
+    osd/gl/mesh.cpp
 )
 
 set(OFSGL_H_SRCS
     osd/gl/context.h
+    osd/gl/mesh.h
 )
 
 add_executable(ofs ${OFS_CPP_SRCS} ${OFSGL_CPP_SRCS} ${OFS_H_SRCS} ${OFSGL_H_SRCS})

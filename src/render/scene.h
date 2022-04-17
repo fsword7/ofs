@@ -5,8 +5,18 @@
 
 #pragma once
 
+class Context;
 class Universe;
 class Player;
+
+template <typename T>
+struct TextureCoordRange
+{
+    T tumin, tumax;
+    T tvmin, tvmax;
+};
+
+typedef TextureCoordRange<double> tcrd_t;
 
 class Scene
 {
