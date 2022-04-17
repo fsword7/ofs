@@ -5,6 +5,9 @@
 
 #pragma once
 
+class Universe;
+class Player;
+
 class Scene
 {
 public:
@@ -13,7 +16,7 @@ public:
     ~Scene() = default;
 
     void init();
-    void render();
+    void render(Player &player);
 
 private:
     Context &ctx;

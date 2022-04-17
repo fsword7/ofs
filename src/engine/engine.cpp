@@ -24,5 +24,5 @@ void Engine::update(double dt)
 
 void Engine::render()
 {
-    scene->render();
+    scene->render(*player);
 }

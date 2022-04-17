@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "osd/gl/context.h"
+#include "engine/player.h"
 #include "render/scene.h"
 
 void Scene::init()
@@ -12,7 +13,7 @@ void Scene::init()
 
 }
 
-void Scene::render()
+void Scene::render(Player &player)
 {
 
     ctx.start();

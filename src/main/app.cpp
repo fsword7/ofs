@@ -39,5 +39,5 @@ void CoreApp::update()
 void CoreApp::render()
 {
     if (scene != nullptr)
-        scene->render();
+        scene->render(*player);
 }
