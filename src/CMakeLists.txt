@@ -12,6 +12,10 @@ set(OFS_CPP_SRCS
     main/app.cpp
     render/scene.cpp
     render/surface.cpp
+    render/vbody.cpp
+    render/vobject.cpp
+    render/vstar.cpp
+    render/vvessel.cpp
     universe/body.cpp
     universe/star.cpp
 )
@@ -26,6 +30,10 @@ set(OFS_H_SRCS
     main/math.h
     render/scene.h
     render/surface.h
+    render/vbody.h
+    render/vobject.h
+    render/vstar.h
+    render/vvessel.h
     universe/body.h
     universe/star.h
 )

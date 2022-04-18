@@ -23,7 +23,8 @@ public:
         objNames[0] = name;
     }
 
-    inline double getRadius() const { return radius; }
+    inline ObjectType getType() const { return objType; }
+    inline double getRadius() const   { return radius; }
 
 private:
     ObjectType objType = objUnknown;

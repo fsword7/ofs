@@ -8,6 +8,7 @@
 class Context;
 class Universe;
 class Player;
+class vObject;
 
 template <typename T>
 struct TextureCoordRange
@@ -25,9 +26,13 @@ public:
     { }
     ~Scene() = default;
 
+    inline Context &getContext() { return ctx; }
+
     void init();
     void render(Player &player);
 
 private:
     Context &ctx;
+
+    std::vector<vObject *> vObjects;
 };

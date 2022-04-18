@@ -6,6 +6,7 @@
 #pragma once
 
 class Object;
+class Context;
 
 class SurfaceTile
 {
@@ -17,7 +18,7 @@ public:
 class SurfaceManager
 {
 public:
-    SurfaceManager(Context &ctx, Object &object) : ctx(ctx), object(object)
+    SurfaceManager(Context &ctx, const Object &object) : ctx(ctx), object(object)
     { }
     ~SurfaceManager() = default;
 
@@ -25,5 +26,5 @@ public:
 
 private:
     Context &ctx;
-    Object &object;
+    const Object &object;
 };

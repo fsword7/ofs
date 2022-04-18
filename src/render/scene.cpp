@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "osd/gl/context.h"
 #include "engine/player.h"
+#include "render/vobject.h"
 #include "render/scene.h"
 
 void Scene::init()
