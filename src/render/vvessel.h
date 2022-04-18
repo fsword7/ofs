@@ -15,5 +15,7 @@ public:
     { }
     ~vVessel() = default;
 
+    void render() override;
+    
 private:
 };

@@ -9,6 +9,61 @@
 #include "render/scene.h"
 #include "render/surface.h"
 
+// ******** SurfaceTile ********
+
+static tcrd_t fullRange = { 0.0, 1.0, 0.0, 1.0 };
+
+SurfaceTile::SurfaceTile(SurfaceManager &mgr, uint32_t lod, uint32_t ilat, uint32_t ilng,
+    SurfaceTile *parent)
+: Tree(parent), smgr(mgr), lod(lod), ilat(ilat), ilng(ilng), tcRange(fullRange)
+{
+    mesh = smgr.createSphere(lod, ilat, ilng, 32, tcRange);
+}
+
+SurfaceTile::~SurfaceTile()
+{
+    if (mesh != nullptr)
+        delete mesh;
+    // if (txOwn == true && txImage != nullptr)
+    //     delete txImage;
+}
+
+void SurfaceTile::render()
+{
+    if (mesh != nullptr)
+        mesh->render();
+}
+
+// ******** SurfaceManager ********
+
+SurfaceManager::SurfaceManager(Context &ctx, const Object &object)
+: ctx(ctx), object(object)
+{
+
+    // Initialize root of virtual surface tiles
+    for(int idx = 0; idx < 2; idx++)
+    {
+        tiles[idx] = new SurfaceTile(*this, 0, 0, idx);
+        // tiles[idx]->load();
+    }
+}
+
+SurfaceManager::~SurfaceManager()
+{
+    for (int idx = 0; idx < 2; idx++)
+        delete tiles[idx];
+}
+
+void SurfaceManager::render(SurfaceTile *tile)
+{
+    tile->render();
+}
+
+void SurfaceManager::render()
+{
+    for (int idx = 0; idx < 2; idx++)
+        render(tiles[idx]);
+}
 
 Mesh *SurfaceManager::createSphere(int lod, int ilat, int ilng, int grids, const tcrd_t &tcr)
 {

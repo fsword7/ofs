@@ -14,3 +14,8 @@ vStar::vStar(const Object &obj, Scene &scene)
 { 
     smgr = new SurfaceManager(scene.getContext(), obj);
 }
+
+void vStar::render()
+{
+    smgr->render();
+}

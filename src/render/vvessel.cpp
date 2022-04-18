@@ -7,3 +7,6 @@
 #include "render/scene.h"
 #include "render/vvessel.h"
 
+void vVessel::render()
+{
+}

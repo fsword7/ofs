@@ -19,6 +19,8 @@ public:
 
     static vObject *create(const Object &obj, Scene &scene);
 
+    virtual void render() = 0;
+
 protected:
     const Object &object;
     Scene &scene;

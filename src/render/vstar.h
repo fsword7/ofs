@@ -14,6 +14,8 @@ public:
     vStar(const Object &obj, Scene &scene);
     ~vStar() = default;
 
+    void render() override;
+    
 private:
     SurfaceManager *smgr = nullptr;
 };

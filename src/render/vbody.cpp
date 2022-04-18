@@ -14,3 +14,8 @@ vBody::vBody(const Object &obj, Scene &scene)
 { 
     smgr = new SurfaceManager(scene.getContext(), obj);
 }
+
+void vBody::render()
+{
+    smgr->render();
+}

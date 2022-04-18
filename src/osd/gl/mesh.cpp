@@ -18,3 +18,14 @@ Mesh *Mesh::create(Context &ctx, int nvtx, vtxef_t *vtx, int nidx, uint16_t *idx
 
     return mesh;
 }
+
+void Mesh::render()
+{
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
+    glDrawElements(GL_TRIANGLES, nidx, GL_UNSIGNED_SHORT, 0);
+
+    glDisable(GL_CULL_FACE);
+}

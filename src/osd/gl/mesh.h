@@ -27,6 +27,8 @@ public:
 
     static Mesh *create(Context &gl, int nvtx, vtxef_t *vtx, int nidx, uint16_t *idx);
 
+    void render();
+
 private:
     Context &ctx;
 

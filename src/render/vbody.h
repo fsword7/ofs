@@ -14,6 +14,8 @@ public:
     vBody(const Object &obj, Scene &scene);
     ~vBody() = default;
 
+    void render() override;
+    
 private:
     SurfaceManager *smgr = nullptr;
 };

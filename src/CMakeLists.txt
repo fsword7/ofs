@@ -36,6 +36,7 @@ set(OFS_H_SRCS
     render/vvessel.h
     universe/body.h
     universe/star.h
+    utils/tree.h
 )
 
 set(OFSGL_CPP_SRCS
