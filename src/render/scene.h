@@ -29,7 +29,7 @@ public:
     inline Context &getContext() { return ctx; }
 
     void init();
-    void render(Player &player);
+    void render(Universe &universe, Player &player);
 
 private:
     Context &ctx;

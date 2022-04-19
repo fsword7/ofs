@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "engine/engine.h"
 #include "engine/player.h"
+#include "universe/universe.h"
 #include "render/scene.h"
 #include "main/app.h"
 
@@ -28,6 +29,7 @@ void CoreApp::initEngine()
     engine->init(ctx, width, height);
 
     scene = engine->getScene();
+    universe = engine->getUniverse();
     player = engine->getPlayer();
     camera = player->getCamera();
 }
@@ -39,5 +41,5 @@ void CoreApp::update()
 void CoreApp::render()
 {
     if (scene != nullptr)
-        scene->render(*player);
+        scene->render(*universe, *player);
 }

@@ -14,7 +14,7 @@ void Scene::init()
 
 }
 
-void Scene::render(Player &player)
+void Scene::render(Universe &universe, Player &player)
 {
 
     ctx.start();

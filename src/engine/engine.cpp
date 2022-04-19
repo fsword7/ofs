@@ -37,5 +37,5 @@ void Engine::update(double dt)
 
 void Engine::render()
 {
-    scene->render(*player);
+    scene->render(*universe, *player);
 }

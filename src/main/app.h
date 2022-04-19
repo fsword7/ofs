@@ -7,6 +7,7 @@
 
 class Context;
 class Engine;
+class Universe;
 class Player;
 class Camera;
 class Scene;
@@ -28,11 +29,13 @@ public:
     void render();
 
 protected:
-    Engine  *engine = nullptr;
-    Player  *player = nullptr;
-    Camera  *camera = nullptr;
-    Context *ctx = nullptr;
-    Scene   *scene = nullptr;
+    Engine   *engine = nullptr;
+    Universe *universe = nullptr;
+    Player   *player = nullptr;
+    Camera   *camera = nullptr;
+
+    Context  *ctx = nullptr;
+    Scene    *scene = nullptr;
 
     int width, height;
 
