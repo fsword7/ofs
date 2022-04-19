@@ -68,6 +68,8 @@ public:
     inline vec3d_t getlPosition()    { return lpos; }
     inline quatd_t getlOrientation() { return lrot; }
 
+    void updateUniversal();
+    
     void move(Object *object, double altitude, goMode mode);
 
 private:

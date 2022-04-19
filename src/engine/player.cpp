@@ -50,7 +50,15 @@ Player::~Player()
 {
 }
 
+void Player::updateUniversal()
+{
+    upos = lpos;
+    urot = lrot;
+}
+
 void Player::move(Object *object, double altitude, goMode mode)
 {
     lpos += vec3d_t( 0, 0, -altitude );
+
+    updateUniversal();
 }

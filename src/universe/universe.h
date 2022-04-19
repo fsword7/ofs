@@ -17,6 +17,9 @@ public:
 
     celStar *findStar(cstr_t &name);
 
+    int findCloseStars(const vec3d_t &obs, double mdist,
+        std::vector<const celStar *> &closeStars) const;
+
 private:
     StarDatabase stardb;
 };

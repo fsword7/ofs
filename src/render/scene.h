@@ -8,6 +8,7 @@
 class Context;
 class Universe;
 class Player;
+class celStar;
 class vObject;
 
 template <typename T>
@@ -35,4 +36,6 @@ private:
     Context &ctx;
 
     std::vector<vObject *> vObjects;
+
+    std::vector<const celStar *> closeStars;
 };
