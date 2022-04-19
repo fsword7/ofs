@@ -50,6 +50,11 @@ public:
     celStar(cstr_t &name);
     ~celStar() = default;
 
+    inline vec3d_t getStarPosition() const { return spos; }
+    inline double  getAbsMag() const       { return absMag; }
+    
+    inline int getHIPnumber() const        { return hip; }
+    
     static celStar *createTheSun();
 
 private: 

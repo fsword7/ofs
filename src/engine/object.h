@@ -23,6 +23,7 @@ public:
         objNames[0] = name;
     }
 
+    inline str_t getName() const      { return objNames[0]; }
     inline ObjectType getType() const { return objType; }
     inline double getRadius() const   { return radius; }
 
