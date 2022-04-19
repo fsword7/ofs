@@ -11,10 +11,10 @@
 
 void Universe::init()
 {
-    sun = celStar::createTheSun();
+    stardb.load();
 }
 
 celStar *Universe::findStar(cstr_t &name)
 {
-    return sun;
+    return stardb.find(name);
 }

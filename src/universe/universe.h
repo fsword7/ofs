@@ -5,7 +5,7 @@
 
 #pragma once
 
-class celStar;
+#include "universe/starlib.h"
 
 class Universe
 {
@@ -18,5 +18,5 @@ public:
     celStar *findStar(cstr_t &name);
 
 private:
-    celStar *sun = nullptr;
+    StarDatabase stardb;
 };

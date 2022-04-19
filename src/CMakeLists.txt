@@ -18,6 +18,7 @@ set(OFS_CPP_SRCS
     render/vvessel.cpp
     universe/body.cpp
     universe/star.cpp
+    universe/starlib.cpp
     universe/universe.cpp
 )
 
@@ -38,6 +39,7 @@ set(OFS_H_SRCS
     universe/star.h
     universe/body.h
     universe/star.h
+    universe/starlib.h
     universe/universe.h
     utils/tree.h
 )
