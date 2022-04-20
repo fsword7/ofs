@@ -34,6 +34,12 @@ void CoreApp::initEngine()
     camera = player->getCamera();
 }
 
+void CoreApp::start()
+{
+    if (engine != nullptr)
+        engine->start();
+}
+
 void CoreApp::update()
 {
 }

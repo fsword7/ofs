@@ -15,7 +15,7 @@ public:
     StarDatabase() = default;
     ~StarDatabase() = default;
 
-    void load();
+    bool loadXHIPData(const fs::path &pname);
 
     void initOctreeData(std::vector<celStar *> stars);
     void finish();

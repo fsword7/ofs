@@ -52,10 +52,14 @@ public:
 
     inline vec3d_t getStarPosition() const { return spos; }
     inline double  getAbsMag() const       { return absMag; }
+    inline int getTemperature() const      { return temp; }
     
+    inline void setHIPnumber(int val)      { hip = val; }
     inline int getHIPnumber() const        { return hip; }
     
     static celStar *createTheSun();
+    static celStar *create(double ra, double de, double pc,
+        cchar_t *spType, double appMag, double ci, double lum);
 
 private: 
     // Star catalogue parameters

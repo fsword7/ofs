@@ -11,7 +11,7 @@
 
 void Universe::init()
 {
-    stardb.load();
+    stardb.loadXHIPData("xhip");
 }
 
 celStar *Universe::findStar(cstr_t &name)

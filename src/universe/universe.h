@@ -13,6 +13,8 @@ public:
     Universe() = default;
     ~Universe() = default;
 
+    inline StarDatabase &getStarDatabase() { return stardb; }
+    
     void init();
 
     celStar *findStar(cstr_t &name);

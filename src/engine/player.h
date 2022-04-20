@@ -16,16 +16,16 @@ public:
     { }
     ~Camera() = default;
 
-    inline vec3d_t getuPosition() const;
-    inline quatd_t getuOrientation() const;
-    inline vec3d_t getlPosition() const;
-    inline quatd_t getlOrientation() const;
-
     inline int getWidth() const     { return width; }
     inline int getHeight() const    { return height; }
     inline double getAspect() const { return aspect; }
     inline double getFOV() const    { return fov; }
     inline double getTanAp() const  { return tan(fov); }
+    
+    vec3d_t getuPosition() const;
+    quatd_t getuOrientation() const;
+    vec3d_t getlPosition() const;
+    quatd_t getlOrientation() const;
 
     void setViewport(int w, int h);
 
@@ -61,12 +61,15 @@ public:
     Player();
     ~Player();
 
-    inline Camera *getCamera(int idx = 0) { return (idx >= 0 && idx < cameras.size() ? cameras[idx] : nullptr); }
+    inline Camera *getCamera(int idx = 0) const
+    { 
+        return (idx >= 0 && idx < cameras.size() ? cameras[idx] : nullptr);
+    }
 
-    inline vec3d_t getuPosition()    { return upos; }
-    inline quatd_t getuOrientation() { return urot; }
-    inline vec3d_t getlPosition()    { return lpos; }
-    inline quatd_t getlOrientation() { return lrot; }
+    inline vec3d_t getuPosition() const     { return upos; }
+    inline quatd_t getuOrientation() const  { return urot; }
+    inline vec3d_t getlPosition() const     { return lpos; }
+    inline quatd_t getlOrientation() const  { return lrot; }
 
     void updateUniversal();
     

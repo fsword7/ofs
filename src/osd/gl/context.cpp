@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "osd/gl/context.h"
+#include "osd/gl/shader.h"
 
 SDL_Window *Context::createWindow(cchar_t *appName, int width, int height)
 {
@@ -55,6 +56,8 @@ void Context::init(int w, int h)
     fmt::printf("    OpenGL version: %s\n", glGetString(GL_VERSION));
 
     resize(w, h);
+
+    smgr = new ShaderManager(*this);
 }
 
 void Context::resize(int w, int h)
@@ -68,6 +71,17 @@ void Context::resize(int w, int h)
 
     fmt::printf("Resize: width %d height %d aspect %lf\n",
         width, height, aspect);
+}
+
+void Context::enableBlend()
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+}
+
+void Context::disableBlend()
+{
+    glDisable(GL_BLEND);
 }
 
 void Context::start()

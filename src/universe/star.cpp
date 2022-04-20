@@ -38,3 +38,26 @@ celStar *celStar::createTheSun()
 
     return star;
 }
+
+celStar *celStar::create(double ra, double de, double pc,
+    cchar_t *spType, double appMag, double ci, double lum)
+{
+    celStar *star = new celStar("(unknown)");
+    int temp;
+
+    star->spos = astro::convertEquatorialToEcliptic(ra, de, pc);
+    star->objPosition = star->spos * KM_PER_PC;
+
+    temp = (int)(4600 * (1.0 / ((ci * 0.92) + 1.7) + 1.0 / ((ci * 0.92) + 0.62)));
+
+    star->ra   = ra;
+    star->dec  = de;
+    star->absMag = astro::convertAppToAbsMag(appMag, pc);
+    star->bMag = appMag + ci;
+    star->vMag = appMag;
+    star->ci   = ci;
+    star->lum  = lum;
+    star->temp = temp;
+
+    return star;
+}

@@ -25,6 +25,7 @@ public:
 
     void initEngine();
 
+    void start();
     void update();
     void render();
 
