@@ -32,7 +32,7 @@ void Engine::start()
 
 void Engine::update(double dt)
 {
-
+    player->update(dt, 1);
 }
 
 void Engine::render()

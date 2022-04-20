@@ -51,10 +51,45 @@ Player::~Player()
 {
 }
 
+void Player::setAngularVelocity(vec3d_t _av)
+{
+    av = _av;
+    wv = quatd_t(0, av.x, av.y, av.z);
+}
+
+void Player::setTravelVelocity(vec3d_t _tv)
+{
+    tv = _tv;
+}
+
 void Player::updateUniversal()
 {
     upos = lpos;
     urot = lrot;
+}
+
+void Player::update(double dt, double timeTravel)
+{
+    // realTime += dt / SECONDS_PER_DAY;
+    // jdTime   += (dt / SECONDS_PER_DAY) * timeTravel;
+    // deltaTime = dt;
+
+    if (mode == tvFreeMode)
+    {
+        // free travel mode
+        // Update current position and attitude in local reference frame
+        // applying angular velocity to rotation quaternion in local space.
+        //
+        //      dq/dt = q * w * t/2
+        //      where w = (0, x, y, z)
+        //
+        lrot += lrot * wv * (dt / 2.0);
+        lrot  = glm::normalize(lrot);
+        lpos -= glm::conjugate(lrot) * tv * dt;
+    }
+
+    // Updating current universal coordinates
+    updateUniversal();
 }
 
 void Player::move(Object *object, double altitude, goMode mode)

@@ -15,6 +15,8 @@ public:
     void cleanup() override;
     void run() override;
 
+    void processKeyEvent(SDL_KeyboardEvent *key, bool down);
+
 private:
     SDL_Window *window = nullptr;
 };

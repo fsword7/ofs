@@ -43,6 +43,11 @@ private:
 class Player : public Object
 {
 public:
+    enum travelMode
+    {
+        tvFreeMode
+    };
+
     enum followMode
     {
         fwEcliptic,
@@ -71,15 +76,34 @@ public:
     inline vec3d_t getlPosition() const     { return lpos; }
     inline quatd_t getlOrientation() const  { return lrot; }
 
+    inline vec3d_t getAngularVelocity()  { return av; }
+    inline vec3d_t getTravelVelocity()   { return tv; }
+    inline double  getJulianTime()       { return jdTime; }
+
+    void setAngularVelocity(vec3d_t av);
+    void setTravelVelocity(vec3d_t tv);
+
     void updateUniversal();
-    
+    void update(double dt, double timeTravel);
+
     void move(Object *object, double altitude, goMode mode);
 
 private:
     std::vector<Camera *> cameras;
+    
+    travelMode mode = tvFreeMode;
 
     vec3d_t  upos = { 0, 0, 0 };
     quatd_t  urot = { 1, 0, 0, 0 };
     vec3d_t  lpos = { 0, 0, 0 };
     quatd_t  lrot = { 1, 0, 0, 0 };
+    
+    // Movement control
+    vec3d_t av; // angular velocity control
+    quatd_t wv; //   quaternion control
+    vec3d_t tv; // travel velocity control
+
+    double  realTime;
+    double  jdTime;
+    double  deltaTime;
 };
