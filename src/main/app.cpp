@@ -120,21 +120,21 @@ void CoreApp::update()
     player->setTravelVelocity(tv);
 
     // Keyboard orbit movement controls
-    // {
-    //     double coarseness = player->computeCoarseness(1.5);
-    //     quatd_t q = { 1, 0, 0, 0 };
+    {
+        double coarseness = player->computeCoarseness(1.5);
+        quatd_t q = { 1, 0, 0, 0 };
 
-    //     if (shiftStateKey[keyLeft])
-    //         q *= yRotate(dt * -keyRotationAccel * coarseness);
-    //     if (shiftStateKey[keyRight])
-    //         q *= yRotate(dt * keyRotationAccel * coarseness);
-    //     if (shiftStateKey[keyUp])
-    //         q *= xRotate(dt * -keyRotationAccel * coarseness);
-    //     if (shiftStateKey[keyDown])
-    //         q *= xRotate(dt * keyRotationAccel * coarseness);
+        if (shiftStateKey[keyLeft])
+            q *= yRotate(dt * -keyRotationAccel * coarseness);
+        if (shiftStateKey[keyRight])
+            q *= yRotate(dt * keyRotationAccel * coarseness);
+        if (shiftStateKey[keyUp])
+            q *= xRotate(dt * -keyRotationAccel * coarseness);
+        if (shiftStateKey[keyDown])
+            q *= xRotate(dt * keyRotationAccel * coarseness);
 
-    //     player->orbit(q);
-    // }
+        player->orbit(q);
+    }
 
     // Keyboard dolly control
     // if (shiftStateKey[keyHome])

@@ -98,3 +98,53 @@ void Player::move(Object *object, double altitude, goMode mode)
 
     updateUniversal();
 }
+
+double Player::computeCoarseness(double maxCoarseness)
+{
+    double radius   = 1;
+    double distance = glm::length(lpos);
+    double altitude = distance - radius;
+    double coarse   = maxCoarseness;
+
+    if (altitude > 0 && altitude < radius)
+        coarse *= std::max(0.01, altitude/radius);
+    return coarse;
+}
+
+void Player::dolly(double delta)
+{
+    // const Object *object = frame->getCenter();
+    // if (object == nullptr)
+    //     return;
+
+    vec3d_t opos = { 0, 0, 0 }; // object->getPosition(jdTime);
+    double  surfaceDistance = 1; // object->getRadius();
+    double  naturalDistance = surfaceDistance * 4.0;
+    double  currentDistance = glm::length(lpos);
+
+    if (currentDistance >= surfaceDistance && naturalDistance != 0)
+    {
+        double r = (currentDistance - surfaceDistance) / naturalDistance;
+        double newDistance = surfaceDistance + naturalDistance * exp(log(r) + delta);
+
+        lpos *= (newDistance / currentDistance);
+
+        // Updating current universal coordinates
+        updateUniversal();
+    }
+}
+
+void Player::orbit(quatd_t rot)
+{
+    // const Object *center = frame->getCenter();
+    // if (center == nullptr)
+    //     return;
+
+    double dist  = glm::length(lpos);
+    quatd_t qrot = glm::normalize(lrot * rot * glm::conjugate(lrot));
+
+    lpos = glm::normalize(glm::conjugate(qrot) * lpos) * dist;
+    lrot = glm::conjugate(qrot) * lrot;
+
+    updateUniversal();
+}

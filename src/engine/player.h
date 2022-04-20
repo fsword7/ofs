@@ -88,6 +88,10 @@ public:
 
     void move(Object *object, double altitude, goMode mode);
 
+    double computeCoarseness(double maxCoarseness);
+    void dolly(double delta);
+    void orbit(quatd_t rot);
+
 private:
     std::vector<Camera *> cameras;
     
