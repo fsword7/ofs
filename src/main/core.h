@@ -28,6 +28,11 @@ typedef const std::string   cstr_t;
 
 namespace fs = std::filesystem;
 
+#define checkAllFlags(flags, mask)  ((flags & (mask)) == (mask))
+#define checkAnyFlags(flags, mask)  (flags & (mask))
+
+#define ARRAY_SIZE(a)   (sizeof(a) / sizeof(a[0]))
+
 #include "main/date.h"
 #include "main/math.h"
 #include "utils/color.h"
