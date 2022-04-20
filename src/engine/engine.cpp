@@ -24,6 +24,10 @@ void Engine::init(Context *ctx, int width, int height)
 
 void Engine::start()
 {
+    // Start real time with julian date/time.
+    realDate.reset();
+    realTime  = realDate;
+    scaleTime = 1.0;
 
     celStar *sun = universe->findStar("Sol");
 
@@ -32,7 +36,7 @@ void Engine::start()
 
 void Engine::update(double dt)
 {
-    player->update(dt, 1);
+    player->update(dt, scaleTime);
 }
 
 void Engine::render()

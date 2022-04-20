@@ -10,6 +10,7 @@ set(OFS_CPP_SRCS
     engine/object.cpp
     engine/player.cpp
     main/app.cpp
+    main/date.cpp
     render/scene.cpp
     render/starcolors.cpp
     render/surface.cpp
@@ -32,6 +33,7 @@ set(OFS_H_SRCS
     main/sdl/app.h
     main/app.h
     main/core.h
+    main/date.h
     main/math.h
     render/scene.h
     render/starcolors.h

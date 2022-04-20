@@ -37,19 +37,21 @@ void CoreApp::initEngine()
 void CoreApp::start()
 {
     if (engine != nullptr)
+    {
         engine->start();
+        currentTime = engine->getRealTime();
+    }
 }
 
 void CoreApp::update()
 {
-    // Date *jdate = engine->getDate();
+    Date *jdate = engine->getDate();
 
-    double  dt = 1; // jdate->update();
+    double  dt = jdate->update();
     vec3d_t av, tv;
 
-    // currentTime += dt;
+    currentTime += dt;
 
-    // dt = jdate->update();
     av = player->getAngularVelocity();
     tv = player->getTravelVelocity();
 

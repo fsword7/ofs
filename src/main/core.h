@@ -28,5 +28,6 @@ typedef const std::string   cstr_t;
 
 namespace fs = std::filesystem;
 
+#include "main/date.h"
 #include "main/math.h"
 #include "utils/color.h"

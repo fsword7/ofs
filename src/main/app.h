@@ -179,6 +179,8 @@ protected:
 
     int width, height;
 
+    double currentTime = 0.0;
+
     bool stateKey[512];
     bool shiftStateKey[512];
     bool ctrlStateKey[512];
