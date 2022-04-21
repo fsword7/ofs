@@ -182,7 +182,7 @@ void StarDatabase::finish()
         hipList[uStars[idx]->getHIPnumber()] = uStars[idx];
 }
 
-celStar *StarDatabase::find(cstr_t &name)
+celStar *StarDatabase::find(cstr_t &name) const
 {
     for (int idx = 0; idx < uStars.size(); idx++)
         if (uStars[idx]->getName() == name)

@@ -8,7 +8,7 @@
 #include "universe/astro.h"
 
 celStar::celStar(cstr_t &name)
-: Object(name, objCelestialStar)
+: RigidBody(name, objCelestialStar)
 {
 
 }

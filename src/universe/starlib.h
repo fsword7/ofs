@@ -22,7 +22,7 @@ public:
 
     void addStar(celStar *star);
 
-    celStar *find(cstr_t &name);
+    celStar *find(cstr_t &name) const;
 
     void findVisibleStars(const ofsHandler &handle, const vec3d_t &obs,
         const quatd_t &rot, double fov, double aspect, double limitMag) const;

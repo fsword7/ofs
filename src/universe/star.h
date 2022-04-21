@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "engine/object.h"
+#include "engine/rigidbody.h"
 
 enum SpectralClass
 {
@@ -39,7 +39,7 @@ enum SpectralClass
 
 class System;
 
-class celStar : public Object
+class celStar : public RigidBody
 {
 public:
     enum {

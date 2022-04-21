@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "engine/object.h"
+#include "engine/rigidbody.h"
 
 class Player;
 
@@ -40,7 +40,7 @@ private:
     double   fov = glm::radians(SCR_FOV);
 };
 
-class Player : public Object
+class Player : public RigidBody
 {
 public:
     enum travelMode
@@ -64,7 +64,7 @@ public:
     };
 
     Player();
-    ~Player();
+    virtual ~Player();
 
     inline Camera *getCamera(int idx = 0) const
     { 

@@ -39,7 +39,7 @@ void Camera::setViewport(int w, int h)
 // ******** Player ********
 
 Player::Player()
-: Object("Player", objPlayer)
+: RigidBody("Player", objPlayer)
 {
     cameras.push_back(new Camera(*this));
 

@@ -9,6 +9,7 @@ set(OFS_CPP_SRCS
     engine/engine.cpp
     engine/object.cpp
     engine/player.cpp
+    engine/rigidbody.cpp
     ephem/orbit.cpp
     ephem/vsop87.cpp
     main/app.cpp
@@ -33,6 +34,7 @@ set(OFS_H_SRCS
     engine/engine.h
     engine/object.h
     engine/player.h
+    engine/rigidbody.h
     ephem/orbit.h
     ephem/vsop87.h
     main/sdl/app.h

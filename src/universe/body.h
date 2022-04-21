@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "engine/object.h"
+#include "engine/rigidbody.h"
 
 class celStar;
 class celBody;
@@ -47,7 +47,7 @@ enum celType
     cbComet
 };
 
-class celBody : public Object
+class celBody : public RigidBody
 {
 public:
     enum {
@@ -58,13 +58,13 @@ public:
     };
 
     celBody(PlanetarySystem *system, cstr_t &name, celType type)
-    : Object(name, objCelestialBody), cbType(type), inSystem(system)
+    : RigidBody(name, objCelestialBody), cbType(type), inSystem(system)
     {
         inSystem->addBody(this);
     }
 
     celBody(cstr_t &name, celType type, celBody *body = nullptr)
-    : Object(name, objCelestialBody), cbType(type)
+    : RigidBody(name, objCelestialBody), cbType(type)
     {
         if (body != nullptr)
         {

@@ -21,7 +21,10 @@ public:
     System *createSolarSystem(celStar *star);
     System *getSolarSystem(celStar *star) const;
 
-    celStar *findStar(cstr_t &name);
+    celStar *findStar(cstr_t &name) const;
+
+    Object *findObject(const Object *obj, const std::string &name) const;
+    Object *findPath(cstr_t &path) const;
 
     int findCloseStars(const vec3d_t &obs, double mdist,
         std::vector<const celStar *> &closeStars) const;
