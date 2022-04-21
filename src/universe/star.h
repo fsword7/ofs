@@ -37,6 +37,8 @@ enum SpectralClass
     spectralDX = 23 
 };
 
+class System;
+
 class celStar : public Object
 {
 public:
@@ -50,13 +52,17 @@ public:
     celStar(cstr_t &name);
     ~celStar() = default;
 
-    inline vec3d_t getStarPosition() const { return spos; }
-    inline double  getAbsMag() const       { return absMag; }
-    inline int getTemperature() const      { return temp; }
+    inline vec3d_t getStarPosition() const      { return spos; }
+    inline double  getAbsMag() const            { return absMag; }
+    inline int getTemperature() const           { return temp; }
     
-    inline void setHIPnumber(int val)      { hip = val; }
-    inline int getHIPnumber() const        { return hip; }
-    
+    inline void setHIPnumber(int val)           { hip = val; }
+    inline uint32_t getHIPnumber() const        { return hip; }
+
+    inline bool hasSolarSytstem() const         { return system != nullptr; }
+    inline System *getSolarSystem() const       { return system; }
+    inline void setSolarSystem(System *sys)     { system = sys; }
+
     static celStar *createTheSun();
     static celStar *create(double ra, double de, double pc,
         cchar_t *spType, double appMag, double ci, double lum);
@@ -80,4 +86,6 @@ private:
     double  bMag, vMag;     // Blue/visual magnitude
     double  ci, lum;        // Color index, luminosity
     int     temp;           // Surface temperature
+
+    System *system = nullptr;
 };

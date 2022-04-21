@@ -14,6 +14,30 @@ void Universe::init()
     stardb.loadXHIPData("xhip");
 }
 
+System *Universe::createSolarSystem(celStar *star)
+{
+    System *system = getSolarSystem(star);
+    if (system != nullptr)
+        return system;
+
+    auto idStar = star->getHIPnumber();
+    system = new System(star);
+    systems.insert({idStar, system});
+
+    return system;
+}
+
+System *Universe::getSolarSystem(celStar *star) const
+{
+    if (star == nullptr)
+        return nullptr;
+    auto idStar = star->getHIPnumber();
+    auto iter = systems.find(idStar);
+    if (iter != systems.end())
+        return iter->second;
+    return nullptr;
+}
+
 celStar *Universe::findStar(cstr_t &name)
 {
     return stardb.find(name);
