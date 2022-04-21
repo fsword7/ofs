@@ -6,6 +6,7 @@
 #pragma once
 
 #include "engine/rigidbody.h"
+#include "universe/frame.h"
 
 class celStar;
 class celBody;
@@ -19,7 +20,8 @@ public:
 
     inline celBody *getPrimaryBody()        { return body; }
     inline celStar *getStar()               { return star; }
-    
+    inline FrameTree *getSystemTree()       { return &tree; }
+
     inline void setStar(celStar *nStar)     { star = nStar; }
 
     void addBody(celBody *body);
@@ -28,6 +30,8 @@ public:
     celBody *find(cstr_t &name) const;
 
 private:
+    FrameTree tree;
+
     // Planetary system parameters
     // System *solarSystem = nullptr;
     celBody *body = nullptr;

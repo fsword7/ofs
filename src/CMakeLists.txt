@@ -17,12 +17,14 @@ set(OFS_CPP_SRCS
     render/scene.cpp
     render/starcolors.cpp
     render/surface.cpp
+    render/systems.cpp
     render/vbody.cpp
     render/vobject.cpp
     render/vstar.cpp
     render/vvessel.cpp
     universe/astro.cpp
     universe/body.cpp
+    universe/frame.cpp
     universe/star.cpp
     universe/starlib.cpp
     universe/startree.cpp
@@ -51,6 +53,7 @@ set(OFS_H_SRCS
     render/vvessel.h
     universe/star.h
     universe/body.h
+    universe/frame.h
     universe/handle.h
     universe/star.h
     universe/starlib.h

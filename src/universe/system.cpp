@@ -28,5 +28,9 @@ celBody *System::createBody(cstr_t &name, PlanetarySystem *system,
 
     fmt::printf("Body %s -> %s\n", name, parentObject->getsName());
 
+    FrameTree *parentFrame = system->getSystemTree();
+
+    parentFrame->addObject(body);
+    
     return body;
 }

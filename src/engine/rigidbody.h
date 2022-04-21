@@ -15,4 +15,8 @@ public:
     { }
     virtual ~RigidBody() = default;
 
+    // orbtial positions
+    vec3d_t getuPosition(double tjd);
+    quatd_t getuOrientation(double tjd);
+
 };

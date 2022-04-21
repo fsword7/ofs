@@ -8,6 +8,7 @@
 #include "engine/object.h"
 
 class Scene;
+class Object;
 
 class vObject
 {
@@ -16,6 +17,8 @@ public:
     : object(obj), scene(scene)
     { }
     virtual ~vObject() = default;
+
+    inline const Object *getObject() const { return &object; }
 
     static vObject *create(const Object &obj, Scene &scene);
 

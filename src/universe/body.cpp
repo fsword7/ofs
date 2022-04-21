@@ -10,13 +10,13 @@
 // ******** Planetary System ********
 
 PlanetarySystem::PlanetarySystem(celBody *body)
-: body(body)
+: body(body), tree(body)
 {
     bodies.clear();
 }
 
 PlanetarySystem::PlanetarySystem(celStar *star)
-: star(star)
+: star(star), tree(star)
 {
     bodies.clear();
 }
