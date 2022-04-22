@@ -38,7 +38,10 @@ public:
     inline void setRadius(double val)   { radius = val; }
     inline void setAlbedo(double val)   { albedo = val; }
     inline void setOrbit(Orbit *nOrbit) { orbit = nOrbit; }
-    
+
+    virtual vec3d_t getuPosition(double tjd);
+    virtual quatd_t getuOrientation(double tjd);
+
 private:
     ObjectType objType = objUnknown;
     std::vector<str_t> objNames{1};

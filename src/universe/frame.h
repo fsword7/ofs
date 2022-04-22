@@ -5,7 +5,10 @@
 
 #pragma once
 
+#include "universe/astro.h"
+
 class Object;
+class Frame;
 class celBody;
 class celStar;
 
@@ -18,6 +21,7 @@ public:
 
     inline celStar *getStar() const         { return parentStar; }
     inline celBody *getBody() const         { return parentBody; }
+    inline Frame *getDefaultFrame() const   { return defaultFrame; }
     inline int getSystemSize() const        { return objects.size(); }
     inline bool isRoot() const              { return parentBody == nullptr; }
     
@@ -30,5 +34,76 @@ private:
 
     std::vector<Object *> objects;
 
-    // Frame *defaultFrame = nullptr;
+    Frame *defaultFrame = nullptr;
 };
+
+class Frame
+{
+public:
+    Frame(Object *object, Frame *parent = nullptr)
+    : center(object), parentFrame(parent)
+    {
+        lock();
+    }
+
+    virtual ~Frame() = default;
+
+    inline Object *getCenter() const        { return center; }
+    inline cstr_t getsName() const          { return frameName; }
+    inline Frame *getParentFrame() const    { return parentFrame; }
+    inline bool isRoot() const              { return parentFrame == nullptr; }
+
+    int lock() const;
+    int release() const;
+
+    virtual quatd_t getOrientation(double tjd) const = 0;
+
+    vec3d_t fromUniversal(const vec3d_t &upos, double tjd);
+    quatd_t fromUniversal(const quatd_t &urot, double tjd);
+
+    vec3d_t toUniversal(const vec3d_t &lpos, double tjd);
+    quatd_t toUniversal(const quatd_t &lrot, double tjd);
+
+    static Frame *create(cstr_t &frameName, Object *bodyObject, Object *parentObject);
+
+private:
+    Frame *parentFrame = nullptr;
+    mutable int refCount = 0;
+
+protected:
+    Object *center = nullptr;
+    str_t frameName;
+};
+
+// class CachingFrame : public Frame
+// {
+// public:
+//     CachingFrame() = default;
+//     virtual ~CachingFrame() = default;
+// };
+
+class J2000EclipticFrame : public Frame
+{
+public:
+    J2000EclipticFrame(Object *object, Frame *parent = nullptr);
+    ~J2000EclipticFrame() = default;
+
+    quatd_t getOrientation(double) const override
+    {
+        return quatd_t(1, 0, 0, 0);
+    }
+};
+
+class J2000EquatorFrame : public Frame
+{
+public:
+    J2000EquatorFrame(Object *object, Object *target, Frame *parent = nullptr);
+    ~J2000EquatorFrame() = default;
+
+    quatd_t getOrientation(double) const override
+    {
+        return quatd_t(vec3d_t(-J2000Obliquity, 0, 0));
+    }
+};
+
+

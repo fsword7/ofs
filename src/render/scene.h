@@ -10,6 +10,7 @@ class VertexBuffer;
 class ShaderManager;
 class ShaderProgram;
 class Universe;
+class FrameTree;
 class Object;
 class Player;
 class celStar;
@@ -67,7 +68,7 @@ protected:
     void initStarRenderer();
     void renderStars(const StarDatabase &starlib, const Player &player, double faintest);
 
-    void buildNearSystems(Player &player, vec3d_t apos, vec3d_t vpnorm, vec3d_t origin);
+    void buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3d_t vpnorm, vec3d_t origin);
     
     vObject *addVisualObject(const Object &object);
     vObject *getVisualObject(const Object &object, bool createFlag);

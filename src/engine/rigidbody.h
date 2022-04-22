@@ -13,10 +13,12 @@ public:
     RigidBody(cstr_t &name, ObjectType type)
     : Object(name, type)
     { }
+    
     virtual ~RigidBody() = default;
 
     // orbtial positions
-    vec3d_t getuPosition(double tjd);
-    quatd_t getuOrientation(double tjd);
+    vec3d_t getuPosition(double tjd) override;
+    quatd_t getuOrientation(double tjd) override;
 
+    vec3d_t getoPosition(double tjd);
 };
