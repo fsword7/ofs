@@ -121,8 +121,26 @@ void Player::update(double dt, double timeTravel)
 
 void Player::move(Object *object, double altitude, goMode mode)
 {
-    lpos = vec3d_t( 0, 0, altitude );
+    // vec3d_t opos = object->getuPosition(jdTime);
+    // quatd_t orot;
+    // vec3d_t tpos;
 
+    // // PlanetarySystem *system;
+    // // celStar *sun;
+
+    // switch (mode)
+    // {
+    // case goGeoSync:
+    //     orot = object->getuOrientation(jdTime);
+    //     break;
+    // };
+
+    // upos = opos + glm::conjugate(orot) * vec3d_t(0, 0, altitude);
+    // urot = orot;
+    // lpos = frame->fromUniversal(upos, jdTime);
+    // lrot = frame->fromUniversal(urot, jdTime);
+
+    lpos = vec3d_t(0, 0, altitude);
     updateUniversal();
 }
 

@@ -10,6 +10,9 @@
 
 vec3d_t RigidBody::getuPosition(double tjd)
 {
+    if (getType() == objCelestialStar)
+        return { 0, 0, 0 };
+
     vec3d_t pos = { 0, 0, 0 };
     vec3d_t opos = orbit->getPosition(tjd);
     Frame  *frame = orbitFrame;
