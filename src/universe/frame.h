@@ -75,6 +75,42 @@ protected:
     str_t frameName;
 };
 
+class PlayerFrame
+{
+public:
+    enum coordType
+    {
+        csUniversal   = 0,
+        csEcliptical  = 1,
+        csEquatrorial = 2,
+        csBodyFixed   = 3,
+        csObjectSysnc = 4
+    };
+
+    PlayerFrame();
+    PlayerFrame(coordType csType, Object *center = nullptr, Object *targer = nullptr);
+    ~PlayerFrame();
+
+    static Frame *create(coordType csType, Object *center = nullptr, Object *targer = nullptr);
+
+    coordType getType() const   { return type; }
+    Frame *getFrame() const     { return frame; }
+    
+    str_t getsName() const
+    { 
+        return frame != nullptr ? frame->getCenter()->getsName() : "(Unknown)";
+    }
+
+    Object *getCenter() const
+    {
+        return frame != nullptr ? frame->getCenter() : nullptr;
+    }
+
+private:
+    coordType type = csUniversal;
+    Frame *frame = nullptr;
+};
+
 // class CachingFrame : public Frame
 // {
 // public:

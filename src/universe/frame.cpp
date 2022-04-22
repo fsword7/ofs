@@ -41,6 +41,44 @@ Object *FrameTree::getObject(int idx) const
     return nullptr;
 }
 
+// ******** Player Reference Frame ********
+
+PlayerFrame::PlayerFrame()
+{
+    frame = create(csUniversal);
+}
+
+PlayerFrame::PlayerFrame(coordType cs, Object *center, Object *target)
+: type(cs)
+{
+    frame = create(cs, center, target);
+}
+
+PlayerFrame::~PlayerFrame()
+{
+    if (frame != nullptr)
+        frame->release();
+}
+
+Frame *PlayerFrame::create(coordType csType, Object *center, Object *target)
+{
+    switch (csType)
+    {
+    case csEcliptical:
+        return new J2000EclipticFrame(center);
+    case csEquatrorial:
+        return new J2000EquatorFrame(center, center);
+    // case csBodyFixed:
+    //     return new BodyFixedFrame(center, center);
+    // case csObjectSysnc:
+    //     return new ObjectSyncFrame(center, target);
+    case csUniversal:
+    default:
+        return new J2000EclipticFrame(nullptr);
+    }
+    return nullptr;
+}
+
 // ******** Reference Frame ********
 
 int Frame::lock() const
