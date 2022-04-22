@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "engine/object.h"
+#include "universe/frame.h"
 #include "engine/player.h"
 
 // ******** Camera ********
@@ -43,12 +44,20 @@ Player::Player()
 {
     cameras.push_back(new Camera(*this));
 
-    // frame = new PlayerFrame();
-    // updateFame(frame);
+    frame = new PlayerFrame();
+    updateFrame(frame);
 }
 
 Player::~Player()
 {
+    if (frame != nullptr)
+        delete frame;
+}
+
+void Player::updateFrame(PlayerFrame *nFrame)
+{
+    lpos = nFrame->fromUniversal(upos, jdTime);
+    lrot = nFrame->fromUniversal(urot, jdTime);
 }
 
 void Player::setAngularVelocity(vec3d_t _av)
@@ -64,15 +73,28 @@ void Player::setTravelVelocity(vec3d_t _tv)
 
 void Player::updateUniversal()
 {
-    upos = lpos;
-    urot = lrot;
+    upos = frame->toUniversal(lpos, jdTime);
+    urot = frame->toUniversal(lrot, jdTime);
+
+    // fmt::printf("To Universal: L(%lf,%lf,%lf) => U(%lf,%lf,%lf)\n",
+    //     lpos.x, lpos.y, lpos.z, upos.x, upos.y, upos.z);
+    // fmt::printf("              P(%lf,%lf,%lf,%lf) => Q(%lf,%lf,%lf,%lf)\n",
+    //     lrot.w, lrot.x, lrot.y, lrot.z, urot.w, urot.x, urot.y, urot.z);
+}
+
+void Player::start(double tjd)
+{
+    // Reset julian date/time
+    realTime = tjd;
+    jdTime = tjd;
+    deltaTime = 0;
 }
 
 void Player::update(double dt, double timeTravel)
 {
-    // realTime += dt / SECONDS_PER_DAY;
-    // jdTime   += (dt / SECONDS_PER_DAY) * timeTravel;
-    // deltaTime = dt;
+    realTime += dt / SECONDS_PER_DAY;
+    jdTime   += (dt / SECONDS_PER_DAY) * timeTravel;
+    deltaTime = dt;
 
     if (mode == tvFreeMode)
     {
@@ -87,6 +109,11 @@ void Player::update(double dt, double timeTravel)
         lrot  = glm::normalize(lrot);
         lpos -= glm::conjugate(lrot) * tv * dt;
     }
+
+    // fmt::printf("Move: (%lf,%lf,%lf) <= (%lf,%lf,%lf)\n",
+    //     lpos.x, lpos.y, lpos.z, tv.x, tv.y, tv.z);
+    // fmt::printf("Rotate: (%lf,%lf,%lf,%lf) <= (%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
+    //     lrot.w, lrot.x, lrot.y, lrot.z, av.x, av.y, av.z, wv.w, wv.x, wv.y, wv.z);
 
     // Updating current universal coordinates
     updateUniversal();
@@ -145,6 +172,11 @@ void Player::orbit(quatd_t rot)
 
     lpos = glm::normalize(glm::conjugate(qrot) * lpos) * dist;
     lrot = glm::conjugate(qrot) * lrot;
+
+    // fmt::printf("Rotation: R(%lf,%lf,%lf,%lf) => Q(%lf,%lf,%lf,%lf)\n",
+    //     rot.w, rot.x, rot.y, rot.z, qrot.w, qrot.x, qrot.y, qrot.z);
+    // fmt::printf("Local:    Q(%lf,%lf,%lf,%lf) => L(%lf,%lf,%lf,%lf)\n",
+    //     qrot.w, qrot.x, qrot.y, qrot.z, lrot.w, lrot.x, lrot.y, lrot.z);
 
     updateUniversal();
 }

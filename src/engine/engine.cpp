@@ -29,6 +29,8 @@ void Engine::start()
     realTime  = realDate;
     scaleTime = 1.0;
 
+    player->start(realTime);
+
     celStar *sun = universe->findStar("Sol");
 
     player->move(sun, sun->getRadius() * 6.0, Player::goEcliptic);

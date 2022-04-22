@@ -8,6 +8,7 @@
 #include "engine/rigidbody.h"
 
 class Player;
+class PlayerFrame;
 
 class Camera
 {
@@ -80,10 +81,13 @@ public:
     inline vec3d_t getTravelVelocity()   { return tv; }
     inline double  getJulianTime()       { return jdTime; }
 
+    void updateFrame(PlayerFrame *nFrame);
+
     void setAngularVelocity(vec3d_t av);
     void setTravelVelocity(vec3d_t tv);
 
     void updateUniversal();
+    void start(double tjd);
     void update(double dt, double timeTravel);
 
     void move(Object *object, double altitude, goMode mode);
@@ -93,6 +97,8 @@ public:
     void orbit(quatd_t rot);
 
 private:
+    PlayerFrame *frame = nullptr;
+
     std::vector<Camera *> cameras;
     
     travelMode mode = tvFreeMode;
@@ -103,9 +109,9 @@ private:
     quatd_t  lrot = { 1, 0, 0, 0 };
     
     // Movement control
-    vec3d_t av; // angular velocity control
-    quatd_t wv; //   quaternion control
-    vec3d_t tv; // travel velocity control
+    vec3d_t av = { 0, 0, 0 };   // angular velocity control
+    quatd_t wv = { 1, 0, 0, 0}; //   quaternion control
+    vec3d_t tv = { 0, 0, 0 };   // travel velocity control
 
     double  realTime;
     double  jdTime;

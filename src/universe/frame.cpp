@@ -60,6 +60,26 @@ PlayerFrame::~PlayerFrame()
         frame->release();
 }
 
+vec3d_t PlayerFrame::fromUniversal(vec3d_t upos, double tjd)
+{
+    return frame != nullptr ? frame->fromUniversal(upos, tjd) : upos;
+}
+
+quatd_t PlayerFrame::fromUniversal(quatd_t urot, double tjd)
+{
+    return frame != nullptr ? frame->fromUniversal(urot, tjd) : urot;
+}
+
+vec3d_t PlayerFrame::toUniversal(vec3d_t lpos, double tjd)
+{
+    return frame != nullptr ? frame->toUniversal(lpos, tjd) : lpos;
+}
+
+quatd_t PlayerFrame::toUniversal(quatd_t lrot, double tjd)
+{
+    return frame != nullptr ? frame->toUniversal(lrot, tjd) : lrot;
+}
+
 Frame *PlayerFrame::create(coordType csType, Object *center, Object *target)
 {
     switch (csType)
@@ -103,6 +123,11 @@ vec3d_t Frame::fromUniversal(const vec3d_t &upos, double tjd)
     quatd_t orot = glm::conjugate(getOrientation(tjd));
     vec3d_t rpos = (opos - upos) * orot;
 
+	// fmt::printf("Center: P(%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
+	// 	opos.x, opos.y, opos.z, orot.w, orot.x, orot.y, orot.z);
+	// fmt::printf(" Frame: U(%lf,%lf,%lf) => L(%lf,%lf,%lf)\n",
+	// 	upos.x, upos.y, upos.z, rpos.x, rpos.y, rpos.z);
+
     return rpos;
 }
 
@@ -122,7 +147,19 @@ vec3d_t Frame::toUniversal(const vec3d_t &lpos, double tjd)
     quatd_t orot = getOrientation(tjd);
     vec3d_t rpos = opos + (lpos * orot);
 
+	// fmt::printf("Center: P(%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
+	// 	opos.x, opos.y, opos.z, orot.w, orot.x, orot.y, orot.z);
+	// fmt::printf(" Frame: L(%lf,%lf,%lf) => U(%lf,%lf,%lf)\n",
+	// 	lpos.x, lpos.y, lpos.z, rpos.x, rpos.y, rpos.z);
+
     return rpos;
+}
+
+quatd_t Frame::toUniversal(const quatd_t &lrot, double tjd)
+{
+    if (center == nullptr)
+        return lrot;
+    return lrot * glm::conjugate(getOrientation(tjd));
 }
 
 Frame *Frame::create(cstr_t &frameName, Object *bodyObject, Object *parentObject)

@@ -6,6 +6,7 @@
 #pragma once
 
 class Orbit;
+class Frame;
 
 class Object
 {
@@ -32,12 +33,20 @@ public:
     inline str_t getsName() const       { return objNames[0]; }
     inline ObjectType getType() const   { return objType; }
     inline double getRadius() const     { return radius; }
-    inline Orbit *getOrbit() const      { return orbit; }
 
     inline void setMass(double val)     { mass = val; }
     inline void setRadius(double val)   { radius = val; }
     inline void setAlbedo(double val)   { albedo = val; }
-    inline void setOrbit(Orbit *nOrbit) { orbit = nOrbit; }
+
+    // Virtual function calls
+    virtual void setOrbitFrame(Frame *frame) = 0;
+    virtual void setBodyFrame(Frame *frame) = 0;
+    virtual void setOrbit(Orbit *nOrbit) = 0;
+
+    virtual Frame *getOrbitFrame() const = 0;
+    virtual Frame *getBodyFrame() const = 0;
+
+    virtual Orbit *getOrbit() const = 0;
 
     virtual vec3d_t getuPosition(double tjd);
     virtual quatd_t getuOrientation(double tjd);
@@ -55,6 +64,4 @@ protected:
     double  mass   = 0.0;
     double  radius = 0.0;
     double  albedo = 0.0;
-
-    Orbit *orbit = nullptr;
 };

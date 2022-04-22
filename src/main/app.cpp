@@ -133,7 +133,8 @@ void CoreApp::update()
         if (shiftStateKey[keyDown])
             q *= xRotate(dt * keyRotationAccel * coarseness);
 
-        player->orbit(q);
+        if (q != quatd_t(1, 0, 0, 0))
+            player->orbit(q);
     }
 
     // Keyboard dolly control
