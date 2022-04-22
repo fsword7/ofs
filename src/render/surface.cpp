@@ -59,7 +59,7 @@ void SurfaceManager::render(SurfaceTile *tile)
     tile->render();
 }
 
-void SurfaceManager::render()
+void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
 {
     for (int idx = 0; idx < 2; idx++)
         render(tiles[idx]);

@@ -7,6 +7,6 @@
 #include "render/scene.h"
 #include "render/vvessel.h"
 
-void vVessel::render()
+void vVessel::render(renderParam &prm, ObjectProperties &op)
 {
 }

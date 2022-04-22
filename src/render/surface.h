@@ -51,7 +51,7 @@ public:
     Mesh *createSphere(int lod, int ilat, int ilng, int grids, const tcrd_t &tcr);
 
     void render(SurfaceTile *tile);
-    void render();
+    void render(renderParam &prm, ObjectProperties &op);
 
 private:
     Context &ctx;

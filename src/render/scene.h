@@ -28,6 +28,62 @@ struct TextureCoordRange
 
 typedef TextureCoordRange<double> tcrd_t;
 
+// Sun light sources list
+struct LightSource
+{
+    vec3d_t spos;       // Sun position;
+    double  luminosity; // Sun Luminosity
+    double  radius;     // Sun radius
+    color_t color;      // Color temperature
+};
+
+// Reflected object list
+struct SecondaryLight
+{
+    Object *object;         // Reflected object
+    vec3d_t viewPosition;   // View position
+    double  radius;         // Object radius
+    double  reflected;      // Reflected brightness
+};
+
+struct ObjectListEntry
+{   
+    Object *object;     // Object
+
+    // Sun and position [km]
+    vec3d_t opos;       // Object position
+    vec3d_t spos;       // Sun position
+
+    double  vdist;      // View distance
+    double  objSize;    // Object size in pixel width
+    double  appMag;     // Apparent magnitude
+
+    // Clipping parameters
+    double  zNear;      // Near Z clipping
+    double  zCenter;    // Center Z clipping
+    double  zFat;       // Far Z clipping
+};
+
+struct ObjectProperties
+{
+    color_t color;
+    uint32_t maxLOD;
+    uint32_t biasLOD;
+    vec3d_t  opos;
+    quatd_t  oqrot;
+    mat4d_t  orot;
+    double   orad;
+
+    vec3d_t  cpos;
+    vec3d_t  cqrot;
+    mat4d_t  crot;
+    vec3d_t  cdir;
+    double   cdist;
+
+    double   viewap;
+    double   tanap;
+};
+
 struct renderParam
 {
     double jnow; // current Julian date/time
@@ -69,7 +125,9 @@ protected:
     void renderStars(const StarDatabase &starlib, const Player &player, double faintest);
 
     void buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3d_t vpnorm, vec3d_t origin);
-    
+    void renderObjectAsPoint(ObjectListEntry &ole);
+    void renderCelestialBody(ObjectListEntry &ole);
+
     vObject *addVisualObject(const Object &object);
     vObject *getVisualObject(const Object &object, bool createFlag);
 
@@ -78,8 +136,9 @@ private:
     ShaderManager *smgr = nullptr;
 
     std::vector<vObject *> vObjectList;
-
     std::vector<const celStar *> closeStars;
+    std::vector<LightSource> lightSources;
+    std::vector<ObjectListEntry> objectList;
 
     StarRenderer *starRenderer = nullptr;
     StarColors *starColors = nullptr;

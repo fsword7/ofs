@@ -10,8 +10,8 @@
 #include "engine/player.h"
 #include "universe/star.h"
 #include "universe/universe.h"
-#include "render/vobject.h"
 #include "render/scene.h"
+#include "render/vobject.h"
 
 void Scene::init()
 {

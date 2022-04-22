@@ -22,7 +22,7 @@ public:
 
     static vObject *create(const Object &obj, Scene &scene);
 
-    virtual void render() = 0;
+    virtual void render(renderParam &prm, ObjectProperties &op) = 0;
 
 protected:
     const Object &object;

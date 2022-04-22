@@ -8,6 +8,33 @@
 #include "universe/frame.h"
 #include "render/scene.h"
 
+void Scene::renderObjectAsPoint(ObjectListEntry &ole)
+{
+
+}
+
+void Scene::renderCelestialBody(ObjectListEntry &ole)
+{
+    celBody *body = dynamic_cast<celBody *>(ole.object);
+
+    vObject *vobj = getVisualObject(*ole.object, true);
+    if (ole.objSize > 1.0)
+    {
+        ObjectProperties op;
+
+        quatd_t orot = body->getuOrientation(prm.jnow);
+
+        op.color = body->getColor();
+        op.orad  = body->getRadius();
+        op.opos  = ole.opos;
+        op.oqrot = orot;
+
+        // vobj->render(prm, op);
+    }
+    else
+        renderObjectAsPoint(ole);
+}
+
 void Scene::buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3d_t vpnorm, vec3d_t origin)
 {
     int nObjects = tree->getSystemSize();
@@ -31,7 +58,16 @@ void Scene::buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3
 
             if (objSize > 1)
             {
+                ObjectListEntry ole;
 
+                ole.object  = body;
+                ole.spos    = spos;
+                ole.opos    = opos;
+                ole.vdist   = vdist;
+                ole.objSize = objSize;
+                ole.appMag  = appMag;
+
+                renderCelestialBody(ole);
             }
 
             // Rendering satellites orbiting around this celestial body
