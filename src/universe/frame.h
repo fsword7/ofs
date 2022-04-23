@@ -75,46 +75,6 @@ protected:
     str_t frameName;
 };
 
-// class PlayerFrame
-// {
-// public:
-//     enum coordType
-//     {
-//         csUniversal  = 0,
-//         csEcliptical = 1,
-//         csEquatorial = 2,
-//         csBodyFixed  = 3,
-//         csObjectSync = 4
-//     };
-
-//     PlayerFrame();
-//     PlayerFrame(coordType csType, Object *center = nullptr, Object *targer = nullptr);
-//     ~PlayerFrame();
-
-//     static Frame *create(coordType csType, Object *center = nullptr, Object *targer = nullptr);
-
-//     coordType getType() const   { return type; }
-//     Frame *getFrame() const     { return frame; }
-    
-//     str_t getsName() const
-//     { 
-//         return frame != nullptr ? frame->getCenter()->getsName() : "(Unknown)";
-//     }
-
-//     Object *getCenter() const
-//     {
-//         return frame != nullptr ? frame->getCenter() : nullptr;
-//     }
-
-//     vec3d_t fromUniversal(vec3d_t upos, double tjd);
-//     quatd_t fromUniversal(quatd_t urot, double tjd);
-//     vec3d_t toUniversal(vec3d_t lpos, double tjd);
-//     quatd_t toUniversal(quatd_t lrot, double tjd);
-    
-// private:
-//     coordType type = csUniversal;
-//     Frame *frame = nullptr;
-// };
 
 // class CachingFrame : public Frame
 // {

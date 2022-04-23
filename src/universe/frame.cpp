@@ -41,64 +41,6 @@ Object *FrameTree::getObject(int idx) const
     return nullptr;
 }
 
-// ******** Player Reference Frame ********
-
-// PlayerFrame::PlayerFrame()
-// {
-//     frame = create(csUniversal);
-// }
-
-// PlayerFrame::PlayerFrame(coordType cs, Object *center, Object *target)
-// : type(cs)
-// {
-//     frame = create(cs, center, target);
-// }
-
-// PlayerFrame::~PlayerFrame()
-// {
-//     if (frame != nullptr)
-//         frame->release();
-// }
-
-// vec3d_t PlayerFrame::fromUniversal(vec3d_t upos, double tjd)
-// {
-//     return frame != nullptr ? frame->fromUniversal(upos, tjd) : upos;
-// }
-
-// quatd_t PlayerFrame::fromUniversal(quatd_t urot, double tjd)
-// {
-//     return frame != nullptr ? frame->fromUniversal(urot, tjd) : urot;
-// }
-
-// vec3d_t PlayerFrame::toUniversal(vec3d_t lpos, double tjd)
-// {
-//     return frame != nullptr ? frame->toUniversal(lpos, tjd) : lpos;
-// }
-
-// quatd_t PlayerFrame::toUniversal(quatd_t lrot, double tjd)
-// {
-//     return frame != nullptr ? frame->toUniversal(lrot, tjd) : lrot;
-// }
-
-// Frame *PlayerFrame::create(coordType csType, Object *center, Object *target)
-// {
-//     switch (csType)
-//     {
-//     case csEcliptical:
-//         return new J2000EclipticFrame(center);
-//     case csEquatorial:
-//         return new J2000EquatorFrame(center, center);
-//     case csBodyFixed:
-//         return new BodyFixedFrame(center, center);
-//     case csObjectSync:
-//         return new ObjectSyncFrame(center, target);
-//     case csUniversal:
-//     default:
-//         return new J2000EclipticFrame(nullptr);
-//     }
-//     return nullptr;
-// }
-
 // ******** Reference Frame ********
 
 int Frame::lock() const
