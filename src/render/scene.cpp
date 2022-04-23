@@ -18,6 +18,11 @@ void Scene::init()
     initStarRenderer();
 }
 
+vec3d_t Scene::getAstrocentericPosition(const celStar *sun, vec3d_t upos, double now)
+{
+    return upos - sun->getuPosition(now);
+}
+
 void Scene::render(Universe &universe, Player &player)
 {
 
@@ -47,6 +52,17 @@ void Scene::render(Universe &universe, Player &player)
     {
         const celStar *sun = closeStars[idx];
 
+        if (!sun->hasSolarSytstem())
+            continue;
+
+        System *system = sun->getSolarSystem();
+        PlanetarySystem *objects = system->getPlanetarySystem();
+        FrameTree *tree = objects->getSystemTree();
+
+        vec3d_t apos = getAstrocentericPosition(sun, obs, prm.jnow);
+        vec3d_t vpn = glm::conjugate(prm.crot) * vec3d_t (0, 0, -1);
+
+        buildNearSystems(tree, player, apos, vpn, { 0, 0, 0 });
     }
 
     ctx.finish();

@@ -7,6 +7,7 @@
 #include "universe/body.h"
 #include "universe/frame.h"
 #include "render/scene.h"
+#include "render/vobject.h"
 
 void Scene::renderObjectAsPoint(ObjectListEntry &ole)
 {
@@ -29,7 +30,7 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
         op.opos  = ole.opos;
         op.oqrot = orot;
 
-        // vobj->render(prm, op);
+        vobj->render(prm, op);
     }
     else
         renderObjectAsPoint(ole);

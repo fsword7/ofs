@@ -17,6 +17,8 @@ struct Vertex32e
 typedef Vertex32e<float> vtxef_t;
 
 class Context;
+class VertexBuffer;
+class Texture;
 
 class Mesh
 {
@@ -25,15 +27,23 @@ public:
     { }
     ~Mesh() = default;
 
+    void setTexture(Texture *image) { txImage = image; }
+
     static Mesh *create(Context &gl, int nvtx, vtxef_t *vtx, int nidx, uint16_t *idx);
 
+    void allocate();
     void render();
 
 private:
     Context &ctx;
 
+    VertexBuffer *vbuf = nullptr;
+    Texture *txImage = nullptr;
+
     // Object parameters
     int       nvtx = 0, nidx = 0;
     vtxef_t  *vtx = nullptr;
     uint16_t *idx = nullptr;
+
+    bool bAllocated = false;
 };

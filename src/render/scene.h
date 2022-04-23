@@ -66,7 +66,7 @@ struct ObjectListEntry
 
 struct ObjectProperties
 {
-    color_t color;
+    color_t  color;
     uint32_t maxLOD;
     uint32_t biasLOD;
     vec3d_t  opos;
@@ -91,6 +91,19 @@ struct renderParam
     // Camera paramters
     vec3d_t cpos;
     quatd_t crot;
+    vec3d_t cdir;
+    double  cdist;
+    double  viewap;
+    double  tanap;
+    double  aspect;
+
+    // Per-object parameters
+    int     maxLOD;
+    int     biasLOD;
+    color_t color;
+    double  orad;
+    quatd_t oqrot;
+    mat4d_t orot;
 
     mat4d_t dmProj;  // projection matrix
     mat4d_t dmView;  // view matrix
@@ -130,6 +143,8 @@ protected:
 
     vObject *addVisualObject(const Object &object);
     vObject *getVisualObject(const Object &object, bool createFlag);
+
+    vec3d_t getAstrocentericPosition(const celStar *sun, vec3d_t upos, double now);
 
 private:
     Context &ctx;

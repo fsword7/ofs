@@ -37,23 +37,23 @@ celBody *System::createBody(cstr_t &name, PlanetarySystem *system,
     
     Frame *orbitFrame, *bodyFrame;
 
-    // if (!orbitFrameName.empty())
-    //     orbitFrame = Frame::create(orbitFrameName, parentObject, parentObject);
-    // else
-    //     orbitFrame = defaultOrbitFrame;
+    if (!orbitFrameName.empty())
+        orbitFrame = Frame::create(orbitFrameName, parentObject, parentObject);
+    else
+        orbitFrame = defaultOrbitFrame;
 
-    // if (!bodyFrameName.empty())
-    //     orbitFrame = Frame::create(bodyFrameName, parentObject, parentObject);
-    // else
-    //     orbitFrame = defaultBodyFrame;
+    if (!bodyFrameName.empty())
+        bodyFrame = Frame::create(bodyFrameName, parentObject, parentObject);
+    else
+        bodyFrame = defaultBodyFrame;
 
-    // fmt::printf("Orbit Frame: %s (Center: %s)\n",
-    //     orbitFrame->getsName(), orbitFrame->getCenter()->getsName());
-    // fmt::printf("Body Frame: %s (Center: %s)\n",
-    //     bodyFrame->getsName(), bodyFrame->getCenter()->getsName());
+    fmt::printf("Orbit Frame: %s (Center: %s)\n",
+        orbitFrame->getsName(), orbitFrame->getCenter()->getsName());
+    fmt::printf("Body Frame: %s (Center: %s)\n",
+        bodyFrame->getsName(), bodyFrame->getCenter()->getsName());
     
-    // body->setOrbitFrame(orbitFrame);
-    // body->setObjectFrame(bodyFrame);
+    body->setOrbitFrame(orbitFrame);
+    body->setBodyFrame(bodyFrame);
 
     return body;
 }

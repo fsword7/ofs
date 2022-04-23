@@ -18,9 +18,9 @@ public:
     PlanetarySystem(celStar *star);
     ~PlanetarySystem() = default;
 
-    inline celBody *getPrimaryBody()        { return body; }
-    inline celStar *getStar()               { return star; }
-    inline FrameTree *getSystemTree()       { return &tree; }
+    inline celBody *getPrimaryBody() const      { return body; }
+    inline celStar *getStar() const             { return star; }
+    inline FrameTree *getSystemTree()           { return &tree; }
 
     inline void setStar(celStar *nStar)     { star = nStar; }
 

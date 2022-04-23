@@ -48,8 +48,9 @@ public:
 
     virtual Orbit *getOrbit() const = 0;
 
-    virtual vec3d_t getuPosition(double tjd);
-    virtual quatd_t getuOrientation(double tjd);
+    virtual vec3d_t getuPosition(double tjd) const;
+    virtual quatd_t getuOrientation(double tjd) const;
+    virtual vec3d_t getoPosition(double tjd) const;
 
 private:
     ObjectType objType = objUnknown;

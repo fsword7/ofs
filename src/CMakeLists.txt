@@ -1,9 +1,10 @@
 find_package(SDL2 REQUIRED)
+find_package(SDL2_Image REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(fmt REQUIRED)
-#find_package(ZLIB REQUIRED)
+find_package(ZLIB REQUIRED)
 
 set(OFS_CPP_SRCS
     engine/engine.cpp
@@ -22,6 +23,7 @@ set(OFS_CPP_SRCS
     render/vobject.cpp
     render/vstar.cpp
     render/vvessel.cpp
+    render/ztreemgr.cpp
     universe/astro.cpp
     universe/body.cpp
     universe/frame.cpp
@@ -51,6 +53,7 @@ set(OFS_H_SRCS
     render/vobject.h
     render/vstar.h
     render/vvessel.h
+    render/ztreemgr.h
     universe/star.h
     universe/body.h
     universe/frame.h
@@ -70,14 +73,17 @@ set(OFSGL_CPP_SRCS
     osd/gl/context.cpp
     osd/gl/mesh.cpp
     osd/gl/shader.cpp
+    osd/gl/texture.cpp
     render/gl/stars.cpp
 )
 
 set(OFSGL_H_SRCS
     osd/gl/buffers.h
     osd/gl/context.h
+    osd/gl/dds.h
     osd/gl/mesh.h
     osd/gl/shader.h
+    osd/gl/texture.h
     render/gl/stars.h
 )
 
@@ -85,7 +91,9 @@ add_executable(ofs ${OFS_CPP_SRCS} ${OFSGL_CPP_SRCS} ${OFS_H_SRCS} ${OFSGL_H_SRC
 target_link_libraries(ofs
     Freetype::Freetype
     SDL2::Main
+    SDL2::Image
     GLEW::GLEW
     OpenGL::GL
     fmt::fmt
+    ZLIB::ZLIB
 )

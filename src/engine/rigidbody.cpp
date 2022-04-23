@@ -8,13 +8,13 @@
 #include "ephem/orbit.h"
 #include "universe/frame.h"
 
-vec3d_t RigidBody::getuPosition(double tjd)
+vec3d_t RigidBody::getuPosition(double tjd) const
 {
     if (getType() == objCelestialStar)
         return { 0, 0, 0 };
 
     vec3d_t pos = { 0, 0, 0 };
-    vec3d_t opos = orbit->getPosition(tjd);
+    vec3d_t opos = getoPosition(tjd);
     Frame  *frame = orbitFrame;
 
     while (frame->getCenter()->getType() == objCelestialBody)
@@ -22,9 +22,8 @@ vec3d_t RigidBody::getuPosition(double tjd)
         Object *object = frame->getCenter();
 
         pos  += frame->getOrientation(tjd) * opos;
-        orbit = object->getOrbit();
+        opos  = object->getoPosition(tjd);
         frame = object->getOrbitFrame();
-        opos  = orbit->getPosition(tjd);
     }
 
     pos += frame->getOrientation(tjd) * opos;
@@ -34,12 +33,12 @@ vec3d_t RigidBody::getuPosition(double tjd)
     // return { 0, 0, 0 };
 }
 
-quatd_t RigidBody::getuOrientation(double tjd)
+quatd_t RigidBody::getuOrientation(double tjd) const
 {
     return { 1, 0, 0, 0 };
 }
 
-vec3d_t RigidBody::getoPosition(double tjd)
+vec3d_t RigidBody::getoPosition(double tjd) const
 {
     return orbit->getPosition(tjd);
 }

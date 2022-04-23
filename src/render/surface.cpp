@@ -4,8 +4,13 @@
 // Date:    Apr 17, 20222
 
 #include "main/core.h"
+#include "osd/gl/context.h"
+#include "osd/gl/shader.h"
 #include "osd/gl/mesh.h"
+#include "osd/gl/texture.h"
 #include "engine/object.h"
+#include "universe/body.h"
+#include "universe/star.h"
 #include "render/scene.h"
 #include "render/surface.h"
 
@@ -17,7 +22,8 @@ SurfaceTile::SurfaceTile(SurfaceManager &mgr, uint32_t lod, uint32_t ilat, uint3
     SurfaceTile *parent)
 : Tree(parent), smgr(mgr), lod(lod), ilat(ilat), ilng(ilng), tcRange(fullRange)
 {
-    mesh = smgr.createSphere(lod, ilat, ilng, 32, tcRange);
+    center = setCenter();
+    // mesh = smgr.createSphere(lod, ilat, ilng, 32, tcRange);
 }
 
 SurfaceTile::~SurfaceTile()
@@ -28,7 +34,96 @@ SurfaceTile::~SurfaceTile()
     //     delete txImage;
 }
 
-void SurfaceTile::render()
+vec3d_t SurfaceTile::setCenter()
+{
+    int nlat = 1 << lod;
+    int nlng = 2 << lod;
+
+    // double mlat0 = pi * double(ilat) / double(nlat);
+    // double mlat1 = pi * double(ilat+1) / double(nlat);
+
+    // double mlng0 = pi*2 * (double(ilng) / double(nlng)) - pi;
+    // double mlng1 = pi*2 * (double(ilng+1) / double(nlng)) - pi;
+
+    double latc = pi * ((double(ilat)+0.5) / double(nlat));
+    double lngc = pi*2 * ((double(ilng+1)+0.5) / double (nlng)) - pi;
+
+    double slat = sin(latc), clat = cos(latc);
+    double slng = sin(lngc), clng = cos(lngc);
+
+    return vec3d_t(slat*clng, clat, slat*-slng);
+}
+
+void SurfaceTile::setSubtextureRange(const tcrd_t &ptcr)
+{
+    if ((ilng & 1) == 0)
+    {   // Right column of tile
+        tcRange.tumin = (ptcr.tumin + ptcr.tumax) / 2.0;
+        tcRange.tumax = ptcr.tumax;
+    }
+    else
+    {   // Left column of tile
+        tcRange.tumin = ptcr.tumin;
+        tcRange.tumax = (ptcr.tumin + ptcr.tumax) / 2.0;
+    }
+
+    if (ilat & 1)
+    {   // Top row of tile
+        tcRange.tvmin = (ptcr.tvmin + ptcr.tvmax) / 2.0;
+        tcRange.tvmax = ptcr.tvmax;
+    }
+    else
+    {   // Bottom row of tile
+        tcRange.tvmin = ptcr.tvmin;
+        tcRange.tvmax = (ptcr.tvmin + ptcr.tvmax) / 2.0;
+    }
+}
+
+void SurfaceTile::load()
+{
+    uint8_t *ddsImage = nullptr;
+    Texture *image = nullptr;
+    uint32_t szImage = 0;
+    int res;
+
+    state = Loading;
+
+    if (image == nullptr && smgr.zTrees[0] != nullptr)
+    {
+        res = szImage = smgr.zTrees[0]->read(lod+4, ilat, ilng, &ddsImage);
+        if (szImage > 0 && ddsImage != nullptr)
+        {
+            image = Texture::loadDDSFromMemory(ddsImage, szImage);
+            delete [] ddsImage;
+        }
+    }
+
+    if (image != nullptr)
+    {
+        txImage = image;
+        txOwn = true;
+    }
+    else
+    {
+        // Non-existent tile. Have to load lower LOD tile
+        // from parent tile and set subtexture range.
+        SurfaceTile *pTile = dynamic_cast<SurfaceTile *>(getParent());
+        if (pTile != nullptr)
+        {
+            txImage = pTile->getTexture();
+            txOwn = false;
+            setSubtextureRange(pTile->tcRange);
+        }
+    }
+
+    mesh = smgr.createSphere(lod, ilat, ilng, 32, tcRange);
+    if (mesh != nullptr)
+        mesh->setTexture(txImage);
+
+    state = Inactive;
+}
+
+void SurfaceTile::render(renderParam &prm)
 {
     if (mesh != nullptr)
         mesh->render();
@@ -39,12 +134,38 @@ void SurfaceTile::render()
 SurfaceManager::SurfaceManager(Context &ctx, const Object &object)
 : ctx(ctx), object(object)
 {
+    ShaderManager &smgr = *ctx.getShaderManager();
+
+    pgmPlanet = smgr.createShader("planet");
+    
+    pgmPlanet->use();
+    mvp = mat4Uniform(pgmPlanet->getID(), "mvp");
+
+    pgmPlanet->release();
+
+    for (int idx = 0; idx < 5; idx++)
+        zTrees[idx] = nullptr;
+    
+    switch(object.getType())
+    {
+    case Object::objCelestialBody:
+        const celBody *body = dynamic_cast<const celBody *>(&object);
+        const PlanetarySystem *system = body->getInSystem();
+        str_t starName = system->getStar()->getsName();
+        str_t bodyName = body->getsName();
+
+        surfaceFolder = fmt::sprintf("systems/%s/%s/Orbiter",
+            starName, bodyName);
+        break;
+    }
+
+    zTrees[0] = zTreeManager::create(surfaceFolder, "surf");
 
     // Initialize root of virtual surface tiles
     for(int idx = 0; idx < 2; idx++)
     {
         tiles[idx] = new SurfaceTile(*this, 0, 0, idx);
-        // tiles[idx]->load();
+        tiles[idx]->load();
     }
 }
 
@@ -54,15 +175,55 @@ SurfaceManager::~SurfaceManager()
         delete tiles[idx];
 }
 
-void SurfaceManager::render(SurfaceTile *tile)
+void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
 {
-    tile->render();
+    tile->state = SurfaceTile::Rendering;
+}
+
+void SurfaceManager::render(SurfaceTile *tile, renderParam &prm)
+{
+    if (tile->state == SurfaceTile::Rendering)
+        tile->render(prm);
+    else if (tile->state == SurfaceTile::Active)
+    {
+        for (int idx = 0; idx < 4; idx++)
+        {
+            SurfaceTile *child = tile->getChild(idx);
+            if (child != nullptr && (child->state & TILE_ACTIVE))
+                render(child, prm);
+        }
+    }
 }
 
 void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
 {
+    pgmPlanet->use();
+
+    prm.maxLOD  = 19;
+    prm.biasLOD = 0;
+    prm.orad    = op.orad;
+    prm.oqrot   = op.oqrot;
+    prm.orot    = glm::toMat4(prm.oqrot);
+
+    prm.cdir    = prm.orot * vec4d_t(op.opos, 1.0);
+    prm.cdist   = glm::length(prm.cdir) / prm.orad;
+    prm.viewap  = (prm.cdist >= 1.0) ? acos(1.0 / prm.cdist) : 0.0;
+    prm.cdir    = glm::normalize(prm.cdir);
+    prm.color   = op.color;
+
+    prm.dmModel = glm::transpose(prm.orot);
+    prm.dmWorld = glm::translate(prm.dmView, op.opos);
+    prm.mvp     = mat4f_t(prm.dmProj * prm.dmWorld * prm.dmModel);
+
+    mvp = prm.mvp;
+
+    // Updating and rendering virtual tiles
     for (int idx = 0; idx < 2; idx++)
-        render(tiles[idx]);
+        update(tiles[idx], prm);
+    for (int idx = 0; idx < 2; idx++)
+        render(tiles[idx], prm);
+
+    pgmPlanet->release();
 }
 
 Mesh *SurfaceManager::createSphere(int lod, int ilat, int ilng, int grids, const tcrd_t &tcr)

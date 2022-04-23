@@ -29,10 +29,9 @@ public:
     // Rotation *getRotationModel() const override { return rotation; }
 
     // orbtial positions
-    vec3d_t getuPosition(double tjd) override;
-    quatd_t getuOrientation(double tjd) override;
-
-    vec3d_t getoPosition(double tjd);
+    vec3d_t getuPosition(double tjd) const override;
+    quatd_t getuOrientation(double tjd) const override;
+    vec3d_t getoPosition(double tjd) const override;
 
 protected:
     // Reference frame parameters

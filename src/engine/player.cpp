@@ -6,6 +6,8 @@
 #include "main/core.h"
 #include "engine/object.h"
 #include "universe/frame.h"
+#include "universe/body.h"
+#include "universe/star.h"
 #include "engine/player.h"
 
 // ******** Camera ********
@@ -121,27 +123,27 @@ void Player::update(double dt, double timeTravel)
 
 void Player::move(Object *object, double altitude, goMode mode)
 {
-    // vec3d_t opos = object->getuPosition(jdTime);
-    // quatd_t orot;
-    // vec3d_t tpos;
+    vec3d_t opos = object->getuPosition(jdTime);
+    quatd_t orot;
+    vec3d_t tpos;
 
-    // // PlanetarySystem *system;
-    // // celStar *sun;
+    PlanetarySystem *system;
+    celStar *sun;
 
-    // switch (mode)
-    // {
-    // case goGeoSync:
-    //     orot = object->getuOrientation(jdTime);
-    //     break;
-    // };
+    switch (mode)
+    {
+    case goGeoSync:
+        orot = object->getuOrientation(jdTime);
+        break;
+    };
 
-    // upos = opos + glm::conjugate(orot) * vec3d_t(0, 0, altitude);
-    // urot = orot;
-    // lpos = frame->fromUniversal(upos, jdTime);
-    // lrot = frame->fromUniversal(urot, jdTime);
+    upos = opos + glm::conjugate(orot) * vec3d_t(0, 0, altitude);
+    urot = orot;
+    lpos = frame->fromUniversal(upos, jdTime);
+    lrot = frame->fromUniversal(urot, jdTime);
 
-    lpos = vec3d_t(0, 0, altitude);
-    updateUniversal();
+    // lpos = vec3d_t(0, 0, altitude);
+    // updateUniversal();
 }
 
 double Player::computeCoarseness(double maxCoarseness)
