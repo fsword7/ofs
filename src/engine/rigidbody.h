@@ -21,12 +21,12 @@ public:
     void setOrbitFrame(Frame *frame) override       { orbitFrame = frame; }
     void setBodyFrame(Frame *frame) override        { bodyFrame = frame; }
     void setOrbit(Orbit *nOrbit) override           { orbit = nOrbit; }
-    // void setRotation(Rotation *nRotation)   { rotation = nRotation; }
+    void setRotation(Rotation *nRotation)           { rotation = nRotation; }
 
     Frame *getOrbitFrame() const override   { return orbitFrame; }
     Frame *getBodyFrame() const override    { return bodyFrame; }
     Orbit *getOrbit() const override        { return orbit; }
-    // Rotation *getRotationModel() const override { return rotation; }
+    Rotation *getRotation() const override  { return rotation; }
 
     // orbtial positions
     vec3d_t getuPosition(double tjd) const override;
@@ -39,4 +39,5 @@ protected:
     Frame *bodyFrame = nullptr;
 
     Orbit *orbit = nullptr;
+    Rotation *rotation = nullptr;
 };

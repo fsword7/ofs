@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "engine/rigidbody.h"
 #include "ephem/orbit.h"
+#include "ephem/rotation.h"
 #include "universe/frame.h"
 
 vec3d_t RigidBody::getuPosition(double tjd) const
@@ -41,6 +42,7 @@ vec3d_t RigidBody::getuPosition(double tjd) const
 
 quatd_t RigidBody::getuOrientation(double tjd) const
 {
+    // return rotation != nullptr ? rotation->getRotation(tjd) : quatd_t( 1, 0, 0, 0 );
     return { 1, 0, 0, 0 };
 }
 

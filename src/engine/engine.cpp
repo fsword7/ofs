@@ -33,7 +33,7 @@ void Engine::start()
 
     celStar *sun   = universe->findStar("Sol");
     Object *planet = universe->findPath("Sol/Earth");
-    // Object *lunar  = universe->findPath("Sol/Earth/Moon");
+    Object *lunar  = universe->findPath("Sol/Earth/Moon");
 
     if (planet == nullptr)
     {
@@ -46,6 +46,10 @@ void Engine::start()
     player->move(planet, planet->getRadius() * 6.0, Player::goGeoSync);
     player->follow(planet, Player::fwGeoSync);
     player->look(planet);
+
+    // player->move(lunar, lunar->getRadius() * 6.0, Player::goGeoSync);
+    // player->follow(lunar, Player::fwGeoSync);
+    // player->look(lunar);
 
     // player->move(sun, sun->getRadius() * 6.0, Player::goEcliptic);
 }

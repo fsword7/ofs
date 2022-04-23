@@ -6,6 +6,7 @@
 #pragma once
 
 class Orbit;
+class Rotation;
 class Frame;
 
 class Object
@@ -42,11 +43,12 @@ public:
     virtual void setOrbitFrame(Frame *frame) = 0;
     virtual void setBodyFrame(Frame *frame) = 0;
     virtual void setOrbit(Orbit *nOrbit) = 0;
+    virtual void setRotation(Rotation *nRotation) = 0;
 
     virtual Frame *getOrbitFrame() const = 0;
     virtual Frame *getBodyFrame() const = 0;
-
     virtual Orbit *getOrbit() const = 0;
+    virtual Rotation *getRotation() const = 0;
 
     virtual vec3d_t getuPosition(double tjd) const;
     virtual quatd_t getuOrientation(double tjd) const;
