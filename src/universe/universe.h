@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "universe/constellations.h"
 #include "universe/starlib.h"
 #include "universe/system.h"
 
@@ -14,8 +15,9 @@ public:
     Universe() = default;
     ~Universe() = default;
 
-    inline StarDatabase &getStarDatabase() { return stardb; }
-    
+    inline StarDatabase &getStarDatabase()      { return stardb; }
+    inline Constellations &getConstellations()  { return constellations; }
+
     void init();
 
     System *createSolarSystem(celStar *star);
@@ -31,6 +33,7 @@ public:
 
 private:
     StarDatabase stardb;
+    Constellations constellations;
 
     SystemsList  systems;
 };

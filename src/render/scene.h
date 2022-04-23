@@ -120,6 +120,12 @@ struct renderParam
 
 };
 
+struct VertexLine
+{
+    vec3f_t spos;
+    color_t color;
+};
+
 class Scene
 {
 public:
@@ -135,7 +141,10 @@ public:
 
 protected:
     void initStarRenderer();
+    void initConstellations(Universe &universe);
+   
     void renderStars(const StarDatabase &starlib, const Player &player, double faintest);
+    void renderConstellations(Universe &universe, const Player &player);
 
     void buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3d_t vpnorm, vec3d_t origin);
     void renderObjectAsPoint(ObjectListEntry &ole);
@@ -168,4 +177,8 @@ private:
 
     ShaderProgram *pgmStar = nullptr;
     VertexBuffer *vbufStar = nullptr;
+
+    ShaderProgram *pgmAsterism = nullptr;
+    VertexBuffer  *vbufAsterism = nullptr;
+    uint32_t asterismLines = 0;
 };

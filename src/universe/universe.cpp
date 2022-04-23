@@ -16,6 +16,8 @@
 void Universe::init()
 {
     stardb.loadXHIPData("xhip");
+    constellations.load("constellations/western/constellationship.fab");
+    // constellations.load("constellations/western_rey/constellationship.fab");
 
     celStar *sun = stardb.find("Sol");
     System *solSystem = createSolarSystem(sun);

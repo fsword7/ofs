@@ -29,6 +29,8 @@ public:
     int findCloseStars(const vec3d_t &obs, double radius,
         std::vector<const celStar *> &stars) const;
 
+    inline celStar *getHIPstar(uint32_t hip) const  { return hipList[hip]; }
+    
 private:
     std::vector<celStar *> uStars;
 

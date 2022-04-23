@@ -30,6 +30,7 @@ set(OFS_CPP_SRCS
     render/ztreemgr.cpp
     universe/astro.cpp
     universe/body.cpp
+    universe/constellations.cpp
     universe/frame.cpp
     universe/star.cpp
     universe/starlib.cpp
@@ -62,6 +63,7 @@ set(OFS_H_SRCS
     render/ztreemgr.h
     universe/star.h
     universe/body.h
+    universe/constellations.h
     universe/frame.h
     universe/handle.h
     universe/star.h
@@ -80,6 +82,7 @@ set(OFSGL_CPP_SRCS
     osd/gl/mesh.cpp
     osd/gl/shader.cpp
     osd/gl/texture.cpp
+    render/gl/constellations.cpp
     render/gl/stars.cpp
 )
 

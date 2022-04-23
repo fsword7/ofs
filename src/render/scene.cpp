@@ -16,6 +16,7 @@
 void Scene::init()
 {
     initStarRenderer();
+    // initConstellations();
 }
 
 vec3d_t Scene::getAstrocentericPosition(const celStar *sun, vec3d_t upos, double now)
