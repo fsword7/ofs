@@ -177,7 +177,8 @@ SurfaceManager::~SurfaceManager()
 
 void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
 {
-    tile->state = SurfaceTile::Rendering;
+    if (tile->state == SurfaceTile::Inactive)
+        tile->state = SurfaceTile::Rendering;
 }
 
 void SurfaceManager::render(SurfaceTile *tile, renderParam &prm)

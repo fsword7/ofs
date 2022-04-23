@@ -25,9 +25,9 @@ public:
     CachingOrbit() = default;
     virtual ~CachingOrbit() = default;
 
-    vec3d_t getPosition(double tjd) const;
-    vec3d_t getVelocity(double tjd) const;
-
+    vec3d_t getPosition(double tjd) const override;
+    vec3d_t getVelocity(double tjd) const override;
+ 
     virtual vec3d_t calculatePosition(double jd) const = 0;
     virtual vec3d_t calculateVelocity(double jd) const;
 

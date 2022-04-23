@@ -45,10 +45,11 @@ void Scene::buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3
         celBody *body = dynamic_cast<celBody *>(tree->getObject(idx));
         if (body == nullptr)
             continue;
-        
+    
         {
+            Frame *frame = body->getOrbitFrame();
             vec3d_t opos = body->getoPosition(prm.jnow);
-            vec3d_t spos = origin + opos;
+            vec3d_t spos = origin + glm::conjugate(frame->getOrientation(prm.jnow)) * opos;
             vec3d_t vpos = spos - apos;
 
             double vdist = glm::length(vpos);
@@ -57,13 +58,20 @@ void Scene::buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3
 
             double appMag = std::numeric_limits<double>::infinity();
 
+            // fmt::printf("%s: Object size: %lf, distance: %lf\n",
+            //     body->getsName(), objSize, vdist);
+            // fmt::printf("Position:   (%lf,%lf,%lf)\n", opos.x, opos.y, opos.z);
+            // fmt::printf("Observer:   (%lf,%lf,%lf)\n", apos.x, apos.y, apos.z);
+            // fmt::printf("View:       (%lf,%lf,%lf)\n", vpos.x, vpos.y, vpos.z);
+            // fmt::printf("Sun:        (%lf,%lf,%lf)\n", spos.x, spos.y, spos.z);
+
             if (objSize > 1)
             {
                 ObjectListEntry ole;
 
                 ole.object  = body;
                 ole.spos    = spos;
-                ole.opos    = opos;
+                ole.opos    = vpos;
                 ole.vdist   = vdist;
                 ole.objSize = objSize;
                 ole.appMag  = appMag;
@@ -72,10 +80,10 @@ void Scene::buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3
             }
 
             // Rendering satellites orbiting around this celestial body
-            // PlanetarySystem *system = body->getOwnSystem();
-            // FrameTree *subTree = system->getSystemTree();
-            // if (subTree != nullptr)
-            //     buildNearSystems(subTree, player, apos, vpnorm, spos);
+            PlanetarySystem *system = body->getOwnSystem();
+            FrameTree *subTree = system->getSystemTree();
+            if (subTree != nullptr)
+                buildNearSystems(subTree, player, apos, vpnorm, spos);
         }
     }
 }

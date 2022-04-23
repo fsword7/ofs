@@ -39,6 +39,7 @@ void Scene::render(Universe &universe, Player &player)
 
     // Projection matrix in universal frame
     // for rendering stars and constellations
+    prm.jnow   = player.getJulianTime();
     prm.cpos   = cam->getuPosition();
     prm.crot   = cam->getuOrientation();
     prm.dmProj = glm::perspective(cam->getFOV(), cam->getAspect(), 1.0, 1'000'000'000.0);

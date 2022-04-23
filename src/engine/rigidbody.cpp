@@ -17,6 +17,8 @@ vec3d_t RigidBody::getuPosition(double tjd) const
     vec3d_t opos = getoPosition(tjd);
     Frame  *frame = orbitFrame;
 
+    // fmt::printf("%s: Position: (%lf,%lf,%lf)\n", getsName(), opos.x, opos.y, opos.z);
+
     while (frame->getCenter()->getType() == objCelestialBody)
     {
         Object *object = frame->getCenter();
@@ -24,9 +26,13 @@ vec3d_t RigidBody::getuPosition(double tjd) const
         pos  += frame->getOrientation(tjd) * opos;
         opos  = object->getoPosition(tjd);
         frame = object->getOrbitFrame();
+
+        // fmt::printf("%s: Position: (%lf,%lf,%lf)\n", object->getsName(), opos.x, opos.y, opos.z);
     }
 
     pos += frame->getOrientation(tjd) * opos;
+
+    // fmt::printf("Final Position: (%lf,%lf,%lf)\n", pos.x, pos.y, pos.z);
 
     return pos;
 
