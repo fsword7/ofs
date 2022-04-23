@@ -41,9 +41,11 @@ void Engine::start()
         return;
     }
     
+    // player->move(planet, planet->getRadius() * 6.0, Player::goBackHelioSync);
+    // player->follow(planet, Player::fwHelioSync);
     player->move(planet, planet->getRadius() * 6.0, Player::goGeoSync);
-    // player->follow(planet, Player::fwGeoSync);
-    // player->look(planet);
+    player->follow(planet, Player::fwGeoSync);
+    player->look(planet);
 
     // player->move(sun, sun->getRadius() * 6.0, Player::goEcliptic);
 }

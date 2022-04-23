@@ -39,6 +39,64 @@ void Camera::setViewport(int w, int h)
     aspect = double(width) / double(height);
 }
 
+// ******** Player Reference Frame ********
+
+PlayerFrame::PlayerFrame()
+{
+    frame = create(csUniversal);
+}
+
+PlayerFrame::PlayerFrame(coordType cs, Object *center, Object *target)
+: type(cs)
+{
+    frame = create(cs, center, target);
+}
+
+PlayerFrame::~PlayerFrame()
+{
+    if (frame != nullptr)
+        frame->release();
+}
+
+vec3d_t PlayerFrame::fromUniversal(vec3d_t upos, double tjd)
+{
+    return frame != nullptr ? frame->fromUniversal(upos, tjd) : upos;
+}
+
+quatd_t PlayerFrame::fromUniversal(quatd_t urot, double tjd)
+{
+    return frame != nullptr ? frame->fromUniversal(urot, tjd) : urot;
+}
+
+vec3d_t PlayerFrame::toUniversal(vec3d_t lpos, double tjd)
+{
+    return frame != nullptr ? frame->toUniversal(lpos, tjd) : lpos;
+}
+
+quatd_t PlayerFrame::toUniversal(quatd_t lrot, double tjd)
+{
+    return frame != nullptr ? frame->toUniversal(lrot, tjd) : lrot;
+}
+
+Frame *PlayerFrame::create(coordType csType, Object *center, Object *target)
+{
+    switch (csType)
+    {
+    case csEcliptical:
+        return new J2000EclipticFrame(center);
+    case csEquatorial:
+        return new J2000EquatorFrame(center, center);
+    case csBodyFixed:
+        return new BodyFixedFrame(center, center);
+    case csObjectSync:
+        return new ObjectSyncFrame(center, target);
+    case csUniversal:
+    default:
+        return new J2000EclipticFrame(nullptr);
+    }
+    return nullptr;
+}
+
 // ******** Player ********
 
 Player::Player()
@@ -54,6 +112,21 @@ Player::~Player()
 {
     if (frame != nullptr)
         delete frame;
+}
+
+void Player::setFrame(PlayerFrame::coordType cs, Object *center, Object *target)
+{
+    PlayerFrame *nFrame = new PlayerFrame(cs, center, target);
+    if (nFrame == nullptr)
+    {
+        fmt::printf("Failed to set new player framme - aborted\n");
+        return;
+    }
+
+    if (frame != nullptr)
+        delete frame;
+    updateFrame(nFrame);
+    frame = nFrame;
 }
 
 void Player::updateFrame(PlayerFrame *nFrame)
@@ -135,7 +208,29 @@ void Player::move(Object *object, double altitude, goMode mode)
     case goGeoSync:
         orot = object->getuOrientation(jdTime);
         break;
-    };
+
+    case goFrontHelioSync:
+        if (object->getType() == objCelestialBody)
+        {
+            system = dynamic_cast<celBody *>(object)->getInSystem();
+            if (system != nullptr)
+                sun = system->getStar();
+        }
+        tpos = sun->getuPosition(jdTime);
+        orot = glm::lookAt(tpos, opos, vec3d_t(0, 1, 0));
+        break;
+
+    case goBackHelioSync:
+        if (object->getType() == objCelestialBody)
+        {
+            system = dynamic_cast<celBody *>(object)->getInSystem();
+            if (system != nullptr)
+                sun = system->getStar();
+        }
+        tpos = sun->getuPosition(jdTime);
+        orot = glm::lookAt(opos, tpos, vec3d_t(0, 1, 0));
+        break;
+    }
 
     upos = opos + glm::conjugate(orot) * vec3d_t(0, 0, -altitude);
     urot = orot;
@@ -144,6 +239,41 @@ void Player::move(Object *object, double altitude, goMode mode)
 
     // lpos = vec3d_t(0, 0, altitude);
     // updateUniversal();
+}
+
+void Player::follow(Object *object, followMode mode)
+{
+    PlanetarySystem *system;
+    celStar *sun;
+
+    switch (mode)
+    {
+    case fwGeoSync:
+        setFrame(PlayerFrame::csBodyFixed, object);
+        break;
+    case fwHelioSync:
+        if (object->getType() == objCelestialBody)
+        {
+            system = dynamic_cast<celBody *>(object)->getInSystem();
+            if (system != nullptr)
+                sun = system->getStar();
+        }
+        setFrame(PlayerFrame::csObjectSync, object, sun);
+        break;
+    case fwEcliptic:
+    default:
+        setFrame(PlayerFrame::csEcliptical, object);
+        break;
+    }
+}
+
+void Player::look(Object *object)
+{
+    vec3d_t opos = object->getuPosition(jdTime);
+    vec3d_t up = vec3d_t(0, 1, 0);
+
+    urot = glm::lookAt(opos, upos, up);
+    lrot = frame->fromUniversal(urot, jdTime);
 }
 
 double Player::computeCoarseness(double maxCoarseness)

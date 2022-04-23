@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "universe/frame.h"
 #include "engine/rigidbody.h"
 
 class Player;
@@ -39,6 +40,47 @@ private:
     uint32_t width = 1, height = 1;
     double   aspect = double(width) / double(height);
     double   fov = glm::radians(SCR_FOV);
+};
+
+class PlayerFrame
+{
+public:
+    enum coordType
+    {
+        csUniversal  = 0,
+        csEcliptical = 1,
+        csEquatorial = 2,
+        csBodyFixed  = 3,
+        csObjectSync = 4
+    };
+
+    PlayerFrame();
+    PlayerFrame(coordType csType, Object *center = nullptr, Object *targer = nullptr);
+    ~PlayerFrame();
+
+    static Frame *create(coordType csType, Object *center = nullptr, Object *targer = nullptr);
+
+    coordType getType() const   { return type; }
+    Frame *getFrame() const     { return frame; }
+    
+    str_t getsName() const
+    { 
+        return frame != nullptr ? frame->getCenter()->getsName() : "(Unknown)";
+    }
+
+    Object *getCenter() const
+    {
+        return frame != nullptr ? frame->getCenter() : nullptr;
+    }
+
+    vec3d_t fromUniversal(vec3d_t upos, double tjd);
+    quatd_t fromUniversal(quatd_t urot, double tjd);
+    vec3d_t toUniversal(vec3d_t lpos, double tjd);
+    quatd_t toUniversal(quatd_t lrot, double tjd);
+    
+private:
+    coordType type = csUniversal;
+    Frame *frame = nullptr;
 };
 
 class Player : public RigidBody
@@ -81,6 +123,7 @@ public:
     inline vec3d_t getTravelVelocity()   { return tv; }
     inline double  getJulianTime()       { return jdTime; }
 
+    void setFrame(PlayerFrame::coordType cs, Object *center = nullptr, Object *target = nullptr);
     void updateFrame(PlayerFrame *nFrame);
 
     void setAngularVelocity(vec3d_t av);
@@ -91,6 +134,8 @@ public:
     void update(double dt, double timeTravel);
 
     void move(Object *object, double altitude, goMode mode);
+    void follow(Object *object, followMode mode);
+    void look(Object *object);
 
     double computeCoarseness(double maxCoarseness);
     void dolly(double delta);

@@ -34,6 +34,14 @@ constexpr static const double pi = 3.14159265358979323846;
 template <typename T> inline constexpr T square(T x) { return x * x; }
 template <typename T> inline constexpr T cube(T x)   { return x * x * x; }
 
+// Restrict x to [-pi, pi] range
+template <typename T> inline constexpr T mod2pi(T x)
+{
+    constexpr T tpi = pi * 2.0;
+
+    return x - tpi * floor((x + pi) / tpi);
+}
+
 template <typename T>
 inline glm::tquat<T> xRotate(T radians)
 {

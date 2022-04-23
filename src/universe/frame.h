@@ -75,46 +75,46 @@ protected:
     str_t frameName;
 };
 
-class PlayerFrame
-{
-public:
-    enum coordType
-    {
-        csUniversal   = 0,
-        csEcliptical  = 1,
-        csEquatrorial = 2,
-        csBodyFixed   = 3,
-        csObjectSysnc = 4
-    };
+// class PlayerFrame
+// {
+// public:
+//     enum coordType
+//     {
+//         csUniversal  = 0,
+//         csEcliptical = 1,
+//         csEquatorial = 2,
+//         csBodyFixed  = 3,
+//         csObjectSync = 4
+//     };
 
-    PlayerFrame();
-    PlayerFrame(coordType csType, Object *center = nullptr, Object *targer = nullptr);
-    ~PlayerFrame();
+//     PlayerFrame();
+//     PlayerFrame(coordType csType, Object *center = nullptr, Object *targer = nullptr);
+//     ~PlayerFrame();
 
-    static Frame *create(coordType csType, Object *center = nullptr, Object *targer = nullptr);
+//     static Frame *create(coordType csType, Object *center = nullptr, Object *targer = nullptr);
 
-    coordType getType() const   { return type; }
-    Frame *getFrame() const     { return frame; }
+//     coordType getType() const   { return type; }
+//     Frame *getFrame() const     { return frame; }
     
-    str_t getsName() const
-    { 
-        return frame != nullptr ? frame->getCenter()->getsName() : "(Unknown)";
-    }
+//     str_t getsName() const
+//     { 
+//         return frame != nullptr ? frame->getCenter()->getsName() : "(Unknown)";
+//     }
 
-    Object *getCenter() const
-    {
-        return frame != nullptr ? frame->getCenter() : nullptr;
-    }
+//     Object *getCenter() const
+//     {
+//         return frame != nullptr ? frame->getCenter() : nullptr;
+//     }
 
-    vec3d_t fromUniversal(vec3d_t upos, double tjd);
-    quatd_t fromUniversal(quatd_t urot, double tjd);
-    vec3d_t toUniversal(vec3d_t lpos, double tjd);
-    quatd_t toUniversal(quatd_t lrot, double tjd);
+//     vec3d_t fromUniversal(vec3d_t upos, double tjd);
+//     quatd_t fromUniversal(quatd_t urot, double tjd);
+//     vec3d_t toUniversal(vec3d_t lpos, double tjd);
+//     quatd_t toUniversal(quatd_t lrot, double tjd);
     
-private:
-    coordType type = csUniversal;
-    Frame *frame = nullptr;
-};
+// private:
+//     coordType type = csUniversal;
+//     Frame *frame = nullptr;
+// };
 
 // class CachingFrame : public Frame
 // {
@@ -147,4 +147,38 @@ public:
     }
 };
 
+class BodyFixedFrame : public Frame
+{
+public:
+    BodyFixedFrame(Object *object, Object *target, Frame *parent = nullptr);
+    ~BodyFixedFrame() = default;
 
+    quatd_t getOrientation(double) const override;
+
+private:
+    Object *fixedObject = nullptr;
+};
+
+class BodyMeanEquatorFrame : public Frame
+{
+public:
+    BodyMeanEquatorFrame(Object *object, Object *target, Frame *parent = nullptr);
+    ~BodyMeanEquatorFrame() = default;
+
+    quatd_t getOrientation(double) const override;
+
+private:
+    Object *equatorObject = nullptr;
+};
+
+class ObjectSyncFrame : public Frame
+{
+public:
+    ObjectSyncFrame(Object *object, Object *target, Frame *parent = nullptr);
+    ~ObjectSyncFrame() = default;
+
+    quatd_t getOrientation(double) const override;
+
+private:
+    Object *targetObject = nullptr;
+};

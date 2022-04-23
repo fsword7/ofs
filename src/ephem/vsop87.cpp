@@ -6,7 +6,7 @@
 #include "main/core.h"
 #include "universe/astro.h"
 #include "ephem/vsop87.h"
-// #include "ephem/elp-mpp02.h"
+#include "ephem/elp-mpp02.h"
 
 #define VSOP_SERIES(series) vsop87s_t(series, ARRAY_SIZE(series))
 #define VSOP_PARAM(series)  (series), ARRAY_SIZE(series)
@@ -157,17 +157,17 @@ Orbit *VSOP87Orbit::create(cstr_t &name)
         return orbit;
     }
 
-    // if (name == "elp-mpp02-llr-lunar")
-    // {
-    //     Orbit *orbit = new ELP2000Orbit(ELP2000Orbit::elpUseLLR);
-    //     return orbit;
-    // }
+    if (name == "elp-mpp02-llr-lunar")
+    {
+        Orbit *orbit = new ELP2000Orbit(ELP2000Orbit::elpUseLLR);
+        return orbit;
+    }
 
-    // if (name == "elp-mmp02-de406-lunar")
-    // {
-    //     Orbit *orbit = new ELP2000Orbit(ELP2000Orbit::elpUseDE406);
-    //     return orbit;
-    // }
+    if (name == "elp-mmp02-de406-lunar")
+    {
+        Orbit *orbit = new ELP2000Orbit(ELP2000Orbit::elpUseDE406);
+        return orbit;
+    }
 
     return nullptr;
 }

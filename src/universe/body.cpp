@@ -53,6 +53,11 @@ PlanetarySystem *celBody::createPlanetarySystem()
     return ownSystem;
 }
 
+quatd_t celBody::getEquatorial(double tjd) const
+{
+    return { 1, 0, 0, 0 };
+}
+
 double celBody::getLuminosity(double lum, double dist) const
 {
     double power = lum * SOLAR_POWER;

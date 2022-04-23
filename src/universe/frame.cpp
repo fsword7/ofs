@@ -43,61 +43,61 @@ Object *FrameTree::getObject(int idx) const
 
 // ******** Player Reference Frame ********
 
-PlayerFrame::PlayerFrame()
-{
-    frame = create(csUniversal);
-}
+// PlayerFrame::PlayerFrame()
+// {
+//     frame = create(csUniversal);
+// }
 
-PlayerFrame::PlayerFrame(coordType cs, Object *center, Object *target)
-: type(cs)
-{
-    frame = create(cs, center, target);
-}
+// PlayerFrame::PlayerFrame(coordType cs, Object *center, Object *target)
+// : type(cs)
+// {
+//     frame = create(cs, center, target);
+// }
 
-PlayerFrame::~PlayerFrame()
-{
-    if (frame != nullptr)
-        frame->release();
-}
+// PlayerFrame::~PlayerFrame()
+// {
+//     if (frame != nullptr)
+//         frame->release();
+// }
 
-vec3d_t PlayerFrame::fromUniversal(vec3d_t upos, double tjd)
-{
-    return frame != nullptr ? frame->fromUniversal(upos, tjd) : upos;
-}
+// vec3d_t PlayerFrame::fromUniversal(vec3d_t upos, double tjd)
+// {
+//     return frame != nullptr ? frame->fromUniversal(upos, tjd) : upos;
+// }
 
-quatd_t PlayerFrame::fromUniversal(quatd_t urot, double tjd)
-{
-    return frame != nullptr ? frame->fromUniversal(urot, tjd) : urot;
-}
+// quatd_t PlayerFrame::fromUniversal(quatd_t urot, double tjd)
+// {
+//     return frame != nullptr ? frame->fromUniversal(urot, tjd) : urot;
+// }
 
-vec3d_t PlayerFrame::toUniversal(vec3d_t lpos, double tjd)
-{
-    return frame != nullptr ? frame->toUniversal(lpos, tjd) : lpos;
-}
+// vec3d_t PlayerFrame::toUniversal(vec3d_t lpos, double tjd)
+// {
+//     return frame != nullptr ? frame->toUniversal(lpos, tjd) : lpos;
+// }
 
-quatd_t PlayerFrame::toUniversal(quatd_t lrot, double tjd)
-{
-    return frame != nullptr ? frame->toUniversal(lrot, tjd) : lrot;
-}
+// quatd_t PlayerFrame::toUniversal(quatd_t lrot, double tjd)
+// {
+//     return frame != nullptr ? frame->toUniversal(lrot, tjd) : lrot;
+// }
 
-Frame *PlayerFrame::create(coordType csType, Object *center, Object *target)
-{
-    switch (csType)
-    {
-    case csEcliptical:
-        return new J2000EclipticFrame(center);
-    case csEquatrorial:
-        return new J2000EquatorFrame(center, center);
-    // case csBodyFixed:
-    //     return new BodyFixedFrame(center, center);
-    // case csObjectSysnc:
-    //     return new ObjectSyncFrame(center, target);
-    case csUniversal:
-    default:
-        return new J2000EclipticFrame(nullptr);
-    }
-    return nullptr;
-}
+// Frame *PlayerFrame::create(coordType csType, Object *center, Object *target)
+// {
+//     switch (csType)
+//     {
+//     case csEcliptical:
+//         return new J2000EclipticFrame(center);
+//     case csEquatorial:
+//         return new J2000EquatorFrame(center, center);
+//     case csBodyFixed:
+//         return new BodyFixedFrame(center, center);
+//     case csObjectSync:
+//         return new ObjectSyncFrame(center, target);
+//     case csUniversal:
+//     default:
+//         return new J2000EclipticFrame(nullptr);
+//     }
+//     return nullptr;
+// }
 
 // ******** Reference Frame ********
 
@@ -185,4 +185,60 @@ J2000EquatorFrame::J2000EquatorFrame(Object *object, Object *target, Frame *pare
 : Frame(object, parent)
 {
     frameName = "J2000 Earth Equator Reference Frame";
+}
+
+// ******** Body Fixed Reference Frame ********
+
+BodyFixedFrame::BodyFixedFrame(Object *object, Object *target, Frame *parent)
+: Frame(object, parent), fixedObject(target)
+{
+    frameName = "Body Fixed Reference Frame";
+}
+
+quatd_t BodyFixedFrame::getOrientation(double tjd) const
+{
+    switch (fixedObject->getType())
+    {
+    case Object::objCelestialStar:
+    case Object::objCelestialBody:
+        return dynamic_cast<celBody *>(fixedObject)->getuOrientation(tjd);
+    default:
+        return { 1, 0, 0, 0 };
+    }
+}
+
+// ******** Body Mean Equator Reference Frame ********
+
+BodyMeanEquatorFrame::BodyMeanEquatorFrame(Object *object, Object *target, Frame *parent)
+: Frame(object, parent), equatorObject(target)
+{
+    frameName = "Body Mean Equator Reference Frame";
+}
+
+quatd_t BodyMeanEquatorFrame::getOrientation(double tjd) const
+{
+    switch (equatorObject->getType())
+    {
+    case Object::objCelestialStar:
+    case Object::objCelestialBody:
+        return dynamic_cast<celBody *>(equatorObject)->getEquatorial(tjd);
+    default:
+        return { 1, 0, 0, 0 };
+    }
+}
+
+// ******** Object Sync Reference Frame ********
+
+ObjectSyncFrame::ObjectSyncFrame(Object *object, Object *target, Frame *parent)
+: Frame(object, parent), targetObject(target)
+{
+    frameName = "Object Sync Reference Frame";
+}
+
+quatd_t ObjectSyncFrame::getOrientation(double tjd) const
+{
+    vec3d_t opos = center->getuPosition(tjd);
+    vec3d_t tpos = targetObject->getuPosition(tjd);
+
+    return glm::lookAt(opos, tpos, vec3d_t(0, 1, 0));
 }

@@ -28,7 +28,7 @@ public:
     void removeBody(celBody *body);
 
     celBody *find(cstr_t &name) const;
-
+    
 private:
     FrameTree tree;
 
@@ -90,10 +90,12 @@ public:
     inline color_t getColor() const                 { return color; }
 
     PlanetarySystem *createPlanetarySystem();
+    
+    quatd_t getEquatorial(double tjd) const;
 
     double getLuminosity(double lum, double dist) const;
     double getApparentMagnitude(vec3d_t sun, double irradiance, vec3d_t view) const;
-    
+
 private:
     celType cbType = cbUnknown;
 
