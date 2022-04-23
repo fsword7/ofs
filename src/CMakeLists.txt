@@ -11,8 +11,11 @@ set(OFS_CPP_SRCS
     engine/object.cpp
     engine/player.cpp
     engine/rigidbody.cpp
+    ephem/earth-p03lp.cpp
     ephem/elp-mpp02.cpp
+    ephem/iau-wgccre.cpp
     ephem/orbit.cpp
+    ephem/rotation.cpp
     ephem/vsop87.cpp
     main/app.cpp
     main/date.cpp
@@ -42,6 +45,7 @@ set(OFS_H_SRCS
     engine/rigidbody.h
     ephem/elp-mpp02.h
     ephem/orbit.h
+    ephem/rotation.h
     ephem/vsop87.h
     main/sdl/app.h
     main/app.h
