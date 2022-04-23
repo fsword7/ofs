@@ -136,7 +136,7 @@ public:
     inline Context &getContext() { return ctx; }
     inline renderParam &getRenderParameters() { return prm; }
 
-    void init();
+    void init(Universe &universe);
     void render(Universe &universe, Player &player);
 
 protected:

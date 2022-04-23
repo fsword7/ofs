@@ -13,10 +13,10 @@
 #include "render/scene.h"
 #include "render/vobject.h"
 
-void Scene::init()
+void Scene::init(Universe &universe)
 {
     initStarRenderer();
-    // initConstellations();
+    initConstellations(universe);
 }
 
 vec3d_t Scene::getAstrocentericPosition(const celStar *sun, vec3d_t upos, double now)
@@ -45,6 +45,9 @@ void Scene::render(Universe &universe, Player &player)
     prm.crot   = cam->getuOrientation();
     prm.dmProj = glm::perspective(cam->getFOV(), cam->getAspect(), 1.0, 1'000'000'000.0);
     prm.dmView = glm::transpose(glm::toMat4(prm.crot));
+
+    // Render constellations in background
+    renderConstellations(universe, player);
 
     // Render visible stars in background
     renderStars(universe.getStarDatabase(), player, faintestNightMag);

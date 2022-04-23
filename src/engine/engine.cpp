@@ -13,10 +13,9 @@
 void Engine::init(Context *ctx, int width, int height)
 {
     scene = new Scene(*ctx);
-    scene->init();
-
     universe = new Universe();
     universe->init();
+    scene->init(*universe);
 
     player = new Player();
     player->getCamera()->setViewport(width, height);
