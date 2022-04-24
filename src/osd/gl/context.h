@@ -10,6 +10,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
+#include "osd/gl/lights.h"
+
 class ShaderManager;
 
 class Context

@@ -55,6 +55,7 @@ public:
     inline vec3d_t getStarPosition() const      { return spos; }
     inline double  getAbsMag() const            { return absMag; }
     inline int getTemperature() const           { return temp; }
+    inline double getLuminosity() const         { return lum; }
     
     inline void setHIPnumber(int val)           { hip = val; }
     inline uint32_t getHIPnumber() const        { return hip; }

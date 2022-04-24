@@ -28,10 +28,14 @@ void Scene::render(Universe &universe, Player &player)
 {
 
     closeStars.clear();
+    lightSources.clear();
+    objectList.clear();
 
     // find closest stars with player's position
     vec3d_t obs = player.getuPosition();
+    prm.jnow    = player.getJulianTime();
     universe.findCloseStars(obs, 1.0, closeStars);
+    setupPrimaryLightSources(closeStars, obs, prm.jnow, lightSources);
 
     ctx.start();
 
@@ -40,7 +44,6 @@ void Scene::render(Universe &universe, Player &player)
 
     // Projection matrix in universal frame
     // for rendering stars and constellations
-    prm.jnow   = player.getJulianTime();
     prm.cpos   = cam->getuPosition();
     prm.crot   = cam->getuOrientation();
     prm.dmProj = glm::perspective(cam->getFOV(), cam->getAspect(), 1.0, 1'000'000'000.0);

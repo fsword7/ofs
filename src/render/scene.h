@@ -19,6 +19,8 @@ class StarColors;
 class StarDatabase;
 class vObject;
 
+#include "osd/gl/lights.h"
+
 template <typename T>
 struct TextureCoordRange
 {
@@ -142,7 +144,13 @@ public:
 protected:
     void initStarRenderer();
     void initConstellations(Universe &universe);
-   
+
+    void setupPrimaryLightSources(const std::vector<const celStar *> nearStars,
+        const vec3d_t &obs, double now, std::vector<LightSource> &ls);
+    void setupSecondaryLightSources();
+    void setObjectLighting(std::vector<LightSource> &suns, const vec3d_t opos,
+        const quatd_t orot, LightState &ls);
+  
     void renderStars(const StarDatabase &starlib, const Player &player, double faintest);
     void renderConstellations(Universe &universe, const Player &player);
 

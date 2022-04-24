@@ -19,6 +19,7 @@ set(OFS_CPP_SRCS
     ephem/vsop87.cpp
     main/app.cpp
     main/date.cpp
+    render/lights.cpp
     render/scene.cpp
     render/starcolors.cpp
     render/surface.cpp

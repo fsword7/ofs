@@ -57,6 +57,13 @@ void Scene::buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3
             double objSize = body->getRadius() / (vdist * pixelSize);
 
             double appMag = std::numeric_limits<double>::infinity();
+            for (int idx = 0; idx < lightSources.size(); idx++)
+            {
+                vec3d_t sun = lightSources[idx].spos;
+                double lum  = lightSources[idx].luminosity;
+                double mag  = body->getApparentMagnitude(sun, lum, vpos);
+                appMag = std::min(appMag, mag);
+            }
 
             // fmt::printf("%s: Object size: %lf, distance: %lf\n",
             //     body->getsName(), objSize, vdist);
