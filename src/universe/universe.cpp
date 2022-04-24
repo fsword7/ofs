@@ -32,7 +32,7 @@ void Universe::init()
     // venus = System::createBody("Venus", system, celType::cbPlanet,
     //     "EclipticJ2000", "EquatorJ2000");
     earth = System::createBody("Earth", system, celType::cbPlanet,
-        "EclipticJ2000", "EquatorJ2000");
+        "EclipticJ2000", "EclipticJ2000");
     // mars = System::createBody("Mars", system, celType::cbPlanet,
     //     "EclipticJ2000", "EquatorJ2000");
     // jupiter = System::createBody("Jupiter", system, celType::cbPlanet,
@@ -51,6 +51,7 @@ void Universe::init()
     earth->setColor(color_t(0.856, 0.910, 1.0));
     earth->setOrbit(VSOP87Orbit::create("vsop87-earth"));
     earth->setRotation(Rotation::create("p03lp-earth"));
+    // earth->setRotation(Rotation::create("iau-earth"));
     earth->setRadius(6378.140);
     earth->setAlbedo(0.449576);
 

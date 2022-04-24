@@ -272,7 +272,7 @@ void Player::look(Object *object)
     vec3d_t opos = object->getuPosition(jdTime);
     vec3d_t up = vec3d_t(0, 1, 0);
 
-    urot = glm::lookAt(opos, upos, up);
+    urot = glm::lookAt(upos, opos, up);
     lrot = frame->fromUniversal(urot, jdTime);
 }
 

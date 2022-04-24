@@ -20,7 +20,7 @@ FrameTree::FrameTree(celStar *star)
 FrameTree::FrameTree(celBody *body)
 : parentBody(body)
 {
-    // defaultFrame = new BodyMeanEquatorFrame(body, body, nullptr);
+    defaultFrame = new BodyMeanEquatorFrame(body, body);
 }
 
 FrameTree::~FrameTree()
@@ -63,7 +63,7 @@ vec3d_t Frame::fromUniversal(const vec3d_t &upos, double tjd)
     
     vec3d_t opos = center->getuPosition(tjd);
     quatd_t orot = glm::conjugate(getOrientation(tjd));
-    vec3d_t rpos = (opos - upos) * orot;
+    vec3d_t rpos = orot * (upos - opos);
 
 	// fmt::printf("Center: P(%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
 	// 	opos.x, opos.y, opos.z, orot.w, orot.x, orot.y, orot.z);
@@ -77,7 +77,7 @@ quatd_t Frame::fromUniversal(const quatd_t &urot, double tjd)
 {
     if (center == nullptr)
         return urot;
-    return urot * getOrientation(tjd);
+    return urot * glm::conjugate(getOrientation(tjd));
 }
 
 vec3d_t Frame::toUniversal(const vec3d_t &lpos, double tjd)
@@ -87,7 +87,7 @@ vec3d_t Frame::toUniversal(const vec3d_t &lpos, double tjd)
 
     vec3d_t opos = center->getuPosition(tjd);
     quatd_t orot = getOrientation(tjd);
-    vec3d_t rpos = opos + (lpos * orot);
+    vec3d_t rpos = opos + (glm::conjugate(orot) * lpos);
 
 	// fmt::printf("Center: P(%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
 	// 	opos.x, opos.y, opos.z, orot.w, orot.x, orot.y, orot.z);
@@ -101,7 +101,7 @@ quatd_t Frame::toUniversal(const quatd_t &lrot, double tjd)
 {
     if (center == nullptr)
         return lrot;
-    return lrot * glm::conjugate(getOrientation(tjd));
+    return lrot * getOrientation(tjd);
 }
 
 Frame *Frame::create(cstr_t &frameName, Object *bodyObject, Object *parentObject)

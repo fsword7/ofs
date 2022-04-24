@@ -42,8 +42,8 @@ vec3d_t RigidBody::getuPosition(double tjd) const
 
 quatd_t RigidBody::getuOrientation(double tjd) const
 {
-    // return rotation != nullptr ? rotation->getRotation(tjd) : quatd_t( 1, 0, 0, 0 );
-    return { 1, 0, 0, 0 };
+    return rotation != nullptr ? rotation->getRotation(tjd) : quatd_t( 1, 0, 0, 0 );
+    // return { 1, 0, 0, 0 };
 }
 
 vec3d_t RigidBody::getoPosition(double tjd) const

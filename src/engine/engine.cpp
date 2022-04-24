@@ -33,17 +33,13 @@ void Engine::start()
     celStar *sun   = universe->findStar("Sol");
     Object *planet = universe->findPath("Sol/Earth");
     Object *lunar  = universe->findPath("Sol/Earth/Moon");
-
-    if (planet == nullptr)
-    {
-        fmt::printf("Planet is not found in universe!\n");
-        return;
-    }
     
     // player->move(planet, planet->getRadius() * 6.0, Player::goBackHelioSync);
     // player->follow(planet, Player::fwHelioSync);
-    player->move(planet, planet->getRadius() * 6.0, Player::goGeoSync);
-    player->follow(planet, Player::fwGeoSync);
+    // player->move(planet, planet->getRadius() * 6.0, Player::goGeoSync);
+    // player->follow(planet, Player::fwGeoSync);
+    player->move(planet, planet->getRadius() * 6.0, Player::goEcliptic);
+    player->follow(planet, Player::fwEcliptic);
     player->look(planet);
 
     // player->move(lunar, lunar->getRadius() * 6.0, Player::goGeoSync);
@@ -51,6 +47,7 @@ void Engine::start()
     // player->look(lunar);
 
     // player->move(sun, sun->getRadius() * 6.0, Player::goEcliptic);
+    // player->look(sun);
 }
 
 void Engine::update(double dt)
