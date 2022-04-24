@@ -84,6 +84,7 @@ set(OFSGL_CPP_SRCS
     osd/gl/shader.cpp
     osd/gl/texture.cpp
     render/gl/constellations.cpp
+    render/gl/fonts.cpp
     render/gl/stars.cpp
 )
 
@@ -94,6 +95,7 @@ set(OFSGL_H_SRCS
     osd/gl/mesh.h
     osd/gl/shader.h
     osd/gl/texture.h
+    render/gl/fonts.h
     render/gl/stars.h
 )
 

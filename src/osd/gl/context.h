@@ -21,7 +21,9 @@ public:
     ~Context() = default;
     
     inline ShaderManager *getShaderManager() const { return smgr; }
-    
+    inline int getWidth() const     { return width; }
+    inline int getHeight() const    { return height; }
+
     SDL_Window *createWindow(cchar_t *appName, int width, int height);
     void setWindowTile(cstr_t &title);
     void destroyWindow();
