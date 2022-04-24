@@ -62,7 +62,7 @@ vec3d_t Frame::fromUniversal(const vec3d_t &upos, double tjd)
         return upos;
     
     vec3d_t opos = center->getuPosition(tjd);
-    quatd_t orot = glm::conjugate(getOrientation(tjd));
+    quatd_t orot = getOrientation(tjd);
     vec3d_t rpos = orot * (upos - opos);
 
 	// fmt::printf("Center: P(%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
