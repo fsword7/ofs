@@ -8,6 +8,7 @@
 #include "engine/object.h"
 
 class Frame;
+class OrbitalElements;
 
 class RigidBody : public Object
 {
@@ -33,6 +34,8 @@ public:
     quatd_t getuOrientation(double tjd) const override;
     vec3d_t getoPosition(double tjd) const override;
 
+    void update();
+    
 protected:
     // Reference frame parameters
     Frame *orbitFrame = nullptr;
@@ -40,4 +43,9 @@ protected:
 
     Orbit *orbit = nullptr;
     Rotation *rotation = nullptr;
+
+    OrbitalElements *elements = nullptr;
+    bool orbitValid = false;
+
+    vec3d_t cpos, cvel; // state vectors in reference frame
 };

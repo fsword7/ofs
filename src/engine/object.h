@@ -9,6 +9,18 @@ class Orbit;
 class Rotation;
 class Frame;
 
+class StateVectors
+{
+public:
+    // All state vectors in assciated frame
+    vec3d_t pos;        // position
+    vec3d_t vel;        // linear velocity
+    
+    mat4d_t R;          // rotation matrix
+    quatd_t Q;          // orientation
+    vec3d_t omega;      // angular velocity
+};
+
 class Object
 {
 public:
@@ -58,6 +70,10 @@ private:
     ObjectType objType = objUnknown;
     std::vector<str_t> objNames{1};
 
+public:
+    StateVectors s0;    // current state vectors at time t0
+    StateVectors s1;    // new state vectors at time t0+dt during update function call
+
 protected:
     vec3d_t objPosition = { 0, 0, 0 };
     vec3d_t objVelocity = { 0, 0, 0 };
@@ -67,4 +83,11 @@ protected:
     double  mass   = 0.0;
     double  radius = 0.0;
     double  albedo = 0.0;
+
+    vec3d_t rposBase, rposAdd;  // base/incremental of relative position
+    vec3d_t rvelBase, rvelAdd;  // baae/incremental of relative velocity
+    quatd_t rrotBase, rrotAdd;  // base/incremental of relative orientation
+
+    Object *cbody = nullptr;    // orbit reference body
+
 };

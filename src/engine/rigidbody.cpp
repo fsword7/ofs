@@ -47,3 +47,7 @@ vec3d_t RigidBody::getoPosition(double tjd) const
 {
     return orbit->getPosition(tjd);
 }
+
+void RigidBody::update()
+{
+}

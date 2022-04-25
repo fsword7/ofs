@@ -11,6 +11,7 @@ set(OFS_CPP_SRCS
     engine/object.cpp
     engine/player.cpp
     engine/rigidbody.cpp
+    engine/supervessel.cpp
     engine/vessel.cpp
     ephem/earth-p03lp.cpp
     ephem/elements.cpp
@@ -49,6 +50,7 @@ set(OFS_H_SRCS
     engine/object.h
     engine/player.h
     engine/rigidbody.h
+    engine/supervessel.h
     engine/vessel.h
     ephem/elements.h
     ephem/elp-mpp02.h
