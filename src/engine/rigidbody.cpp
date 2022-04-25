@@ -36,14 +36,11 @@ vec3d_t RigidBody::getuPosition(double tjd) const
     // fmt::printf("Final Position: (%lf,%lf,%lf)\n", pos.x, pos.y, pos.z);
 
     return pos;
-
-    // return { 0, 0, 0 };
 }
 
 quatd_t RigidBody::getuOrientation(double tjd) const
 {
     return rotation != nullptr ? rotation->getRotation(tjd) : quatd_t( 1, 0, 0, 0 );
-    // return { 1, 0, 0, 0 };
 }
 
 vec3d_t RigidBody::getoPosition(double tjd) const
