@@ -21,6 +21,7 @@ set(OFS_CPP_SRCS
     ephem/vsop87.cpp
     main/app.cpp
     main/date.cpp
+    render/elevation.cpp
     render/lights.cpp
     render/loader.cpp
     render/scene.cpp
@@ -59,6 +60,7 @@ set(OFS_H_SRCS
     main/core.h
     main/date.h
     main/math.h
+    render/elevation.h
     render/scene.h
     render/starcolors.h
     render/surface.h
