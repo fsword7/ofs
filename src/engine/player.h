@@ -51,7 +51,8 @@ public:
         csEcliptical = 1,
         csEquatorial = 2,
         csBodyFixed  = 3,
-        csObjectSync = 4
+        csBodyMeanEquator = 4,
+        csObjectSync = 5
     };
 
     PlayerFrame();
@@ -94,14 +95,16 @@ public:
     enum followMode
     {
         fwEcliptic,
-        fwGeoSync,
+        fwEquatorial,
+        fwBodyFixed,
         fwHelioSync
     };
 
     enum goMode
     {
         goEcliptic,
-        goGeoSync,
+        goEquartorial,
+        goBodyFixed,
         goFrontHelioSync,
         goBackHelioSync
     };

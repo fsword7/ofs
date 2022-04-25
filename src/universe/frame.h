@@ -98,12 +98,12 @@ public:
 class J2000EquatorFrame : public Frame
 {
 public:
-    J2000EquatorFrame(Object *object, Object *target, Frame *parent = nullptr);
+    J2000EquatorFrame(Object *object, Frame *parent = nullptr);
     ~J2000EquatorFrame() = default;
 
     quatd_t getOrientation(double) const override
     {
-        return quatd_t(vec3d_t(-J2000Obliquity, 0, 0));
+        return quatd_t(vec3d_t(J2000Obliquity, 0, 0));
     }
 };
 

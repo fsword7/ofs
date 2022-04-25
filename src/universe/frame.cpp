@@ -107,7 +107,7 @@ quatd_t Frame::toUniversal(const quatd_t &lrot, double tjd)
 Frame *Frame::create(cstr_t &frameName, Object *bodyObject, Object *parentObject)
 {
     if (frameName == "EquatorJ2000")
-        return new J2000EquatorFrame(bodyObject, parentObject);
+        return new J2000EquatorFrame(bodyObject);
     if (frameName == "EclipticJ2000")
         return new J2000EclipticFrame(bodyObject);
     return nullptr;
@@ -123,7 +123,7 @@ J2000EclipticFrame::J2000EclipticFrame(Object *object, Frame *parent)
 
 // ******** J2000 Earth Equator Reference Frame ********
 
-J2000EquatorFrame::J2000EquatorFrame(Object *object, Object *target, Frame *parent)
+J2000EquatorFrame::J2000EquatorFrame(Object *object, Frame *parent)
 : Frame(object, parent)
 {
     frameName = "J2000 Earth Equator Reference Frame";

@@ -85,9 +85,11 @@ Frame *PlayerFrame::create(coordType csType, Object *center, Object *target)
     case csEcliptical:
         return new J2000EclipticFrame(center);
     case csEquatorial:
-        return new J2000EquatorFrame(center, center);
+        return new J2000EquatorFrame(center);
     case csBodyFixed:
         return new BodyFixedFrame(center, center);
+    case csBodyMeanEquator:
+        return new BodyMeanEquatorFrame(center, center);
     case csObjectSync:
         return new ObjectSyncFrame(center, target);
     case csUniversal:
@@ -206,7 +208,11 @@ void Player::move(Object *object, double altitude, goMode mode)
 
     switch (mode)
     {
-    case goGeoSync:
+    case goEquartorial:
+        orot = quatd_t(vec3d_t(J2000Obliquity, 0, 0));
+        break;
+
+    case goBodyFixed:
         orot = object->getuOrientation(jdTime);
         break;
 
@@ -249,7 +255,10 @@ void Player::follow(Object *object, followMode mode)
 
     switch (mode)
     {
-    case fwGeoSync:
+    case fwEquatorial:
+        setFrame(PlayerFrame::csEquatorial, object);
+        break;
+    case fwBodyFixed:
         setFrame(PlayerFrame::csBodyFixed, object);
         break;
     case fwHelioSync:
