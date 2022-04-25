@@ -14,6 +14,9 @@
 #include "render/scene.h"
 #include "render/surface.h"
 
+// Global parameters
+SurfaceHandler *SurfaceManager::loader = nullptr;
+
 // ******** SurfaceTile ********
 
 static tcrd_t fullRange = { 0.0, 1.0, 0.0, 1.0 };
@@ -175,10 +178,114 @@ SurfaceManager::~SurfaceManager()
         delete tiles[idx];
 }
 
+void SurfaceManager::ginit()
+{
+    loader = new SurfaceHandler();
+}
+
+void SurfaceManager::gexit()
+{
+    if (loader != nullptr)
+    {
+        delete loader;
+        loader = nullptr;
+    }
+}
+
 void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
 {
     if (tile->state == SurfaceTile::Inactive)
         tile->state = SurfaceTile::Rendering;
+
+    // int lod  = tile->lod;
+    // int nlat = 1 << tile->lod;
+    // int nlng = 2 << tile->lod;
+
+    // // Farthest edge of quad tile radius
+    // constexpr double trad0 = sqrt(2.0)*(pi/2.0);
+
+    // double trad, alpha, adist;
+    // double erad;
+    // double tdist, apr;
+    // int    tlod;
+    // bool   splitFlag = false;
+    // int    bias = 4;
+
+    // tile->state = TerrainTile::Rendering;
+
+    // // Find angle between camera and tile center
+    // trad  = trad0 / double(nlat);
+    // alpha = acos(glm::dot(prm.cdir, -tile->center));
+    // adist = alpha - trad;
+
+    // // Check if tile is visible from camera position
+    // // If tile is hiding from camera position, mark tile
+    // // as invisible to not being rendered (LOD level 1+)
+    // if (adist >= prm.viewap)
+    // {
+    //     // fmt::printf("Out of view: LOD %d (%d,%d) %lf < %lf\n", tile->lod+4, tile->ilat, tile->ilng,
+    //     //     degrees(adist), degrees(prm.viewap));
+    //     tile->state = TerrainTile::Invisible;
+    //     return;
+    // }
+    // // fmt::printf("In view: LOD %d (%d,%d) - %lf >= %lf\n", tile->lod+4, tile->ilat, tile->ilng,
+    // //     degrees(adist), degrees(prm.viewap));
+
+    // // Check if tile is visible in view area
+
+    // // Check LOD level from tile distance
+    // {
+    //     erad = prm.orad;
+    //     if (adist < 0.0)
+    //     {
+    //         tdist = prm.cdist - erad;
+    //     }
+    //     else
+    //     {
+    //         double h = erad * sin(adist);
+    //         double a = prm.cdist - (erad * cos(adist));
+    //         tdist = sqrt(h*h + a*a);
+    //     }
+    //     bias -= 2.0 * sqrt(std::max(0.0, adist) / prm.viewap);
+    //     apr = tdist * prm.tanap;
+    //     if (apr > 0.000001)
+    //         tlod = std::max(0, std::min(int(prm.maxLOD), int(bias - log(apr)*1.1)));
+    //     else
+    //         tlod = prm.maxLOD;
+    //     tlod += prm.biasLOD;
+    //     splitFlag = (lod < tlod+1);
+    // }
+
+    // if (splitFlag == true)
+    // {
+    //     // fmt::printf("Tile split at LOD %d (Expected LOD %d)\n", lod+4, tlod+4);
+
+    //     bool valid = true;
+
+    //     for (int idx = 0; idx < 4; idx++)
+    //     {
+    //         TerrainTile *child = tile->getChild(idx);
+    //         if (child == nullptr)
+    //             child = tile->createChild(idx);
+    //         else if (child->state == TerrainTile::Invalid)
+    //             loader->queue(child);
+    //         if ((child->state & TILE_VALID) == 0)
+    //             valid = false;
+    //     }
+    //     if (valid)
+    //     {
+    //         tile->state = TerrainTile::Active;
+    //         for (int idx = 0; idx < 4; idx++)
+    //             process(tile->getChild(idx), prm);
+    //     }
+    // }
+    // else
+    // {
+    //     // fmt::printf("Tile LOD level %d (%d,%d)\n", lod+4, tile->ilat, tile->ilng);
+    //     // fmt::printf("Alpha: %lf  Distance: %lf\n", degrees(alpha), degrees(adist));
+    //     // fmt::printf("Aperature: %lf LOD: %d Tile center LOD: %d\n", apr, lod+4, tlod+4);
+    // }
+
 }
 
 void SurfaceManager::render(SurfaceTile *tile, renderParam &prm)

@@ -17,12 +17,13 @@
 class Object;
 class Context;
 class SurfaceManager;
+class SurfaceHandler;
 class Texture;
 
 class SurfaceTile : public Tree<SurfaceTile, QTREE_NODES>
 {
     friend class SurfaceManager;
-    // friend class SurfaceHandle;
+    friend class SurfaceHandler;
 
 public:
     enum TileState
@@ -70,6 +71,32 @@ private:
     int16_t *ggelev = nullptr;
 };
 
+class SurfaceHandler
+{
+public:
+    SurfaceHandler();
+    ~SurfaceHandler();
+
+    void start();
+    void shutdown();
+
+    void queue(SurfaceTile *tile);
+    bool unqueue(SurfaceTile *tile);
+    void unqueue(SurfaceManager *mgr);
+
+protected:
+    void handle();
+
+private:
+    std::queue<SurfaceTile *> tiles;
+
+    volatile bool runHandler;
+    int           msFreq;
+    std::thread   loader;
+    std::mutex    muQueue;
+    std::mutex    muLoading;
+};
+
 class SurfaceManager
 {
     friend class SurfaceTile;
@@ -77,6 +104,9 @@ class SurfaceManager
 public:
     SurfaceManager(Context &ctx, const Object &object);
     ~SurfaceManager();
+
+    static void ginit();
+    static void gexit();
 
     Mesh *createSphere(int lod, int ilat, int ilng, int grids, const tcrd_t &tcr);
 
@@ -89,6 +119,8 @@ private:
     const Object &object;
 
     fs::path surfaceFolder;
+
+    static SurfaceHandler *loader;
 
     ShaderProgram *pgmPlanet = nullptr;
     mat4Uniform mvp;
