@@ -22,15 +22,17 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
     if (ole.objSize > 1.0)
     {
         ObjectProperties op;
-
+        LightState lights;
+    
         quatd_t orot = body->getuOrientation(prm.jnow);
+        setObjectLighting(lightSources, ole.opos, orot, lights);
 
         op.color = body->getColor();
         op.orad  = body->getRadius();
         op.opos  = ole.opos;
         op.oqrot = orot;
 
-        vobj->render(prm, op);
+        vobj->render(prm, op, lights);
     }
     else
         renderObjectAsPoint(ole);

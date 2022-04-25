@@ -182,7 +182,8 @@ void Player::update(double dt, double timeTravel)
         //
         lrot += lrot * wv * (dt / 2.0);
         lrot  = glm::normalize(lrot);
-        lpos -= glm::conjugate(lrot) * tv * dt;
+        // lpos -= glm::conjugate(lrot) * tv * dt;
+        lpos -= (lrot * tv) * dt;
     }
 
     // fmt::printf("Move: (%lf,%lf,%lf) <= (%lf,%lf,%lf)\n",
@@ -319,9 +320,12 @@ void Player::orbit(quatd_t rot)
 
     double dist  = glm::length(lpos);
     quatd_t qrot = glm::normalize(lrot * rot * glm::conjugate(lrot));
-
     lpos = glm::normalize(glm::conjugate(qrot) * lpos) * dist;
     lrot = glm::conjugate(qrot) * lrot;
+
+    // quatd_t qrot = glm::normalize(glm::conjugate(lrot) * rot * lrot);
+    // lpos = glm::normalize(qrot * lpos) * dist;
+    // lrot = lrot * qrot;
 
     // fmt::printf("Rotation: R(%lf,%lf,%lf,%lf) => Q(%lf,%lf,%lf,%lf)\n",
     //     rot.w, rot.x, rot.y, rot.z, qrot.w, qrot.x, qrot.y, qrot.z);

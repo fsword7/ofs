@@ -14,7 +14,7 @@ public:
     vBody(const Object &obj, Scene &scene);
     ~vBody() = default;
 
-    void render(renderParam &prm, ObjectProperties &op) override;
+    void render(renderParam &prm, ObjectProperties &op, LightState &lights) override;
     
 private:
     SurfaceManager *smgr = nullptr;

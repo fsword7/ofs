@@ -29,6 +29,15 @@ vObject *vObject::create(const Object &obj, Scene &scene)
     return nullptr;
 }
 
+void vObject::render(renderParam &prm, ObjectProperties &op)
+{
+}
+
+void vObject::render(renderParam &prm,
+    ObjectProperties &op, LightState &lights)
+{
+}
+
 // ******** Scene ********
 
 vObject *Scene::addVisualObject(const Object &object)
