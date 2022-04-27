@@ -75,6 +75,7 @@ struct ObjectProperties
     quatd_t  oqrot;
     mat4d_t  orot;
     double   orad;
+    vec3d_t  wpos;
 
     vec3d_t  cpos;
     vec3d_t  cqrot;

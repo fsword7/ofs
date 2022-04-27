@@ -77,3 +77,13 @@ double celBody::getApparentMagnitude(vec3d_t sun, double irradiance, vec3d_t vie
 
     return astro::convertLumToAppMag(absMag, astro::convertKilometerToParsec(vdist));
 }
+
+vec3d_t celBody::getPlanetocentric(vec3d_t pos)
+{
+    vec3d_t w = glm::normalize(pos);
+
+    double lat = acos(w.y) - (pi / 2.0);
+    double lng = atan2(w.z, -w.x);
+
+    return vec3d_t(lng, lat, glm::length(pos) - radius);
+}

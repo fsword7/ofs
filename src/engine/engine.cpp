@@ -33,7 +33,9 @@ void Engine::start()
     celStar *sun   = universe->findStar("Sol");
     Object *planet = universe->findPath("Sol/Earth");
     Object *lunar  = universe->findPath("Sol/Earth/Moon");
-    
+
+    // player->move(planet, planet->getRadius() * 6.0, Player::goFrontHelioSync);
+    // player->follow(planet, Player::fwHelioSync);
     // player->move(planet, planet->getRadius() * 6.0, Player::goBackHelioSync);
     // player->follow(planet, Player::fwHelioSync);
     player->move(planet, planet->getRadius() * 6.0, Player::goBodyFixed);
@@ -44,8 +46,8 @@ void Engine::start()
     // player->follow(planet, Player::fwEcliptic);
     player->look(planet);
 
-    // player->move(lunar, lunar->getRadius() * 6.0, Player::goGeoSync);
-    // player->follow(lunar, Player::fwGeoSync);
+    // player->move(lunar, lunar->getRadius() * 6.0, Player::goBodyFixed);
+    // player->follow(lunar, Player::fwBodyFixed);
     // player->look(lunar);
 
     // player->move(sun, sun->getRadius() * 6.0, Player::goEcliptic);

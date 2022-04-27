@@ -58,6 +58,7 @@ void Scene::render(Universe &universe, Player &player)
     // for rendering stars and constellations
     prm.cpos   = cam->getuPosition();
     prm.crot   = cam->getuOrientation();
+    prm.tanap  = cam->getTanAp();
     prm.dmProj = glm::perspective(cam->getFOV(), cam->getAspect(), 0.0001, 1'000'000'000.0);
     prm.dmView = glm::transpose(glm::toMat4(prm.crot));
 

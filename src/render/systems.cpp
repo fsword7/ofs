@@ -29,6 +29,7 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
 
         op.color = body->getColor();
         op.orad  = body->getRadius();
+        op.wpos  = body->getPlanetocentric(ole.opos);
         op.opos  = ole.opos;
         op.oqrot = orot;
 

@@ -332,8 +332,26 @@ void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
     prm.cdir    = op.oqrot * vec4d_t(op.opos, 1.0);
     prm.cdist   = glm::length(prm.cdir) / prm.orad;
     prm.viewap  = (prm.cdist >= 1.0) ? acos(1.0 / prm.cdist) : 0.0;
-    prm.cdir    = glm::normalize(prm.cdir);
     prm.color   = op.color;
+
+	// fmt::printf("Surface Manager - Render Parameter\n");
+	// fmt::printf("Planet Radius:      %lf\n", prm.orad);
+	// fmt::printf("Planet Position:    (%lf,%lf,%lf)\n",
+	// 	op.opos.x, op.opos.y, op.opos.z);
+	// fmt::printf("Planet Orientation: (%lf,%lf,%lf,%lf)\n",
+	// 	prm.oqrot.w, prm.oqrot.x, prm.oqrot.y, prm.oqrot.z);
+    // fmt::printf("World Coordination: %lf %lf\n",
+    //     glm::degrees(op.wpos.x), glm::degrees(op.wpos.y));
+	// fmt::printf("Camera Position:    (%lf,%lf,%lf)\n",
+	// 	prm.cpos.x, prm.cpos.y, prm.cpos.z);
+	// fmt::printf("Camera Direction:   (%lf,%lf,%lf)\n",
+	// 	prm.cdir.x, prm.cdir.y, prm.cdir.z);
+	// fmt::printf("Camera Distance:    %lf\n", prm.cdist);
+	// fmt::printf("Horizon View:       %lf\n", glm::degrees(prm.viewap));
+	// fmt::printf("Camera Position:    (%lf,%lf,%lf) in Universe frame\n",
+	// 	prm.cpos.x, prm.cpos.y, prm.cpos.z);
+
+    prm.cdir    = glm::normalize(prm.cdir);
 
     prm.dmModel = glm::transpose(prm.orot);
     prm.dmWorld = glm::translate(prm.dmView, op.opos);
