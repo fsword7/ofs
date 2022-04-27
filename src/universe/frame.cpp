@@ -56,6 +56,7 @@ int Frame::release() const
     return count;
 }
 
+
 vec3d_t Frame::fromUniversal(const vec3d_t &upos, double tjd)
 {
     if (center == nullptr)
@@ -65,11 +66,6 @@ vec3d_t Frame::fromUniversal(const vec3d_t &upos, double tjd)
     quatd_t orot = getOrientation(tjd);
     // vec3d_t rpos = orot * (upos - opos);
     vec3d_t rpos = (upos - opos) * orot;
-
-	// fmt::printf("Center: P(%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
-	// 	opos.x, opos.y, opos.z, orot.w, orot.x, orot.y, orot.z);
-	// fmt::printf(" Frame: U(%lf,%lf,%lf) => L(%lf,%lf,%lf)\n",
-	// 	upos.x, upos.y, upos.z, rpos.x, rpos.y, rpos.z);
 
     return rpos;
 }
@@ -92,11 +88,6 @@ vec3d_t Frame::toUniversal(const vec3d_t &lpos, double tjd)
     // vec3d_t rpos = opos + (glm::conjugate(orot) * lpos);
     vec3d_t rpos = opos + (lpos * glm::conjugate(orot));
 
-	// fmt::printf("Center: P(%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
-	// 	opos.x, opos.y, opos.z, orot.w, orot.x, orot.y, orot.z);
-	// fmt::printf(" Frame: L(%lf,%lf,%lf) => U(%lf,%lf,%lf)\n",
-	// 	lpos.x, lpos.y, lpos.z, rpos.x, rpos.y, rpos.z);
-
     return rpos;
 }
 
@@ -107,6 +98,7 @@ quatd_t Frame::toUniversal(const quatd_t &lrot, double tjd)
     // return lrot * getOrientation(tjd);
     return getOrientation(tjd) * lrot;
 }
+
 
 Frame *Frame::create(cstr_t &frameName, Object *bodyObject, Object *parentObject)
 {
