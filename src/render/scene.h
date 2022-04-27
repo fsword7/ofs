@@ -139,6 +139,8 @@ public:
     inline renderParam &getRenderParameters() { return prm; }
 
     void init(Universe &universe);
+    void cleanup();
+
     void render(Universe &universe, Player &player);
 
 protected:

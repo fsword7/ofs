@@ -72,6 +72,7 @@ void Scene::buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3
             // fmt::printf("Position:   (%lf,%lf,%lf)\n", opos.x, opos.y, opos.z);
             // fmt::printf("Observer:   (%lf,%lf,%lf)\n", apos.x, apos.y, apos.z);
             // fmt::printf("View:       (%lf,%lf,%lf)\n", vpos.x, vpos.y, vpos.z);
+            // fmt::printf("Camera:     (%lf,%lf,%lf)\n", cpos.x, cpos.y, cpos.z);
             // fmt::printf("Sun:        (%lf,%lf,%lf)\n", spos.x, spos.y, spos.z);
 
             if (objSize > 1)

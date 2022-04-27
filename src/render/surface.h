@@ -43,11 +43,14 @@ public:
         SurfaceTile *parent = nullptr);
     ~SurfaceTile();
 
+    SurfaceTile *createChild(int idx);
     vec3d_t setCenter();
     void setSubtextureRange(const tcrd_t &ptcr);
 
     void load();
     void render(renderParam &prm);
+
+    int16_t *readElevationFile(int lod, int ilat, int ilng, double eres);
 
     inline Texture *getTexture() const { return txImage; }
 
