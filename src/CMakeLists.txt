@@ -8,6 +8,7 @@ find_package(ZLIB REQUIRED)
 
 set(OFS_CPP_SRCS
     engine/engine.cpp
+    engine/headup.cpp
     engine/object.cpp
     engine/player.cpp
     engine/rigidbody.cpp

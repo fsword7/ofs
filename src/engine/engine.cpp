@@ -4,11 +4,16 @@
 // Date:    Apr 16, 2022
 
 #include "main/core.h"
+#include "osd/gl/context.h"
+#include "osd/gl/buffers.h"
+#include "osd/gl/shader.h"
 #include "engine/engine.h"
 #include "engine/player.h"
 #include "universe/universe.h"
 #include "universe/star.h"
+#include "render/gl/fonts.h"
 #include "render/scene.h"
+#include "render/overlay.h"
 
 void Engine::init(Context *ctx, int width, int height)
 {
@@ -19,6 +24,10 @@ void Engine::init(Context *ctx, int width, int height)
 
     player = new Player();
     player->getCamera()->setViewport(width, height);
+
+    overlay = new Overlay(*ctx);
+    titleFont = TextureFont::load(*ctx, "fonts/OpenSans-Bold.ttf", 20);
+    textFont = TextureFont::load(*ctx, "fonts/OpenSans-Regular.ttf", 12);
 }
 
 void Engine::start()
@@ -62,4 +71,5 @@ void Engine::update(double dt)
 void Engine::render()
 {
     scene->render(*universe, *player);
+    renderOverlay();
 }

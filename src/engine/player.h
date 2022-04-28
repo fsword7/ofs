@@ -117,6 +117,7 @@ public:
         return (idx >= 0 && idx < cameras.size() ? cameras[idx] : nullptr);
     }
 
+    inline Object *getCenter() const        { return frame != nullptr ? frame->getCenter() : nullptr; }
     inline vec3d_t getuPosition() const     { return upos; }
     inline quatd_t getuOrientation() const  { return urot; }
     inline vec3d_t getlPosition() const     { return lpos; }

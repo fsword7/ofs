@@ -43,6 +43,8 @@ void TextureFont::initGlyphs()
 {
     FT_GlyphSlot slot = face->glyph;
 
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
     glyph = new Glyph[face->num_glyphs];
     for (int gidx = 0; gidx < face->num_glyphs; gidx++)
     {
@@ -86,6 +88,8 @@ void TextureFont::initGlyphs()
     ShaderManager &smgr = *gl.getShaderManager();
     pgm = smgr.createShader("text");
 
+    pgm->use();
+
     // Initialize OpenGL buffers
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -93,9 +97,11 @@ void TextureFont::initGlyphs()
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 0, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    pgm->release();
 }
 
 TextureFont *TextureFont::load(Context &gl, const fs::path &path, int size, int dpi)
@@ -195,6 +201,9 @@ void TextureFont::render(cstr_t &text, float x, float y, const color_t &color)
             { xpos+w, ypos,   1.0, 1.0 },
             { xpos+w, ypos+h, 1.0, 0.0 },
         };
+
+        // fmt::printf("Render '%lc' => Glyph index %d (%f,%f) at (%f,%f) Advance (%f,%f)\n",
+        //     *ch, gidx, w, h, xpos, ypos, glyph[gidx].ax, glyph[gidx].ay);
 
         glBindTexture(GL_TEXTURE_2D, glyph[gidx].glName);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);

@@ -150,6 +150,7 @@ void CoreApp::render()
 {
     if (scene != nullptr)
         scene->render(*universe, *player);
+    engine->renderOverlay();
 }
 
 // *****************

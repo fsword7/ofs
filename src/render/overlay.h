@@ -9,6 +9,8 @@ class Context;
 class TextureFont;
 class Overlay;
 
+#include "render/gl/fonts.h"
+
 class OverlayBuffer : public std::streambuf
 {
 public:

@@ -6,6 +6,8 @@
 #pragma once
 
 class Context;
+class TextureFont;
+class Overlay;
 class Scene;
 class Player;
 class Universe;
@@ -32,6 +34,10 @@ public:
     void update(double dt);
     void render();
 
+    void renderOverlay();
+    void displayPlanetInfo();
+    void displayPlanetocentric(double lon, double lat, double alt);
+
 private:
     Universe *universe = nullptr;
     Player *player = nullptr;
@@ -42,4 +48,10 @@ private:
 
     // Renderer
     Scene *scene = nullptr;
+
+    // Overlay
+    TextureFont *titleFont = nullptr;
+    TextureFont *textFont = nullptr;
+    Overlay *overlay = nullptr;
+    vec3d_t lastView;
 };
