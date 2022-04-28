@@ -96,7 +96,11 @@ public:
     double getLuminosity(double lum, double dist) const;
     double getApparentMagnitude(vec3d_t sun, double irradiance, vec3d_t view) const;
 
-    vec3d_t getPlanetocentric(vec3d_t pos);
+    quatd_t getBodyFixedFromEcliptic(double tjd) const;
+
+    vec3d_t getPlanetocentric(vec3d_t pos) const;
+    vec3d_t getPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const;
+    vec3d_t getHeliocentric(double tjd) const;
 
 private:
     celType cbType = cbUnknown;

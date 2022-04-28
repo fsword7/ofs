@@ -11,6 +11,7 @@
 #include "engine/object.h"
 #include "engine/player.h"
 // #include "engine/headup.h"
+#include "universe/body.h"
 #include "render/overlay.h"
 
 void Engine::renderOverlay()
@@ -37,8 +38,8 @@ void Engine::displayPlanetocentric(double lng, double lat, double alt)
     double dlng = abs(glm::degrees(lng));
     double dlat = abs(glm::degrees(lat));
 
-    str_t locObject = fmt::sprintf("Location: %.6f%c %.6f%c",
-        dlng, lngHemi, dlat, latHemi);
+    str_t locObject = fmt::sprintf("Latitude/Longiude: %.6f%c %.6f%c",
+        dlat, latHemi, dlng, lngHemi);
     overlay->print(locObject);
 }
 
@@ -54,9 +55,11 @@ void Engine::displayPlanetInfo()
     overlay->setFont(textFont);
     str_t distObject = fmt::sprintf("Distance: %f", glm::length(view));
     str_t radiusObject = fmt::sprintf("Radius: %f", center->getRadius());
+
     overlay->print(distObject);
     overlay->print(radiusObject);
 
     // const vec3d_t opos = center->getoPosition(curTime);
-
+    vec3d_t pc = dynamic_cast<const celBody *>(center)->getPlanetocentricFromEcliptic(view, jdTime);
+    displayPlanetocentric(pc.x, pc.y, pc.z);
 }
