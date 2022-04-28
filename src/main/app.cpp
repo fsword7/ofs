@@ -177,6 +177,15 @@ void CoreApp::keyPress(keyCode code, int modifiers, bool down)
 
 void CoreApp::keyEntered(char32_t ch, int modifiers)
 {
+    switch (ch)
+    {
+        case L'k':
+            engine->setTimeWarp(engine->getTimeWarp() * 2.0);
+            break;
 
+        case L'l':
+            engine->setTimeWarp(engine->getTimeWarp() / 2.0);
+            break;
+    }
 }
 

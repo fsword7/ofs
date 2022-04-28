@@ -16,12 +16,15 @@ public:
     Engine() = default;
     ~Engine() = default;
 
-    inline Scene *getScene()       { return scene; }
-    inline Universe *getUniverse() { return universe; }
-    inline Player *getPlayer()     { return player; }
-    inline Date *getDate()         { return &realDate; }
+    inline Scene *getScene()        { return scene; }
+    inline Universe *getUniverse()  { return universe; }
+    inline Player *getPlayer()      { return player; }
+    inline Date *getDate()          { return &realDate; }
 
-    inline double getRealTime()    { return realTime; }
+    inline double getRealTime()     { return realTime; }
+    inline double getTimeWarp()     { return scaleTime; }
+
+    inline void setTimeWarp(double scale)   { scaleTime = scale; }
     
     void init(Context *ctx, int width, int height);
 

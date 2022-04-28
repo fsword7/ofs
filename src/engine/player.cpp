@@ -224,7 +224,7 @@ void Player::move(Object *object, double altitude, goMode mode)
                 sun = system->getStar();
         }
         tpos = sun->getuPosition(jdTime);
-        orot = glm::lookAt(tpos, opos, vec3d_t(0, 1, 0));
+        orot = glm::lookAt(opos, tpos, vec3d_t(0, 1, 0));
         break;
 
     case goBackHelioSync:
@@ -235,17 +235,14 @@ void Player::move(Object *object, double altitude, goMode mode)
                 sun = system->getStar();
         }
         tpos = sun->getuPosition(jdTime);
-        orot = glm::lookAt(opos, tpos, vec3d_t(0, 1, 0));
+        orot = glm::lookAt(tpos, opos, vec3d_t(0, 1, 0));
         break;
     }
 
     upos = opos + glm::conjugate(orot) * vec3d_t(0, 0, -altitude);
-    urot = orot;
+    urot = glm::conjugate(orot);
     lpos = frame->fromUniversal(upos, jdTime);
     lrot = frame->fromUniversal(urot, jdTime);
-
-    // lpos = vec3d_t(0, 0, altitude);
-    // updateUniversal();
 }
 
 void Player::follow(Object *object, followMode mode)
