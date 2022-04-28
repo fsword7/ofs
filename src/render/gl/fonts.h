@@ -35,11 +35,16 @@ public:
     static void ginit();
     static void gexit();
     
-    void initGlyphs();
+    inline float getHeight() const      { return maxAscent + maxDescent; }
+    inline float getMaxAscent() const   { return maxAscent; }
+    inline float getMaxDescent() const  { return maxDescent; }
 
     float getWidth(cstr_t &text);
     void render(cstr_t &text, float x, float y, const color_t &color);
-    
+
+private:
+    void initGlyphs();
+
 private:
     Context &gl;
 

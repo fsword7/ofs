@@ -25,6 +25,7 @@ set(OFS_CPP_SRCS
     render/elevation.cpp
     render/lights.cpp
     render/loader.cpp
+    render/overlay.cpp
     render/scene.cpp
     render/starcolors.cpp
     render/surface.cpp
@@ -63,6 +64,7 @@ set(OFS_H_SRCS
     main/date.h
     main/math.h
     render/elevation.h
+    render/overlay.h
     render/scene.h
     render/starcolors.h
     render/surface.h

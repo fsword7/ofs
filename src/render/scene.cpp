@@ -11,6 +11,7 @@
 #include "engine/player.h"
 #include "universe/star.h"
 #include "universe/universe.h"
+#include "render/gl/fonts.h"
 #include "render/scene.h"
 #include "render/vobject.h"
 #include "render/surface.h"
@@ -19,7 +20,7 @@ void Scene::init(Universe &universe)
 {
     // Initialize global parameters
     SurfaceManager::ginit();
-    // TextureFont::ginit();
+    TextureFont::ginit();
 
     initStarRenderer();
     initConstellations(universe);
@@ -28,7 +29,7 @@ void Scene::init(Universe &universe)
 void Scene::cleanup()
 {
     SurfaceManager::gexit();
-    // TextureFont::gexit();
+    TextureFont::gexit();
 }
 
 vec3d_t Scene::getAstrocentericPosition(const celStar *sun, vec3d_t upos, double now)
