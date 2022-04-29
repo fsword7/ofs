@@ -39,6 +39,13 @@ void Camera::setViewport(int w, int h)
     aspect = double(width) / double(height);
 }
 
+vec3d_t Camera::getPickRay(float vx, float vy) const
+{
+    float s = float(2.0 * tan(fov / 2.0));
+
+    return glm::normalize(vec3d_t(vx * s * aspect, vy * s, -1.0));
+}
+
 // ******** Player Reference Frame ********
 
 PlayerFrame::PlayerFrame()

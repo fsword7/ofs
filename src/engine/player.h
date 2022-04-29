@@ -28,6 +28,8 @@ public:
     quatd_t getuOrientation() const;
     vec3d_t getlPosition() const;
     quatd_t getlOrientation() const;
+    
+    vec3d_t getPickRay(float vx, float vy) const;
 
     void setViewport(int w, int h);
 
@@ -63,7 +65,7 @@ public:
 
     coordType getType() const   { return type; }
     Frame *getFrame() const     { return frame; }
-    
+
     str_t getsName() const
     { 
         return frame != nullptr ? frame->getCenter()->getsName() : "(Unknown)";

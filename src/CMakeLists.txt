@@ -14,6 +14,7 @@ set(OFS_CPP_SRCS
     engine/rigidbody.cpp
     engine/supervessel.cpp
     engine/vessel.cpp
+    engine/view.cpp
     ephem/earth-p03lp.cpp
     ephem/elements.cpp
     ephem/elp-mpp02.cpp
@@ -25,6 +26,7 @@ set(OFS_CPP_SRCS
     main/date.cpp
     render/elevation.cpp
     render/lights.cpp
+    render/mesh.cpp
     render/loader.cpp
     render/overlay.cpp
     render/scene.cpp
@@ -54,6 +56,7 @@ set(OFS_H_SRCS
     engine/rigidbody.h
     engine/supervessel.h
     engine/vessel.h
+    engine/view.h
     ephem/elements.h
     ephem/elp-mpp02.h
     ephem/orbit.h
@@ -65,6 +68,7 @@ set(OFS_H_SRCS
     main/date.h
     main/math.h
     render/elevation.h
+    render/mesh.h
     render/overlay.h
     render/scene.h
     render/starcolors.h

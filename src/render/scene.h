@@ -22,6 +22,16 @@ class vObject;
 #include "osd/gl/lights.h"
 
 template <typename T>
+struct Vertex32
+{
+    T vx, vy, vz;   // vertex
+    T nx, ny, nz;   // normal for lightings
+    T tu, tv;       // texture coordinates
+};
+
+typedef Vertex32<float> vtxf_t;
+
+template <typename T>
 struct TextureCoordRange
 {
     T tumin, tumax;
