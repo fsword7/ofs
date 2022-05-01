@@ -45,21 +45,21 @@ void Engine::displayPlanetocentric(double lng, double lat, double alt)
 
 void Engine::displayPlanetInfo()
 {
-    const Object *center = player->getCenter();
+    const Object *focus = getFoucsedObject();
     double jdTime = player->getJulianTime();
-    vec3d_t view = center->getuPosition(jdTime) - player->getuPosition();
+    vec3d_t view = focus->getuPosition(jdTime) - player->getuPosition();
 
     overlay->setFont(titleFont);
-    overlay->print(center->getsName());
+    overlay->print(focus->getsName());
 
     overlay->setFont(textFont);
     str_t distObject = fmt::sprintf("Distance: %f", glm::length(view));
-    str_t radiusObject = fmt::sprintf("Radius: %f", center->getRadius());
+    str_t radiusObject = fmt::sprintf("Radius: %f", focus->getRadius());
 
     overlay->print(distObject);
     overlay->print(radiusObject);
 
     // const vec3d_t opos = center->getoPosition(curTime);
-    vec3d_t pc = dynamic_cast<const celBody *>(center)->getPlanetocentricFromEcliptic(view, jdTime);
+    vec3d_t pc = dynamic_cast<const celBody *>(focus)->getPlanetocentricFromEcliptic(view, jdTime);
     displayPlanetocentric(pc.x, pc.y, pc.z);
 }

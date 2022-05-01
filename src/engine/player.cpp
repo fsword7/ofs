@@ -144,6 +144,13 @@ void Player::updateFrame(PlayerFrame *nFrame)
     lrot = nFrame->fromUniversal(urot, jdTime);
 }
 
+vec3d_t Player::getPickRay(float vx, float vy)
+{
+    if (cameras.size() > 0)
+        return cameras[0]->getPickRay(vx, vy);
+    return { 0, 0, 0 };
+}
+
 void Player::setAngularVelocity(vec3d_t _av)
 {
     av = _av;

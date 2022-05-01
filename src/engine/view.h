@@ -3,6 +3,9 @@
 // Author:  Tim Stark
 // Date:    Apr 28, 2022
 
+class Scene;
+class Player;
+
 class View
 {
 public:

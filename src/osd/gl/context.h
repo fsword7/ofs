@@ -25,7 +25,7 @@ public:
     inline int getHeight() const    { return height; }
 
     SDL_Window *createWindow(cchar_t *appName, int width, int height);
-    void setWindowTile(cstr_t &title);
+    void setWindowTitle(cstr_t &title);
     void destroyWindow();
 
     void init(int w, int h);

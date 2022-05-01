@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "engine/engine.h"
 #include "engine/player.h"
+#include "engine/view.h"
 #include "universe/universe.h"
 #include "render/scene.h"
 #include "main/app.h"
@@ -32,6 +33,18 @@ void CoreApp::initEngine()
     universe = engine->getUniverse();
     player = engine->getPlayer();
     camera = player->getCamera();
+
+    View *view = new View(View::viewMainWindow, player,
+        scene, 0.0f, 0.0f, 1.0f, 1.0f);
+    views.push_back(view);
+    activeView = view;
+}
+
+View *CoreApp::pickView(float x, float y)
+{
+    if (views.size() > 0)
+        return views[0];
+    return nullptr;
 }
 
 void CoreApp::start()
@@ -153,9 +166,7 @@ void CoreApp::render()
     engine->renderOverlay();
 }
 
-// *****************
-// Keyboard controls
-// *****************
+// ******** Keyboard Controls ********
 
 void CoreApp::keyPress(keyCode code, int modifiers, bool down)
 {
@@ -190,3 +201,40 @@ void CoreApp::keyEntered(char32_t ch, int modifiers)
     }
 }
 
+// ******** Mouse Controls ********
+
+void CoreApp::mouseMove(float mx, float my, int state)
+{
+
+}
+
+void CoreApp::mousePressButtonDown(float mx, float my, int state)
+{
+
+}
+
+void CoreApp::mousePressButtonUp(float mx, float my, int state)
+{
+    View *view = nullptr;
+    float vx = 0.0f, vy = 0.0f;
+
+    if (state & mouseLeftButton)
+    {
+        view = pickView(mx, my);
+        if (view != nullptr)
+            view->map(mx / float(width), my / float(height), vx, vy);
+
+        vec3d_t ray = player->getPickRay(vx, vy);
+
+        Object *picked = engine->pickObject(ray);
+    }
+}
+
+void CoreApp::mouseDialWheel(float motion, int state)
+{
+
+}
+
+// ******** Joystick Controls ********
+
+// ******** Gamepad Controls ********

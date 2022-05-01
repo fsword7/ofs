@@ -31,6 +31,8 @@ public:
     int findCloseStars(const vec3d_t &obs, double mdist,
         std::vector<const celStar *> &closeStars) const;
 
+    Object *pick(const vec3d_t &obs, const vec3d_t &dir, double when);
+
 private:
     StarDatabase stardb;
     Constellations constellations;

@@ -38,7 +38,7 @@ void Context::destroyWindow()
     window = nullptr;
 }
 
-void Context::setWindowTile(cstr_t &title)
+void Context::setWindowTitle(cstr_t &title)
 {
     SDL_SetWindowTitle(window, title.c_str());
 }

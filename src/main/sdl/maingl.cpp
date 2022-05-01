@@ -5,6 +5,8 @@
 
 #include "main/core.h"
 #include "osd/gl/context.h"
+#include "engine/player.h"
+#include "engine/view.h"
 #include "main/sdl/app.h"
 
 void sdlCoreApp::init()
@@ -91,7 +93,13 @@ void sdlCoreApp::run()
 {
     bool running = true;
     uint16_t mod;
-    
+    int   state;
+    int   mx, my;
+    float vx = 0.0f, vy = 0.0f;
+    vec3d_t pickRay;
+
+    std::string title;
+
     start();
     while(running)
     {
@@ -114,6 +122,95 @@ void sdlCoreApp::run()
             case SDL_KEYUP:
                 mod = event.key.keysym.mod;
                 processKeyEvent(&event.key, false);
+                break;
+
+            // Handling joystick events
+
+            // Handling mouse events
+            case SDL_MOUSEMOTION:
+                mx = event.motion.x;
+                my = event.motion.y;
+
+                state = 0;
+                if (event.motion.state & SDL_BUTTON_LMASK)
+                    state |= mouseLeftButton;
+                if (event.motion.state & SDL_BUTTON_MMASK)
+                    state |= mouseMiddleButton;
+                if (event.motion.state & SDL_BUTTON_RMASK)
+                    state |= mouseRightButton;
+                if (mod & KMOD_CTRL)
+                    state |= mouseControlButton;
+                if (mod & KMOD_ALT)
+                    state |= mouseAltButton;
+                if (mod & KMOD_SHIFT)
+                    state |= mouseShiftButton;
+
+                if (activeView != nullptr)
+                {
+                    activeView->map(mx / float(width), my / float(height), vx, vy);
+                    pickRay = player->getPickRay(vx, vy);
+                }
+
+                title = fmt::sprintf("%s X: %d Y %d (%f,%f) State: %c%c%c%c%c%c\n",
+                    APP_SHORT, mx, my, pickRay.x, pickRay.y,
+                    (state & mouseLeftButton    ? 'L' : '-'),
+                    (state & mouseMiddleButton  ? 'M' : '-'),
+                    (state & mouseRightButton   ? 'R' : '-'),
+                    (state & mouseControlButton ? 'C' : '-'),
+                    (state & mouseAltButton     ? 'A' : '-'),
+                    (state & mouseShiftButton   ? 'S' : '-'));
+                ctx->setWindowTitle(title);
+
+                mouseMove(mx, my, state);
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                mx = event.motion.x;
+                my = event.motion.y;
+
+                state = 0;
+                if (event.motion.state & SDL_BUTTON_LMASK)
+                    state |= mouseLeftButton;
+                if (event.motion.state & SDL_BUTTON_MMASK)
+                    state |= mouseMiddleButton;
+                if (event.motion.state & SDL_BUTTON_RMASK)
+                    state |= mouseRightButton;
+                if (mod & KMOD_CTRL)
+                    state |= mouseControlButton;
+                if (mod & KMOD_ALT)
+                    state |= mouseAltButton;
+                if (mod & KMOD_SHIFT)
+                    state |= mouseShiftButton;
+
+                mousePressButtonDown(mx, my, state);
+                break;
+
+            case SDL_MOUSEBUTTONUP:
+                mx = event.motion.x;
+                my = event.motion.y;
+
+                state = 0;
+                if (event.motion.state & SDL_BUTTON_LMASK)
+                    state |= mouseLeftButton;
+                if (event.motion.state & SDL_BUTTON_MMASK)
+                    state |= mouseMiddleButton;
+                if (event.motion.state & SDL_BUTTON_RMASK)
+                    state |= mouseRightButton;
+                if (mod & KMOD_CTRL)
+                    state |= mouseControlButton;
+                if (mod & KMOD_ALT)
+                    state |= mouseAltButton;
+                if (mod & KMOD_SHIFT)
+                    state |= mouseShiftButton;
+
+                mousePressButtonUp(mx, my, state);
+                break;
+
+            case SDL_MOUSEWHEEL:
+                if (event.wheel.y > 0)      // scroll up
+                    mouseDialWheel(-1.0f, 0);
+                else if (event.wheel.y < 0) // scroll down
+                    mouseDialWheel(1.0f, 0);
                 break;
            
             }

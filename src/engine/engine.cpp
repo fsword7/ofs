@@ -8,6 +8,7 @@
 #include "osd/gl/buffers.h"
 #include "osd/gl/shader.h"
 #include "engine/engine.h"
+#include "engine/object.h"
 #include "engine/player.h"
 #include "universe/universe.h"
 #include "universe/star.h"
@@ -61,6 +62,8 @@ void Engine::start()
 
     // player->move(sun, sun->getRadius() * 6.0, Player::goEcliptic);
     // player->look(sun);
+
+    focusObject = planet;
 }
 
 void Engine::update(double dt)
@@ -72,4 +75,11 @@ void Engine::render()
 {
     scene->render(*universe, *player);
     renderOverlay();
+}
+
+Object *Engine::pickObject(const vec3d_t &pickRay)
+{
+    return universe->pick(player->getuPosition(),
+        glm::conjugate(player->getuOrientation()) * pickRay,
+        player->getJulianTime());
 }

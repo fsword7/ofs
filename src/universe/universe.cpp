@@ -148,3 +148,8 @@ int Universe::findCloseStars(const vec3d_t &obs, double mdist,
 {
     return stardb.findCloseStars(obs, mdist, closeStars);
 }
+
+Object *Universe::pick(const vec3d_t &obs, const vec3d_t &dir, double when)
+{
+    return nullptr;
+}

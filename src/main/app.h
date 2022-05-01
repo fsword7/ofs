@@ -11,6 +11,7 @@ class Universe;
 class Player;
 class Camera;
 class Scene;
+class View;
 
 
 class CoreApp
@@ -150,6 +151,8 @@ public:
 
     void initEngine();
 
+    View *pickView(float x, float y);
+
     void start();
     void update();
     void render();
@@ -159,10 +162,10 @@ public:
     void keyEntered(char32_t ch, int modifiers);
 
     // Mouse contols
-    // void mouseMove(float mx, float my, int state);
-    // void mousePressButtonDown(float mx, float my, int state);
-    // void mousePressButtonUp(float mx, float my, int state);
-    // void mouseDialWheel(float motion, int state);
+    void mouseMove(float mx, float my, int state);
+    void mousePressButtonDown(float mx, float my, int state);
+    void mousePressButtonUp(float mx, float my, int state);
+    void mouseDialWheel(float motion, int state);
 
     // Joystick controls
 
@@ -200,4 +203,7 @@ protected:
     double dollyTime = 0.0;
     double zoomMotion = 0.0;
     double zoomTime = 0.0;
+
+    std::vector<View *> views;
+    View *activeView = nullptr;
 };

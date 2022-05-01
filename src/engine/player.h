@@ -129,6 +129,8 @@ public:
     inline vec3d_t getTravelVelocity()   { return tv; }
     inline double  getJulianTime()       { return jdTime; }
 
+    vec3d_t getPickRay(float vx, float vy);
+    
     void setFrame(PlayerFrame::coordType cs, Object *center = nullptr, Object *target = nullptr);
     void updateFrame(PlayerFrame *nFrame);
 
