@@ -31,6 +31,7 @@ public:
     int findCloseStars(const vec3d_t &obs, double mdist,
         std::vector<const celStar *> &closeStars) const;
 
+    Object *pickPlanet(System *system, const vec3d_t &obs, const vec3d_t &dir, double when);
     Object *pick(const vec3d_t &obs, const vec3d_t &dir, double when);
 
 private:

@@ -149,7 +149,25 @@ int Universe::findCloseStars(const vec3d_t &obs, double mdist,
     return stardb.findCloseStars(obs, mdist, closeStars);
 }
 
+Object *Universe::pickPlanet(System *system, const vec3d_t &obs, const vec3d_t &dir, double when)
+{
+
+    return nullptr;
+}
+
 Object *Universe::pick(const vec3d_t &obs, const vec3d_t &dir, double when)
 {
-    return nullptr;
+    std::vector<const celStar *> closeStars;
+    Object *picked = nullptr;
+
+    findCloseStars(obs, 1.0, closeStars);
+    for (auto star : closeStars)
+    {
+        if (!star->hasSolarSytstem())
+            continue;
+        System *system = star->getSolarSystem();
+        picked = pickPlanet(system, obs, dir, when);
+    }
+
+    return picked;
 }
