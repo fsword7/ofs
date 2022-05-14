@@ -12,6 +12,7 @@
 #include "universe/body.h"
 #include "universe/system.h"
 #include "universe/astro.h"
+#include "scripts/parser.h"
 
 void Universe::init()
 {
@@ -61,6 +62,9 @@ void Universe::init()
     lunar->setRadius(1738.14);
     lunar->setAlbedo(0.136);
 
+    std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
+    Parser::analyze(in);
+    in.close();
 }
 
 System *Universe::createSolarSystem(celStar *star)

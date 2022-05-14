@@ -5,6 +5,7 @@ find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(fmt REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(lua REQUIRED)
 
 set(OFS_CPP_SRCS
     engine/engine.cpp
@@ -38,6 +39,7 @@ set(OFS_CPP_SRCS
     render/vstar.cpp
     render/vvessel.cpp
     render/ztreemgr.cpp
+    scripts/parser.cpp
     universe/astro.cpp
     universe/body.cpp
     universe/constellations.cpp
@@ -78,6 +80,7 @@ set(OFS_H_SRCS
     render/vstar.h
     render/vvessel.h
     render/ztreemgr.h
+    scripts/parser.h
     universe/star.h
     universe/body.h
     universe/constellations.h
