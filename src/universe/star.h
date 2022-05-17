@@ -60,7 +60,7 @@ public:
     inline void setHIPnumber(int val)           { hip = val; }
     inline uint32_t getHIPnumber() const        { return hip; }
 
-    inline bool hasSolarSytstem() const         { return system != nullptr; }
+    inline bool hasSolarSystem() const          { return system != nullptr; }
     inline System *getSolarSystem() const       { return system; }
     inline void setSolarSystem(System *sys)     { system = sys; }
 

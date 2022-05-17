@@ -47,6 +47,7 @@ set(OFS_CPP_SRCS
     universe/star.cpp
     universe/starlib.cpp
     universe/startree.cpp
+    universe/surface.cpp
     universe/system.cpp
     universe/universe.cpp
 )
@@ -89,6 +90,7 @@ set(OFS_H_SRCS
     universe/star.h
     universe/starlib.h
     universe/startree.h
+    universe/surface.h
     universe/system.h
     universe/universe.h
     utils/color.h

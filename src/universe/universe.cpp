@@ -63,7 +63,7 @@ void Universe::init()
     lunar->setAlbedo(0.136);
 
     std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
-    Parser::analyze(in);
+    System::loadSolarSystemObjects(in, *this, "systems");
     in.close();
 }
 
@@ -167,7 +167,7 @@ Object *Universe::pick(const vec3d_t &obs, const vec3d_t &dir, double when)
     findCloseStars(obs, 1.0, closeStars);
     for (auto star : closeStars)
     {
-        if (!star->hasSolarSytstem())
+        if (!star->hasSolarSystem())
             continue;
         System *system = star->getSolarSystem();
         picked = pickPlanet(system, obs, dir, when);

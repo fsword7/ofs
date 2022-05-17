@@ -7,6 +7,7 @@
 
 #include "engine/rigidbody.h"
 #include "universe/frame.h"
+#include "universe/surface.h"
 
 class celStar;
 class celBody;
@@ -108,6 +109,8 @@ private:
 protected:
     color_t color = color_t(0.7f, 0.7f, 0.7f, 1.0f);
     uint32_t knownFlags = 0;
+
+    celSurface surface;
 
     PlanetarySystem *ownSystem = nullptr;
     PlanetarySystem *inSystem = nullptr;

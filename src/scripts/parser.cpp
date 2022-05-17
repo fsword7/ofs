@@ -22,12 +22,127 @@ void Group::addValue(std::string key, Value &val)
     data.insert(hash_t::value_type(key, &val));
 }
 
-Value *Group::getValue(std::string key)
+Value *Group::getValue(cstr_t &key) const
 {
     hash_t::const_iterator iter = data.find(key);
     if (iter == data.end())
         return nullptr;
     return iter->second;
+}
+
+bool Group::getNumber(cstr_t &key, double &val) const
+{
+    Value *v = getValue(key);
+    if (v == nullptr || v->getType() != Value::vtNumber)
+        return false;
+    val = v->getNumber();
+    return true;
+}
+
+bool Group::getNumber(cstr_t &key, float &val) const
+{
+    Value *v = getValue(key);
+    if (v == nullptr || v->getType() != Value::vtNumber)
+        return false;
+    val = v->getNumber();
+    return true;
+}
+
+bool Group::getBoolean(cstr_t &key, bool &val) const
+{
+    Value *v = getValue(key);
+    if (v == nullptr || v->getType() != Value::vtBoolean)
+        return false;
+    val = v->getBoolean();
+    return true;
+}
+
+bool Group::getString(cstr_t &key, str_t &val) const
+{
+    Value *v = getValue(key);
+    if (v == nullptr || v->getType() != Value::vtString)
+        return false;
+    val = v->getString();
+    return true;
+}
+
+bool Group::getVector(cstr_t &key, vec3d_t &val) const
+{
+    Value *v = getValue(key);
+    if (v == nullptr || v->getType() != Value::vtArray)
+        return false;
+
+    Array *arr = v->getArray();
+    if (arr->size() != 3)
+        return false;
+    Value *x = (*arr)[0];
+    Value *y = (*arr)[1];
+    Value *z = (*arr)[2];
+
+    if (x->getType() != Value::vtNumber ||
+        y->getType() != Value::vtNumber ||
+        z->getType() != Value::vtNumber)
+        return false;
+    
+    val = vec3d_t(x->getNumber(), y->getNumber(), z->getNumber());
+
+    return true;
+}
+
+bool Group::getVector(cstr_t &key, vec4d_t &val) const
+{
+    Value *v = getValue(key);
+    if (v == nullptr || v->getType() != Value::vtArray)
+        return false;
+
+    Array *arr = v->getArray();
+    if (arr->size() != 4)
+        return false;
+    Value *x = (*arr)[0];
+    Value *y = (*arr)[1];
+    Value *z = (*arr)[2];
+    Value *w = (*arr)[3];
+
+    if (x->getType() != Value::vtNumber ||
+        y->getType() != Value::vtNumber ||
+        z->getType() != Value::vtNumber ||
+        w->getType() != Value::vtNumber)
+        return false;
+    
+    val = vec4d_t(x->getNumber(), y->getNumber(),
+        z->getNumber(), w->getNumber());
+
+    return true;
+}
+
+bool Group::getPath(cstr_t &key, fs::path &path) const
+{
+    std::string v;
+    if (getString(key, v))
+    {
+        path = v;
+        return true;
+    }
+    return false;
+}
+
+bool Group::getColor(cstr_t &key, color_t &color) const
+{
+    vec4d_t vec4;
+    if (getVector(key, vec4))
+    {
+        color = color_t(vec4.x, vec4.y, vec4.z, vec4.w);
+        return true;
+    }
+
+    vec3d_t vec3;
+    if (getVector(key, vec3))
+    {
+        color = color_t(vec3.x, vec3.y, vec3.z);
+        return true;
+    }
+
+    return false;
 }
 
 // ******** Parser ********
@@ -41,7 +156,7 @@ Parser::Parser(std::istream &in)
 Value *Parser::getValue()
 {
     tokenType token = getNextToken();
-    ValueArray *array;
+    Array *array;
     Group *group;
 
     switch (token)

@@ -74,7 +74,7 @@ void Scene::render(Universe &universe, Player &player)
     {
         const celStar *sun = closeStars[idx];
 
-        if (!sun->hasSolarSytstem())
+        if (!sun->hasSolarSystem())
             continue;
 
         System *system = sun->getSolarSystem();

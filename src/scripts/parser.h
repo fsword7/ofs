@@ -40,6 +40,13 @@ enum tokenType
     tkEndArray
 };
 
+class Value;
+class Group;
+
+typedef std::vector<Value *> Array;
+typedef std::map<std::string, Value *> hash_t;
+using ValueArray = Array;
+
 class Value
 {
 public:
@@ -50,23 +57,27 @@ public:
         vtBoolean   = 2,
         vtString    = 3,
         vtArray     = 4,
-        vtHash      = 5
+        vtGroup     = 5
     };
 
     Value() = default;
     ~Value() = default;
 
-    Value(bool val) : type(vtBoolean) { data.b = val; }
-    Value(double val) :  type(vtNumber) { data.d = val; }
+    Value(bool val) : type(vtBoolean)       { data.b = val; }
+    Value(double val) :  type(vtNumber)     { data.d = val; }
+    Value(Array *array) : type(vtArray)     { data.a = array; }
+    Value(Group *group) : type(vtGroup)     { data.g = group; }
 
     Value(const str_t &val) : type(vtString) { data.s = new std::string(val); }
-
+    
     inline valueType getType() const    { return type; }
     inline bool isNull() const          { return type == vtNull; }
 
     inline double getNumber() const     { assert(type == vtNumber);  return data.d; }
     inline double getBoolean() const    { assert(type == vtBoolean); return data.b; }
     inline str_t getString() const      { assert(type == vtString);  return *data.s; }
+    inline Array *getArray() const      { assert(type == vtArray);   return data.a; }
+    inline Group *getGroup() const      { assert(type == vtGroup);   return data.g; }
 
 private:
     valueType type = vtNull;
@@ -76,11 +87,10 @@ private:
         str_t   *s;
         double  d;
         bool    b;
+        Array  *a;
+        Group  *g;
     } data;
 };
-
-typedef std::vector<Value *> ValueArray;
-typedef std::map<std::string, Value *> hash_t;
 
 class Group
 {
@@ -88,8 +98,18 @@ public:
     Group() = default;
     ~Group();
 
-    Value *getValue(std::string key);
     void addValue(std::string key, Value &val);
+    Value *getValue(cstr_t &key) const;
+
+    bool getNumber(cstr_t &key, double &val) const;
+    bool getNumber(cstr_t &key, float &val) const;
+    bool getBoolean(cstr_t &key, bool &val) const;
+    bool getString(cstr_t &key, str_t &val) const;   
+    bool getVector(cstr_t &key, vec3d_t &val) const;
+    bool getVector(cstr_t &key, vec4d_t &val) const;
+
+    bool getPath(cstr_t &key, fs::path &path) const;
+    bool getColor(cstr_t &key, color_t &color) const;
 
 private:
     hash_t data;
@@ -104,11 +124,13 @@ public:
     tokenType getNextToken();
 
     Value *getValue();
-    ValueArray *getArray();
+    Array *getArray();
     Group *getGroup();
 
     inline std::string getText() const      { return text; }
     inline double getNumber() const         { return value; }
+    inline int getLineNumber() const        { return lineno; }
+    inline tokenType getTokenType() const   { return tkType; }
     inline void pushBack()                  { pushedBack = true; }
 
     static void analyze(std::istream &in);
