@@ -8,6 +8,7 @@
 class celStar;
 class Universe;
 class Parser;
+class Value;
 class Group;
 
 #include "universe/body.h"
@@ -25,9 +26,16 @@ public:
 
     // Loading SSO system file
     static bool logError(const Parser &parser, cstr_t &message);
+    static void initClassifications();
+    static celType getClassification(cstr_t &className);
+    static Object *getFrameCenter(Universe &universe, Group *gFrame, Object *defaultObject);
+    static Frame *createJ2000EclipticFrame(Universe &universe, Group *vFrame, Object *center);
+    static Frame *createJ2000EquatorFrame(Universe &universe, Group *vFrame, Object *center);
+    static Frame *createReferenceFrame(Universe &universe, Group *gFrame, Object *center, Object *body);
+    static Frame *createReferenceFrame(Universe &universe, Value *vFrame, Object *center, Object *body);
     static void setSurface(celSurface &surface, Group *objData);
     static celBody *createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem,
-        Group *objData);
+        Universe &universe, Group *objData);
     static bool loadSolarSystemObjects(std::istream &in, Universe &universe, const fs::path &path);
 
 private:

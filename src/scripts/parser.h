@@ -44,7 +44,7 @@ class Value;
 class Group;
 
 typedef std::vector<Value *> Array;
-typedef std::map<std::string, Value *> hash_t;
+typedef std::map<std::string, Value *, CompareIgnoreCasePredicate> hash_t;
 using ValueArray = Array;
 
 class Value

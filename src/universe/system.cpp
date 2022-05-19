@@ -67,6 +67,31 @@ bool System::logError(const Parser &parser, cstr_t &message)
     return false;
 }
 
+typedef std::map<std::string, celType, CompareIgnoreCasePredicate> classificationTable;
+static classificationTable classifications;
+
+void System::initClassifications()
+{
+    // Build classification table
+    classifications["planet"] = celType::cbPlanet;
+    classifications["dwarfplanet"] = celType::cbDwarfPlanet;
+    classifications["moon"] = celType::cbMoon;
+    classifications["submoon"] = celType::cbSubmoon;
+    classifications["asteroid"] = celType::cbAsteroid;
+    classifications["comet"] = celType::cbComet;
+}
+
+celType System::getClassification(cstr_t &className)
+{
+    if (classifications.empty())
+        initClassifications();
+    
+    classificationTable::iterator iter = classifications.find(className);
+    if (iter == classifications.end())
+        return celType::cbUnknown;
+    return iter->second;
+}
+
 void System::setSurface(celSurface &surface, Group *objData)
 {
 
@@ -77,9 +102,78 @@ void System::setSurface(celSurface &surface, Group *objData)
 
 }
 
-celBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem, Group *objData)
+Object *System::getFrameCenter(Universe &universe, Group *gFrame, Object *defaultObject)
 {
-    celBody *body = new celBody(pSystem, name, cbUnknown);
+    std::string centerName;
+    if (!gFrame->getString("Center", centerName))
+        return defaultObject;
+    
+    Object *centerObject = universe.findPath(centerName);
+    if (centerObject == nullptr)
+        return nullptr;
+    return centerObject;
+}
+
+Frame *System::createJ2000EclipticFrame(Universe &universe, Group *gFrame, Object *defaultCenter)
+{
+    Object *centerObject = getFrameCenter(universe, gFrame, defaultCenter);
+    if (centerObject == nullptr)
+        return nullptr;
+
+    return new J2000EclipticFrame(centerObject);
+}
+
+Frame *System::createJ2000EquatorFrame(Universe &universe, Group *gFrame, Object *defaultCenter)
+{
+    Object *centerObject = getFrameCenter(universe, gFrame, defaultCenter);
+    if (centerObject == nullptr)
+        return nullptr;
+
+    return new J2000EquatorFrame(centerObject);
+}
+
+Frame *System::createReferenceFrame(Universe &universe, Group *gFrame, Object *center, Object *body)
+{
+    Value *value = nullptr;
+
+    if (value = gFrame->getValue("EclipticJ2000"))
+    {
+        if (value->getType() != Value::vtGroup)
+            return nullptr;
+
+        return createJ2000EclipticFrame(universe, value->getGroup(), center);
+    }
+
+    if (value = gFrame->getValue("EquatorJ2000"))
+    {
+        if (value->getType() != Value::vtGroup)
+            return nullptr;
+
+        return createJ2000EquatorFrame(universe, value->getGroup(), center);
+    }
+
+    return nullptr;
+}
+
+Frame *System::createReferenceFrame(Universe &universe, Value *vFrame, Object *center, Object *body)
+{
+    if (vFrame->getType() != Value::vtGroup)
+    {
+        // logError(parser, "Bad frame definition");
+        return nullptr;
+    }
+    return createReferenceFrame(universe, vFrame->getGroup(), center, body);
+}
+
+celBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem, Universe &universe, Group *objData)
+{
+    // Determine body classification first
+    std::string className;
+    celType bodyType = celType::cbUnknown;
+    if (objData->getString("Class", className));
+        bodyType = getClassification(className);
+
+    celBody *body = new celBody(pSystem, name, bodyType);
 
 
     double val;
@@ -93,6 +187,33 @@ celBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSyste
     celSurface surface;
     setSurface(surface, objData);
     // body->setSurface(surface);
+
+    Frame *orbitFrame = nullptr;
+    Frame *bodyFrame = nullptr;
+    Orbit *orbit = nullptr;
+    Object *parent = nullptr;
+
+    // Default timeline without limits
+    double beginning = -std::numeric_limits<double>::infinity();
+    double ending = std::numeric_limits<double>::infinity();
+
+    // Get the object's orbit reference frame
+    Value *vOrbitFrame = objData->getValue("OrbitFrame");
+    if (vOrbitFrame != nullptr)
+    {
+        auto frame = createReferenceFrame(universe, vOrbitFrame, parent, body);
+        if (frame != nullptr)
+            orbitFrame = frame;
+    }
+
+    // the object's body frame
+    Value *vBodyFrame = objData->getValue("BodyFrame");
+    if (vBodyFrame != nullptr)
+    {
+        auto frame = createReferenceFrame(universe, vBodyFrame, parent, body);
+        if (frame != nullptr)
+            bodyFrame = frame;
+    }
 
     return nullptr;
 }
@@ -191,7 +312,7 @@ bool System::loadSolarSystemObjects(std::istream &in, Universe &universe, const 
             continue;
         }
 
-        celBody *body = createBody2(primaryName, celType::cbUnknown, pSystem, objData);
+        celBody *body = createBody2(primaryName, celType::cbUnknown, pSystem, universe, objData);
 
         // All done, delete all object definitions
         delete group;

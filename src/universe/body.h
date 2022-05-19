@@ -48,6 +48,7 @@ enum celType
     cbPlanet,
     cbDwarfPlanet,
     cbMoon,
+    cbSubmoon,
     cbAsteroid,
     cbComet
 };
