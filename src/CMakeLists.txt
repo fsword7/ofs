@@ -50,6 +50,7 @@ set(OFS_CPP_SRCS
     universe/surface.cpp
     universe/system.cpp
     universe/universe.cpp
+    utils/logger.cpp
     utils/string.cpp
 )
 
@@ -95,6 +96,7 @@ set(OFS_H_SRCS
     universe/system.h
     universe/universe.h
     utils/color.h
+    utils/logger.h
     utils/string.h
     utils/tree.h
 )
