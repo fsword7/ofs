@@ -13,7 +13,7 @@
 
 void sdlCoreApp::init()
 {
-    Logger::create(Logger::logVerbose);
+    Logger::create(Logger::logVerbose, "ofs.log");
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -32,6 +32,7 @@ void sdlCoreApp::init()
 void sdlCoreApp::cleanup()
 {
     SDL_Quit();
+    Logger::destroyLogger();
 }
 
 void sdlCoreApp::processKeyEvent(SDL_KeyboardEvent *key, bool down)

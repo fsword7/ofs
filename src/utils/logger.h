@@ -5,14 +5,16 @@
 
 #pragma once
 
-#include <iosfwd>
+#include <iostream>
+#include <fstream>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
 class Logger
 {
 public:
-    using logStream = std::basic_ostream<char>;
+    using outStream = std::basic_ostream<char>;
+    using logStream = std::basic_ofstream<char>;
 
     enum levelType
     {
@@ -28,13 +30,15 @@ public:
     : outLog(std::clog), outError(std::cerr)
     { }
 
-    Logger(levelType logType, logStream &log, logStream &err)
+    Logger(levelType logType, outStream &log, outStream &err)
     : level(logType), outLog(log), outError(err)
     { }
 
-    ~Logger() = default;
+    Logger(levelType logType, const fs::path &logName);
+    ~Logger();
 
-    static Logger *create(levelType logType, logStream &log, logStream &err);
+    static Logger *create(levelType type, const fs::path &logName);
+    static Logger *create(levelType logType, outStream &log, outStream &err);
     static Logger *create(levelType logType);
 
     static void destroyLogger()     { delete Logger::logger; }
@@ -91,6 +95,7 @@ public:
 
 private:
     levelType level = logInfo;
-    logStream &outLog;
-    logStream &outError;
+    mutable logStream outLogFile;
+    outStream &outLog;
+    outStream &outError;
 };
