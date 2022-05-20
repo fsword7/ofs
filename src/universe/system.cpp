@@ -110,7 +110,11 @@ Object *System::getFrameCenter(Universe &universe, Group *gFrame, Object *defaul
     
     Object *centerObject = universe.findPath(centerName);
     if (centerObject == nullptr)
+    {
+        Logger::getLogger()->error("Bad center definition");
         return nullptr;
+    }
+
     return centerObject;
 }
 
@@ -118,7 +122,10 @@ Frame *System::createJ2000EclipticFrame(Universe &universe, Group *gFrame, Objec
 {
     Object *centerObject = getFrameCenter(universe, gFrame, defaultCenter);
     if (centerObject == nullptr)
+    {
+        Logger::getLogger()->error("Bad J2000 Ecliptic frame definition");
         return nullptr;
+    }
 
     return new J2000EclipticFrame(centerObject);
 }
@@ -127,7 +134,10 @@ Frame *System::createJ2000EquatorFrame(Universe &universe, Group *gFrame, Object
 {
     Object *centerObject = getFrameCenter(universe, gFrame, defaultCenter);
     if (centerObject == nullptr)
+    {
+        Logger::getLogger()->error("Bad J2000 Equator frame definition");
         return nullptr;
+    }
 
     return new J2000EquatorFrame(centerObject);
 }
@@ -139,7 +149,10 @@ Frame *System::createReferenceFrame(Universe &universe, Group *gFrame, Object *c
     if (value = gFrame->getValue("EclipticJ2000"))
     {
         if (value->getType() != Value::vtGroup)
+        {
+            Logger::getLogger()->error("Bad J2000 Ecliptic reference frame definition");
             return nullptr;
+        }
 
         return createJ2000EclipticFrame(universe, value->getGroup(), center);
     }
@@ -147,7 +160,10 @@ Frame *System::createReferenceFrame(Universe &universe, Group *gFrame, Object *c
     if (value = gFrame->getValue("EquatorJ2000"))
     {
         if (value->getType() != Value::vtGroup)
+        {
+            Logger::getLogger()->error("Bad J2000 Equator reference frame definition");
             return nullptr;
+        }
 
         return createJ2000EquatorFrame(universe, value->getGroup(), center);
     }
@@ -159,9 +175,10 @@ Frame *System::createReferenceFrame(Universe &universe, Value *vFrame, Object *c
 {
     if (vFrame->getType() != Value::vtGroup)
     {
-        // logError(parser, "Bad frame definition");
+        Logger::getLogger()->error("Bad reference frame definition");
         return nullptr;
     }
+
     return createReferenceFrame(universe, vFrame->getGroup(), center, body);
 }
 
