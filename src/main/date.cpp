@@ -77,7 +77,7 @@ double Date::getJulian() const
 
 str_t Date::getString() const
 {
-    return fmt::sprintf("%04d %s %02d %02d:%02d:%02d %s",
+    return fmt::format("{:04d} {} {:02d} {:02d}:{:02d}:{:02d} {}",
         year, monthList[month-1], day, hour, minute, int(second), tzName);
 }
 

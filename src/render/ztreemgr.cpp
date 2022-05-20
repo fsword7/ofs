@@ -29,7 +29,7 @@ zTreeManager *zTreeManager::create(const fs::path &pname, cstr_t &tname)
 
 bool zTreeManager::open(const fs::path &fname)
 {
-    fmt::printf("Opening file %s...\n", fname.string());
+    Logger::getLogger()->info("Opening file {}...\n", fname.string());
     zfile.open(fname.c_str(), std::ios::in|std::ios::binary);
     if (!zfile.is_open())
         return false;
@@ -37,7 +37,7 @@ bool zTreeManager::open(const fs::path &fname)
     zfile.seekg(0, zfile.end);
     auto fileSize = zfile.tellg();
     zfile.seekg(0, zfile.beg);
-    fmt::printf("File length = %d bytes\n", fileSize);
+    Logger::getLogger()->info("File length = {} bytes\n", fileSize);
 
     zfile.read((char *)&hdr, sizeof(hdr));
     if (zfile.fail())
@@ -64,7 +64,7 @@ bool zTreeManager::open(const fs::path &fname)
         return false;
     }
 
-    fmt::printf("Succesfully opened file\n");
+    Logger::getLogger()->info("Succesfully opened file\n");
     return true;
 }
 

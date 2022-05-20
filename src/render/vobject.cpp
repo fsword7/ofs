@@ -44,7 +44,7 @@ vObject *Scene::addVisualObject(const Object &object)
 {
     vObject *vobj = nullptr;
 
-    fmt::printf("Adding visual object: %s\n",
+    Logger::getLogger()->verbose("Adding visual object: {}\n",
         object.getsName());
     vobj = vObject::create(object, *this);
     vObjectList.push_back(vobj);

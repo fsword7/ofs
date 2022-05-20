@@ -29,7 +29,7 @@ celBody *System::createBody(cstr_t &name, PlanetarySystem *system,
     if (parentObject == nullptr)
         parentObject = system->getStar();
 
-    fmt::printf("Body %s -> %s\n", name, parentObject->getsName());
+    Logger::getLogger()->info("Body {} -> {}\n", name, parentObject->getsName());
 
     FrameTree *parentFrame = system->getSystemTree();
     Frame *defaultOrbitFrame = parentFrame->getDefaultFrame();
@@ -49,9 +49,9 @@ celBody *System::createBody(cstr_t &name, PlanetarySystem *system,
     else
         bodyFrame = defaultBodyFrame;
 
-    fmt::printf("Orbit Frame: %s (Center: %s)\n",
+    Logger::getLogger()->info("Orbit Frame: {} (Center: {})\n",
         orbitFrame->getsName(), orbitFrame->getCenter()->getsName());
-    fmt::printf("Body Frame: %s (Center: %s)\n",
+    Logger::getLogger()->info("Body Frame: {} (Center: {})\n",
         bodyFrame->getsName(), bodyFrame->getCenter()->getsName());
     
     body->setOrbitFrame(orbitFrame);
@@ -62,7 +62,7 @@ celBody *System::createBody(cstr_t &name, PlanetarySystem *system,
 
 bool System::logError(const Parser &parser, cstr_t &message)
 {
-    fmt::printf("Error in .sso file (line %d): %s\n",
+    Logger::getLogger()->error("Error in .sso file (line {}): {}\n",
         parser.getLineNumber(), message);
     return false;
 }
@@ -286,7 +286,7 @@ bool System::loadSolarSystemObjects(std::istream &in, Universe &universe, const 
         PlanetarySystem *pSystem = nullptr;
         std::string primaryName = nameList.front();
 
-        fmt::printf("Body: %s Parent: %s Object: %s\n", bodyName, parentName,
+        Logger::getLogger()->info("Body: {} Parent: {} Object: {}\n", bodyName, parentName,
             parent != nullptr ? parent->getsName() : "<Body not found>");
 
         if (parent->getType() == Object::objCelestialStar)
@@ -301,13 +301,13 @@ bool System::loadSolarSystemObjects(std::istream &in, Universe &universe, const 
             pSystem = body->createPlanetarySystem();
         }
         else
-            return logError(parser, fmt::sprintf("Parent celestial body '%s' of '%s' not found",
+            return logError(parser, fmt::format("Parent celestial body '{}' of '{}' not found",
                 parentName, primaryName));
 
         celBody *existingBody = pSystem->find(primaryName);
         if (existingBody != nullptr)
         {
-            logError(parser, fmt::sprintf("Body '%s' already created", primaryName));
+            logError(parser, fmt::format("Body '{}' already created", primaryName));
             delete objData;
             continue;
         }

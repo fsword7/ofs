@@ -26,20 +26,20 @@ bool StarDatabase::loadXHIPData(const fs::path &pname)
 
     if (!mdata.is_open())
     {
-        fmt::printf("File '%s': %s\n", mfname.string(), strerror(errno));
+        Logger::getLogger()->error("File '{}': {}\n", mfname.string(), strerror(errno));
         return false;
     }
 
     if (!pdata.is_open())
     {
-        fmt::printf("File '%s': %s\n", pfname.string(), strerror(errno));
+        Logger::getLogger()->error("File '{}': {}\n", pfname.string(), strerror(errno));
         pdata.close();
         return false;
     }
 
     if (!bdata.is_open())
     {
-        fmt::printf("File '%s': %s\n", bfname.string(), strerror(errno));
+        Logger::getLogger()->error("File '{}': {}\n", bfname.string(), strerror(errno));
         mdata.close();
         pdata.close();
         return false;
@@ -91,7 +91,7 @@ bool StarDatabase::loadXHIPData(const fs::path &pname)
         sscanf(bcells[XHIP_B_nHIP].c_str(), "%d", &bhip);
         if (hip != phip || hip != bhip)
         {
-            fmt::printf("HIP %d - data mismatch (%d, %d, %d)\n", hip, hip, phip, bhip);
+            Logger::getLogger()->error("HIP {} - data mismatch ({}, {}, {})\n", hip, hip, phip, bhip);
             break;
         }
 
@@ -135,8 +135,8 @@ bool StarDatabase::loadXHIPData(const fs::path &pname)
     pdata.close();
     bdata.close();
 
-    fmt::printf("Total %d stars with negative parallex.\n", cnplx);
-    fmt::printf("Total %d stars with zero parallel.\n", czplx); 
+    Logger::getLogger()->info("Total {} stars with negative parallex.\n", cnplx);
+    Logger::getLogger()->info("Total {} stars with zero parallel.\n", czplx); 
 
     finish();
     
@@ -157,13 +157,13 @@ void StarDatabase::initOctreeData(std::vector<celStar *> stars)
     for (int idx = 0; idx < uStars.size(); idx++)
         starTree->insert(*uStars[idx], STARTREE_ROOTSIZE);
 
-    fmt::printf("Star database has %d nodes and %d objects\n",
+    Logger::getLogger()->info("Star database has {} nodes and {} objects\n",
         starTree->countNodes(), starTree->countObjects());
 }
 
 void StarDatabase::finish()
 {
-    fmt::printf("Total star count: %d\n", uStars.size());
+    Logger::getLogger()->info("Total star count: {}\n", uStars.size());
 
     initOctreeData(uStars);
 

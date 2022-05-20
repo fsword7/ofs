@@ -15,7 +15,7 @@ SDL_Window *Context::createWindow(cchar_t *appName, int width, int height)
 
     if (window == nullptr)
     {
-        fmt::printf("SDL2 Window can't be created: %s\n", SDL_GetError());
+        Logger::getLogger()->fatal("SDL2 Window can't be created: {}\n", SDL_GetError());
         abort();
     }
     SDL_ShowWindow(window);
@@ -49,12 +49,13 @@ void Context::init(int w, int h)
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {
-        fmt::printf("GLEW error: %s\n", glewGetErrorString(err));
+        Logger::getLogger()->fatal("GLEW error: {}\n",
+            glewGetErrorString(err));
         abort();
     }
 
-    fmt::printf("Using GLEW version: %s\n", glewGetString(GLEW_VERSION));
-    fmt::printf("    OpenGL version: %s\n", glGetString(GL_VERSION));
+    Logger::getLogger()->info("Using GLEW version: {}\n", glewGetString(GLEW_VERSION));
+    Logger::getLogger()->info("    OpenGL version: {}\n", glGetString(GL_VERSION));
 
     resize(w, h);
 
@@ -70,7 +71,7 @@ void Context::resize(int w, int h)
     // Update OpenGL coordinates
     glViewport(0, 0, width, height);
 
-    fmt::printf("Resize: width %d height %d aspect %lf\n",
+    Logger::getLogger()->info("Resize: width {} height {} aspect {}\n",
         width, height, aspect);
 }
 

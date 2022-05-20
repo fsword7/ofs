@@ -35,7 +35,7 @@ void Scene::initConstellations(Universe &universe)
     }
 
     // std::cout << "Total " << asterismLines << " asterism lines\n" << std::flush;
-    fmt::printf("Total %d asterism lines\n", asterismLines);
+    Logger::getLogger()->info("Total {} asterism lines\n", asterismLines);
 
     pgmAsterism->release();
 }
@@ -61,7 +61,7 @@ void Scene::renderConstellations(Universe &universe, const Player &player)
     vertices = reinterpret_cast<VertexLine *>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
     if (vertices == nullptr)
     {
-        fmt::printf("Can't render constellations - aborted (error code: %d)\n",
+        Logger::getLogger()->fatal("Can't render constellations - aborted (error code: {})\n",
             glGetError());
         vbufAsterism->release();
         pgmAsterism->release();
@@ -78,9 +78,9 @@ void Scene::renderConstellations(Universe &universe, const Player &player)
             const celStar *star2 = starlib.getHIPstar(aster->hipList[sidx+1]);
 
             if (star1 == nullptr)
-                fmt::printf("HIP %d not found in catalogue\n", aster->hipList[sidx]);
+                Logger::getLogger()->warn("HIP {} not found in catalogue\n", aster->hipList[sidx]);
             if (star2 == nullptr)
-                fmt::printf("HIP %d not found in catalogue\n", aster->hipList[sidx+1]);
+                Logger::getLogger()->warn("HIP {} not found in catalogue\n", aster->hipList[sidx+1]);
             if (star1 == nullptr || star2 == nullptr)
                 continue;
 
@@ -95,7 +95,7 @@ void Scene::renderConstellations(Universe &universe, const Player &player)
 
     if (!glUnmapBuffer(GL_ARRAY_BUFFER))
     {
-        fmt::printf("Data buffer corruption - aborted (error code: %d)\n", glGetError());
+        Logger::getLogger()->fatal("Data buffer corruption - aborted (error code: {})\n", glGetError());
         vbufAsterism->release();
         pgmAsterism->release();
         return;

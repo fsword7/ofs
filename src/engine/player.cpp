@@ -128,7 +128,7 @@ void Player::setFrame(PlayerFrame::coordType cs, Object *center, Object *target)
     PlayerFrame *nFrame = new PlayerFrame(cs, center, target);
     if (nFrame == nullptr)
     {
-        fmt::printf("Failed to set new player framme - aborted\n");
+        Logger::getLogger()->fatal("Failed to set new player framme - aborted\n");
         return;
     }
 

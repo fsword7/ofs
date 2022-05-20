@@ -173,7 +173,7 @@ SurfaceManager::SurfaceManager(Context &ctx, const Object &object)
         str_t starName = system->getStar()->getsName();
         str_t bodyName = body->getsName();
 
-        surfaceFolder = fmt::sprintf("systems/%s/%s/Orbiter",
+        surfaceFolder = fmt::format("systems/{}/{}/Orbiter",
             starName, bodyName);
         break;
     }

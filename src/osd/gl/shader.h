@@ -90,7 +90,7 @@ public:
     vec3Uniform(GLuint id, cstr_t &name)
     {
         slot = glGetUniformLocation(id, name.c_str());
-        fmt::printf("Uniform slot = %d (program ID %d): %s\n", slot, id, name);
+        Logger::getLogger()->verbose("Uniform slot = {} (program ID {}): {}\n", slot, id, name);
     }
 
     vec3Uniform &operator = (const vec3f_t &val)
@@ -230,7 +230,7 @@ public:
 protected:
     std::string strLightProperty(int idx, cstr_t &name)
     {
-        return fmt::sprintf("lights[%d].%s", idx, name);
+        return fmt::format("lights[{}].{}", idx, name);
     }
 
 private:

@@ -9,12 +9,18 @@
 #include "engine/view.h"
 #include "main/sdl/app.h"
 
+#include <fmt/printf.h>
+
 void sdlCoreApp::init()
 {
+    Logger::create(Logger::logVerbose);
+
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
-        fmt::printf("OFS: Unable to initialize SDL2 inteface: %s\n",
+        Logger::getLogger()->fatal("OFS: Unable to initialize SDL2 interface: {}\n",
             SDL_GetError());
+        // fmt::printf("OFS: Unable to initialize SDL2 inteface: %s\n",
+        //     SDL_GetError());
         abort();
     }
 

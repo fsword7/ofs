@@ -24,7 +24,7 @@
 #include <thread>
 #include <mutex>
 
-#include <fmt/printf.h>
+// #include <fmt/printf.h>
 
 typedef const char          cchar_t;
 typedef std::string         str_t;
@@ -39,5 +39,6 @@ namespace fs = std::filesystem;
 
 #include "main/date.h"
 #include "main/math.h"
+#include "utils/logger.h"
 #include "utils/color.h"
 #include "utils/string.h"

@@ -17,7 +17,7 @@ bool StarColors::load(const fs::path &fname)
 
     if (!data.is_open())
     {
-        fmt::printf("I/O error: file: %s: %s\n",
+        Logger::getLogger()->error("I/O error: file: {}: {}\n",
             fname.string(), strerror(errno));
         return false;
     }
@@ -64,9 +64,9 @@ bool StarColors::load(const fs::path &fname)
     maxTemp = temps[temps.size()-1];
     scaleTemp = (maxTemp - minTemp) / (temps.size()-1);
 
-    fmt::printf("Total %d black body colors (2deg)\n", colors2.size());
-    fmt::printf("Total %d black body colors (10deg)\n", colors10.size());
-    fmt::printf("Range temperature: %d to %d (scale: %lf)\n",
+    Logger::getLogger()->info("Total {} black body colors (2deg)\n", colors2.size());
+    Logger::getLogger()->info("Total {} black body colors (10deg)\n", colors10.size());
+    Logger::getLogger()->info("Range temperature: {} to {} (scale: {})\n",
         minTemp, maxTemp, scaleTemp);
     return true;
 }

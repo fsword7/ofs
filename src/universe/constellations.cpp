@@ -17,7 +17,7 @@ bool Constellations::load(const fs::path &fname)
 
     if (!data.is_open())
     {
-        fmt::printf("File %s: %s\n", fname.string(), strerror(errno));
+        Logger::getLogger()->error("File {}: {}\n", fname.string(), strerror(errno));
         return false;
     }
 
@@ -59,7 +59,7 @@ bool Constellations::load(const fs::path &fname)
     }
 
     data.close();
-    fmt::printf("Total %d constellations\n", nAsterisms);
+    Logger::getLogger()->info("Total {} constellations\n", nAsterisms);
 
     return true;
 }

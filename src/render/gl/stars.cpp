@@ -36,7 +36,7 @@ void StarVertex::start()
     vertices = reinterpret_cast<starVertex *>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
     if (vertices == nullptr)
     {
-        fmt::printf("Can't render stars - aborted (error code: %d)\n",
+        Logger::getLogger()->fatal("Can't render stars - aborted (error code: {})\n",
             glGetError());
         pgm->release();
         vbuf->release();
@@ -56,7 +56,7 @@ void StarVertex::render()
 {
     if (!glUnmapBuffer(GL_ARRAY_BUFFER))
     {
-        fmt::printf("Stars: buffer corrupted - aborted (error code: %d)\n", glGetError());
+        Logger::getLogger()->fatal("Stars: buffer corrupted - aborted (error code: {})\n", glGetError());
         return;
     }
     vertices = nullptr;

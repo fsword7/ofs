@@ -132,15 +132,15 @@ void ShaderSource::dump(cstr_t &source)
         if (newLine == true)
         {
             lineNumber++;
-            fmt::printf("%04d: ", lineNumber);
+            Logger::getLogger()->verbose("{:04d}: ", lineNumber);
             newLine = false;
         }
 
-        fmt::printf("%c", source[idx]);
+        Logger::getLogger()->verbose("{}", source[idx]);
         if (source[idx] == '\n')
             newLine = true;
     }
-    fmt::printf("\n\n");
+    Logger::getLogger()->verbose("\n\n");
 }
 
 cstr_t ShaderSource::getLogInfo()
@@ -199,7 +199,7 @@ ShaderStatus ShaderSource::compile(const std::vector<str_t> &source)
 
             dsrc[idx] += ch;
         }
-        fmt::printf("After include parser: \n");
+        Logger::getLogger()->verbose("After include parser: \n");
         dump(dsrc[idx]);
         src[idx] = dsrc[idx].c_str();
     }
@@ -231,7 +231,7 @@ ShaderStatus ShaderSource::create(ShaderType type, const std::vector<str_t>& sou
     if (status != shrSuccessful)
     {
         log = newShader->getLogInfo();
-        fmt::printf("Compiling shader source error:\n\n%s\n", log);
+        Logger::getLogger()->verbose("Compiling shader source error:\n\n{}\n", log);
         delete newShader;
         return status;
     }
@@ -290,7 +290,7 @@ ShaderStatus ShaderProgram::link()
     if (status == GL_FALSE)
     {
         log = getLogInfo();
-        fmt::printf("Linking shader program error:\n\n%s\n", log);
+        Logger::getLogger()->verbose("Linking shader program error:\n\n{}\n", log);
         return shrLinkError;
     }
 
@@ -453,10 +453,10 @@ void ShaderProgram::listUniforms()
         GLint location = glGetUniformLocation(id, name);
 
         if (size > 1)
-            fmt::printf("Uniform %d (loc=%d):\t%d %20s %-20s <Size: %d>\n",
+            Logger::getLogger()->verbose("Uniform %d (loc=%d):\t%d %20s %-20s <Size: %d>\n",
                 idx, location, type, "-", name, size);
         else
-            fmt::printf("Uniform %d (loc=%d):\t%d %20s %-20s\n",
+            Logger::getLogger()->verbose("Uniform %d (loc=%d):\t%d %20s %-20s\n",
                 idx, location, type, "-", name);   
     }
 }
@@ -516,8 +516,8 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name)
         if (programs[idx]->getName() == name)
             return programs[idx];
 
-    auto vsName = fmt::sprintf("../shaders/%s.vs", name);
-    auto fsName = fmt::sprintf("../shaders/%s.fs", name);
+    auto vsName = fmt::format("../shaders/{}.vs", name);
+    auto fsName = fmt::format("../shaders/{}.fs", name);
 
     // fs::path p = fs::current_path();
     // std::cout << "Current path: " << p << std::endl;
@@ -531,7 +531,7 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name)
         std::ifstream vsFile(vsName);
         if (!vsFile.good())
         {
-            fmt::printf("Failed to open '%s' file: '%s'\n",
+            Logger::getLogger()->verbose("Failed to open '%s' file: '%s'\n",
                 vsName, strerror(errno));
             return nullptr;
         }
@@ -547,7 +547,7 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name)
         std::ifstream fsFile(fsName);
         if (!fsFile.good())
         {
-            fmt::printf("Failed to open '%s' file: '%s'\n",
+            Logger::getLogger()->verbose("Failed to open '%s' file: '%s'\n",
                 fsName, strerror(errno));
             return nullptr;
         }
