@@ -38,7 +38,7 @@ void Engine::displayPlanetocentric(double lng, double lat, double alt)
     double dlng = abs(glm::degrees(lng));
     double dlat = abs(glm::degrees(lat));
 
-    str_t locObject = fmt::format("Latitude/Longiude: {}{} {}{}",
+    str_t locObject = fmt::format("Latitude/Longiude: {:.6f}{} {:.6f}{}",
         dlat, latHemi, dlng, lngHemi);
     overlay->print(locObject);
 }
@@ -53,7 +53,7 @@ void Engine::displayPlanetInfo()
     overlay->print(focus->getsName());
 
     overlay->setFont(textFont);
-    str_t distObject = fmt::format("Distance: {}", glm::length(view));
+    str_t distObject = fmt::format("Distance: {:.4f}", glm::length(view));
     str_t radiusObject = fmt::format("Radius: {}", focus->getRadius());
 
     overlay->print(distObject);
