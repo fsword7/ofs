@@ -33,6 +33,8 @@ public:
     static Frame *createJ2000EquatorFrame(Universe &universe, Group *vFrame, Object *center);
     static Frame *createReferenceFrame(Universe &universe, Group *gFrame, Object *center, Object *body);
     static Frame *createReferenceFrame(Universe &universe, Value *vFrame, Object *center, Object *body);
+    static Orbit *createOrbit(Object *centerObject, Group *objData, const fs::path &path);
+    static Rotation *createRotation(Object *centerObject, Group *objData, const fs::path &path);
     static void setSurface(celSurface &surface, Group *objData);
     static celBody *createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem,
         Universe &universe, Group *objData);

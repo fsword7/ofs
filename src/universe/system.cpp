@@ -9,6 +9,8 @@
 #include "universe/frame.h"
 #include "universe/system.h"
 #include "universe/universe.h"
+#include "ephem/vsop87.h"
+#include "ephem/rotation.h"
 #include "scripts/parser.h"
 
 // ******** Solar System ********
@@ -182,6 +184,38 @@ Frame *System::createReferenceFrame(Universe &universe, Value *vFrame, Object *c
     return createReferenceFrame(universe, vFrame->getGroup(), center, body);
 }
 
+Orbit *System::createOrbit(Object *centerObject, Group *objData, const fs::path &path)
+{
+    Orbit *orbit = nullptr;
+
+    std::string orbitName;
+    if (objData->getString("Orbit", orbitName))
+    {
+        orbit = VSOP87Orbit::create(orbitName);
+        if (orbit != nullptr)
+            return orbit;
+        Logger::getLogger()->error("Can't find VSOP07 orbit name '{}'\n", orbitName);
+    }
+
+    return nullptr;
+}
+
+Rotation *System::createRotation(Object *centerObject, Group *objData, const fs::path &path)
+{
+    Rotation *rotation = nullptr;
+
+    std::string rotationName;
+    if (objData->getString("Rotation", rotationName))
+    {
+        rotation = Rotation::create(rotationName);
+        if (rotation != nullptr)
+            return rotation;
+        Logger::getLogger()->error("Can't find rotation name '{}'\n", rotationName);
+    }
+
+    return nullptr;
+}
+
 celBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem, Universe &universe, Group *objData)
 {
     // Determine body classification first
@@ -208,6 +242,7 @@ celBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSyste
     Frame *orbitFrame = nullptr;
     Frame *bodyFrame = nullptr;
     Orbit *orbit = nullptr;
+    Rotation *rotation = nullptr;
     Object *parent = nullptr;
 
     // Default timeline without limits
@@ -232,7 +267,15 @@ celBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSyste
             bodyFrame = frame;
     }
 
-    return nullptr;
+    orbit = createOrbit(orbitFrame->getCenter(), objData, "");
+    rotation = createRotation(bodyFrame->getCenter(), objData, "");
+
+    body->setOrbitFrame(orbitFrame);
+    body->setBodyFrame(bodyFrame);
+    body->setOrbit(orbit);
+    body->setRotation(rotation);
+
+    return body;
 }
 
 bool System::loadSolarSystemObjects(std::istream &in, Universe &universe, const fs::path &path)
