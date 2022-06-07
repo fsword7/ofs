@@ -64,6 +64,12 @@ public:
     vec3d_t toUniversal(const vec3d_t &lpos, double tjd);
     quatd_t toUniversal(const quatd_t &lrot, double tjd);
 
+    vec3d_t fromUniversalLocal(const vec3d_t &upos, double tjd);
+    quatd_t fromUniversalLocal(const quatd_t &urot, double tjd);
+
+    vec3d_t toUniversalLocal(const vec3d_t &lpos, double tjd);
+    quatd_t toUniversalLocal(const quatd_t &lrot, double tjd);
+
     static Frame *create(cstr_t &frameName, Object *bodyObject, Object *parentObject);
 
 private:

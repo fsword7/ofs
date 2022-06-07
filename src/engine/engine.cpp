@@ -48,13 +48,13 @@ void Engine::start()
     // player->follow(planet, Player::fwHelioSync);
     // player->move(planet, planet->getRadius() * 6.0, Player::goBackHelioSync);
     // player->follow(planet, Player::fwHelioSync);
-    player->move(planet, planet->getRadius() * 6.0, Player::goBodyFixed);
-    player->follow(planet, Player::fwBodyFixed);
+    // player->move(planet, planet->getRadius() * 6.0, Player::goBodyFixed);
+    // player->follow(planet, Player::fwBodyFixed);
     // player->move(planet, planet->getRadius() * 6.0, Player::goEquartorial);   
     // player->follow(planet, Player::fwEquatorial);
-    // player->move(planet, planet->getRadius() * 6.0, Player::goEcliptic);
-    // player->follow(planet, Player::fwEcliptic);
-    // player->look(planet);
+    player->move(planet, planet->getRadius() * 6.0, Player::goEcliptic);
+    player->follow(planet, Player::fwEcliptic);
+    player->look(planet);
 
     // player->move(lunar, lunar->getRadius() * 6.0, Player::goBodyFixed);
     // player->follow(lunar, Player::fwBodyFixed);

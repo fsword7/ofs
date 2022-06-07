@@ -191,11 +191,15 @@ void CoreApp::keyEntered(char32_t ch, int modifiers)
 {
     switch (ch)
     {
-        case L'k':
+        case L'j':  // Reset time warp scale
+            engine->setTimeWarp(1);
+            break;
+
+        case L'k':  // Increase time warp scale
             engine->setTimeWarp(engine->getTimeWarp() * 2.0);
             break;
 
-        case L'l':
+        case L'l':  // Decrease time warp scale
             engine->setTimeWarp(engine->getTimeWarp() / 2.0);
             break;
     }

@@ -119,21 +119,23 @@ public:
         return (idx >= 0 && idx < cameras.size() ? cameras[idx] : nullptr);
     }
 
-    inline Object *getCenter() const        { return frame != nullptr ? frame->getCenter() : nullptr; }
-    inline vec3d_t getuPosition() const     { return upos; }
-    inline quatd_t getuOrientation() const  { return urot; }
-    inline vec3d_t getlPosition() const     { return lpos; }
-    inline quatd_t getlOrientation() const  { return lrot; }
+    inline Object *getCenter() const            { return frame != nullptr ? frame->getCenter() : nullptr; }
+    inline Object *getTrackingObject() const    { return trackingObject; }
+    inline vec3d_t getuPosition() const         { return upos; }
+    inline quatd_t getuOrientation() const      { return urot; }
+    inline vec3d_t getlPosition() const         { return lpos; }
+    inline quatd_t getlOrientation() const      { return lrot; }
 
-    inline vec3d_t getAngularVelocity()  { return av; }
-    inline vec3d_t getTravelVelocity()   { return tv; }
-    inline double  getJulianTime()       { return jdTime; }
+    inline vec3d_t getAngularVelocity() const   { return av; }
+    inline vec3d_t getTravelVelocity() const    { return tv; }
+    inline double  getJulianTime() const        { return jdTime; }
 
     vec3d_t getPickRay(float vx, float vy);
     
     void setFrame(PlayerFrame::coordType cs, Object *center = nullptr, Object *target = nullptr);
     void updateFrame(PlayerFrame *nFrame);
 
+    void setTrackingObject(Object *object)      { trackingObject = object; }
     void setAngularVelocity(vec3d_t av);
     void setTravelVelocity(vec3d_t tv);
 
@@ -169,4 +171,6 @@ private:
     double  realTime;
     double  jdTime;
     double  deltaTime;
+
+    Object *trackingObject = nullptr;
 };

@@ -62,10 +62,10 @@ vec3d_t Frame::fromUniversal(const vec3d_t &upos, double tjd)
     if (center == nullptr)
         return upos;
     
-    vec3d_t opos = center->getuPosition(tjd);
-    quatd_t orot = getOrientation(tjd);
-    // vec3d_t rpos = orot * (upos - opos);
-    vec3d_t rpos = (upos - opos) * orot;
+    vec3d_t cpos = center->getuPosition(tjd);
+    quatd_t crot = getOrientation(tjd);
+    vec3d_t rpos = crot * (upos - cpos);
+    // vec3d_t rpos = (upos - cpos) * crot;
 
     return rpos;
 }
@@ -74,8 +74,8 @@ quatd_t Frame::fromUniversal(const quatd_t &urot, double tjd)
 {
     if (center == nullptr)
         return urot;
-    // return urot * glm::conjugate(getOrientation(tjd));
-    return glm::conjugate(getOrientation(tjd)) * urot;
+    return urot * glm::conjugate(getOrientation(tjd));
+    // return glm::conjugate(getOrientation(tjd)) * urot;
 }
 
 vec3d_t Frame::toUniversal(const vec3d_t &lpos, double tjd)
@@ -83,15 +83,57 @@ vec3d_t Frame::toUniversal(const vec3d_t &lpos, double tjd)
     if (center == nullptr)
         return lpos;
 
-    vec3d_t opos = center->getuPosition(tjd);
-    quatd_t orot = getOrientation(tjd);
-    // vec3d_t rpos = opos + (glm::conjugate(orot) * lpos);
-    vec3d_t rpos = opos + (lpos * glm::conjugate(orot));
+    vec3d_t cpos = center->getuPosition(tjd);
+    quatd_t crot = getOrientation(tjd);
+    vec3d_t rpos = cpos + (glm::conjugate(crot) * lpos);
+    // vec3d_t rpos = cpos + (lpos * glm::conjugate(crot));
 
     return rpos;
 }
 
 quatd_t Frame::toUniversal(const quatd_t &lrot, double tjd)
+{
+    if (center == nullptr)
+        return lrot;
+    return lrot * getOrientation(tjd);
+    // return getOrientation(tjd) * lrot;
+}
+
+vec3d_t Frame::fromUniversalLocal(const vec3d_t &upos, double tjd)
+{
+    if (center == nullptr)
+        return upos;
+    
+    vec3d_t cpos = center->getuPosition(tjd);
+    quatd_t crot = getOrientation(tjd);
+    // vec3d_t rpos = crot * (upos - cpos);
+    vec3d_t rpos = (upos - cpos) * crot;
+
+    return rpos;
+}
+
+quatd_t Frame::fromUniversalLocal(const quatd_t &urot, double tjd)
+{
+    if (center == nullptr)
+        return urot;
+    // return urot * glm::conjugate(getOrientation(tjd));
+    return glm::conjugate(getOrientation(tjd)) * urot;
+}
+
+vec3d_t Frame::toUniversalLocal(const vec3d_t &lpos, double tjd)
+{
+    if (center == nullptr)
+        return lpos;
+
+    vec3d_t cpos = center->getuPosition(tjd);
+    quatd_t crot = getOrientation(tjd);
+    // vec3d_t rpos = cpos + (glm::conjugate(crot) * lpos);
+    vec3d_t rpos = cpos + (lpos * glm::conjugate(crot));
+
+    return rpos;
+}
+
+quatd_t Frame::toUniversalLocal(const quatd_t &lrot, double tjd)
 {
     if (center == nullptr)
         return lrot;
@@ -135,13 +177,15 @@ BodyFixedFrame::BodyFixedFrame(Object *object, Object *target, Frame *parent)
 
 quatd_t BodyFixedFrame::getOrientation(double tjd) const
 {
+    quatd_t yrot180 = { 0, 0, 1, 0 };
+
     switch (fixedObject->getType())
     {
     case Object::objCelestialStar:
     case Object::objCelestialBody:
-        return dynamic_cast<celBody *>(fixedObject)->getuOrientation(tjd);
+        return yrot180 * dynamic_cast<celBody *>(fixedObject)->getuOrientation(tjd);
     default:
-        return { 1, 0, 0, 0 };
+        return yrot180; // { 1, 0, 0, 0 };
     }
 }
 

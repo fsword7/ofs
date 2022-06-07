@@ -196,16 +196,16 @@ void Player::update(double dt, double timeTravel)
         //      dq/dt = q * w * t/2
         //      where w = (0, x, y, z)
         //
-        lrot += lrot * wv * (dt / 2.0);
-        lrot  = glm::normalize(lrot);
-        // lpos -= glm::conjugate(lrot) * tv * dt;
-        lpos -= (lrot * tv) * dt;
-    }
 
-    // fmt::printf("Move: (%lf,%lf,%lf) <= (%lf,%lf,%lf)\n",
-    //     lpos.x, lpos.y, lpos.z, tv.x, tv.y, tv.z);
-    // fmt::printf("Rotate: (%lf,%lf,%lf,%lf) <= (%lf,%lf,%lf) Q(%lf,%lf,%lf,%lf)\n",
-    //     lrot.w, lrot.x, lrot.y, lrot.z, av.x, av.y, av.z, wv.w, wv.x, wv.y, wv.z);
+        // lrot += lrot * (wv * (dt / 2.0));
+        // lrot  = glm::normalize(lrot);       
+        // lpos -= (lrot * tv) * dt;
+
+        lrot += (wv * (dt / 2.0)) * lrot;
+        lrot  = glm::normalize(lrot);       
+        lpos -= (glm::conjugate(lrot) * tv) * dt;
+
+    }
 
     // Updating current universal coordinates
     updateUniversal();
@@ -334,17 +334,35 @@ void Player::dolly(double delta)
 
 void Player::orbit(quatd_t rot)
 {
-    // const Object *center = frame->getCenter();
-    // if (center == nullptr)
-    //     return;
+    // If tracking object reference not set, assign center object in local
+    // reference frame as default. If center object is not available,
+    // do nothing and return.
+    if (trackingObject == nullptr)
+    {
+        if (frame != nullptr)
+            trackingObject = frame->getCenter();
+        if (trackingObject == nullptr)
+            return;
+    }
 
-    double dist  = glm::length(lpos);
-    quatd_t qrot = glm::normalize(lrot * rot * glm::conjugate(lrot));
-    lpos = glm::normalize(glm::conjugate(qrot) * lpos) * dist;
-    lrot = glm::conjugate(qrot) * lrot;
+    // Determine central position of object (planet, vessel, etc)
+    vec3d_t cpos = frame->fromUniversal(trackingObject->getuPosition(jdTime), jdTime);
+    vec3d_t vpos = lpos - cpos;
+
+    double vdist = glm::length(vpos);
+    quatd_t qrot = glm::conjugate(lrot) * rot * lrot;
+    vpos = glm::conjugate(qrot) * vpos;
+    vpos = glm::normalize(vpos) * vdist;
+
+    lrot = lrot * qrot;
+    lpos = cpos + vpos;
+
+    // quatd_t qrot = glm::normalize(lrot * rot * glm::conjugate(lrot));
+    // lpos = glm::normalize(qrot * lpos) * vdist;
+    // lrot = glm::conjugate(qrot) * lrot;
 
     // quatd_t qrot = glm::normalize(glm::conjugate(lrot) * rot * lrot);
-    // lpos = glm::normalize(qrot * lpos) * dist;
+    // lpos = glm::normalize(glm::conjugate(qrot) * lpos) * vdist;
     // lrot = lrot * qrot;
 
     // fmt::printf("Rotation: R(%lf,%lf,%lf,%lf) => Q(%lf,%lf,%lf,%lf)\n",
