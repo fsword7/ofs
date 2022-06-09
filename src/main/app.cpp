@@ -117,9 +117,9 @@ void CoreApp::update()
     //     tv.y -= dt * keyMovementControl;
 
     // Z-axis move control
-    if (stateKey[keyPad3] || stateKey[keyHome])
+    if (stateKey[keyPad3])
         tv.z += dt * keyMovementControl;
-    if (stateKey[keyPad1] || stateKey[keyEnd])
+    if (stateKey[keyPad1])
         tv.z -= dt * keyMovementControl;
 
     // Braking control
@@ -151,10 +151,10 @@ void CoreApp::update()
     }
 
     // Keyboard dolly control
-    // if (shiftStateKey[keyHome])
-    //     player->dolly(-dt * 2.0);
-    // if (shiftStateKey[keyEnd])
-    //     player->dolly(dt * 2.0);
+    if (shiftStateKey[keyHome])
+        player->dolly(-dt * 2.0);
+    if (shiftStateKey[keyEnd])
+        player->dolly(dt * 2.0);
 
     engine->update(dt);
 }
