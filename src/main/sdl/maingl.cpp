@@ -13,7 +13,7 @@
 
 void sdlCoreApp::init()
 {
-    Logger::create(Logger::logVerbose, "ofs.log");
+    Logger::create(Logger::logDebug, "ofs.log");
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {

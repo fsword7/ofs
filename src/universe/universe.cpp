@@ -45,9 +45,9 @@ void Universe::init()
     // neptune = System::createBody("Neptune", system, celType::cbPlanet,
     //     "EclipticJ2000", "EquatorJ2000");
 
-    system = earth->createPlanetarySystem();
-    lunar = System::createBody("Moon", system, celType::cbMoon,
-        "EclipticJ2000", "EquatorJ2000");
+    // system = earth->createPlanetarySystem();
+    // lunar = System::createBody("Moon", system, celType::cbMoon,
+    //     "EclipticJ2000", "EquatorJ2000");
 
     earth->setColor(color_t(0.856, 0.910, 1.0));
     earth->setOrbit(VSOP87Orbit::create("vsop87-earth"));
@@ -56,11 +56,11 @@ void Universe::init()
     earth->setRadius(6378.140);
     earth->setAlbedo(0.449576);
 
-    lunar->setColor(color_t(1.0, 0.945582, 0.865));
-    lunar->setOrbit(VSOP87Orbit::create("elp-mpp02-llr-lunar"));
-    lunar->setRotation(Rotation::create("iau-lunar"));
-    lunar->setRadius(1738.14);
-    lunar->setAlbedo(0.136);
+    // lunar->setColor(color_t(1.0, 0.945582, 0.865));
+    // lunar->setOrbit(VSOP87Orbit::create("elp-mpp02-llr-lunar"));
+    // lunar->setRotation(Rotation::create("iau-lunar"));
+    // lunar->setRadius(1738.14);
+    // lunar->setAlbedo(0.136);
 
     std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
     System::loadSolarSystemObjects(in, *this, "systems");

@@ -14,6 +14,7 @@ class FrameTree;
 class Object;
 class Player;
 class celStar;
+class celBody;
 class StarRenderer;
 class StarColors;
 class StarDatabase;
@@ -78,6 +79,8 @@ struct ObjectListEntry
 
 struct ObjectProperties
 {
+    celBody *body;
+
     color_t  color;
     uint32_t maxLOD;
     uint32_t biasLOD;
@@ -85,7 +88,8 @@ struct ObjectProperties
     quatd_t  oqrot;
     mat4d_t  orot;
     double   orad;
-    vec3d_t  wpos;
+    vec3d_t  wpos;      // world coordinates (longitude/latitude)
+    vec3d_t  lpos;      // local planetocentric coordinates
 
     vec3d_t  cpos;
     vec3d_t  cqrot;
@@ -101,10 +105,11 @@ struct renderParam
 {
     double jnow; // current Julian date/time
 
-    // Camera paramters
+    // View parameters
     vec3d_t cpos;
     quatd_t crot;
     vec3d_t cdir;
+    vec3d_t wpos;       // world coordinates (longtidude/latitude)
     double  cdist;
     double  viewap;
     double  tanap;

@@ -25,7 +25,7 @@ SurfaceTile::SurfaceTile(SurfaceManager &mgr, uint32_t lod, uint32_t ilat, uint3
     SurfaceTile *parent)
 : Tree(parent), smgr(mgr), lod(lod), ilat(ilat), ilng(ilng), tcRange(fullRange)
 {
-    center = setCenter();
+    setCenter(center, wpos);
     // mesh = smgr.createSphere(lod, ilat, ilng, 32, tcRange);
 }
 
@@ -53,24 +53,22 @@ SurfaceTile *SurfaceTile::createChild(int idx)
     return child;
 }
 
-vec3d_t SurfaceTile::setCenter()
+void SurfaceTile::setCenter(vec3d_t &cnml, vec3d_t &wpos)
 {
     int nlat = 1 << lod;
     int nlng = 2 << lod;
 
-    // double mlat0 = pi * double(ilat) / double(nlat);
-    // double mlat1 = pi * double(ilat+1) / double(nlat);
-
-    // double mlng0 = pi*2 * (double(ilng) / double(nlng)) - pi;
-    // double mlng1 = pi*2 * (double(ilng+1) / double(nlng)) - pi;
-
     double latc = pi * ((double(ilat)+0.5) / double(nlat));
-    double lngc = pi*2 * ((double(ilng+1)+0.5) / double (nlng)) - pi;
+    double lngc = pi*2 * ((double(ilng)+0.5) / double(nlng));
 
     double slat = sin(latc), clat = cos(latc);
     double slng = sin(lngc), clng = cos(lngc);
 
-    return vec3d_t(slat*clng, clat, slat*-slng);
+    cnml = vec3d_t(slat*clng, clat, slat*-slng);
+    wpos = vec3d_t(acos(cnml.y) - (pi / 2.0), atan2(cnml.z, -cnml.x),  0);
+    
+    // double lat = acos(cnml.y) - (pi / 2.0);
+    // double lng = atan2(cml.z, -cnml.x);
 }
 
 void SurfaceTile::setSubtextureRange(const tcrd_t &ptcr)
@@ -132,6 +130,9 @@ void SurfaceTile::load()
             txImage = pTile->getTexture();
             txOwn = false;
             setSubtextureRange(pTile->tcRange);
+
+            // Get parent tile with last own texture image.
+            parentTile = pTile->txOwn ? pTile : pTile->parentTile;
         }
     }
 
@@ -218,7 +219,7 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
     int nlng = 2 << tile->lod;
 
     // Farthest edge of quad tile radius
-    constexpr double trad0 = sqrt(2.0)*(pi/2.0);
+    constexpr double trad0 = sqrt(3.0)*(pi/2.0);
 
     double trad, alpha, adist;
     double erad;
@@ -239,13 +240,20 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
     // as invisible to not being rendered (LOD level 1+)
     if (adist >= prm.viewap)
     {
-        // fmt::printf("Out of view: LOD %d (%d,%d) %lf < %lf\n", tile->lod+4, tile->ilat, tile->ilng,
-        //     degrees(adist), degrees(prm.viewap));
+        Logger::getLogger()->debug("Tile: LOD {} ({},{}) - processing\n",
+            tile->lod+4, tile->ilat, tile->ilng);
+
+        Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            tile->center.x, tile->center.y, tile->center.z,
+            abs(glm::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+            abs(glm::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+ 
+        Logger::getLogger()->debug(" -- Out of view {:.6f} >= {:.6f} - not rendering\n",
+            glm::degrees(adist), glm::degrees(prm.viewap));
+
         tile->state = SurfaceTile::Invisible;
         return;
     }
-    // fmt::printf("In view: LOD %d (%d,%d) - %lf >= %lf\n", tile->lod+4, tile->ilat, tile->ilng,
-    //     degrees(adist), degrees(prm.viewap));
 
     // Check if tile is visible in view area
 
@@ -269,7 +277,7 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
         else
             tlod = prm.maxLOD;
         tlod += prm.biasLOD;
-        splitFlag = (lod < tlod+1);
+        splitFlag = (lod < tlod);
     }
 
     if (splitFlag == true)
@@ -297,6 +305,21 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
     }
     else
     {
+        Logger::getLogger()->debug("Tile: LOD {} ({},{}) - processing\n",
+            tile->lod+4, tile->ilat, tile->ilng);
+
+        Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            tile->center.x, tile->center.y, tile->center.z,
+            abs(glm::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+            abs(glm::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+        Logger::getLogger()->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
+            glm::degrees(alpha), glm::degrees(trad), glm::degrees(adist));
+        if (tile->parentTile != nullptr)
+            Logger::getLogger()->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
+                tile->parentTile->lod, tile->parentTile->ilat, tile->parentTile->ilng);
+        Logger::getLogger()->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
+            glm::degrees(adist), glm::degrees(prm.viewap));
+
         // fmt::printf("Tile LOD level %d (%d,%d)\n", lod+4, tile->ilat, tile->ilng);
         // fmt::printf("Alpha: %lf  Distance: %lf\n", degrees(alpha), degrees(adist));
         // fmt::printf("Aperature: %lf LOD: %d Tile center LOD: %d\n", apr, lod+4, tlod+4);
@@ -328,11 +351,18 @@ void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
     prm.orad    = op.orad;
     prm.oqrot   = op.oqrot;
     prm.orot    = glm::toMat4(prm.oqrot);
+    prm.wpos    = op.wpos;
 
-    prm.cdir    = op.oqrot * vec4d_t(op.opos, 1.0);
-    prm.cdist   = glm::length(prm.cdir) / prm.orad;
+    // prm.cdir    = op.opos * glm::conjugate(op.oqrot);
+    prm.cdir    = glm::normalize(-op.lpos);
+    prm.cdist   = glm::length(op.lpos) / prm.orad;
     prm.viewap  = (prm.cdist >= 1.0) ? acos(1.0 / prm.cdist) : 0.0;
     prm.color   = op.color;
+
+    Logger::getLogger()->debug("{} View direction: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+        op.body->getsName(), prm.cdir.x, prm.cdir.y, prm.cdir.z,
+        abs(glm::degrees(op.wpos.x)), (op.wpos.x < 0) ? 'S' : 'N',
+        abs(glm::degrees(op.wpos.y)), (op.wpos.y < 0) ? 'W' : 'E');
 
 	// fmt::printf("Surface Manager - Render Parameter\n");
 	// fmt::printf("Planet Radius:      %lf\n", prm.orad);
@@ -350,8 +380,6 @@ void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
 	// fmt::printf("Horizon View:       %lf\n", glm::degrees(prm.viewap));
 	// fmt::printf("Camera Position:    (%lf,%lf,%lf) in Universe frame\n",
 	// 	prm.cpos.x, prm.cpos.y, prm.cpos.z);
-
-    prm.cdir    = glm::normalize(prm.cdir);
 
     prm.dmModel = glm::transpose(prm.orot);
     prm.dmWorld = glm::translate(prm.dmView, op.opos);

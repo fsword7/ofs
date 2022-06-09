@@ -28,15 +28,15 @@ void Engine::renderOverlay()
 
 }
 
-void Engine::displayPlanetocentric(double lng, double lat, double alt)
+void Engine::displayPlanetocentric(double lat, double lng, double alt)
 {
-    char lngHemi, latHemi;
+    char latHemi, lngHemi;
 
-    lngHemi = lng < 0.0 ? 'W' : lng > 0.0 ? 'E' : ' ';
     latHemi = lat < 0.0 ? 'S' : lat > 0.0 ? 'N' : ' ';
+    lngHemi = lng < 0.0 ? 'W' : lng > 0.0 ? 'E' : ' ';
 
-    double dlng = abs(glm::degrees(lng));
     double dlat = abs(glm::degrees(lat));
+    double dlng = abs(glm::degrees(lng));
 
     str_t locObject = fmt::format("Latitude/Longiude: {:.6f}{} {:.6f}{}",
         dlat, latHemi, dlng, lngHemi);
@@ -62,4 +62,8 @@ void Engine::displayPlanetInfo()
     // const vec3d_t opos = center->getoPosition(curTime);
     vec3d_t pc = dynamic_cast<const celBody *>(focus)->getPlanetocentricFromEcliptic(view, jdTime);
     displayPlanetocentric(pc.x, pc.y, pc.z);
+
+    vec3d_t lpos = dynamic_cast<const celBody *>(focus)->getvPlanetocentricFromEcliptic(view, jdTime);
+    str_t posObject = fmt::format("Planetocentric: {:.6f} {:.6f} {:.6f}", lpos.x, lpos.y, lpos.z);
+    overlay->print(posObject);
 }

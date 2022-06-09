@@ -82,7 +82,7 @@ double celBody::getApparentMagnitude(vec3d_t sun, double irradiance, vec3d_t vie
 
 quatd_t celBody::getBodyFixedFromEcliptic(double tjd) const
 {
-    return rotation->getRotation(tjd) * bodyFrame->getOrientation(tjd);
+    return (rotation != nullptr ? rotation->getRotation(tjd) : quatd_t(1, 0, 0, 0)) * bodyFrame->getOrientation(tjd);
 }
 
 vec3d_t celBody::getPlanetocentric(vec3d_t pos) const
@@ -92,7 +92,7 @@ vec3d_t celBody::getPlanetocentric(vec3d_t pos) const
     double lat = acos(w.y) - (pi / 2.0);
     double lng = atan2(w.z, -w.x);
 
-    return vec3d_t(lng, lat, glm::length(pos) - radius);
+    return vec3d_t(lat, lng, glm::length(pos) - radius);
 }
 
 vec3d_t celBody::getPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const
@@ -100,6 +100,11 @@ vec3d_t celBody::getPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) c
     vec3d_t lpos = pos * glm::conjugate(getBodyFixedFromEcliptic(tjd));
 
     return getPlanetocentric(lpos);
+}
+
+vec3d_t celBody::getvPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const
+{
+    return pos * glm::conjugate(getBodyFixedFromEcliptic(tjd));
 }
 
 vec3d_t celBody::getHeliocentric(double tjd) const

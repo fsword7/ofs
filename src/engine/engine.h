@@ -39,7 +39,7 @@ public:
 
     void renderOverlay();
     void displayPlanetInfo();
-    void displayPlanetocentric(double lon, double lat, double alt);
+    void displayPlanetocentric(double lat, double lng, double alt);
 
     Object *pickObject(const vec3d_t &pickRay);
 

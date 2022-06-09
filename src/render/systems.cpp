@@ -27,11 +27,15 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
         quatd_t orot = body->getuOrientation(prm.jnow);
         setObjectLighting(lightSources, ole.opos, orot, lights);
 
+        op.body  = body;
         op.color = body->getColor();
         op.orad  = body->getRadius();
-        op.wpos  = body->getPlanetocentric(ole.opos);
+        op.lpos  = body->getvPlanetocentricFromEcliptic(ole.opos, prm.jnow);
+        op.wpos  = body->getPlanetocentric(op.lpos);
         op.opos  = ole.opos;
         op.oqrot = orot;
+
+        // fmt::print("Planetocentric: {:.6f} {:.6f} {:.6f}\n", op.lpos.x, op.lpos.y, op.lpos.z);
 
         vobj->render(prm, op, lights);
     }

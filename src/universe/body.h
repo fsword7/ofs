@@ -102,6 +102,7 @@ public:
 
     vec3d_t getPlanetocentric(vec3d_t pos) const;
     vec3d_t getPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const;
+    vec3d_t getvPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const;
     vec3d_t getHeliocentric(double tjd) const;
 
 private:

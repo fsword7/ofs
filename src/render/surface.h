@@ -44,7 +44,7 @@ public:
     ~SurfaceTile();
 
     SurfaceTile *createChild(int idx);
-    vec3d_t setCenter();
+    void setCenter(vec3d_t &center, vec3d_t &wpos);
     void setSubtextureRange(const tcrd_t &ptcr);
 
     void load();
@@ -59,7 +59,8 @@ private:
 
     TileState state = Invalid;
     uint32_t  lod, ilat, ilng;
-    vec3d_t   center;
+    vec3d_t   center;   // planetocentric coordinates (tile normal)
+    vec3d_t   wpos;     // world coordinates (longitude/latitude)
 
     Mesh *mesh = nullptr;
 
@@ -67,6 +68,8 @@ private:
     bool    txOwn = false;
     tcrd_t  tcRange;
     Texture *txImage = nullptr;
+
+    const SurfaceTile *parentTile = nullptr;
 
     // Elevation data parameters
     bool     elevOwn = false;
