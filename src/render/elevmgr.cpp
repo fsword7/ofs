@@ -7,7 +7,7 @@
 #include "osd/gl/mesh.h"
 #include "render/scene.h"
 #include "render/surface.h"
-#include "render/elevation.h"
+#include "render/elevmgr.h"
 
 int16_t *SurfaceTile::readElevationFile(int lod, int ilat, int ilng, double eres)
 {

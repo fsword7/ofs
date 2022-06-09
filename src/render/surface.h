@@ -130,6 +130,7 @@ private:
 
     ShaderProgram *pgmPlanet = nullptr;
     mat4Uniform mvp;
+    bool tileDebug = false;
 
     zTreeManager *zTrees[5];
     SurfaceTile *tiles[2];

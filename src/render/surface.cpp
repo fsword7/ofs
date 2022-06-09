@@ -240,16 +240,19 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
     // as invisible to not being rendered (LOD level 1+)
     if (adist >= prm.viewap)
     {
-        Logger::getLogger()->debug("Tile: LOD {} ({},{}) - processing\n",
-            tile->lod+4, tile->ilat, tile->ilng);
+        if (tileDebug)
+        {
+            Logger::getLogger()->debug("Tile: LOD {} ({},{}) - processing\n",
+                tile->lod+4, tile->ilat, tile->ilng);
 
-        Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-            tile->center.x, tile->center.y, tile->center.z,
-            abs(glm::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
-            abs(glm::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
- 
-        Logger::getLogger()->debug(" -- Out of view {:.6f} >= {:.6f} - not rendering\n",
-            glm::degrees(adist), glm::degrees(prm.viewap));
+            Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+                tile->center.x, tile->center.y, tile->center.z,
+                abs(glm::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+                abs(glm::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+    
+            Logger::getLogger()->debug(" -- Out of view {:.6f} >= {:.6f} - not rendering\n",
+                glm::degrees(adist), glm::degrees(prm.viewap));
+        }
 
         tile->state = SurfaceTile::Invisible;
         return;
@@ -303,7 +306,7 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
                 update(tile->getChild(idx), prm);
         }
     }
-    else
+    else if (tileDebug)
     {
         Logger::getLogger()->debug("Tile: LOD {} ({},{}) - processing\n",
             tile->lod+4, tile->ilat, tile->ilng);
@@ -359,10 +362,13 @@ void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
     prm.viewap  = (prm.cdist >= 1.0) ? acos(1.0 / prm.cdist) : 0.0;
     prm.color   = op.color;
 
-    Logger::getLogger()->debug("{} View direction: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-        op.body->getsName(), prm.cdir.x, prm.cdir.y, prm.cdir.z,
-        abs(glm::degrees(op.wpos.x)), (op.wpos.x < 0) ? 'S' : 'N',
-        abs(glm::degrees(op.wpos.y)), (op.wpos.y < 0) ? 'W' : 'E');
+    if (tileDebug)
+    {
+        Logger::getLogger()->debug("{} View direction: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            op.body->getsName(), prm.cdir.x, prm.cdir.y, prm.cdir.z,
+            abs(glm::degrees(op.wpos.x)), (op.wpos.x < 0) ? 'S' : 'N',
+            abs(glm::degrees(op.wpos.y)), (op.wpos.y < 0) ? 'W' : 'E');
+    }
 
 	// fmt::printf("Surface Manager - Render Parameter\n");
 	// fmt::printf("Planet Radius:      %lf\n", prm.orad);
