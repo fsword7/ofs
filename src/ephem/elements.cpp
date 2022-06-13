@@ -62,8 +62,8 @@ void OrbitalElements::calculate(const vec3d_t &pos, const vec3d_t &vel, double t
     // Set radius/velocity vectors
     R = pos;
     V = vel;
-    r = R.length();
-    v = V.length();
+    r = R.norm();
+    v = V.norm();
 
     // a = r * mu / (2.0 * mu - r * V.squaredNorm());
 

@@ -45,7 +45,7 @@ void StarVertex::start()
 
     glEnable(GL_PROGRAM_POINT_SIZE);
 
-    mvp = mat4f_t(prm.dmProj * prm.dmView);
+    mvp = (prm.dmProj * prm.dmView).cast<float>();
 
     nStars = 0;
     type = useSprites;
@@ -100,7 +100,7 @@ void StarVertex::finish()
 
 void StarVertex::addStar(const vec3d_t &pos, const color_t &color, double radius)
 {
-    vertices[nStars].posStar = pos;
+    vertices[nStars].posStar = pos.cast<float>();
     vertices[nStars].color = color;
     vertices[nStars].size = radius;
     nStars++;
@@ -123,7 +123,7 @@ void StarRenderer::process(const celStar &star, double dist, double appMag) cons
     // camera position in universal reference frame
     spos  = star.getStarPosition() * KM_PER_PC;
     rpos  = spos - cpos;
-    rdist = glm::length(rpos);
+    rdist = rpos.norm();
 
     // Calculate apparent size of star in view field
     srad    = star.getRadius();

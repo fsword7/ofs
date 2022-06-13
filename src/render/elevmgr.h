@@ -22,18 +22,18 @@
 //    16 = unsigned short (16-bit)
 //   -16 = signed short (16-bit)
 
-#pragma pack(push, 1)
-struct elevHeader
-{
-    uint32_t code;                  // Code 'ELE1' in four CC format
-    int      hdrSize;               // Header length (expected 76 bytes)
-    int      format;                // Data format
-    int      xgrd, ygrd;            // (X,Y) grids  (expected 259 x 259)
-    int      xpad, ypad;            // (X,Y) pads   (expected 1 x 1)
-    double   scale;                 // Elevation scale
-    double   offset;                // Elevation offset
-    double   latmin, latmax;        // Latitude range [rad]
-    double   lngmin, lngmax;        // Longtitude range [rad]
-    double   emin, emax, emean;     // Min, max, and mean elevation [m]
-};
-#pragma pack(pop)
+// #pragma pack(push, 1)
+// struct elevHeader
+// {
+//     uint32_t code;                  // Code 'ELE1' in four CC format
+//     int      hdrSize;               // Header length (expected 76 bytes)
+//     int      format;                // Data format
+//     int      xgrd, ygrd;            // (X,Y) grids  (expected 259 x 259)
+//     int      xpad, ypad;            // (X,Y) pads   (expected 1 x 1)
+//     double   scale;                 // Elevation scale
+//     double   offset;                // Elevation offset
+//     double   latmin, latmax;        // Latitude range [rad]
+//     double   lngmin, lngmax;        // Longtitude range [rad]
+//     double   emin, emax, emean;     // Min, max, and mean elevation [m]
+// };
+// #pragma pack(pop)

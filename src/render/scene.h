@@ -59,12 +59,23 @@ struct SecondaryLight
     double  reflected;      // Reflected brightness
 };
 
+// Label parameters
+struct Annotation
+{
+    str_t       labelText;
+    color_t     color;
+    vec3d_t     tpos;
+    float       size;
+
+};
+
 struct ObjectListEntry
 {   
     Object *object;     // Object
 
     // Sun and position [km]
     vec3d_t opos;       // Object position
+    quatd_t orot;       // Object orientation
     vec3d_t spos;       // Sun position
 
     double  vdist;      // View distance
@@ -90,6 +101,8 @@ struct ObjectProperties
     double   orad;
     vec3d_t  wpos;      // world coordinates (longitude/latitude)
     vec3d_t  lpos;      // local planetocentric coordinates
+
+    mat4d_t  mvp;
 
     vec3d_t  cpos;
     vec3d_t  cqrot;
@@ -189,6 +202,12 @@ private:
     std::vector<const celStar *> closeStars;
     std::vector<LightSource> lightSources;
     std::vector<ObjectListEntry> objectList;
+
+    // Annotation lists
+    std::vector<Annotation> bgAnnotations;      // Background annotation list
+    std::vector<Annotation> fgAnnotations;      // Foreground annotation list
+    std::vector<Annotation> dsAnnotations;      // Depth-sorted annotation list
+    std::vector<Annotation> objAnnotations;     // Object annotation list
 
     StarRenderer *starRenderer = nullptr;
     StarColors *starColors = nullptr;

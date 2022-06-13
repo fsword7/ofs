@@ -65,7 +65,7 @@ void SurfaceTile::setCenter(vec3d_t &cnml, vec3d_t &wpos)
     double slng = sin(lngc), clng = cos(lngc);
 
     cnml = vec3d_t(slat*clng, clat, slat*-slng);
-    wpos = vec3d_t(acos(cnml.y) - (pi / 2.0), atan2(cnml.z, -cnml.x),  0);
+    wpos = vec3d_t(acos(cnml.y()) - (pi / 2.0), atan2(cnml.z(), -cnml.x()),  0);
     
     // double lat = acos(cnml.y) - (pi / 2.0);
     // double lng = atan2(cml.z, -cnml.x);
@@ -136,7 +136,7 @@ void SurfaceTile::load()
         }
     }
 
-    mesh = smgr.createSphere(lod, ilat, ilng, 32, tcRange);
+    mesh = smgr.createSphere(lod, ilat, ilng, smgr.gridRes, tcRange);
     if (mesh != nullptr)
         mesh->setTexture(txImage);
 
@@ -232,7 +232,7 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
 
     // Find angle between camera and tile center
     trad  = trad0 / double(nlat);
-    alpha = acos(glm::dot(prm.cdir, -tile->center));
+    alpha = acos(prm.cdir.dot(-tile->center));
     adist = alpha - trad;
 
     // Check if tile is visible from camera position
@@ -246,12 +246,12 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
                 tile->lod+4, tile->ilat, tile->ilng);
 
             Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-                tile->center.x, tile->center.y, tile->center.z,
-                abs(glm::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
-                abs(glm::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+                tile->center.x(), tile->center.y(), tile->center.z(),
+                abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
+                abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
     
             Logger::getLogger()->debug(" -- Out of view {:.6f} >= {:.6f} - not rendering\n",
-                glm::degrees(adist), glm::degrees(prm.viewap));
+                ofs::degrees(adist), ofs::degrees(prm.viewap));
         }
 
         tile->state = SurfaceTile::Invisible;
@@ -312,16 +312,16 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
             tile->lod+4, tile->ilat, tile->ilng);
 
         Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-            tile->center.x, tile->center.y, tile->center.z,
-            abs(glm::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
-            abs(glm::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+            tile->center.x(), tile->center.y(), tile->center.z(),
+            abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
+            abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
         Logger::getLogger()->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
-            glm::degrees(alpha), glm::degrees(trad), glm::degrees(adist));
+            ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
         if (tile->parentTile != nullptr)
             Logger::getLogger()->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
                 tile->parentTile->lod, tile->parentTile->ilat, tile->parentTile->ilng);
         Logger::getLogger()->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
-            glm::degrees(adist), glm::degrees(prm.viewap));
+            ofs::degrees(adist), ofs::degrees(prm.viewap));
 
         // fmt::printf("Tile LOD level %d (%d,%d)\n", lod+4, tile->ilat, tile->ilng);
         // fmt::printf("Alpha: %lf  Distance: %lf\n", degrees(alpha), degrees(adist));
@@ -353,21 +353,21 @@ void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
     prm.biasLOD = 0;
     prm.orad    = op.orad;
     prm.oqrot   = op.oqrot;
-    prm.orot    = glm::toMat4(prm.oqrot);
+    // prm.orot    = glm::toMat4(prm.oqrot);
     prm.wpos    = op.wpos;
 
     // prm.cdir    = op.opos * glm::conjugate(op.oqrot);
-    prm.cdir    = glm::normalize(-op.lpos);
-    prm.cdist   = glm::length(op.lpos) / prm.orad;
+    prm.cdir    = -op.lpos.normalized();
+    prm.cdist   = op.lpos.norm() / prm.orad;
     prm.viewap  = (prm.cdist >= 1.0) ? acos(1.0 / prm.cdist) : 0.0;
     prm.color   = op.color;
 
     if (tileDebug)
     {
         Logger::getLogger()->debug("{} View direction: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-            op.body->getsName(), prm.cdir.x, prm.cdir.y, prm.cdir.z,
-            abs(glm::degrees(op.wpos.x)), (op.wpos.x < 0) ? 'S' : 'N',
-            abs(glm::degrees(op.wpos.y)), (op.wpos.y < 0) ? 'W' : 'E');
+            op.body->getsName(), prm.cdir.x(), prm.cdir.y(), prm.cdir.z(),
+            abs(ofs::degrees(op.wpos.x())), (op.wpos.x() < 0) ? 'S' : 'N',
+            abs(ofs::degrees(op.wpos.y())), (op.wpos.y() < 0) ? 'W' : 'E');
     }
 
 	// fmt::printf("Surface Manager - Render Parameter\n");
@@ -387,10 +387,11 @@ void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
 	// fmt::printf("Camera Position:    (%lf,%lf,%lf) in Universe frame\n",
 	// 	prm.cpos.x, prm.cpos.y, prm.cpos.z);
 
-    prm.dmModel = glm::transpose(prm.orot);
-    prm.dmWorld = glm::translate(prm.dmView, op.opos);
-    prm.mvp     = mat4f_t(prm.dmProj * prm.dmWorld * prm.dmModel);
-
+    // prm.dmModel = prm.orot.transpose();
+    // prm.dmWorld = glm::translate(prm.dmView, op.opos);
+    // prm.dmWorld = prm.dmView * Eigen::Translation3d(op.opos);
+    // prm.mvp     = (prm.dmProj * prm.dmWorld * prm.dmModel).cast<float>();
+    prm.mvp = (prm.dmProj * op.mvp).cast<float>();
     mvp = prm.mvp;
 
     // Updating and rendering virtual tiles
@@ -504,17 +505,17 @@ Mesh *SurfaceManager::createSphere(int lod, int ilat, int ilng, int grids, const
             pos = nml * erad;
 
 			// Convert to 32-bit floats for vertices buffer/rendering
-            vtx[vidx].vx = float(pos.x);
-            vtx[vidx].vy = float(pos.y);
-            vtx[vidx].vz = float(pos.z);
+            vtx[vidx].vx = float(pos.x());
+            vtx[vidx].vy = float(pos.y());
+            vtx[vidx].vz = float(pos.z());
 
-       		vtx[vidx].ex = float(pos.x - vtx[vidx].vx);
-            vtx[vidx].ey = float(pos.y - vtx[vidx].vy);
-            vtx[vidx].ez = float(pos.z - vtx[vidx].vz);
+       		vtx[vidx].ex = float(pos.x() - vtx[vidx].vx);
+            vtx[vidx].ey = float(pos.y() - vtx[vidx].vy);
+            vtx[vidx].ez = float(pos.z() - vtx[vidx].vz);
 
-            vtx[vidx].nx = float(nml.x);
-            vtx[vidx].ny = float(nml.y);
-            vtx[vidx].nz = float(nml.z);
+            vtx[vidx].nx = float(nml.x());
+            vtx[vidx].ny = float(nml.y());
+            vtx[vidx].nz = float(nml.z());
 
             vtx[vidx].tu = float(tu);
             vtx[vidx].tv = float(tv);

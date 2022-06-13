@@ -176,12 +176,13 @@ void TextureFont::render(cstr_t &text, float x, float y, const color_t &color)
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vao);
 
-    mat4f_t proj = glm::ortho(0.0f, float(gl.getWidth()), 0.0f, float(gl.getHeight()));
+    // mat4f_t proj = ofs::ortho(0.0f, float(gl.getWidth()), 0.0f, float(gl.getHeight()));
+    mat4f_t proj = ofs::ortho(0.0f, float(gl.getWidth()), float(gl.getHeight()), 0.0f);
 
     uint32_t colorLoc = glGetUniformLocation(pgm->getID(), "textColor");
     glUniform3f(colorLoc, color.getRed(), color.getGreen(), color.getBlue());
     uint32_t mvpLoc = glGetUniformLocation(pgm->getID(), "proj");
-    glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(proj));
+    glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, proj.data());
 
     std::string::const_iterator ch;
     for (ch = text.begin(); ch != text.end(); ch++)

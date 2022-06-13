@@ -117,6 +117,81 @@ int16_t *SurfaceTile::readElevationFile(int lod, int ilat, int ilng, double eres
     return elev;
 }
 
+bool SurfaceTile::interpolateLinearElevationGrid(const float *inElev,  float *outElev)
+{
+    int q0 = 0, c = 129;
+
+    if (!(ilat & 1))
+        q0 = TILE_ELEVRES * 128;
+    if (ilng & 1)
+        q0 += 128;
+
+    for (int i = 0; i <= c; i++)
+    {
+        int q1 = q0 + 1;
+        int q2 = q0 + TILE_ELEVRES;
+        int q3 = q1 + TILE_ELEVRES;
+        int x = (TILE_ELEVRES << 1) * i;
+
+        for (int k = 0; k <= c; k++)
+        {
+            float f0 = inElev[k + q0], f1 = inElev[k + q1];
+            float f2 = inElev[k + q2], f3 = inElev[k + q3];
+
+            outElev[x + 0] = (f0 + f1 + f2 + f3) / 4.0;
+            if (k != c)
+                outElev[x + 1] = (f1 + f3) / 2.0;
+
+            if (i != c)
+            {
+                outElev[x + TILE_ELEVRES] = (f2 + f3) / 2.0;
+                if (k != c)
+                    outElev[x + TILE_ELEVRES + 1] = f3;
+            }
+            x += 2;
+        }
+        q0 += TILE_ELEVRES;
+    }
+
+    return true;
+}
+
+bool SurfaceTile::interpolateCubicElevationGrid(int16_t *elev, int lod, int ilat, int ilng,
+    int16_t *pElev, int plod, int pilat, int pilng,
+    double *eMean)
+{
+    double elevGrid = 32;
+    
+    const int nlat = 1 << lod;
+    const int nlng = 2 << lod;
+
+    double mlat0 = (pi / 2.0) * (double(nlat-2 * ilat-2) / double(nlat));
+    double mlat1 = (pi / 2.0) * (double(nlat-2 * ilat) / double(nlat));
+    double mlng0 = pi * (double(ilng*2 - nlng) / double(nlng));
+    double mlng1 = pi * (double(ilng*2 - nlng+2) / double(nlng));
+    double dlat  = (mlat1 - mlat0) / elevGrid;
+    double dlng  = (mlng1 - mlng0) / elevGrid;
+
+    const int pnlat = 1 << plod;
+    const int pnlng = 2 << plod;
+
+    double pmlat0 = (pi / 2.0) * (double(pnlat-2 * pilat-2) / double(pnlat));
+    double pmlat1 = (pi / 2.0) * (double(pnlat-2 * pilat) / double(pnlat));
+    double pmlng0 = pi * (double(pilng*2 - pnlng) / double(pnlng));
+    double pmlng1 = pi * (double(pilng*2 - pnlng+2) / double(pnlng));
+    double pdlat  = (pmlat1 - pmlat0) / elevGrid;
+    double pdlng  = (pmlng1 - pmlng0) / elevGrid;
+
+    return false;
+}
+
+bool SurfaceTile::loadElevationData()
+{
+    if (elev != nullptr)
+        return true;
+
+    return false;
+}
 
 // bool TerrainTile::loadElevation()
 // {
@@ -161,49 +236,42 @@ int16_t *SurfaceTile::readElevationFile(int lod, int ilat, int ilng, double eres
 //     return elev != nullptr;
 // }
 
-// int16_t *TerrainTile::getElevationData()
-// {
-// 	TerrainTile *ptile = nullptr;
-// 	int      resBlock = ELEV_RES;
-// 	int      ofs;
-// 	uint32_t mask;
-// 	int      glod = 3;
+float *SurfaceTile::getElevationData()
+{
+    // If great-grandfather eleveation data
+    // already is loaded, just return it.
+    if (ggelev != nullptr)
+        return ggelev;
 
-// 	// If grand-grandfather elevation data
-// 	// already is loaded, just return it.
-// 	if (ggelev != nullptr)
-// 		return ggelev;
+    int gglod = 3;
+    while ((1u << (8 - gglod)) < smgr.gridRes)
+        gglod--;
 
-// 	while ((1u << (8 - glod)) < tmgr.resGrid)
-// 		glod--;
+    SurfaceTile *ggTile = nullptr;
+    int resBlock = TILE_RES;
+    if (lod >= gglod)
+    {
+        ggTile = this;
 
-// //	cout << "Current LOD: " << lod+3 << " Elev LOD: " << glod << endl;
+        // Find parent tile (LOD level 3+)
+        while (resBlock > smgr.gridRes && ggTile != nullptr)
+        {
+            ggTile = ggTile->getParent();
+            resBlock >>= 1;
+        }
+        if (ggTile != nullptr && ggTile->loadElevationData())
+        {
+            int nBlock = TILE_FILERES / resBlock;
+            int mask = nBlock - 1;
+            int ofs = ((mask - ilat & mask) * TILE_ELEVRES + (ilng & mask)) * resBlock;
+            ggelev = ggTile->elev + ofs;
+        }
+    }
+    else
+    {
+        // Find global tile (LOD level 0-2)
 
-// 	if (lod >= glod) {
-// 		// Find parent tile (LOD level 3+)
-// 		ptile = this;
-// //		cout << "LOD: " << ptile->lod+3 << " Block Resolution: " << resBlock << endl;
-// 		while (resBlock > tmgr.resGrid && ptile != nullptr) {
-// 			ptile = ptile->getParent();
-// 			resBlock >>= 1;
-// 		}
-// 	} else {
-// 		// Find globe tile (LOD level 0-2)
-// 	}
+    }
 
-// 	if (ptile != nullptr) {
-// //		cout << "Block Resolution: " << resBlock << " Parent Tile LOD: " << ptile->lod+3 << endl;
-
-// //		if (ptile->loadElevation()) {
-// //			mask = (ELEV_RES / resBlock) - 1;
-// //			ofs  = ((mask - ilat & mask)*ELEV_STRIDE + (mask - ilng & mask)) * resBlock;
-// //			cout << "Tile Lat: " << ilat << " Lng: " << ilng << endl;
-// //			cout << "GG Tile Lat: " << ptile->ilat << " Lng: " << ptile->ilng
-// //			     << "Elev X: " << (ilng & mask) << " Y: " << (ilat & mask) << endl;
-// //			ggelev = ptile->elev + ofs;
-// //			cout << "Got new elevation data ready" << endl;
-// //		}
-// 	}
-
-// 	return ggelev;
-// }
+    return ggelev;
+}

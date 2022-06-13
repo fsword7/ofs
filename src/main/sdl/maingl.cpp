@@ -159,7 +159,7 @@ void sdlCoreApp::run()
                 }
 
                 title = fmt::sprintf("%s X: %d Y %d (%f,%f) State: %c%c%c%c%c%c\n",
-                    APP_SHORT, mx, my, pickRay.x, pickRay.y,
+                    APP_SHORT, mx, my, pickRay.x(), pickRay.y(),
                     (state & mouseLeftButton    ? 'L' : '-'),
                     (state & mouseMiddleButton  ? 'M' : '-'),
                     (state & mouseRightButton   ? 'R' : '-'),

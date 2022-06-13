@@ -15,6 +15,7 @@
 #include "render/scene.h"
 #include "render/vobject.h"
 #include "render/surface.h"
+#include "main/debug.h"
 
 void Scene::init(Universe &universe)
 {
@@ -44,6 +45,12 @@ void Scene::render(Universe &universe, Player &player)
     lightSources.clear();
     objectList.clear();
 
+    // Clear all annotation lists
+    bgAnnotations.clear();
+    fgAnnotations.clear();
+    dsAnnotations.clear();
+    objAnnotations.clear();
+
     // find closest stars with player's position
     vec3d_t obs = player.getuPosition();
     prm.jnow    = player.getJulianTime();
@@ -60,8 +67,11 @@ void Scene::render(Universe &universe, Player &player)
     prm.cpos   = cam->getuPosition();
     prm.crot   = cam->getuOrientation();
     prm.tanap  = cam->getTanAp();
-    prm.dmProj = glm::perspective(cam->getFOV(), cam->getAspect(), 0.0001, 1'000'000'000.0);
-    prm.dmView = glm::transpose(glm::toMat4(prm.crot));
+    prm.dmProj = ofs::perspective(cam->getFOV(), cam->getAspect(), 0.0001, 1'000'000'000.0);
+    prm.dmView = Eigen::Affine3d(prm.crot).matrix();
+
+    // displayMatrix4("dmProg", prm.dmProj);
+    // displayMatrix4("dmView", prm.dmView);
 
     // Render constellations in background
     renderConstellations(universe, player);
@@ -82,7 +92,7 @@ void Scene::render(Universe &universe, Player &player)
         FrameTree *tree = objects->getSystemTree();
 
         vec3d_t apos = getAstrocentericPosition(sun, obs, prm.jnow);
-        vec3d_t vpn = glm::conjugate(prm.crot) * vec3d_t (0, 0, -1);
+        vec3d_t vpn = prm.crot.conjugate() * vec3d_t (0, 0, -1);
 
         buildNearSystems(tree, player, apos, vpn, { 0, 0, 0 });
     }

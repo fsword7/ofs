@@ -43,7 +43,10 @@ vec3d_t Camera::getPickRay(float vx, float vy) const
 {
     float s = float(2.0 * tan(fov / 2.0));
 
-    return glm::normalize(vec3d_t(vx * s * aspect, vy * s, -1.0));
+    vec3d_t ray = vec3d_t(vx * s * aspect, vy * s, -1.0);
+    ray.normalize();
+
+    return ray;
 }
 
 // ******** Player Reference Frame ********
@@ -154,7 +157,6 @@ vec3d_t Player::getPickRay(float vx, float vy)
 void Player::setAngularVelocity(vec3d_t _av)
 {
     av = _av;
-    wv = quatd_t(0, av.x, av.y, av.z);
 }
 
 void Player::setTravelVelocity(vec3d_t _tv)
@@ -166,11 +168,6 @@ void Player::updateUniversal()
 {
     upos = frame->toUniversal(lpos, jdTime);
     urot = frame->toUniversal(lrot, jdTime);
-
-    // fmt::printf("To Universal: L(%lf,%lf,%lf) => U(%lf,%lf,%lf)\n",
-    //     lpos.x, lpos.y, lpos.z, upos.x, upos.y, upos.z);
-    // fmt::printf("              P(%lf,%lf,%lf,%lf) => Q(%lf,%lf,%lf,%lf)\n",
-    //     lrot.w, lrot.x, lrot.y, lrot.z, urot.w, urot.x, urot.y, urot.z);
 }
 
 void Player::start(double tjd)
@@ -179,6 +176,7 @@ void Player::start(double tjd)
     realTime = tjd;
     jdTime = tjd;
     deltaTime = 0;
+    
 }
 
 void Player::update(double dt, double timeTravel)
@@ -197,13 +195,17 @@ void Player::update(double dt, double timeTravel)
         //      where w = (0, x, y, z)
         //
 
-        // lrot += lrot * (wv * (dt / 2.0));
-        // lrot  = glm::normalize(lrot);       
-        // lpos -= (lrot * tv) * dt;
+        vec3d_t wv = av * 0.5;
+        quatd_t dr = quatd_t(0.5, wv.x(), wv.y(), wv.z()) * lrot;
+        lrot = quatd_t(dr.coeffs() + dt * dr.coeffs());
+        lrot.normalize();
+    
+        // Logger::getLogger()->debug("WV   {:.6f} {:.6f} {:.6f}\n", wv.x(), wv.y(), wv.z());
+        // Logger::getLogger()->debug("QWV  {:.6f} {:.6f} {:.6f} {:.6f}\n", qwv.w(), qwv.x(), qwv.y(), qwv.z());
+        // Logger::getLogger()->debug("DR   {:.6f} {:.6f} {:.6f} {:.6f}\n", dr.w(), dr.x(), dr.y(), dr.z());
+        // Logger::getLogger()->debug("LROT {:.6f} {:.6f} {:.6f} {:.6f}\n", lrot.w(), lrot.x(), lrot.y(), lrot.z());
 
-        lrot += (wv * (dt / 2.0)) * lrot;
-        lrot  = glm::normalize(lrot);       
-        lpos -= (glm::conjugate(lrot) * tv) * dt;
+        lpos -= (lrot.conjugate() * tv) * dt;
 
     }
 
@@ -223,7 +225,7 @@ void Player::move(Object *object, double altitude, goMode mode)
     switch (mode)
     {
     case goEquartorial:
-        orot = quatd_t(vec3d_t(J2000Obliquity, 0, 0));
+        orot = quatd_t(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX()));
         break;
 
     case goBodyFixed:
@@ -238,7 +240,7 @@ void Player::move(Object *object, double altitude, goMode mode)
                 sun = system->getStar();
         }
         tpos = sun->getuPosition(jdTime);
-        orot = glm::lookAt(opos, tpos, vec3d_t(0, 1, 0));
+        orot = ofs::lookAt(opos, tpos, vec3d_t(0, 1, 0));
         break;
 
     case goBackHelioSync:
@@ -249,12 +251,12 @@ void Player::move(Object *object, double altitude, goMode mode)
                 sun = system->getStar();
         }
         tpos = sun->getuPosition(jdTime);
-        orot = glm::lookAt(tpos, opos, vec3d_t(0, 1, 0));
+        orot = ofs::lookAt(tpos, opos, vec3d_t(0, 1, 0));
         break;
     }
 
-    upos = opos + glm::conjugate(orot) * vec3d_t(0, 0, -altitude);
-    urot = glm::conjugate(orot);
+    upos = opos + orot.conjugate() * vec3d_t(0, 0, -altitude);
+    urot = orot.conjugate();
     lpos = frame->fromUniversal(upos, jdTime);
     lrot = frame->fromUniversal(urot, jdTime);
 }
@@ -293,14 +295,14 @@ void Player::look(Object *object)
     vec3d_t opos = object->getuPosition(jdTime);
     vec3d_t up = vec3d_t(0, 1, 0);
 
-    urot = glm::lookAt(upos, opos, up);
+    urot = ofs::lookAt(upos, opos, up);
     lrot = frame->fromUniversal(urot, jdTime);
 }
 
 double Player::computeCoarseness(double maxCoarseness)
 {
     double radius   = 1;
-    double distance = glm::length(lpos);
+    double distance = lpos.norm();
     double altitude = distance - radius;
     double coarse   = maxCoarseness;
 
@@ -318,7 +320,7 @@ void Player::dolly(double delta)
     vec3d_t opos = { 0, 0, 0 }; // object->getPosition(jdTime);
     double  surfaceDistance = 1; // object->getRadius();
     double  naturalDistance = surfaceDistance * 4.0;
-    double  currentDistance = glm::length(lpos);
+    double  currentDistance = lpos.norm();
 
     if (currentDistance >= surfaceDistance && naturalDistance != 0)
     {
@@ -349,26 +351,13 @@ void Player::orbit(quatd_t rot)
     vec3d_t cpos = frame->fromUniversal(trackingObject->getuPosition(jdTime), jdTime);
     vec3d_t vpos = lpos - cpos;
 
-    double vdist = glm::length(vpos);
-    quatd_t qrot = glm::conjugate(lrot) * rot * lrot;
-    vpos = glm::conjugate(qrot) * vpos;
-    vpos = glm::normalize(vpos) * vdist;
+    double vdist = vpos.norm();
+    quatd_t qrot = lrot.conjugate() * rot * lrot;
+    vpos = qrot.conjugate() * vpos;
+    vpos = vpos.normalized() * vdist;
 
     lrot = lrot * qrot;
     lpos = cpos + vpos;
-
-    // quatd_t qrot = glm::normalize(lrot * rot * glm::conjugate(lrot));
-    // lpos = glm::normalize(qrot * lpos) * vdist;
-    // lrot = glm::conjugate(qrot) * lrot;
-
-    // quatd_t qrot = glm::normalize(glm::conjugate(lrot) * rot * lrot);
-    // lpos = glm::normalize(glm::conjugate(qrot) * lpos) * vdist;
-    // lrot = lrot * qrot;
-
-    // fmt::printf("Rotation: R(%lf,%lf,%lf,%lf) => Q(%lf,%lf,%lf,%lf)\n",
-    //     rot.w, rot.x, rot.y, rot.z, qrot.w, qrot.x, qrot.y, qrot.z);
-    // fmt::printf("Local:    Q(%lf,%lf,%lf,%lf) => L(%lf,%lf,%lf,%lf)\n",
-    //     qrot.w, qrot.x, qrot.y, qrot.z, lrot.w, lrot.x, lrot.y, lrot.z);
 
     updateUniversal();
 }

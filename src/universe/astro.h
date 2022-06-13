@@ -6,7 +6,7 @@
 #pragma once
 
 #define LN_MAG          1.085736
-#define J2000Obliquity  glm::radians(23.4392911)
+#define J2000Obliquity  ofs::radians(23.4392911)
 
 #define LY_PER_PARSEC   3.26167
 #define KM_PER_LY       9460730472580.8

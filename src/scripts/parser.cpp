@@ -131,14 +131,14 @@ bool Group::getColor(cstr_t &key, color_t &color) const
     vec4d_t vec4;
     if (getVector(key, vec4))
     {
-        color = color_t(vec4.x, vec4.y, vec4.z, vec4.w);
+        color = color_t(vec4.x(), vec4.y(), vec4.z(), vec4.w());
         return true;
     }
 
     vec3d_t vec3;
     if (getVector(key, vec3))
     {
-        color = color_t(vec3.x, vec3.y, vec3.z);
+        color = color_t(vec3.x(), vec3.y(), vec3.z());
         return true;
     }
 

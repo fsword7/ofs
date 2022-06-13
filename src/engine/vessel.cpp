@@ -20,17 +20,17 @@ void surface_t::setLanded(double _lng, double _lat, double alt, double dir,
     altitude = alt;
     heading = dir;
 
-    pitch = atan2(nml.z, nml.y);
-    bank = (fabs(nml.x) > eps || fabs(nml.y) > eps)
-        ? atan2(nml.x, nml.y) : 0.0;
+    pitch = atan2(nml.z(), nml.y());
+    bank = (fabs(nml.x()) > eps || fabs(nml.y()) > eps)
+        ? atan2(nml.x(), nml.y()) : 0.0;
 
     airSpeed = groundSpeed = 0.0;
 
     slng = sin(lng), clng = cos(lng);
     slat = sin(lat), clat = cos(lat);
-    l2h = { -slng,      0.0,   clng,
-             clat*clng, slat,  clat*slng,
-            -slat*clng, clat, -slat*slng };
+    // l2h = { -slng,      0.0,   clng,
+    //          clat*clng, slat,  clat*slng,
+    //         -slat*clng, clat, -slat*slng };
 
 }
 
@@ -59,9 +59,9 @@ void Vessel::initLanded(Object *object, double lat, double lng, double dir)
     {
         double sdir = sin(dir), cdir = cos(dir);
 
-        landrot = {  sp->clng*sp->slat*sdir - sp->lng*cdir,   sp->clng*sp->clat,  -sp->clng*sp->slat*cdir - sp->slng*sdir,
-                    -sp->clat*sdir,                           sp->slat,            sp->clat*cdir,
-                     sp->slng*sp->slat*sdir + sp->clng*cdir,  sp->clat*sp->slng,  -sp->slng*sp->slat*cdir + sp->clng*sdir }; 
+        // landrot = {  sp->clng*sp->slat*sdir - sp->lng*cdir,   sp->clng*sp->clat,  -sp->clng*sp->slat*cdir - sp->slng*sdir,
+        //             -sp->clat*sdir,                           sp->slat,            sp->clat*cdir,
+        //              sp->slng*sp->slat*sdir + sp->clng*cdir,  sp->clat*sp->slng,  -sp->slng*sp->slat*cdir + sp->clng*sdir }; 
     }
 
 

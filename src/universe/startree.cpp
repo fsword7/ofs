@@ -85,9 +85,9 @@ uint32_t StarTree::index(const celStar &star, const vec3d_t &cell)
 {
     vec3d_t spos = star.getStarPosition();
 
-    return ((spos.x < cell.x) ? 0 : xPos) |
-           ((spos.y < cell.y) ? 0 : yPos) |
-           ((spos.z < cell.z) ? 0 : zPos);
+    return ((spos.x() < cell.x()) ? 0 : xPos) |
+           ((spos.y() < cell.y()) ? 0 : yPos) |
+           ((spos.z() < cell.z()) ? 0 : zPos);
 }
 
 uint32_t StarTree::countNodes()
@@ -117,13 +117,13 @@ uint32_t StarTree::countObjects()
 void StarTree::processVisibleStars(const ofsHandler &handle, const vec3d_t &obs,
     const double limitingFactor, const double scale)
 {
-    double dist = glm::length(obs - cellCenter) - scale * sqrt(3.0);
+    double dist = (obs - cellCenter).norm() - scale * sqrt(3.0);
 
     for (int32_t idx = 0; idx < list.size(); idx++)
     {
         const celStar &star = *list[idx];
 
-        double dist = glm::length(obs - star.getStarPosition());
+        double dist = (obs - star.getStarPosition()).norm();
         double appMag = convertAbsToAppMag(star.getAbsMag(), dist);
 
         handle.process(star, dist, appMag);
@@ -144,7 +144,7 @@ void StarTree::processVisibleStars(const ofsHandler &handle, const vec3d_t &obs,
 void StarTree::processCloseStars(const vec3d_t &obs, const double radius, const double scale,
     std::vector<const celStar *> &stars)
 {
-    double dist = glm::length(obs - cellCenter) - scale * sqrt(3.0);
+    double dist = (obs - cellCenter).norm() - scale * sqrt(3.0);
     if (dist > radius)
         return;
     
@@ -152,9 +152,9 @@ void StarTree::processCloseStars(const vec3d_t &obs, const double radius, const 
     {
         const celStar *star = list[idx];
 
-        if (glm::length(obs - star->getStarPosition()) < square(radius))
+        if ((obs - star->getStarPosition()).norm() < ofs::square(radius))
         {
-            double dist = glm::length(obs - star->getStarPosition());
+            double dist = (obs - star->getStarPosition()).norm();
             if (dist < radius)
                 stars.push_back(star);
         }

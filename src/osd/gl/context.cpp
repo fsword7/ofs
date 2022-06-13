@@ -56,6 +56,8 @@ void Context::init(int w, int h)
 
     Logger::getLogger()->info("Using GLEW version: {}\n", glewGetString(GLEW_VERSION));
     Logger::getLogger()->info("    OpenGL version: {}\n", glGetString(GL_VERSION));
+    Logger::getLogger()->info("Using Eigen version {}.{}\n",
+        EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
 
     resize(w, h);
 

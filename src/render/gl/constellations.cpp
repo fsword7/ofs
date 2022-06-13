@@ -84,10 +84,10 @@ void Scene::renderConstellations(Universe &universe, const Player &player)
             if (star1 == nullptr || star2 == nullptr)
                 continue;
 
-            vertices[rLines].spos = vec3f_t((star1->getStarPosition() * KM_PER_PC) - cpos);
+            vertices[rLines].spos = ((star1->getStarPosition() * KM_PER_PC) - cpos).cast<float>();
             vertices[rLines].color = color_t(0.5, 0.5, 0.5, 1.0);
             rLines++;
-            vertices[rLines].spos = vec3f_t((star2->getStarPosition() * KM_PER_PC) - cpos);
+            vertices[rLines].spos = ((star2->getStarPosition() * KM_PER_PC) - cpos).cast<float>();
             vertices[rLines].color = color_t(0.5, 0.5, 0.5, 1.0);
             rLines++;
         }
@@ -106,10 +106,10 @@ void Scene::renderConstellations(Universe &universe, const Player &player)
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
-    mat4f_t mvp = mat4f_t(prm.dmProj * prm.dmView);
+    mat4f_t mvp = (prm.dmProj * prm.dmView).cast<float>();
 
     uint32_t mvpLoc = glGetUniformLocation(pgmAsterism->getID(), "mvp");
-    glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
+    glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, mvp.data());
 
     glDrawArrays(GL_LINES, 0, rLines);
 

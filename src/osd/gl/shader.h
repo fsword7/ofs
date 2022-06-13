@@ -75,7 +75,7 @@ public:
     vec2Uniform &operator = (const vec2f_t &val)
     {
         if (slot != -1)
-            glUniform2f(slot, val.x, val.y);
+            glUniform2fv(slot, 1, val.data());
         return *this;
     }
 
@@ -96,7 +96,7 @@ public:
     vec3Uniform &operator = (const vec3f_t &val)
     {
         if (slot != -1)
-            glUniform3f(slot, val.x, val.y, val.z);
+            glUniform3fv(slot, 1, val.data());
         return *this;
     }
 
@@ -116,7 +116,7 @@ public:
     vec4Uniform &operator = (const vec4f_t &val)
     {
         if (slot != -1)
-            glUniform4f(slot, val.x, val.y, val.z, val.w);
+            glUniform4fv(slot, 1, val.data());
         return *this;
     }
 
@@ -136,7 +136,7 @@ public:
     mat3Uniform &operator = (const mat3f_t &val)
     {
         if (slot != -1)
-            glUniformMatrix3fv(slot, 1, GL_FALSE, glm::value_ptr(val));
+            glUniformMatrix3fv(slot, 1, GL_FALSE, val.data());
         return *this;
     }
 
@@ -157,7 +157,7 @@ public:
     mat4Uniform &operator = (const mat4f_t &val)
     {
         if (slot != -1)
-            glUniformMatrix4fv(slot, 1, GL_FALSE, glm::value_ptr(val));
+            glUniformMatrix4fv(slot, 1, GL_FALSE, val.data());
         // fmt::printf("Set mat4 data on slot %d\n", slot);
         return *this;
     }

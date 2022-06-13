@@ -27,6 +27,10 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
         quatd_t orot = body->getuOrientation(prm.jnow);
         setObjectLighting(lightSources, ole.opos, orot, lights);
 
+        // Apply the modelview for celestial body
+        Eigen::Affine3d transform = Eigen::Translation3d(ole.opos) * ole.orot.conjugate();
+        mat4d_t mvPlanet = prm.dmView * transform.matrix();
+    
         op.body  = body;
         op.color = body->getColor();
         op.orad  = body->getRadius();
@@ -34,7 +38,8 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
         op.wpos  = body->getPlanetocentric(op.lpos);
         op.opos  = ole.opos;
         op.oqrot = orot;
-
+        op.mvp   = mvPlanet;
+        
         // fmt::print("Planetocentric: {:.6f} {:.6f} {:.6f}\n", op.lpos.x, op.lpos.y, op.lpos.z);
 
         vobj->render(prm, op, lights);
@@ -56,11 +61,11 @@ void Scene::buildNearSystems(FrameTree *tree, Player &player, vec3d_t apos, vec3
         {
             Frame *frame = body->getOrbitFrame();
             vec3d_t opos = body->getoPosition(prm.jnow);
-            vec3d_t spos = origin + glm::conjugate(frame->getOrientation(prm.jnow)) * opos;
+            vec3d_t spos = origin + frame->getOrientation(prm.jnow).conjugate() * opos;
             vec3d_t vpos = spos - apos;
 
-            double vdist = glm::length(vpos);
-            double vbnorm = glm::dot(vpnorm, vpos);
+            double vdist = vpos.norm();
+            double vbnorm = vpnorm.dot(vpos);
             double objSize = body->getRadius() / (vdist * pixelSize);
 
             double appMag = std::numeric_limits<double>::infinity();

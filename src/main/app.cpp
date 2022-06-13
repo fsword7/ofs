@@ -118,9 +118,9 @@ void CoreApp::update()
 
     // Z-axis move control
     if (stateKey[keyPad3])
-        tv.z += dt * keyMovementControl;
+        tv.z() += dt * keyMovementControl;
     if (stateKey[keyPad1])
-        tv.z -= dt * keyMovementControl;
+        tv.z() -= dt * keyMovementControl;
 
     // Braking control
     if (stateKey[keyPad5] || stateKey[keyb])

@@ -64,12 +64,6 @@ public:
     vec3d_t toUniversal(const vec3d_t &lpos, double tjd);
     quatd_t toUniversal(const quatd_t &lrot, double tjd);
 
-    vec3d_t fromUniversalLocal(const vec3d_t &upos, double tjd);
-    quatd_t fromUniversalLocal(const quatd_t &urot, double tjd);
-
-    vec3d_t toUniversalLocal(const vec3d_t &lpos, double tjd);
-    quatd_t toUniversalLocal(const quatd_t &lrot, double tjd);
-
     static Frame *create(cstr_t &frameName, Object *bodyObject, Object *parentObject);
 
 private:
@@ -97,7 +91,7 @@ public:
 
     quatd_t getOrientation(double) const override
     {
-        return quatd_t(1, 0, 0, 0);
+        return quatd_t::Identity();
     }
 };
 
@@ -109,7 +103,8 @@ public:
 
     quatd_t getOrientation(double) const override
     {
-        return quatd_t(vec3d_t(J2000Obliquity, 0, 0));
+        // return quatd_t(vec3d_t(J2000Obliquity, 0, 0));
+        return quatd_t(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX()));
     }
 };
 

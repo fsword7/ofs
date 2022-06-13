@@ -14,11 +14,38 @@
 #define TILE_VALID      0x8000'0000
 #define TILE_ACTIVE     0x4000'0000
 
+#define TILE_FILERES    256
+#define TILE_ELEVRES    (TILE_FILERES+3)
+
 class Object;
 class Context;
 class SurfaceManager;
 class SurfaceHandler;
 class Texture;
+
+// Elevation file header
+// Format type:
+//     0 = flat (no data)
+//     8 = unsigned byte (8-bit)
+//    -8 = signed byte (8-bit)
+//    16 = unsigned short (16-bit)
+//   -16 = signed short (16-bit)
+
+#pragma pack(push, 1)
+struct elevHeader
+{
+    uint32_t code;                  // Code 'ELE1' in four CC format
+    int      hdrSize;               // Header length (expected 76 bytes)
+    int      format;                // Data format
+    int      xgrd, ygrd;            // (X,Y) grids  (expected 259 x 259)
+    int      xpad, ypad;            // (X,Y) pads   (expected 1 x 1)
+    double   scale;                 // Elevation scale
+    double   offset;                // Elevation offset
+    double   latmin, latmax;        // Latitude range [rad]
+    double   lngmin, lngmax;        // Longtitude range [rad]
+    double   emin, emax, emean;     // Min, max, and mean elevation [m]
+};
+#pragma pack(pop)
 
 class SurfaceTile : public Tree<SurfaceTile, QTREE_NODES>
 {
@@ -51,6 +78,11 @@ public:
     void render(renderParam &prm);
 
     int16_t *readElevationFile(int lod, int ilat, int ilng, double eres);
+    bool interpolateLinearElevationGrid(const float *inElev, float *outElev);
+    bool interpolateCubicElevationGrid(int16_t *elev, int lod, int ilat, int ilng,
+        int16_t *pElev, int plod, int pilat, int pilng, double *eMean);
+    bool loadElevationData();
+    float *getElevationData();
 
     inline Texture *getTexture() const { return txImage; }
 
@@ -72,9 +104,9 @@ private:
     const SurfaceTile *parentTile = nullptr;
 
     // Elevation data parameters
-    bool     elevOwn = false;
-    int16_t *elev = nullptr;
-    int16_t *ggelev = nullptr;
+    bool    elevOwn = false;
+    float  *elev = nullptr;
+    float  *ggelev = nullptr;  // Great-grandfather elevation data
 };
 
 class SurfaceHandler
@@ -114,6 +146,8 @@ public:
     static void ginit();
     static void gexit();
 
+    inline int getGridResolution() const        { return gridRes; }
+
     Mesh *createSphere(int lod, int ilat, int ilng, int grids, const tcrd_t &tcr);
 
     void update(SurfaceTile *tile, renderParam &prm);
@@ -130,7 +164,8 @@ private:
 
     ShaderProgram *pgmPlanet = nullptr;
     mat4Uniform mvp;
-    bool tileDebug = false;
+    bool tileDebug = false;     // Tile debug enable
+    int gridRes = 32;           // Grid resolution (default 32 for surfaces)
 
     zTreeManager *zTrees[5];
     SurfaceTile *tiles[2];

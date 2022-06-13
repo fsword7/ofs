@@ -36,12 +36,12 @@ public:
 private:
     Player &player;
 
-    vec3d_t rpos = { 0, 0, 0 };     // Relative position [player frame]
-    quatd_t rrot = { 1, 0, 0, 0};   // Relative orientation [player frame]
+    vec3d_t rpos = vec3d_t::Zero();         // Relative position [player frame]
+    quatd_t rrot = quatd_t::Identity();     // Relative orientation [player frame]
 
     uint32_t width = 1, height = 1;
     double   aspect = double(width) / double(height);
-    double   fov = glm::radians(SCR_FOV);
+    double   fov = ofs::radians(SCR_FOV);
 };
 
 class PlayerFrame
@@ -158,15 +158,15 @@ private:
     
     travelMode mode = tvFreeMode;
 
-    vec3d_t  upos = { 0, 0, 0 };
-    quatd_t  urot = { 1, 0, 0, 0 };
-    vec3d_t  lpos = { 0, 0, 0 };
-    quatd_t  lrot = { 1, 0, 0, 0 };
+    vec3d_t  upos = vec3d_t::Zero();
+    quatd_t  urot = quatd_t::Identity();
+    vec3d_t  lpos = vec3d_t::Zero();
+    quatd_t  lrot = quatd_t::Identity();
     
     // Movement control
-    vec3d_t av = { 0, 0, 0 };   // angular velocity control
-    quatd_t wv = { 1, 0, 0, 0}; //   quaternion control
-    vec3d_t tv = { 0, 0, 0 };   // travel velocity control
+    vec3d_t av = vec3d_t::Zero();   // angular velocity control
+    // quatd_t wv = { 1, 0, 0, 0}; //   quaternion control
+    vec3d_t tv = vec3d_t::Zero();   // travel velocity control
 
     double  realTime;
     double  jdTime;

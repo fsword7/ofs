@@ -125,8 +125,8 @@ quatd_t EarthRotation::computeEquatorRotation(double tjd) const
 	computePrecissionObliquity(T, opa, osa);
 	computeEclipticPrecission(T, ppa, pqa);
 
-	double obliquity  = glm::radians(osa / 3600);
-	double precession = glm::radians(ppa / 3600);
+	double obliquity  = ofs::radians(osa / 3600);
+	double precession = ofs::radians(ppa / 3600);
 
 	double P = ppa * 2.0 * pi / 129600;
 	double Q = pqa * 2.0 * pi / 129600;
@@ -135,9 +135,9 @@ quatd_t EarthRotation::computeEquatorRotation(double tjd) const
 
 	quatd_t RPi = zRotate(PiA);
 	quatd_t rpi = xRotate(piA);
-	quatd_t eclRotation = glm::conjugate(RPi) * rpi * RPi;
+	quatd_t eclRotation = RPi.conjugate() * rpi * RPi;
 
-	quatd_t q = xRotate(obliquity) * zRotate(-precession) * glm::conjugate(eclRotation);
+	quatd_t q = xRotate(obliquity) * zRotate(-precession) * eclRotation.conjugate();
 
 	// fmt::printf("Yes, here equator rotation\n");
 

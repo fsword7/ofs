@@ -41,7 +41,7 @@ void Scene::setObjectLighting(std::vector<LightSource> &suns, const vec3d_t opos
     for (int idx = 0; idx < nLights; idx++)
     {
         vec3d_t spos = opos - suns[idx].spos;
-        double  dist = glm::length(spos);
+        double  dist = spos.norm();
         double  au   = astro::convertKilometerToAU(dist);
 
         ls.lights[idx].spos       = spos;
@@ -49,7 +49,7 @@ void Scene::setObjectLighting(std::vector<LightSource> &suns, const vec3d_t opos
         ls.lights[idx].color      = suns[idx].color;
         ls.lights[idx].irradiance = suns[idx].luminosity / (au * au);
         ls.lights[idx].dEye       = spos * (1.0 / dist);
-        ls.lights[idx].dObject    = ls.lights[idx].dEye * orot;
+        // ls.lights[idx].dObject    = ls.lights[idx].dEye * orot;
         ls.lights[idx].shadows    = true;
     }
 
@@ -64,7 +64,7 @@ void Scene::setObjectLighting(std::vector<LightSource> &suns, const vec3d_t opos
         // sort(ls.lights, ls.lights + nLights, LightIrradiancePredicate());
     }
 
-    ls.eyePosObject = -opos * orot;
-    ls.eyeDirObject = (vec3d_t(0, 0, 0) - opos) * orot;
-    ls.ambientColor = vec3d_t(0, 0, 0);
+    // ls.eyePosObject = -opos * orot;
+    // ls.eyeDirObject = (vec3d_t(0, 0, 0) - opos) * orot;
+    // ls.ambientColor = vec3d_t(0, 0, 0);
 }
