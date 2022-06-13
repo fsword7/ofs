@@ -28,7 +28,7 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
         setObjectLighting(lightSources, ole.opos, orot, lights);
 
         // Apply the modelview for celestial body
-        Eigen::Affine3d transform = Eigen::Translation3d(ole.opos) * ole.orot.conjugate();
+        Eigen::Affine3d transform = Eigen::Translation3d(ole.opos) * orot.conjugate();
         mat4d_t mvPlanet = prm.dmView * transform.matrix();
     
         op.body  = body;

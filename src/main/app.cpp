@@ -87,21 +87,21 @@ void CoreApp::update()
     // Keyboard attitude control
     // X-axis attitude control
     if (stateKey[keyPad2] || stateKey[keyDown])
-        av += vec3d_t(dt * -keyAttitudeAccel, 0, 0);
-    if (stateKey[keyPad8] || stateKey[keyUp])
         av += vec3d_t(dt * keyAttitudeAccel, 0, 0);
+    if (stateKey[keyPad8] || stateKey[keyUp])
+        av += vec3d_t(dt * -keyAttitudeAccel, 0, 0);
     
     // Y-axis attitude control
     if (stateKey[keyPad6] || stateKey[keyRight])
-        av += vec3d_t(0, dt * -keyAttitudeAccel, 0);
-    if (stateKey[keyPad4] || stateKey[keyLeft])
         av += vec3d_t(0, dt * keyAttitudeAccel, 0);
+    if (stateKey[keyPad4] || stateKey[keyLeft])
+        av += vec3d_t(0, dt * -keyAttitudeAccel, 0);
 
     // Z-axis attitude control
     if (stateKey[keyPad7])
-        av += vec3d_t(0, 0, dt * -keyAttitudeAccel);
-    if (stateKey[keyPad9])
         av += vec3d_t(0, 0, dt * keyAttitudeAccel);
+    if (stateKey[keyPad9])
+        av += vec3d_t(0, 0, dt * -keyAttitudeAccel);
 
     // Keyboard movement control
     // X-axis move control

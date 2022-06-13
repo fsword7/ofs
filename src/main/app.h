@@ -189,7 +189,7 @@ protected:
     bool ctrlStateKey[512];
     bool altStateKey[512];
 
-    double keyAttitudeAccel = ofs::radians(60.0);
+    double keyAttitudeAccel = ofs::radians(5.0);
     double keyAttitudeBrake = ofs::radians(60.0);
     double keyRotationAccel = ofs::radians(60.0);
     double keyMovementControl = 1000.0;
