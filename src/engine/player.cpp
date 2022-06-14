@@ -250,7 +250,7 @@ void Player::move(Object *object, double altitude, goMode mode)
         break;
     }
 
-    upos = opos + orot.conjugate() * vec3d_t(0, 0, -altitude);
+    upos = opos + orot.conjugate() * vec3d_t(0, 0, altitude);
     urot = orot.conjugate();
     lpos = frame->fromUniversal(upos, jdTime);
     lrot = frame->fromUniversal(urot, jdTime);
