@@ -196,15 +196,10 @@ void Player::update(double dt, double timeTravel)
         //
 
         vec3d_t wv = av * 0.5;
-        quatd_t dr = quatd_t(0.5, wv.x(), wv.y(), wv.z()) * lrot;
+        quatd_t dr = quatd_t(1.0, wv.x(), wv.y(), wv.z()) * lrot;
         lrot = quatd_t(dr.coeffs() + dt * dr.coeffs());
         lrot.normalize();
     
-        // Logger::getLogger()->debug("WV   {:.6f} {:.6f} {:.6f}\n", wv.x(), wv.y(), wv.z());
-        // Logger::getLogger()->debug("QWV  {:.6f} {:.6f} {:.6f} {:.6f}\n", qwv.w(), qwv.x(), qwv.y(), qwv.z());
-        // Logger::getLogger()->debug("DR   {:.6f} {:.6f} {:.6f} {:.6f}\n", dr.w(), dr.x(), dr.y(), dr.z());
-        // Logger::getLogger()->debug("LROT {:.6f} {:.6f} {:.6f} {:.6f}\n", lrot.w(), lrot.x(), lrot.y(), lrot.z());
-
         lpos -= (lrot.conjugate() * tv) * dt;
 
     }

@@ -99,22 +99,22 @@ void CoreApp::update()
 
     // Z-axis attitude control
     if (stateKey[keyPad7])
-        av += vec3d_t(0, 0, dt * keyAttitudeAccel);
-    if (stateKey[keyPad9])
         av += vec3d_t(0, 0, dt * -keyAttitudeAccel);
+    if (stateKey[keyPad9])
+        av += vec3d_t(0, 0, dt * keyAttitudeAccel);
 
     // Keyboard movement control
     // X-axis move control
-    // if (stateKey[keyLeft])
-    //     tv.x += dt * keyMovementControl;
-    // if (stateKey[keyRight])
-    //     tv.x -= dt * keyMovementControl;
+    if (shiftStateKey[keyPad4])
+        tv.x() += dt * keyMovementControl;
+    if (shiftStateKey[keyPad6])
+        tv.x() -= dt * keyMovementControl;
 
     // Y-axis move control
-    // if (stateKey[keyDown])
-    //     tv.y += dt * keyMovementControl;
-    // if (stateKey[keyUp])
-    //     tv.y -= dt * keyMovementControl;
+    if (shiftStateKey[keyPad8])
+        tv.y() += dt * keyMovementControl;
+    if (shiftStateKey[keyPad2])
+        tv.y() -= dt * keyMovementControl;
 
     // Z-axis move control
     if (stateKey[keyPad3])
