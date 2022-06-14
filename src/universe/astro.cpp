@@ -7,10 +7,7 @@
 #include "universe/astro.h"
 
 namespace astro
-{
-    static const quatd_t J2000ObliquityRotation =
-        Eigen::Quaternion<double>(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX()));
- 
+{ 
     vec3d_t convertEquatorialToEcliptic(double ra, double de, double pc)
     {
         double theta, phi;
@@ -23,7 +20,5 @@ namespace astro
         opos  = vec3d_t(sin(phi)*cos(theta), cos(phi), sin(phi)*-sin(theta)) * pc;
 
         return J2000ObliquityRotation * opos;
-
-        // return opos * quatd_t(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX())) * pc;
     }
 }

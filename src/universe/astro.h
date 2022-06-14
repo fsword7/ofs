@@ -29,6 +29,9 @@ namespace astro
 {
     constexpr double G     = 6.673889e-11;  // official graviational constant [N (m/kg)^2]
     constexpr double J2000 = 2451545.0;     // Epoch J2000 [Jan 1, 2000 at 12:00 UTC]
+    
+    const quatd_t J2000ObliquityRotation =
+        Eigen::Quaternion<double>(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX()));
 
     vec3d_t convertEquatorialToEcliptic(double ra, double de, double pc);
 
