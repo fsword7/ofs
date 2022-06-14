@@ -26,6 +26,7 @@ set(OFS_CPP_SRCS
     ephem/vsop87.cpp
     main/app.cpp
     main/date.cpp
+    render/annotation.cpp
     render/elevmgr.cpp
     render/lights.cpp
     render/mesh.cpp

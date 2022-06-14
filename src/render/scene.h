@@ -194,6 +194,11 @@ protected:
 
     vec3d_t getAstrocentericPosition(const celStar *sun, vec3d_t upos, double now);
 
+    void addAnnotation(std::vector<Annotation> &annotations,
+        cstr_t &labelText, color_t color, const vec3d_t &pos, float size);
+
+    void renderAnnotations(const std::vector<Annotation> &annotations);
+
 private:
     Context &ctx;
     ShaderManager *smgr = nullptr;

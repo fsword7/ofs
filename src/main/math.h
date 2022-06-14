@@ -145,6 +145,50 @@ namespace ofs
         return m;
     }
 
+    template <typename T> bool setProjectPerspective(const Eigen::Matrix<T, 4, 4> &mvp, const int viewport[4],
+        const Eigen::Matrix<T, 3, 1> &from, Eigen::Matrix<T, 3, 1> &to)
+    {
+        Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
+        Eigen::Matrix<T, 4, 1> out = mvp * in;
+        if (out.w() == static_cast<T>(0))
+            return false;
+
+        out = out.array() / out.w();
+        out = static_cast<T>(0.5) + out.array() * static_cast<T>(0.5);
+        out.x() = viewport[0] + out.x() * viewport[2];
+        out.y() = viewport[1] + out.y() * viewport[3];
+
+        to = { out.x(), out.y(), out.z() };
+
+        return true;
+    }
+
+    template <typename T> bool setProjectPerspective(const Eigen::Matrix<T, 4, 4> &dmProj, const Eigen::Matrix<T, 4, 4> &dmView,
+        const int viewport[4], const Eigen::Matrix<T, 3, 1> &from, Eigen::Matrix<T, 3, 1> &to)
+    {
+        Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
+        Eigen::Matrix<T, 4, 1> out = dmProj * dmView * in;
+
+        // Outside of prospective area, do nothing and return with false condition.
+        if (out.w() == static_cast<T>(0))
+            return false;
+
+        out = out.array() / out.w();
+        out = static_cast<T>(0.5) + out.array() * static_cast<T>(0.5);
+
+        out.x() = viewport[0] + out.x() * viewport[2];
+        out.y() = viewport[1] + out.y() * viewport[3];
+
+        double depth = from.x() * dmView(2, 0) +
+                       from.y() * dmView(2, 1) +
+                       from.z() * dmView(2, 2);
+        out.z() = -depth;
+
+        to = { out.x(), out.y(), out.z() };
+
+        return true;
+    }
+
     template <typename T> Eigen::Matrix<T, 4, 4> ortho(T left, T right, T top, T bottom, T zNear = -1, T zFar = 1)
     {
         T rl = right - left;
