@@ -41,21 +41,28 @@ public:
     
     virtual ~Object() = default;
 
-    inline void setsName(str_t name)    { objNames[0] = name; }    
-    inline str_t getName() const        { return objNames[0]; }
-    inline str_t getsName() const       { return objNames[0]; }
-    inline ObjectType getType() const   { return objType; }
-    inline double getRadius() const     { return radius; }
+    inline void setsName(str_t name)        { objNames[0] = name; }    
+    inline str_t getName() const            { return objNames[0]; }
+    inline str_t getsName() const           { return objNames[0]; }
+    inline ObjectType getType() const       { return objType; }
+    inline double getRadius() const         { return radius; }
+    inline double getBoundingRadius() const { return radius * std::numbers::sqrt3; }
+    inline double getCullingRadius() const  { return cullingRadius; }   
+    inline vec3d_t getSemiAxes() const      { return semiAxes; }
 
-    inline void setMass(double val)     { mass = val; }
-    inline void setRadius(double val)   { radius = val; }
-    inline void setAlbedo(double val)   { albedo = val; }
+    inline bool isSphere() const            { return semiAxes.x() == semiAxes.y() && semiAxes.x() == semiAxes.z(); }
+
+    inline void setMass(double val)         { mass = val; }
+    inline void setAlbedo(double val)       { albedo = val; }
+    inline void setRadius(double val)       { radius = val; semiAxes = { val, val, val }; }
+    inline void setSemiAxes(vec3d_t axes)   { semiAxes = axes; radius = semiAxes.maxCoeff(); }
 
     // Virtual function calls
     virtual void setOrbitFrame(Frame *frame) = 0;
     virtual void setBodyFrame(Frame *frame) = 0;
     virtual void setOrbit(Orbit *nOrbit) = 0;
     virtual void setRotation(Rotation *nRotation) = 0;
+    virtual void updateCullingRadius();
 
     virtual Frame *getOrbitFrame() const = 0;
     virtual Frame *getBodyFrame() const = 0;
@@ -75,14 +82,16 @@ public:
     StateVectors s1;    // new state vectors at time t0+dt during update function call
 
 protected:
-    vec3d_t objPosition = { 0, 0, 0 };
-    vec3d_t objVelocity = { 0, 0, 0 };
-    quatd_t objRotation = { 1, 0, 0, 0 };
+    vec3d_t objPosition = vec3d_t::Zero();
+    vec3d_t objVelocity = vec3d_t::Zero();
+    quatd_t objRotation = quatd_t::Identity();
 
 
-    double  mass   = 0.0;
-    double  radius = 0.0;
-    double  albedo = 0.0;
+    double  mass     = 0.0;
+    double  radius   = 0.0;
+    double  albedo   = 0.0;
+    vec3d_t semiAxes = vec3d_t::Zero();
+    double  cullingRadius = 0.0;
 
     vec3d_t rposBase, rposAdd;  // base/incremental of relative position
     vec3d_t rvelBase, rvelAdd;  // baae/incremental of relative velocity

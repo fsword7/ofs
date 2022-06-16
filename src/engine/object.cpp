@@ -20,3 +20,8 @@ quatd_t Object::getuOrientation(double tjd) const
 {
     return objRotation;
 }
+
+void Object::updateCullingRadius()
+{
+    cullingRadius = getBoundingRadius();
+}
