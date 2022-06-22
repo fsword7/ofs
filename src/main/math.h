@@ -203,4 +203,48 @@ namespace ofs
 
         return m;
     }
+
+
+    // scale function calls
+
+    template <typename T>
+    Eigen::Matrix<T, 4, 4> scale(T s)
+    {
+        return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s)).matrix();
+    }
+
+    // rotate function calls
+
+    template <typename T>
+    Eigen::Matrix<T, 4, 4> rotate(const Eigen::Quaternion<T> &q)
+    {
+        return Eigen::Transform<T, 3, Eigen::Affine>(q).matrix();
+    }
+
+    template <typename T>
+    Eigen::Matrix<T, 4, 4> rotate(T angle, const Eigen::Matrix<T, 3, 1> &axis)
+    {
+        return rotate(Eigen::AngleAxis<T>(angle, axis));
+    }
+
+    template <typename T>
+    Eigen::Matrix<T, 4, 4> rotate(Eigen::AngleAxis<T> &a)
+    {
+        return Eigen::Transform<T, 3, Eigen::Affine>(a).matrix();
+    }
+    
+    // translate function calls
+
+    template <typename T>
+    Eigen::Matrix<T, 4, 4> translate(T x, T y, T z)
+    {
+        return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(Eigen::Matrix<T, 3, 1>(x, y, z))).matrix();
+    }
+
+    template <typename T>
+    Eigen::Matrix<T, 4, 4> translate(const Eigen::Matrix<T, 3, 1> &v)
+    {
+        return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(v)).matrix();
+    }
+
 }

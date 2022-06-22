@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "render/refmark.h"
+
 class Orbit;
 class Rotation;
 class Frame;
@@ -99,4 +101,5 @@ protected:
 
     Object *cbody = nullptr;    // orbit reference body
 
+    std::vector<ReferenceMark *> referenceMarks;
 };

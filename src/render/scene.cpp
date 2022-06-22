@@ -67,11 +67,9 @@ void Scene::render(Universe &universe, Player &player)
     prm.cpos   = cam->getuPosition();
     prm.crot   = cam->getuOrientation();
     prm.tanap  = cam->getTanAp();
+    prm.pxSize = pixelSize;
     prm.dmProj = ofs::perspective(cam->getFOV(), cam->getAspect(), 0.0001, 1'000'000'000.0);
     prm.dmView = Eigen::Affine3d(prm.crot).matrix();
-
-    // displayMatrix4("dmProg", prm.dmProj);
-    // displayMatrix4("dmView", prm.dmView);
 
     // Render constellations in background
     renderConstellations(universe, player);

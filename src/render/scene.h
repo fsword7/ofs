@@ -32,6 +32,26 @@ struct Vertex32
 
 typedef Vertex32<float> vtxf_t;
 
+struct LineVertex
+{
+    LineVertex(vec3f_t p1, vec3f_t p2, float s)
+    : point1(p1), point2(p2), scale(s)
+    { }
+
+    vec3f_t point1, point2;
+    float scale;
+};
+
+struct LineStripVertrex
+{
+    LineStripVertrex(vec3f_t p, float s)
+    : point(p), scale(s)
+    { }
+
+    vec3f_t point;
+    float scale;
+};
+
 template <typename T>
 struct TextureCoordRange
 {
@@ -127,6 +147,7 @@ struct renderParam
     double  viewap;
     double  tanap;
     double  aspect;
+    double  pxSize;     // pixel width
 
     // Per-object parameters
     int     maxLOD;

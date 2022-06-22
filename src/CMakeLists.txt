@@ -31,7 +31,9 @@ set(OFS_CPP_SRCS
     render/lights.cpp
     render/mesh.cpp
     render/loader.cpp
+    render/planetgrid.cpp
     render/overlay.cpp
+    render/refmark.cpp
     render/scene.cpp
     render/starcolors.cpp
     render/surface.cpp
@@ -76,7 +78,9 @@ set(OFS_H_SRCS
     main/math.h
     render/elevmgr.h
     render/mesh.h
+    render/planetgrid.h
     render/overlay.h
+    render/refmark.h
     render/scene.h
     render/starcolors.h
     render/surface.h
