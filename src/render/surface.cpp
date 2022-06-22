@@ -73,7 +73,7 @@ void SurfaceTile::setCenter(vec3d_t &cnml, vec3d_t &wpos)
 
 void SurfaceTile::setSubtextureRange(const tcrd_t &ptcr)
 {
-    if ((ilng & 1) == 0)
+    if (ilng & 1)
     {   // Right column of tile
         tcRange.tumin = (ptcr.tumin + ptcr.tumax) / 2.0;
         tcRange.tumax = ptcr.tumax;
@@ -225,42 +225,49 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
     double erad;
     double tdist, apr;
     int    tlod;
-    bool   splitFlag = false;
+    bool   bStepDown = true; // step down (next LOD level)
     int    bias = 4;
 
     tile->state = SurfaceTile::Rendering;
 
     // Find angle between camera and tile center
     trad  = trad0 / double(nlat);
-    alpha = acos(prm.cdir.dot(-tile->center));
+    alpha = acos(prm.cdir.dot(tile->center));
     adist = alpha - trad;
 
     // Check if tile is visible from camera position
     // If tile is hiding from camera position, mark tile
-    // as invisible to not being rendered (LOD level 1+)
+    // as invisible to not being rendered (LOD level 2+)
     if (adist >= prm.viewap)
     {
-        if (tileDebug)
+        if (lod > 0)
         {
-            Logger::getLogger()->debug("Tile: LOD {} ({},{}) - processing\n",
-                tile->lod+4, tile->ilat, tile->ilng);
+            if (tileDebug)
+            {
+                Logger::getLogger()->debug("Tile: LOD {} ({},{}) - processing\n",
+                    tile->lod+4, tile->ilat, tile->ilng);
 
-            Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-                tile->center.x(), tile->center.y(), tile->center.z(),
-                abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
-                abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
-    
-            Logger::getLogger()->debug(" -- Out of view {:.6f} >= {:.6f} - not rendering\n",
-                ofs::degrees(adist), ofs::degrees(prm.viewap));
+                Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+                    tile->center.x(), tile->center.y(), tile->center.z(),
+                    abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
+                    abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
+        
+                Logger::getLogger()->debug(" -- Out of view {:.6f} >= {:.6f} - rendering at LOD 1 level\n",
+                    ofs::degrees(adist), ofs::degrees(prm.viewap));
+            }
+
+            tile->state = SurfaceTile::Invisible;
+            return;
         }
 
-        tile->state = SurfaceTile::Invisible;
-        return;
+        // Force to rendering at LOD level 1 as default
+        bStepDown = false;
     }
 
     // Check if tile is visible in view area
 
     // Check LOD level from tile distance
+    if (bStepDown)
     {
         erad = prm.orad;
         if (adist < 0.0)
@@ -280,13 +287,11 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
         else
             tlod = prm.maxLOD;
         tlod += prm.biasLOD;
-        splitFlag = (lod < tlod);
+        bStepDown = (lod < tlod);
     }
 
-    if (splitFlag == true)
+    if (bStepDown)
     {
-        // fmt::printf("Tile split at LOD %d (Expected LOD %d)\n", lod+4, tlod+4);
-
         bool valid = true;
 
         for (int idx = 0; idx < 4; idx++)
@@ -319,15 +324,10 @@ void SurfaceManager::update(SurfaceTile *tile, renderParam &prm)
             ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
         if (tile->parentTile != nullptr)
             Logger::getLogger()->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
-                tile->parentTile->lod, tile->parentTile->ilat, tile->parentTile->ilng);
+                tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
         Logger::getLogger()->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
             ofs::degrees(adist), ofs::degrees(prm.viewap));
-
-        // fmt::printf("Tile LOD level %d (%d,%d)\n", lod+4, tile->ilat, tile->ilng);
-        // fmt::printf("Alpha: %lf  Distance: %lf\n", degrees(alpha), degrees(adist));
-        // fmt::printf("Aperature: %lf LOD: %d Tile center LOD: %d\n", apr, lod+4, tlod+4);
     }
-
 }
 
 void SurfaceManager::render(SurfaceTile *tile, renderParam &prm)
@@ -357,7 +357,7 @@ void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
     prm.wpos    = op.wpos;
 
     // prm.cdir    = op.opos * glm::conjugate(op.oqrot);
-    prm.cdir    = -op.lpos.normalized();
+    prm.cdir    = op.lpos.normalized();
     prm.cdist   = op.lpos.norm() / prm.orad;
     prm.viewap  = (prm.cdist >= 1.0) ? acos(1.0 / prm.cdist) : 0.0;
     prm.color   = op.color;
@@ -370,27 +370,6 @@ void SurfaceManager::render(renderParam &prm, ObjectProperties &op)
             abs(ofs::degrees(op.wpos.y())), (op.wpos.y() < 0) ? 'W' : 'E');
     }
 
-	// fmt::printf("Surface Manager - Render Parameter\n");
-	// fmt::printf("Planet Radius:      %lf\n", prm.orad);
-	// fmt::printf("Planet Position:    (%lf,%lf,%lf)\n",
-	// 	op.opos.x, op.opos.y, op.opos.z);
-	// fmt::printf("Planet Orientation: (%lf,%lf,%lf,%lf)\n",
-	// 	prm.oqrot.w, prm.oqrot.x, prm.oqrot.y, prm.oqrot.z);
-    // fmt::printf("World Coordination: %lf %lf\n",
-    //     glm::degrees(op.wpos.x), glm::degrees(op.wpos.y));
-	// fmt::printf("Camera Position:    (%lf,%lf,%lf)\n",
-	// 	prm.cpos.x, prm.cpos.y, prm.cpos.z);
-	// fmt::printf("Camera Direction:   (%lf,%lf,%lf)\n",
-	// 	prm.cdir.x, prm.cdir.y, prm.cdir.z);
-	// fmt::printf("Camera Distance:    %lf\n", prm.cdist);
-	// fmt::printf("Horizon View:       %lf\n", glm::degrees(prm.viewap));
-	// fmt::printf("Camera Position:    (%lf,%lf,%lf) in Universe frame\n",
-	// 	prm.cpos.x, prm.cpos.y, prm.cpos.z);
-
-    // prm.dmModel = prm.orot.transpose();
-    // prm.dmWorld = glm::translate(prm.dmView, op.opos);
-    // prm.dmWorld = prm.dmView * Eigen::Translation3d(op.opos);
-    // prm.mvp     = (prm.dmProj * prm.dmWorld * prm.dmModel).cast<float>();
     prm.mvp = (prm.dmProj * op.mvp).cast<float>();
     mvp = prm.mvp;
 
