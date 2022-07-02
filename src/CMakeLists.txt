@@ -1,12 +1,12 @@
 find_package(SDL2 REQUIRED)
-find_package(SDL2_Image REQUIRED)
+find_package(SDL2_image REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(fmt REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(lua REQUIRED)
+#find_package(lua REQUIRED)
 
 set(OFS_CPP_SRCS
     engine/engine.cpp
