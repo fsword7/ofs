@@ -42,7 +42,7 @@ Logger *Logger::create(levelType logType)
 void Logger::vlog(levelType level, fmt::string_view format, fmt::format_args args) const
 {
     if (outLogFile.is_open())
-        outLogFile << fmt::vformat(format, args);
+        outLogFile << fmt::vformat(format, args) << std::flush;
     else
     {
         auto &out = (level <= logWarning || level == logDebug) ? outError : outLog;   
