@@ -35,12 +35,14 @@ bool StarColors::load(const fs::path &fname)
             continue;
         if (line[0] == '#')
             continue;
-        
+
         cells.clear();
         while (!lineStream.eof())
         {
             str_t tmp;
             lineStream >> tmp;
+            if (tmp.empty())
+                continue;
             cells.push_back(tmp);
         }
         if (cells.size() != D58_nSIZE)
