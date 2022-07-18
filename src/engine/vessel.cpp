@@ -45,6 +45,23 @@ Vessel::Vessel()
 
 }
 
+void Vessel::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
+{
+    // Number of touchdown points must be least 3 points
+    assert(ntd >= 3);
+
+    // Initialize touchdown points
+    tpVertices.clear();
+    tpVertices.resize(ntd);
+
+    for (int idx = 0; idx < ntd; idx++)
+    {
+        tpVertices[idx].pos = tdvtx[idx].pos;
+        tpVertices[idx].stiffness = tdvtx[idx].stiffness;
+        tpVertices[idx].damping = tdvtx[idx].damping;
+    }
+}
+
 void Vessel::initLanded(Object *object, double lat, double lng, double dir)
 {
 

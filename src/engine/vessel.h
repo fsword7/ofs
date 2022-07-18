@@ -153,6 +153,8 @@ public:
     bool addSurfaceForces(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt);
     void getIntermediateMoments(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt);
 
+    void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
+
     void updateMass();
     void update();
 
