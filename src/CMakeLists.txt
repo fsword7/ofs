@@ -17,6 +17,11 @@ set(OFS_CPP_SRCS
     engine/supervessel.cpp
     engine/vessel.cpp
     engine/view.cpp
+    ephem/earth/atmo.cpp
+    ephem/earth/nrlmsise00_data.cpp
+    ephem/earth/nrlmsise00_math.cpp
+    ephem/earth/nrlmsise00_p.cpp
+    ephem/earth/nrlmsise00.cpp
     ephem/earth-p03lp.cpp
     ephem/elements.cpp
     ephem/elp-mpp02.cpp
@@ -45,6 +50,7 @@ set(OFS_CPP_SRCS
     render/ztreemgr.cpp
     scripts/parser.cpp
     universe/astro.cpp
+    universe/atmo.cpp
     universe/body.cpp
     universe/constellations.cpp
     universe/frame.cpp
@@ -66,6 +72,10 @@ set(OFS_H_SRCS
     engine/supervessel.h
     engine/vessel.h
     engine/view.h
+    ephem/earth/atmo.h
+    ephem/earth/nrlmsise00_math.hpp
+    ephem/earth/nrlmsise00_p.hpp
+    ephem/earth/nrlmsise00.hpp
     ephem/elements.h
     ephem/elp-mpp02.h
     ephem/orbit.h
@@ -90,7 +100,8 @@ set(OFS_H_SRCS
     render/vvessel.h
     render/ztreemgr.h
     scripts/parser.h
-    universe/star.h
+    universe/astro.h
+    universe/atmo.h
     universe/body.h
     universe/constellations.h
     universe/frame.h
