@@ -146,6 +146,8 @@ public:
     Vessel();
     virtual ~Vessel() = default;
 
+    inline void clearTouchdownPoints()          { tpVertices.clear(); }
+
     void initLanded(Object *object, double lat, double lng, double dir);
     void initDocked();
     void initOrbiting();
@@ -153,6 +155,7 @@ public:
     bool addSurfaceForces(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt);
     void getIntermediateMoments(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt);
 
+    void setGenericDefaults();
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
 
     void updateMass();

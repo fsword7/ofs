@@ -45,6 +45,23 @@ Vessel::Vessel()
 
 }
 
+void Vessel::setGenericDefaults()
+{
+    // Object stands above 2 meters with 3 legs
+    tdVertex_t tdvtx[3];
+    tdvtx[0].pos = {  0, -2,  2 }; // forward leg
+    tdvtx[1].pos = { -2, -2, -2 }; // left back leg
+    tdvtx[2].pos = {  2, -2, -2 }; // right back leg
+    for (int idx = 0; idx < sizeof(tdvtx); idx++)
+    {
+        tdvtx[idx].stiffness = 1e5;
+        tdvtx[idx].damping = 1e5;
+    }
+
+    setTouchdownPoints(tdvtx, sizeof(tdvtx));
+
+}
+
 void Vessel::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
 {
     // Number of touchdown points must be least 3 points
