@@ -7,6 +7,7 @@
 #include "ephem/elements.h"
 #include "engine/rigidbody.h"
 #include "engine/vessel.h"
+#include "universe/astro.h"
 
 void surface_t::setLanded(double _lng, double _lat, double alt, double dir,
     const vec3d_t &nml, const Object *object)
@@ -54,8 +55,8 @@ void Vessel::setGenericDefaults()
     tdvtx[2].pos = {  2, -2, -2 }; // right back leg
     for (int idx = 0; idx < sizeof(tdvtx); idx++)
     {
-        tdvtx[idx].stiffness = 1e5;
-        tdvtx[idx].damping = 1e5;
+        tdvtx[idx].stiffness = 0;
+        tdvtx[idx].damping = 0;
     }
 
     setTouchdownPoints(tdvtx, sizeof(tdvtx));
@@ -73,10 +74,26 @@ void Vessel::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
 
     for (int idx = 0; idx < ntd; idx++)
     {
-        tpVertices[idx].pos = tdvtx[idx].pos;
+        tpVertices[idx].pos = tdvtx[idx].pos / M_PER_KM;
         tpVertices[idx].stiffness = tdvtx[idx].stiffness;
         tpVertices[idx].damping = tdvtx[idx].damping;
     }
+
+    vec3d_t tp[3] = { tpVertices[0].pos, tpVertices[1].pos, tpVertices[2].pos };
+
+    tpNormal = (tp[0] - (tp[1] + tp[2])*0.5).cross(tp[2] - tp[1]);
+    double len = tpNormal.norm();
+    tpNormal /= len;
+
+    double a = tp[0].y() * (tp[1].z() - tp[2].z()) - tp[1].y() * (tp[0].z() - tp[2].z()) + tp[2].y() * (tp[0].z() - tp[1].z());
+    double b = tp[0].x() * (tp[1].z() - tp[2].z()) - tp[1].x() * (tp[0].z() - tp[2].z()) + tp[2].x() * (tp[0].z() - tp[1].z());
+    double c = tp[0].x() * (tp[1].y() - tp[2].y()) - tp[1].x() * (tp[0].y() - tp[2].y()) + tp[2].x() * (tp[0].y() - tp[1].y());
+    double d = -tp[0].x()*a - tp[0].y()*b - tp[0].z()*c;
+    double scl = sqrt(a*a + b*b + c*c);
+
+    cogElev = fabs(d / scl);
+    tpCGravity = { -a*cogElev/scl, -b*cogElev/scl, -c*cogElev/scl };
+
 }
 
 void Vessel::initLanded(Object *object, double lat, double lng, double dir)

@@ -176,8 +176,8 @@ private:
 
     // Collision detection parameters (touchdown points)
     std::vector<tdVertex_t> tpVertices; // touchdown vertices (vessel frame)
-    vec3d_t tpMormal;                   // upward normal of touchdown plane (vessel frame)
+    vec3d_t tpNormal;                   // upward normal of touchdown plane (vessel frame)
     vec3d_t tpCGravity;                 // center of gravity projection
-
+    double  cogElev;
 
 };

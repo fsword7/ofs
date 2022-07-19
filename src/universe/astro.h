@@ -14,6 +14,9 @@
 #define KM_PER_AU       149597870.7
 #define AU_PER_LY       (KM_PER_LY / KM_PER_AU)
 #define KM_PER_PC       (KM_PER_AU * AU_PER_PC)
+#define M_PER_KM        1e3
+#define CM_PER_KM       1e6
+#define MM_PER_KM       1e9
 
 // default star parameters (our sun)
 #define SOLAR_ABSMAG        4.83
