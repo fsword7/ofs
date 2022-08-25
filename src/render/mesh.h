@@ -22,7 +22,7 @@ struct MeshGroup
     int32_t     nvtx;       // Number of vertices
     int32_t     nidx;       // Number of Indices
     vtxf_t      *vtx;       // Vertices data
-    uint16_t    *idx;       // Indices data
+    uint32_t    *idx;       // Indices data
 
     uint32_t    uFlags;
     uint8_t     flags;
@@ -35,7 +35,10 @@ public:
     Mesh3D() = default;
     ~Mesh3D() = default;
 
+    void setup();
     void clear();
+
+    MeshGroup *addGroup(vtxf_t *vtx, int nvtx, uint32_t *idx, int nidx, int midx, int tidx, int zbias);
 
 private:
     int nGroups;        // Number of Mesh 3D groups
