@@ -35,11 +35,24 @@ void surface_t::setLanded(double _lng, double _lat, double alt, double dir,
 
 }
 
+// ******** VesselBase ********
+
 VesselBase::VesselBase()
 : RigidBody("", objVessel)
 {
     
 }
+
+void VesselBase::getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt)
+{
+}
+
+bool VesselBase::addSurfaceForces(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt)
+{
+    return false;
+}
+
+// ******** Vessel ********
 
 Vessel::Vessel()
 {
@@ -129,22 +142,22 @@ void Vessel::initOrbiting()
 
 }
 
-bool Vessel::addSurfaceForces(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt)
-{
-    return false;
-}
-
-void Vessel::getIntermediateMoments(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt)
+void Vessel::getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt)
 {
     vec3d_t F = Fadd;
     vec3d_t M = Ladd;
 
-    // Check for collision detection
-    addSurfaceForces(F, M, state, dt);
+    // Check for surface forces and collision detection
+    addSurfaceForces(state, F, M, dt);
 
     // Updates linear and angular moments
     acc += state.Q * F/mass;
     am  += M/mass;
+}
+
+bool Vessel::addSurfaceForces(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt)
+{
+    return false;
 }
 
 void Vessel::updateMass()

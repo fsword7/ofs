@@ -111,7 +111,7 @@ enum thrustType_t
 struct tdVertex_t
 {
     vec3d_t pos;            // position in vessel frame
-    double  stiffness;      // suspension - stiffness 
+    double  stiffness;      // suspension - stiffness [ N/m ] 
     double  damping;        // suspension - damping
     double  compression;    // suspension - compression factor
 };
@@ -130,11 +130,19 @@ public:
     VesselBase();
     virtual ~VesselBase() = default;
 
+    virtual void getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt);
+    virtual bool addSurfaceForces(const StateVectors &state, vec3d_t &acc, vec3d_t &am, double dt);
+
 protected:
     FlightStatus fsType = fsFlight;
 
     surface_t surfParam;    // ship parameters in planet atomsphere
     mat3d_t   landrot;      // Ship orientation in local planet frame
+
+    vec3d_t F;      // Linear moment
+    vec3d_t L;      // Angular moment
+    vec3d_t Fadd;   // collecting linear forces
+    vec3d_t Ladd;   // collecting torque components
 
 };
 
@@ -152,9 +160,9 @@ public:
     void initDocked();
     void initOrbiting();
 
-    bool addSurfaceForces(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt);
-    void getIntermediateMoments(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt);
-
+    void getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt) override;
+    bool addSurfaceForces(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt) override;
+    
     void setGenericDefaults();
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
 
@@ -163,11 +171,6 @@ public:
 
 private:
     SuperVessel *superVessel = nullptr;
-
-    vec3d_t F;      // Linear moment
-    vec3d_t L;      // Angular moment
-    vec3d_t Fadd;   // collecting linear forces
-    vec3d_t Ladd;   // collecting torque components
 
     double  lift;   // Lift force from wings
     double  drag;   // drag from atomspheric forces
