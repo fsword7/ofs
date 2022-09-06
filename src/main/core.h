@@ -44,3 +44,4 @@ namespace fs = std::filesystem;
 #include "utils/logger.h"
 #include "utils/color.h"
 #include "utils/string.h"
+#include "api/module.h"

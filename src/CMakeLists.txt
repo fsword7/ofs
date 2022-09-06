@@ -11,7 +11,9 @@ find_package(ZLIB REQUIRED)
 set(OFS_CPP_SRCS
     engine/engine.cpp
     engine/headup.cpp
+    engine/mfdpanel.cpp
     engine/object.cpp
+    engine/panel.cpp
     engine/player.cpp
     engine/rigidbody.cpp
     engine/supervessel.cpp
@@ -31,8 +33,13 @@ set(OFS_CPP_SRCS
     ephem/vsop87.cpp
     main/app.cpp
     main/date.cpp
+    main/graphics.cpp
+    main/main.cpp
+    main/module.cpp
+    main/timedate.cpp
     render/annotation.cpp
     render/elevmgr.cpp
+    render/hudpanel.cpp
     render/lights.cpp
     render/mesh.cpp
     render/loader.cpp
@@ -65,8 +72,13 @@ set(OFS_CPP_SRCS
 )
 
 set(OFS_H_SRCS
+    api/draw.h
+    api/graphics.h
+    api/module.h
     engine/engine.h
+    engine/mfdpanel.h
     engine/object.h
+    engine/panel.h
     engine/player.h
     engine/rigidbody.h
     engine/supervessel.h
@@ -81,12 +93,14 @@ set(OFS_H_SRCS
     ephem/orbit.h
     ephem/rotation.h
     ephem/vsop87.h
-    main/sdl/app.h
+    # main/sdl/app.h
     main/app.h
     main/core.h
     main/date.h
     main/math.h
+    main/timedate.h
     render/elevmgr.h
+    render/hudpanel.h
     render/mesh.h
     render/planetgrid.h
     render/overlay.h
@@ -119,7 +133,7 @@ set(OFS_H_SRCS
 )
 
 set(OFSGL_CPP_SRCS
-    main/sdl/maingl.cpp
+    # main/sdl/maingl.cpp
     osd/gl/buffers.cpp
     osd/gl/context.cpp
     osd/gl/mesh.cpp
@@ -151,4 +165,22 @@ target_link_libraries(ofs
     Eigen3::Eigen
     fmt::fmt
     ZLIB::ZLIB
+    libdl.a
 )
+
+set_target_properties(ofs
+    PROPERTIES
+    ENABLE_EXPORTS 1
+)
+
+install(TARGETS ofs
+    RUNTIME
+    DESTINATION ${OFS_INSTALL_ROOT_DIR}
+)
+
+install(FILES $<TARGET_LINKER_FILE:ofs>
+    DESTINATION ${OFS_INSTALL_ROOT_DIR}/lib
+)
+
+add_subdirectory(client/glclient)
+# add_subdirectory(client/vkclient)

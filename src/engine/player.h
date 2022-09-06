@@ -23,6 +23,7 @@ public:
     inline double getAspect() const { return aspect; }
     inline double getFOV() const    { return fov; }
     inline double getTanAp() const  { return tan(fov); }
+    inline bool isExternal() const  { return external; }
     
     vec3d_t getuPosition() const;
     quatd_t getuOrientation() const;
@@ -42,6 +43,7 @@ private:
     uint32_t width = 1, height = 1;
     double   aspect = double(width) / double(height);
     double   fov = ofs::radians(SCR_FOV);
+    bool     external = false;
 };
 
 class PlayerFrame

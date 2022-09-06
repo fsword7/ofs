@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include "main/timedate.h"
+#include <SDL2/SDL.h>
+
 class Context;
 class Engine;
 class Universe;
@@ -12,7 +15,15 @@ class Player;
 class Camera;
 class Scene;
 class View;
+class Panel;
+class GraphicsClient;
 
+struct ModuleEntry
+{
+    std::string name;
+    std::string path;
+    ModuleHandle handle;
+};
 
 class CoreApp
 {
@@ -145,10 +156,12 @@ public:
     };
 
     // Virtual main function calls packages
-    virtual void init() = 0;
-    virtual void cleanup() = 0;
-    virtual void run() = 0;
+    virtual void init();
+    virtual void cleanup();
+    virtual void run();
 
+    inline GraphicsClient *getClient() { return gclient; }
+    
     void initEngine();
 
     View *pickView(float x, float y);
@@ -156,6 +169,34 @@ public:
     void start();
     void update();
     void render();
+
+    void openSession();
+    void closeSession();
+    void updateWorld();
+    void renderScene();
+    void drawHUD();
+
+    // Module function calls
+    void loadStartupModules();
+    ModuleHandle loadModule(cstr_t &path, cstr_t &name);
+    bool unloadModule(ModuleHandle handle);
+    bool unloadModule(cstr_t &name);
+    void *findModuleProcAddress(ModuleHandle handle, cchar_t *funcName);
+
+    bool attachGraphicsClient(GraphicsClient *gc);
+    bool detachGraphicsClient(GraphicsClient *gc);
+
+    void displayFrame();
+
+    // Time/date update routines
+    bool beginTimeStep(bool running);
+    void endTimeStep(bool running);
+    void pause(bool flag);
+    void freeze(bool flag);
+    void suspend();
+    void resume();
+
+    inline void togglePause() { pause(bRunning); }
 
     // Keyboard controls
     void keyPress(keyCode code, int modifiers, bool down);
@@ -179,10 +220,21 @@ protected:
 
     Context  *ctx = nullptr;
     Scene    *scene = nullptr;
+    Panel    *panel = nullptr;
+
+    GraphicsClient *gclient = nullptr;
 
     int width, height;
 
     double currentTime = 0.0;
+    std::chrono::time_point<std::chrono::steady_clock> prevTime, suspendTime;
+
+    bool bSession;
+    bool bRunning;
+    bool bRequestRunning;
+    bool bFreezing;
+
+    TimeDate td;
 
     bool stateKey[512];
     bool shiftStateKey[512];
@@ -206,4 +258,8 @@ protected:
 
     std::vector<View *> views;
     View *activeView = nullptr;
+
+    std::vector<ModuleEntry> moduleList;
 };
+
+extern CoreApp *ofsAppCore;

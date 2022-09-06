@@ -4,7 +4,6 @@
 // Date:    Apr 15, 2022
 
 #include "main/app.h"
-
 class sdlCoreApp : public CoreApp
 {
 public:
