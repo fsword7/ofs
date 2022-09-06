@@ -3,7 +3,7 @@
 // Author:  Tim Stark
 // Date:    Aug 30, 2022
 
-#define OFS_IMPLEMENTATION
+#define OFSAPI_SERVER_BUILD
 
 #include "main/core.h"
 #include "api/module.h"

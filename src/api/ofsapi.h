@@ -11,11 +11,11 @@
 #define LIBIMPORT   __declspec(dllimport)
 #define LIBCALL     extern "C" LIBEXPORT
 
-#ifdef OFS_IMPLEMENTATION
+#ifdef OFSAPI_SERVER_BUILD
 #define OFSAPI LIBEXPORT
 #else
 #define OFSAPI LIBIMPORT
-#endif /* OFS_IMPLEMENTATION */
+#endif /* OFSAPI_SERVER_BUILD */
 
 #else /* __WIN32__ */
 
