@@ -12,15 +12,16 @@
 #define LIBCALL     extern "C" LIBEXPORT
 
 #ifdef OFSAPI_SERVER_BUILD
-#define OFSAPI LIBEXPORT
+#define OFSAPI LIBEXPORT // server side
 #else
-#define OFSAPI LIBIMPORT
+#define OFSAPI LIBIMPORT // client side
 #endif /* OFSAPI_SERVER_BUILD */
 
 #else /* __WIN32__ */
 
-#define DLLEXPORT
-#define DLLIMPORT
+#define LIBEXPORT
+#define LIBIMPORT
+#define LIBCALL     extern "C"
 #define OFSAPI
 
 #endif /* __WIN32__ */
