@@ -193,7 +193,7 @@ void CoreApp::init()
     loadStartupModules();
 
     // Loading plugin modules
-    loadModule("modules/plugin", "oglClient");
+    loadModule("modules/plugin", "glclient");
 }
 
 void CoreApp::cleanup()

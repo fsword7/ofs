@@ -28,7 +28,7 @@ OFSAPI void *ofsGetProcAddress(ModuleHandle module, const char *funcName)
     return dlsym(module, funcName);
 }
 
-OFSAPI const char *ofsGetModuleError()
+OFSAPI char *ofsGetModuleError()
 {
     return dlerror();
 }
@@ -52,6 +52,11 @@ OFSAPI int ofsGetDateInteger(cstr_t &date)
 
     val = ((year % 100) * 10000) + ((month + 1) * 100) + day;
     return val;
+}
+
+OFSAPI ModuleHandle ofsGetModuleHandle()
+{
+    return nullptr;
 }
 
 OFSAPI void ofsInitModule(ModuleHandle handle)

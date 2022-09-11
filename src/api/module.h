@@ -19,6 +19,7 @@ OFSAPI ModuleHandle ofsLoadModule(const char *name);
 OFSAPI void ofsUnloadModule(ModuleHandle module);
 // OFSAPI Dl_info *ofsGetModuleInfo(ModuleHandle module);
 OFSAPI void *ofsGetProcAddress(ModuleHandle module, const char *funcName);
-OFSAPI const char *ofsGetModuleError();
+OFSAPI char *ofsGetModuleError();
 
 OFSAPI int ofsGetDateInteger(cstr_t &date);
+OFSAPI ModuleHandle ofsGetModuleHandle();

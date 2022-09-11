@@ -19,15 +19,19 @@ set(OGL_H_SRCS
 add_library(glclient SHARED ${OGL_CPP_SRCS} ${OGL_H_SRCS})
 
 target_link_libraries(glclient
-    ${OFS_LIB}
     Freetype::Freetype
     SDL2::Main
     SDL2::Image
     GLEW::GLEW
     OpenGL::GL
     Eigen3::Eigen
+)
+if (MINGW)
+target_link_libraries(glclient
+    ${OFS_LIB}
     libdl.a
 )
+endif()
 
 set_target_properties(glclient
     PROPERTIES
