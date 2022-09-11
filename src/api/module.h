@@ -6,10 +6,7 @@
 #pragma once
 
 #include "api/ofsapi.h"
-
-#ifdef __MINGW32__
 #include <dlfcn.h>
-#endif /* __MINGW32__ */
 
 typedef void * ModuleHandle;
 
