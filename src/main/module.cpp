@@ -14,7 +14,7 @@ OFSAPI ModuleHandle ofsLoadModule(const char *name)
 #ifdef __MINGW32__
     return dlopen(path.c_str(), RTLD_LAZY|RTLD_GLOBAL);
 #else
-    return dlopen(path.c_str(), RTLD_LAZY|RTLD_GLOBAL|RTLD_BEEPBIND);
+    return dlopen(path.c_str(), RTLD_LAZY|RTLD_GLOBAL|RTLD_DEEPBIND);
 #endif /* __MINGW32__ */
 }
 
