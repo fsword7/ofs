@@ -9,11 +9,21 @@ find_package(Freetype REQUIRED)
 set(OGL_CPP_SRCS
     glclient.cpp
     scene.cpp
+    surface.cpp
+    vbody.cpp
+    vobject.cpp
+    vstar.cpp
+    vvessel.cpp
 )
 
 set(OGL_H_SRCS
     glclient.h
     scene.h
+    surface.h
+    vbody.h
+    vobject.h
+    vstar.h
+    vvessel.h
 )
 
 add_library(glclient SHARED ${OGL_CPP_SRCS} ${OGL_H_SRCS})

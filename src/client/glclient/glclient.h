@@ -20,6 +20,7 @@ public:
     virtual ~glClient() {}
 
     bool cbInitialize() override;
+    void cbCleanup() override;
 
     bool cbCreateRenderingWindow() override;
     bool cbDisplayFrame() override;

@@ -18,11 +18,11 @@ vObject *vObject::create(const Object &obj, Scene &scene)
 {
     switch (obj.getType())
     {
-    case Object::objCelestialStar:
+    case ObjectType::objCelestialStar:
         return new vStar(obj, scene);
-    case Object::objCelestialBody:
+    case ObjectType::objCelestialBody:
         return new vBody(obj, scene);
-    case Object::objVessel:
+    case ObjectType::objVessel:
         return new vVessel(obj, scene);
     }
 

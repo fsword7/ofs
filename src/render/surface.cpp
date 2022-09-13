@@ -168,7 +168,7 @@ SurfaceManager::SurfaceManager(Context &ctx, const Object &object)
     
     switch(object.getType())
     {
-    case Object::objCelestialBody:
+    case ObjectType::objCelestialBody:
         const celBody *body = dynamic_cast<const celBody *>(&object);
         const PlanetarySystem *system = body->getInSystem();
         str_t starName = system->getStar()->getsName();

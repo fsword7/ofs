@@ -4,6 +4,7 @@
 // Date:    Sep 3, 2022
 
 #include "main/core.h"
+#include "engine/object.h"
 #include "glclient.h"
 #include "scene.h"
 
@@ -11,6 +12,11 @@ Scene::Scene(int width, int height)
 : width(width), height(height)
 { 
     glViewport(0, 0, width, height);
+}
+
+void Scene::init()
+{
+    vobjList.clear();
 }
 
 void Scene::render()

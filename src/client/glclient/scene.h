@@ -5,14 +5,21 @@
 
 #pragma once
 
+class vObject;
 class Scene
 {
 public:
     Scene(int width, int height);
     ~Scene() = default;
 
+    void init();
     void render();
+
+    vObject *addVisualObject(ObjectHandle object);
+    vObject *getVisualObject(ObjectHandle object, bool bCreate = false);
 
 private:
     int width, height;
+
+    std::vector<vObject *> vobjList;
 };

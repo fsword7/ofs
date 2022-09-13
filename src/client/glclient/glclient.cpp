@@ -60,16 +60,24 @@ static void __attribute__ ((destructor)) destroyModule(void)
 
 bool glClient::cbInitialize()
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-    {
-        // Logger::getLogger()->fatal("OFS: Unable to initialize SDL2 interface: {}\n",
-        //     SDL_GetError());
-        // fmt::printf("OFS: Unable to initialize SDL2 inteface: %s\n",
-        //     SDL_GetError());
-        abort();
-    }
+    // if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    // {
+    //     // Logger::getLogger()->fatal("OFS: Unable to initialize SDL2 interface: {}\n",
+    //     //     SDL_GetError());
+    //     // fmt::printf("OFS: Unable to initialize SDL2 inteface: %s\n",
+    //     //     SDL_GetError());
+    //     abort();
+    // }
+
+    width  = 1920;
+    height = 1080;
 
     return true;
+}
+
+void glClient::cbCleanup()
+{
+
 }
 
 bool glClient::cbCreateRenderingWindow()
@@ -81,6 +89,7 @@ bool glClient::cbCreateRenderingWindow()
     if (window == nullptr)
     {
         // Logger::getLogger()->fatal("SDL2 Window can't be created: {}\n", SDL_GetError());
+        printf("SDL2 Window can't be created: %s\n", SDL_GetError());
         abort();
     }
     SDL_ShowWindow(window);
@@ -95,8 +104,9 @@ bool glClient::cbCreateRenderingWindow()
     SDL_GL_SetSwapInterval(1);
 
     scene = new Scene(width, height);
+    scene->init();
 
-    return false;
+    return true;
 }
 
 bool glClient::cbDisplayFrame()
