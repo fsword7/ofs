@@ -105,14 +105,14 @@ Object *Universe::findObject(const Object *obj, cstr_t &name) const
 
     switch (obj->getType())
     {
-    case Object::objCelestialStar:
+    case ObjectType::objCelestialStar:
         sun = dynamic_cast<const celStar *>(obj);
         if ((system = sun->getSolarSystem()) == nullptr)
             break;
         objects = system->getPlanetarySystem();
         return objects->find(name);
 
-    case Object::objCelestialBody:
+    case ObjectType::objCelestialBody:
         body = dynamic_cast<const celBody *>(obj);
         objects = body->getOwnSystem();
         if (objects != nullptr)

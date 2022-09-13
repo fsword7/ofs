@@ -14,6 +14,7 @@ public:
     virtual ~GraphicsClient();
 
     virtual bool cbInitialize() { return false; }
+    virtual void cbCleanup() { }
 
     virtual bool cbCreateRenderingWindow() = 0;
     virtual bool cbDisplayFrame() = 0;

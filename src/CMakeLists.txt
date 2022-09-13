@@ -36,6 +36,7 @@ set(OFS_CPP_SRCS
     main/graphics.cpp
     main/main.cpp
     main/module.cpp
+    main/ofsapi.cpp
     main/timedate.cpp
     render/annotation.cpp
     render/elevmgr.cpp
@@ -75,6 +76,7 @@ set(OFS_H_SRCS
     api/draw.h
     api/graphics.h
     api/module.h
+    api/ofsapi.h
     engine/engine.h
     engine/mfdpanel.h
     engine/object.h

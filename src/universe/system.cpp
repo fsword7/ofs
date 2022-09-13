@@ -349,13 +349,13 @@ bool System::loadSolarSystemObjects(std::istream &in, Universe &universe, const 
         Logger::getLogger()->info("Body: {} Parent: {} Object: {}\n", bodyName, parentName,
             parent != nullptr ? parent->getsName() : "<Body not found>");
 
-        if (parent->getType() == Object::objCelestialStar)
+        if (parent->getType() == ObjectType::objCelestialStar)
         {
             celStar *star = dynamic_cast<celStar *>(parent);
             System *system = universe.createSolarSystem(star);
             pSystem = system->getPlanetarySystem();
         }
-        else if (parent->getType() == Object::objCelestialBody)
+        else if (parent->getType() == ObjectType::objCelestialBody)
         {
             celBody *body = dynamic_cast<celBody *>(parent);
             pSystem = body->createPlanetarySystem();

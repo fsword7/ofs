@@ -194,6 +194,9 @@ void CoreApp::init()
 
     // Loading plugin modules
     loadModule("modules/plugin", "glclient");
+
+    if (gclient != nullptr)
+        createSceneWindow();
 }
 
 void CoreApp::cleanup()
@@ -209,12 +212,12 @@ void CoreApp::openSession()
     auto now = std::chrono::steady_clock::now();
     td.reset(time(nullptr));
 
-
+    bSession = true;
 }
 
 void CoreApp::closeSession()
 {
-
+    bSession = false;
 }
 
 void CoreApp::updateWorld()
@@ -227,6 +230,7 @@ bool CoreApp::attachGraphicsClient(GraphicsClient *gc)
     if (gclient != nullptr)
         return false;
     gclient = gc;
+    gclient->cbInitialize();
     return true;
 }
 
@@ -236,6 +240,17 @@ bool CoreApp::detachGraphicsClient(GraphicsClient *gc)
         return false;
     gclient = nullptr;
     return true;
+}
+
+void CoreApp::createSceneWindow()
+{
+    if (gclient != nullptr)
+    {
+        if (!gclient->cbCreateRenderingWindow())
+            exit(0);
+    }
+    else
+        exit(0);
 }
 
 void CoreApp::renderScene()
@@ -258,6 +273,7 @@ void CoreApp::displayFrame()
 
 void CoreApp::run()
 {
+    bRunning = true;
     while (bRunning)
     {
         SDL_Event event;

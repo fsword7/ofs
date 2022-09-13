@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     ofsAppCore->init();
 
     printf("Running world...\n");
-    // ofsAppCore->run();
+    ofsAppCore->run();
 
     ofsAppCore->cleanup();
     delete ofsAppCore;

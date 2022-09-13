@@ -25,3 +25,19 @@
 #define OFSAPI
 
 #endif /* __WIN32__ */
+
+
+typedef void * ObjectHandle;
+
+
+enum ObjectType
+{
+    objUnknown = 0,
+    objPlayer,
+    objVessel,
+    objCelestialStar,
+    objCelestialBody,
+};
+
+OFSAPI ObjectHandle ofsGetObjectByName(cstr_t &name);
+OFSAPI ObjectType ofsGetObjectType(ObjectHandle object);

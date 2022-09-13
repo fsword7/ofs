@@ -161,6 +161,7 @@ public:
     virtual void run();
 
     inline GraphicsClient *getClient() { return gclient; }
+    inline Universe *getUniverse() { return universe; }
     
     void initEngine();
 
@@ -185,6 +186,7 @@ public:
 
     bool attachGraphicsClient(GraphicsClient *gc);
     bool detachGraphicsClient(GraphicsClient *gc);
+    void createSceneWindow();
 
     void displayFrame();
 

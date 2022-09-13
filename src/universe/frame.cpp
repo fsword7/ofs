@@ -135,8 +135,8 @@ quatd_t BodyFixedFrame::getOrientation(double tjd) const
 
     switch (fixedObject->getType())
     {
-    case Object::objCelestialStar:
-    case Object::objCelestialBody:
+    case ObjectType::objCelestialStar:
+    case ObjectType::objCelestialBody:
         return yrot180 * dynamic_cast<celBody *>(fixedObject)->getuOrientation(tjd);
     default:
         return yrot180; // { 1, 0, 0, 0 };
@@ -155,8 +155,8 @@ quatd_t BodyMeanEquatorFrame::getOrientation(double tjd) const
 {
     switch (equatorObject->getType())
     {
-    case Object::objCelestialStar:
-    case Object::objCelestialBody:
+    case ObjectType::objCelestialStar:
+    case ObjectType::objCelestialBody:
         return dynamic_cast<celBody *>(equatorObject)->getEquatorial(tjd);
     default:
         return quatd_t::Identity();

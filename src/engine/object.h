@@ -26,14 +26,14 @@ public:
 class Object
 {
 public:
-    enum ObjectType
-    {
-        objUnknown = 0,
-        objPlayer,
-        objVessel,
-        objCelestialStar,
-        objCelestialBody,
-    };
+    // enum oldObjectType
+    // {
+    //     objUnknown = 0,
+    //     objPlayer,
+    //     objVessel,
+    //     objCelestialStar,
+    //     objCelestialBody,
+    // };
 
     Object(const cstr_t &name, ObjectType type)
     : objType(type)
