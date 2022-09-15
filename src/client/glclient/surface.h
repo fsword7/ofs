@@ -13,8 +13,35 @@ struct Vertex
 {
     float vx, vy, vz;   // Vertex position
     float nx, ny, nz;   // Normal position
-    float tu0, tu1;     // Texture coordinates
-    float tv0, tv1;
+    float tu, tv;       // Texture coordinates
+};
+
+struct Mesh
+{
+    Mesh(int nvtx, Vertex *vtx, int nidx, uint16_t *idx)
+    : nvtx(nvtx), vtx(vtx), nidx(nidx), idx(idx)
+    { }
+
+    ~Mesh()
+    {
+        delete [] vtx;
+        delete [] idx;
+    }
+
+    // VertexBuffer   *vbo = nullptr;
+    // IndexBuffer    *ibo = nullptr;
+    // VertexArray    *vao = nullptr;;
+
+    int       nvtx;
+    Vertex   *vtx;
+    int       nidx;
+    uint16_t *idx;
+};
+
+struct tcRange
+{
+    double tumin, tumax;
+    double tvmin, tvmax;
 };
 
 class Scene;
@@ -26,12 +53,16 @@ public:
     SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, SurfaceTile *parent = nullptr);
     ~SurfaceTile();
 
+    void load();
+    void render();
+
 private:
     SurfaceManager &mgr;
 
     int lod;
     int ilat, ilng;
 
+    Mesh *mesh = nullptr;
 };
 
 class SurfaceManager
@@ -44,7 +75,7 @@ public:
 
     mat4d_t getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 
-    void createSpherePatch(int grid, int lod, int ilat, int ilng,
+    Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
         int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
 
 private:

@@ -25,6 +25,7 @@ public:
     bool cbCreateRenderingWindow() override;
     bool cbDisplayFrame() override;
 
+    void cbStart() override;
     void cbRenderScene() override;
 
 private:

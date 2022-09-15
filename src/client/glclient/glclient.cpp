@@ -121,6 +121,12 @@ bool glClient::cbDisplayFrame()
     return true;
 }
 
+void glClient::cbStart()
+{
+    if (scene != nullptr)
+        scene->start();
+}
+
 void glClient::cbRenderScene()
 {
     if (scene != nullptr)

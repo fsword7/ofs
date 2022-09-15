@@ -13,6 +13,7 @@ public:
     ~Scene() = default;
 
     void init();
+    void start();
     void render();
 
     vObject *addVisualObject(ObjectHandle object);
@@ -22,4 +23,6 @@ private:
     int width, height;
 
     std::vector<vObject *> vobjList;
+
+    vObject *vEarth = nullptr;
 };

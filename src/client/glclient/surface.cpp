@@ -4,10 +4,13 @@
 // Date:    Sep 12, 2022
 
 #include "main/core.h"
+#include "glclient.h"
 #include "scene.h"
 #include "surface.h"
 
 // ******** Surface Tile ********
+
+static tcRange range = { 0, 1, 0, 1 };
 
 SurfaceTile::SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, SurfaceTile *parent)
 : Tree(parent), mgr(mgr), lod(lod), ilat(ilat), ilng(ilng)
@@ -17,7 +20,26 @@ SurfaceTile::SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, Surfa
 
 SurfaceTile::~SurfaceTile()
 {
+    if (mesh != nullptr)
+        delete mesh;
+}
 
+void SurfaceTile::load()
+{
+
+    mesh = mgr.createSpherePatch(32, lod, ilat, ilng, range);
+}
+
+void SurfaceTile::render()
+{
+    if (mesh == nullptr)
+        return;
+    // if (mesh->vao == nullptr)
+    // {
+
+    // }
+
+    glDrawElements(GL_TRIANGLES, 0, GL_UNSIGNED_SHORT, 0);
 }
 
 // ******** Surface Manager ********
@@ -25,9 +47,13 @@ SurfaceTile::~SurfaceTile()
 SurfaceManager::SurfaceManager(ObjectHandle object, Scene &scene)
 : object(object), scene(scene)
 {
+    objSize = ofsGetObjectRadius(object);
 
-    tiles[0] = new SurfaceTile(*this, 0, 0, 0);
-    tiles[1] = new SurfaceTile(*this, 0, 0, 1);
+    for (int idx = 0; idx < 2; idx++)
+    {
+        tiles[idx] = new SurfaceTile(*this, 0, 0, idx);
+        tiles[idx]->load();
+    }
 }
 
 SurfaceManager::~SurfaceManager()
@@ -64,7 +90,8 @@ mat4d_t SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
     return mat4d_t().Identity();
 }
 
-void SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, int16_t *elev, double selev, double gelev)
+Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
+    int16_t *elev, double selev, double gelev)
 {
     int nlat = 1 << lod;
     int nlng = 2 << lod;
@@ -87,18 +114,25 @@ void SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, in
     Vertex *vtx = new Vertex[nvtxb];
     int cvtx = 0;
 
-    for (int idx0 = 0; idx0 < grid; idx0++)
-    {
-        lat = mlat0 + (mlat1-mlat0) * double(idx0)/double(grid);       
-        slat = sin(lat), clat = cos(lat);
-        for (int idx1 = 0; idx1 < grid; idx1++)
-        {
-            lng = mlng0 + (mlng1-mlng0) * double(idx1)/double(grid);
-            slng = sin(lng), clng = cos(lng);
+    float tur = range.tumax - range.tumin;
+    float tvr = range.tvmax - range.tvmin;
+    float tu, tv;
 
+    for (int y = 0; y < grid; y++)
+    {
+        lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
+        slat = sin(lat), clat = cos(lat);
+        tu = range.tumin + tur * float(y)/float(grid);
+
+        for (int x = 0; x < grid; x++)
+        {
+            lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
+            slng = sin(lng), clng = cos(lng);
+            tv = range.tvmin + tvr + float(x)/float(grid);
             erad = radius + gelev;
+
             if (elev != nullptr)
-                erad += double(elev[(idx0+1)*ELEV_STRIDE + (idx1+1)]) * selev;
+                erad += double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * selev;
             nml = vec3d_t(clat*clng, slat, clat*slng);
             pos = nml * erad;
 
@@ -110,9 +144,9 @@ void SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, in
             vtx[cvtx].ny = float(nml.y());
             vtx[cvtx].nz = float(nml.z());
 
-            // vtx[cvtx].tu0 = vtx[cvtx].tu0*tuRange + range->tumin;
-            // vtx[cvtx].tv0 = vtx[cvtx].tv0*tvRange + range->tvmin;
-
+            vtx[cvtx].tu = tu;
+            vtx[cvtx].tv = tv;
+   
             cvtx++;
         }
     }
@@ -128,17 +162,17 @@ void SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, in
     }
     else
     {
-        for (int idx0 = 0, nofs0 = 0; idx0 < grid; idx0++)
+        for (int y = 0, nofs0 = 0; y < grid; y++)
         {
             int nofs1 = nofs0+grid+1;
-            for (int idx1 = 0; idx1 < grid; idx1++)
+            for (int x = 0; x < grid; x++)
             {
-                idx[cidx++] = nofs0+idx1;
-                idx[cidx++] = nofs1+idx1;
-                idx[cidx++] = nofs0+idx1+1;
-                idx[cidx++] = nofs1+idx1+1;
-                idx[cidx++] = nofs0+idx1+1;
-                idx[cidx++] = nofs1+idx1;
+                idx[cidx++] = nofs0+x;
+                idx[cidx++] = nofs1+x;
+                idx[cidx++] = nofs0+x+1;
+                idx[cidx++] = nofs1+x+1;
+                idx[cidx++] = nofs0+x+1;
+                idx[cidx++] = nofs1+x;
             }
             nofs0 = nofs1;
         }
@@ -148,4 +182,6 @@ void SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, in
     {
 
     }
+
+    return new Mesh(nvtx, vtx, nidx, idx);
 }

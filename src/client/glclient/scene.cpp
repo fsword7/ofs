@@ -19,6 +19,16 @@ void Scene::init()
     vobjList.clear();
 }
 
+void Scene::start()
+{
+
+    ObjectHandle earth = ofsGetObjectByName("Sol/Earth");
+    if (earth != nullptr)
+        vEarth = addVisualObject(earth);
+    else
+        printf("Can't find planet Earth for visual object\n");
+}
+
 void Scene::render()
 {
     // Clear all framebuffer
