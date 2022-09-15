@@ -231,10 +231,10 @@ protected:
     double currentTime = 0.0;
     std::chrono::time_point<std::chrono::steady_clock> prevTime, suspendTime;
 
-    bool bSession;
-    bool bRunning;
-    bool bRequestRunning;
-    bool bFreezing;
+    bool bSession = false;
+    bool bRunning = true;
+    bool bRequestRunning = false;
+    bool bFreezing = false;
 
     TimeDate td;
 

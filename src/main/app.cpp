@@ -195,8 +195,13 @@ void CoreApp::init()
     // Loading plugin modules
     loadModule("modules/plugin", "glclient");
 
+    // Initialize graphics client module
     if (gclient != nullptr)
         createSceneWindow();
+
+    // Initialize universe
+    universe = new Universe();
+    universe->init();
 }
 
 void CoreApp::cleanup()
@@ -211,6 +216,9 @@ void CoreApp::openSession()
 {
     auto now = std::chrono::steady_clock::now();
     td.reset(time(nullptr));
+
+    if (gclient != nullptr)
+        gclient->cbStart();
 
     bSession = true;
 }
@@ -273,6 +281,8 @@ void CoreApp::displayFrame()
 
 void CoreApp::run()
 {
+    openSession();
+
     bRunning = true;
     while (bRunning)
     {
@@ -291,17 +301,19 @@ void CoreApp::run()
 
         if (bSession)
         {
-            if (beginTimeStep(bRunning))
-            {
-                updateWorld();
-                endTimeStep(bRunning);
-            }
+            // if (beginTimeStep(bRunning))
+            // {
+            //     updateWorld();
+            //     endTimeStep(bRunning);
+            // }
         }
 
         renderScene();
         drawHUD();
         displayFrame();
     }
+
+    closeSession();
 }
 
 // ******** Time/date updating routines/controls ********

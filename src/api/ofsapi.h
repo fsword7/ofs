@@ -41,3 +41,4 @@ enum ObjectType
 
 OFSAPI ObjectHandle ofsGetObjectByName(cstr_t &name);
 OFSAPI ObjectType ofsGetObjectType(ObjectHandle object);
+OFSAPI double ofsGetObjectRadius(ObjectHandle object);

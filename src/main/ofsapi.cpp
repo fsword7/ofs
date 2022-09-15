@@ -19,3 +19,8 @@ LIBEXPORT ObjectType ofsGetObjectType(ObjectHandle object)
 {
     return static_cast<Object *>(object)->getType();
 }
+
+LIBEXPORT double ofsGetObjectRadius(ObjectHandle object)
+{
+    return static_cast<Object *>(object)->getRadius(); 
+}
