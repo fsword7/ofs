@@ -7,6 +7,7 @@ find_package(Eigen3 REQUIRED)
 find_package(Freetype REQUIRED)
 
 set(OGL_CPP_SRCS
+    buffer.cpp
     glclient.cpp
     scene.cpp
     surface.cpp
@@ -17,6 +18,7 @@ set(OGL_CPP_SRCS
 )
 
 set(OGL_H_SRCS
+    buffer.h
     glclient.h
     scene.h
     surface.h

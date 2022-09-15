@@ -9,6 +9,10 @@
 
 #define ELEV_STRIDE 0
 
+class VertexArray;
+class VertexBuffer;
+class IndexBuffer;
+
 struct Vertex
 {
     float vx, vy, vz;   // Vertex position
@@ -28,9 +32,11 @@ struct Mesh
         delete [] idx;
     }
 
-    // VertexBuffer   *vbo = nullptr;
-    // IndexBuffer    *ibo = nullptr;
-    // VertexArray    *vao = nullptr;;
+    void upload();
+
+    VertexArray    *vao = nullptr;;
+    VertexBuffer   *vbo = nullptr;
+    IndexBuffer    *ibo = nullptr;
 
     int       nvtx;
     Vertex   *vtx;

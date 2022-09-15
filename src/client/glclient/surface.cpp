@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "glclient.h"
 #include "scene.h"
+#include "buffer.h"
 #include "surface.h"
 
 // ******** Surface Tile ********
@@ -34,12 +35,13 @@ void SurfaceTile::render()
 {
     if (mesh == nullptr)
         return;
-    // if (mesh->vao == nullptr)
-    // {
+    if (mesh->vao == nullptr)
+        mesh->upload();
 
-    // }
+    mesh->vao->bind();
 
-    glDrawElements(GL_TRIANGLES, 0, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, mesh->ibo->getCount(), GL_UNSIGNED_SHORT, 0);
+    mesh->vao->unbind();
 }
 
 // ******** Surface Manager ********
@@ -184,4 +186,29 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
     }
 
     return new Mesh(nvtx, vtx, nidx, idx);
+}
+
+// ******** Mesh ********
+
+void Mesh::upload()
+{
+    vao = new VertexArray();
+    vao->bind();
+
+    vbo = new VertexBuffer(vtx, nvtx * sizeof(Vertex));
+    vbo->bind();
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)12);
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)24);
+    glEnableVertexAttribArray(2);
+
+    ibo = new IndexBuffer(idx, nidx);
+    ibo->bind();
+
+    vao->unbind();
 }

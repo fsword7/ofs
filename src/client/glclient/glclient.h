@@ -8,6 +8,8 @@
 #include "api/module.h"
 #include "api/graphics.h"
 
+#include <GL/glew.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
