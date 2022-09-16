@@ -4,7 +4,7 @@
 // Date:    Sep 15, 2022
 
 #include "main/core.h"
-#include "glclient.h"
+#include "client.h"
 #include "buffer.h"
 
 // ******** vertex array objects ********

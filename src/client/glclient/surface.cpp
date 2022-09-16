@@ -4,7 +4,7 @@
 // Date:    Sep 12, 2022
 
 #include "main/core.h"
-#include "glclient.h"
+#include "client.h"
 #include "scene.h"
 #include "buffer.h"
 #include "surface.h"

@@ -5,7 +5,7 @@
 
 #include "main/core.h"
 #include "engine/object.h"
-#include "glclient.h"
+#include "client.h"
 #include "scene.h"
 
 Scene::Scene(int width, int height)

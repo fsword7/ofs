@@ -4,7 +4,7 @@
 // Date:    Aug 30, 2022
 
 #include "main/core.h"
-#include "glclient.h"
+#include "client.h"
 #include "scene.h"
 
 #include <dlfcn.h>

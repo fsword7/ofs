@@ -8,7 +8,7 @@ find_package(Freetype REQUIRED)
 
 set(OGL_CPP_SRCS
     buffer.cpp
-    glclient.cpp
+    client.cpp
     scene.cpp
     surface.cpp
     vbody.cpp
@@ -19,7 +19,7 @@ set(OGL_CPP_SRCS
 
 set(OGL_H_SRCS
     buffer.h
-    glclient.h
+    client.h
     scene.h
     surface.h
     vbody.h
