@@ -79,7 +79,7 @@ public:
     SurfaceManager(ObjectHandle object, Scene &scene);
     ~SurfaceManager();
 
-    mat4d_t getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
+    glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 
     Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
         int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);

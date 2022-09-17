@@ -13,6 +13,9 @@ public:
     vBody(ObjectHandle object, Scene &scene);
     ~vBody();
 
+    void update() override;
+    void render() override;
+
 private:
     SurfaceManager *smgr = nullptr;
 };

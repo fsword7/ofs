@@ -5,6 +5,7 @@
 
 #pragma once
 
+class Camera;
 class vObject;
 class Scene
 {
@@ -14,6 +15,7 @@ public:
 
     void init();
     void start();
+    void update();
     void render();
 
     vObject *addVisualObject(ObjectHandle object);
@@ -21,6 +23,8 @@ public:
 
 private:
     int width, height;
+
+    Camera *camera = nullptr;
 
     std::vector<vObject *> vobjList;
 

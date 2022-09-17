@@ -8,6 +8,7 @@ find_package(Freetype REQUIRED)
 
 set(OGL_CPP_SRCS
     buffer.cpp
+    camera.cpp
     client.cpp
     scene.cpp
     surface.cpp
@@ -19,6 +20,7 @@ set(OGL_CPP_SRCS
 
 set(OGL_H_SRCS
     buffer.h
+    camera.h
     client.h
     scene.h
     surface.h

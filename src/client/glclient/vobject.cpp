@@ -27,6 +27,23 @@ vObject *vObject::create(ObjectHandle object, Scene &scene)
     return nullptr;
 }
 
+void vObject::update()
+{
+
+    cpos = ofsGetObjectGlobalPosition(object);
+    cpos -= ofsGetCameraGlobalPosition();
+    // cdist = glm::length(cpos);
+
+    // grot = ofsGetObjectGlobalRotation(object);
+    dmWorld = {
+        { grot[0][0], grot[0][1], grot[0][2], 0 },
+        { grot[1][0], grot[1][1], grot[1][2], 0 },
+        { grot[2][0], grot[2][1], grot[2][2], 0 },
+        { cpos.x, cpos.y, cpos.z, 1.0}
+    };
+
+}
+
 // ******** Scene ********
 
 vObject *Scene::addVisualObject(ObjectHandle object)

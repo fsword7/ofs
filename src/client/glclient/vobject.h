@@ -19,7 +19,18 @@ public:
 
     static vObject *create(ObjectHandle object, Scene &scene);
 
+    virtual void update();
+    virtual void render() {}
+
 protected:
     ObjectHandle object;
     Scene &scene;
+
+    glm::dmat3 grot;
+
+    // Camera parameters
+    glm::dvec3 cpos;
+    glm::dvec3 cdist;
+
+    glm::dmat4 dmWorld;
 };

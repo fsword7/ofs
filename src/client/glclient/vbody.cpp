@@ -18,3 +18,14 @@ vBody::~vBody()
 {
     
 }
+
+void vBody::update()
+{
+    vObject::update();
+
+}
+
+void vBody::render()
+{
+
+}

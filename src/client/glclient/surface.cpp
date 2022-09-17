@@ -63,33 +63,33 @@ SurfaceManager::~SurfaceManager()
     delete tiles[0],tiles[1];
 }
 
-mat4d_t SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
+glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
 {
 
-    mat4d_t grot;
-    mat4d_t lrot;
-    mat4d_t wrot;
+    glm::dmat4 grot;
+    glm::dmat4 lrot;
+    glm::dmat4 wrot;
 
     double lat;
     double lng = (double(ilng) / double(nlng)) * (pi*2.0) + pi;
     double slng = sin(lng), clng = cos(lng);
 
-    // lrot = { { clng,  0,   slng, 0   },
-    //          { 0,     1.0, 0,    0   },
-    //          { -slng, 0,   clng, 0   },  
-    //          { 0,     0,   0,    1.0 }};
+    lrot = { { clng,  0,   slng, 0   },
+             { 0,     1.0, 0,    0   },
+             { -slng, 0,   clng, 0   },  
+             { 0,     0,   0,    1.0 }};
 
     double scale = 1.0;
-    double objSize;
     double dx = objSize * cos(lng) * cos(lat);
     double dy = objSize * sin(lat);
     double dz = objSize * sin(lng) * cos(lat);
 
-    wrot(4,1) = (dx*grot(1,1) + dy*grot(1,2) + dz*grot(1,3)) * scale;
-    wrot(4,2) = (dx*grot(2,1) + dy*grot(2,2) + dz*grot(2,3)) * scale;
-    wrot(4,3) = (dx*grot(3,1) + dy*grot(3,2) + dz*grot(3,3)) * scale;
+    // Calculate translation with per-tile model matrix
+    wrot[3][0] = (dx*grot[0][0] + dy*grot[0][1] + dz*grot[0][2] /* + prm.cpos */) * scale;
+    wrot[3][1] = (dx*grot[1][0] + dy*grot[1][1] + dz*grot[1][2] /* + prm.cpos */) * scale;
+    wrot[3][2] = (dx*grot[2][0] + dy*grot[2][1] + dz*grot[2][2] /* + prm.cpos */) * scale;
 
-    return mat4d_t().Identity();
+    return wrot;
 }
 
 Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
@@ -103,7 +103,7 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
     double mlng0  = 0.0;
     double mlng1  = (pi*2.0) / double(nlng);
 
-    vec3d_t pos, nml;
+    glm::dvec3 pos, nml;
     double  radius = objSize;
     
     double slat, clat, slng, clng;
@@ -135,16 +135,16 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
 
             if (elev != nullptr)
                 erad += double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * selev;
-            nml = vec3d_t(clat*clng, slat, clat*slng);
+            nml = glm::dvec3(clat*clng, slat, clat*slng);
             pos = nml * erad;
 
-            vtx[cvtx].vx = float(pos.x());
-            vtx[cvtx].vy = float(pos.y());
-            vtx[cvtx].vz = float(pos.z());
+            vtx[cvtx].vx = float(pos.x);
+            vtx[cvtx].vy = float(pos.y);
+            vtx[cvtx].vz = float(pos.z);
 
-            vtx[cvtx].nx = float(nml.x());
-            vtx[cvtx].ny = float(nml.y());
-            vtx[cvtx].nz = float(nml.z());
+            vtx[cvtx].nx = float(nml.x);
+            vtx[cvtx].ny = float(nml.y);
+            vtx[cvtx].nz = float(nml.z);
 
             vtx[cvtx].tu = tu;
             vtx[cvtx].tv = tv;
