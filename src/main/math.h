@@ -8,6 +8,11 @@
 #include <cmath>
 #include <numbers>
 
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/matrix.hpp>
+#include <glm/exponential.hpp>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 

@@ -39,6 +39,11 @@ enum ObjectType
     objCelestialBody,
 };
 
+OFSAPI glm::dvec3 ofsGetCameraGlobalPosition();
+OFSAPI glm::dvec3 ofsGetCameraGlobalDirection();
+OFSAPI glm::dmat3 ofsGetCameraRotationMatrix();
+
 OFSAPI ObjectHandle ofsGetObjectByName(cstr_t &name);
 OFSAPI ObjectType ofsGetObjectType(ObjectHandle object);
 OFSAPI double ofsGetObjectRadius(ObjectHandle object);
+OFSAPI glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object);
