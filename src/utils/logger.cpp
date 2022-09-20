@@ -6,8 +6,6 @@
 #include "main/core.h"
 #include "utils/logger.h"
 
-Logger *Logger::logger = nullptr;
-
 Logger::Logger(levelType type, const fs::path &logName)
 : level(type), outLog(std::clog), outError(std::cerr)
 {

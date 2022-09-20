@@ -4,6 +4,7 @@
 // Date:    Sep 13, 2022
 
 #include "main/core.h"
+#include "client.h"
 #include "vobject.h"
 #include "vbody.h"
 #include "surface.h"
@@ -27,5 +28,5 @@ void vBody::update()
 
 void vBody::render()
 {
-
+    smgr->render();
 }

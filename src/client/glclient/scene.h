@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "shader.h"
+
 class Camera;
 class vObject;
 class Scene
@@ -13,6 +15,8 @@ public:
     Scene(int width, int height);
     ~Scene() = default;
 
+    inline ShaderManager &getShaderManager() { return shmgr; }
+    
     void init();
     void start();
     void update();
@@ -23,6 +27,8 @@ public:
 
 private:
     int width, height;
+
+    ShaderManager shmgr;
 
     Camera *camera = nullptr;
 

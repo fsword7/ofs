@@ -176,6 +176,8 @@ void CoreApp::render()
 
 // ********* new package *********
 
+Logger *Logger::logger = nullptr;
+
 void CoreApp::init()
 {
     Logger::create(Logger::logDebug, "ofs.log");

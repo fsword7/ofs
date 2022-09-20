@@ -11,7 +11,8 @@
 #include "scene.h"
 
 Scene::Scene(int width, int height)
-: width(width), height(height)
+: width(width), height(height),
+  shmgr("shaders/gl")
 { 
 }
 

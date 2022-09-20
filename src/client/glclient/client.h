@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "api/logger.h"
 #include "api/module.h"
 #include "api/graphics.h"
 
@@ -40,3 +41,5 @@ private:
 
     Scene *scene = nullptr;
 };
+
+extern ofsLogger *logger;

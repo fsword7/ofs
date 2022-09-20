@@ -70,6 +70,26 @@ inline Eigen::Quaternion<T> zRotate(T radians)
     return Eigen::Quaternion<T>(cos(ang), 0, 0, sin(ang));
 }
 
+// return M * v
+inline glm::dvec3 mul(const glm::dmat4 &m, const glm::dvec3 &val)
+{
+    return glm::dvec3(
+        m[0][0]*val.x + m[0][1]*val.y + m[0][2]*val.z,
+        m[1][0]*val.x + m[1][1]*val.y + m[1][2]*val.z,
+        m[2][0]*val.x + m[2][1]*val.y + m[2][2]*val.z
+    );
+}
+
+// return M^T * v
+inline glm::dvec3 tmul(const glm::dmat4 &m, const glm::dvec3 &val)
+{
+    return glm::dvec3(
+        m[0][0]*val.x + m[1][0]*val.y + m[2][0]*val.z,
+        m[0][1]*val.x + m[1][1]*val.y + m[2][1]*val.z,
+        m[0][2]*val.x + m[1][2]*val.y + m[2][2]*val.z
+    );
+}
+
 namespace ofs
 {
     template <typename T> inline constexpr T square(T x)

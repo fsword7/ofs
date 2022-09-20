@@ -11,15 +11,20 @@
 
 glClient *gclient = nullptr;
 ModuleHandle myHandle = nullptr;
+ofsLogger *logger = nullptr;
 
 LIBCALL void initModule(ModuleHandle handle)
 {
+    logger = new ofsLogger(ofsLogger::logDebug, "glclient.log");
+    logger->info("--------- OpenGL client --------\n");
+
     gclient = new glClient(handle);
     if (!ofsRegisterGraphicsClient(gclient))
     {
-        delete gclient;
-        gclient = nullptr;
         printf("Can't register graphics client - aborted.\n");
+        delete gclient, logger;
+        gclient = nullptr;
+        logger = nullptr;
     }
 }
 
@@ -28,8 +33,9 @@ LIBCALL void exitModule(ModuleHandle handle)
     if (gclient != nullptr)
     {
         ofsUnregisterGraphicsClient(gclient);
-        delete gclient;
+        delete gclient, logger;
         gclient = nullptr;
+        logger = nullptr;
     }
 }
 
@@ -60,14 +66,19 @@ static void __attribute__ ((destructor)) destroyModule(void)
 
 bool glClient::cbInitialize()
 {
-    // if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    // // Initialize GLEW package
+    // GLenum err = glewInit();
+    // if (err != GLEW_OK)
     // {
-    //     // Logger::getLogger()->fatal("OFS: Unable to initialize SDL2 interface: {}\n",
-    //     //     SDL_GetError());
-    //     // fmt::printf("OFS: Unable to initialize SDL2 inteface: %s\n",
-    //     //     SDL_GetError());
+    //     logger->fatal("GLEW error: {}\n",
+    //         glewGetErrorString(err));
     //     abort();
     // }
+
+    // logger->info("Using GLEW version: {}\n", glewGetString(GLEW_VERSION));
+    // logger->info("    OpenGL version: {}\n", glGetString(GL_VERSION));
+    // // logger->info("Using Eigen version {}.{}\n",
+    // //     EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
 
     width  = 1920;
     height = 1080;
@@ -103,6 +114,21 @@ bool glClient::cbCreateRenderingWindow()
     ctx = SDL_GL_CreateContext(window);
     SDL_GL_SetSwapInterval(1);
 
+    // Initialize GLEW package
+    GLenum err = glewInit();
+    if (err != GLEW_OK)
+    {
+        logger->fatal("GLEW error: {}\n",
+            glewGetErrorString(err));
+        abort();
+    }
+
+    logger->info("Using GLEW version: {}\n", glewGetString(GLEW_VERSION));
+    logger->info("    OpenGL version: {}\n", glGetString(GL_VERSION));
+    // logger->info("Using Eigen version {}.{}\n",
+    //     EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
+
+    // Initialize scene package
     scene = new Scene(width, height);
     scene->init();
 

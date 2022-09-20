@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "api/ofsapi.h"
+#include "client.h"
 #include "scene.h"
 #include "vobject.h"
 #include "vbody.h"

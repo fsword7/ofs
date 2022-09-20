@@ -3,14 +3,16 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(Eigen3 REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(fmt REQUIRED)
 
 set(OGL_CPP_SRCS
     buffer.cpp
     camera.cpp
     client.cpp
     scene.cpp
+    shader.cpp
     surface.cpp
     vbody.cpp
     vobject.cpp
@@ -23,11 +25,17 @@ set(OGL_H_SRCS
     camera.h
     client.h
     scene.h
+    shader.h
     surface.h
     vbody.h
     vobject.h
     vstar.h
     vvessel.h
+)
+
+set (OGL_SHADERS
+    shaders/body.fs
+    shaders/body.vs
 )
 
 add_library(glclient SHARED ${OGL_CPP_SRCS} ${OGL_H_SRCS})
@@ -38,6 +46,7 @@ target_link_libraries(glclient
     SDL2::Image
     GLEW::GLEW
     OpenGL::GL
+    fmt::fmt
     Eigen3::Eigen
 )
 if (MINGW)
@@ -54,4 +63,8 @@ set_target_properties(glclient
 
 install(TARGETS glclient
     DESTINATION ${OFS_INSTALL_PLUGIN_DIR}
+)
+
+install(FILES ${OGL_SHADERS}
+    DESTINATION ${OFS_INSTALL_ROOT_DIR}/shaders/gl
 )
