@@ -12,6 +12,8 @@ Camera::Camera(int width, int height)
 {
     setSize(width, height);
     fov = SCR_FOV;
+    zNear = 0.0001;
+    zFar = 10000000;
 }
 
 void Camera::setSize(int w, int h)

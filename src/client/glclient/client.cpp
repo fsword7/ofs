@@ -156,5 +156,8 @@ void glClient::cbStart()
 void glClient::cbRenderScene()
 {
     if (scene != nullptr)
+    {
+        scene->update();
         scene->render();
+    }
 }

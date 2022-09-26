@@ -39,10 +39,12 @@ struct Mesh
     VertexBuffer   *vbo = nullptr;
     IndexBuffer    *ibo = nullptr;
 
-    int       nvtx;
-    Vertex   *vtx;
-    int       nidx;
-    uint16_t *idx;
+    glm::dvec4 *bbvtx;
+
+    int         nvtx;
+    Vertex     *vtx;
+    int         nidx;
+    uint16_t   *idx;
 };
 
 struct tcRange

@@ -28,7 +28,7 @@ private:
 
     glm::dvec3 gpos;            // Global position
     glm::dvec3 gdir;            // Global direction
-    glm::dmat4 grot;            // Global rotation/orientation
+    glm::dmat3 grot;            // Global rotation/orientation
 
     double zNear, zFar;         // Frustum Limits
     double aspect;              // Screen aspect ratio

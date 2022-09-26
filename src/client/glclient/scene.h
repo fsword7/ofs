@@ -15,8 +15,9 @@ public:
     Scene(int width, int height);
     ~Scene() = default;
 
-    inline ShaderManager &getShaderManager() { return shmgr; }
-    
+    inline ShaderManager &getShaderManager()        { return shmgr; }
+    inline Camera *getCamera(int idx = 0) const     { return camera; }
+
     void init();
     void start();
     void update();

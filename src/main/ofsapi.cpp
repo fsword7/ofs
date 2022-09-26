@@ -6,23 +6,24 @@
 #define OFSAPI_SERVER_BUILD
 
 #include "main/core.h"
+#include "engine/camera.h"
 #include "engine/object.h"
 #include "main/app.h"
 #include "universe/universe.h"
 
 LIBEXPORT glm::dvec3 ofsGetCameraGlobalPosition()
 {
-    return glm::dvec3(0, 30000, 0);
+    return ofsAppCore->getCamera()->getGlobalPosition();
 }
 
 LIBEXPORT glm::dvec3 ofsGetCameraGlobalDirection()
 {
-    return glm::dvec3(0, 0, 0);
+    return ofsAppCore->getCamera()->getGlobalDirection();
 }
 
 LIBEXPORT glm::dmat3 ofsGetCameraRotationMatrix()
 {
-    return glm::dmat3(1);
+    return ofsAppCore->getCamera()->getGlobalRotation();
 }
 
 LIBEXPORT ObjectHandle ofsGetObjectByName(cstr_t &name)

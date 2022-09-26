@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "client.h"
+#include "camera.h"
 #include "scene.h"
 #include "buffer.h"
 #include "surface.h"
@@ -52,10 +53,23 @@ void SurfaceTile::render()
     if (mesh->vao == nullptr)
         mesh->upload();
 
+    mgr.pgmBody->use();
+
     mesh->vao->bind();
 
+    mgr.uViewProj = glm::mat4(mgr.prm.dmViewProj);
+
+    // Load per-tile model matrix into GLSL space
+    mgr.uModel = glm::mat4(mgr.prm.dmWorld);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     glDrawElements(GL_TRIANGLES, mesh->ibo->getCount(), GL_UNSIGNED_SHORT, 0);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
     mesh->vao->unbind();
+    mgr.pgmBody->release();
 }
 
 // ******** Surface Manager ********
@@ -92,28 +106,34 @@ SurfaceManager::~SurfaceManager()
 
 glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
 {
-    glm::dmat4 lrot(1.0);
-    glm::dmat4 wrot(1.0);
+    // glm::dmat4 lrot(1.0);
 
-    double lat;
-    double lng = (double(ilng) / double(nlng)) * (pi*2.0) + pi;
+    // lrot = { { clng,  0,   slng, 0   },
+    //          { 0,     1.0, 0,    0   },
+    //          { -slng, 0,   clng, 0   },  
+    //          { 0,     0,   0,    1.0 }};
+
+    if (nlng <= 8)
+        return prm.dmWorld;
+
+    double lat = pi * double(nlat / 2-ilat-1) / double(nlat);
+    // double lat = pi * double(nlat / 2-ilat) / double(nlat);
+    double lng = (pi*2.0) * (double(ilng) / double(nlng)) + pi;
     double slng = sin(lng), clng = cos(lng);
-
-    lrot = { { clng,  0,   slng, 0   },
-             { 0,     1.0, 0,    0   },
-             { -slng, 0,   clng, 0   },  
-             { 0,     0,   0,    1.0 }};
 
     double dx = objSize * cos(lng) * cos(lat);
     double dy = objSize * sin(lat);
     double dz = objSize * sin(lng) * cos(lat);
 
     // Calculate translation with per-tile model matrix
+    // Move a center from body center to tile by eliminating
+    // jiffery due to round-off errors.
+    glm::dmat4 wrot(1.0);
     wrot[3][0] = (dx*prm.urot[0][0] + dy*prm.urot[0][1] + dz*prm.urot[0][2] + prm.cpos.x) * prm.scale;
     wrot[3][1] = (dx*prm.urot[1][0] + dy*prm.urot[1][1] + dz*prm.urot[1][2] + prm.cpos.y) * prm.scale;
     wrot[3][2] = (dx*prm.urot[2][0] + dy*prm.urot[2][1] + dz*prm.urot[2][2] + prm.cpos.z) * prm.scale;
 
-    return lrot * wrot; // mul(lrot, wrot);
+    return wrot;
 }
 
 void SurfaceManager::setRenderParams()
@@ -121,7 +141,11 @@ void SurfaceManager::setRenderParams()
     glm::dvec3 opos, cpos;
     double cdist;
 
-    // prm.urot = ofsGetObjectRotation(object);
+    Camera *cam = scene.getCamera();
+    prm.dmViewProj = cam->getViewProjMatrix();
+    prm.dmWorld = glm::dmat4(1);
+
+    prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
     opos = ofsGetObjectGlobalPosition(object);
     cpos = ofsGetCameraGlobalPosition();
 
@@ -222,8 +246,10 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
 
     double mlat0  = pi * double(nlat / 2-ilat-1) / double(nlat);
     double mlat1  = pi * double(nlat / 2-ilat) / double(nlat);
-    double mlng0  = 0.0;
-    double mlng1  = (pi*2.0) / double(nlng);
+    double mlng0 = (pi*2.0) * double(ilng) / double(nlng) + pi;
+    double mlng1 = (pi*2.0) * double(ilng+1) / double(nlng) + pi;
+    // double mlng0  = 0.0;
+    // double mlng1  = (pi*2.0) / double(nlng);
 
     glm::dvec3 pos, nml;
     double  radius = objSize;
@@ -234,13 +260,22 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
 
     // Initialize vertices
     int nvtx  = (grid+1)*(grid+1);
-    int nvtxb = nvtx + grid+1 + grid+1;
-    Vertex *vtx = new Vertex[nvtxb];
+    int nvtxe = nvtx + grid+1 + grid+1;
+    Vertex *vtx = new Vertex[nvtxe];
     int cvtx = 0;
 
     float tur = range.tumax - range.tumin;
     float tvr = range.tvmax - range.tvmin;
     float tu, tv;
+
+
+    // double clat0 = cos(mlat0), slat0 = sin(mlat0);
+    // double clat1 = cos(mlat1), slat1 = sin(mlat1);
+    // double clng0 = cos(mlng0), slng0 = sin(mlng0);
+    // double clng1 = cos(mlng1), slng1 = sin(mlng1);
+    // glm::dvec3 ex = glm::normalize(glm::dvec3( clat0*clng1 - clat0*clng0, 0, clat0*slng1 - clat0*slng0 ));
+    // glm::dvec3 ey = glm::normalize(glm::dvec3( (clng0+clng1)*(clat1-clat0)*0.5, slat1-slat0, (slng0+slng1)*(clat1-clat0)*0.5 ));
+    // glm::dvec3 ez = glm::cross(ey, ex);
 
     for (int y = 0; y < grid; y++)
     {

@@ -14,8 +14,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-
 class Scene;
 
 class glClient : public GraphicsClient

@@ -72,10 +72,10 @@ public:
         slot = glGetUniformLocation(id, name.c_str());
     }
 
-    vec2Uniform &operator = (const vec2f_t &val)
+    vec2Uniform &operator = (const glm::vec2 &val)
     {
         if (slot != -1)
-            glUniform2fv(slot, 1, val.data());
+            glUniform2fv(slot, 1, glm::value_ptr(val));
         return *this;
     }
 
@@ -90,13 +90,12 @@ public:
     vec3Uniform(GLuint id, cstr_t &name)
     {
         slot = glGetUniformLocation(id, name.c_str());
-        Logger::getLogger()->verbose("Uniform slot = {} (program ID {}): {}\n", slot, id, name);
     }
 
-    vec3Uniform &operator = (const vec3f_t &val)
+    vec3Uniform &operator = (const glm::vec3 &val)
     {
         if (slot != -1)
-            glUniform3fv(slot, 1, val.data());
+            glUniform3fv(slot, 1, glm::value_ptr(val));
         return *this;
     }
 
@@ -113,10 +112,10 @@ public:
         slot = glGetUniformLocation(id, name.c_str());
     }
 
-    vec4Uniform &operator = (const vec4f_t &val)
+    vec4Uniform &operator = (const glm::vec4 &val)
     {
         if (slot != -1)
-            glUniform4fv(slot, 1, val.data());
+            glUniform4fv(slot, 1, glm::value_ptr(val));
         return *this;
     }
 
@@ -133,10 +132,10 @@ public:
         slot = glGetUniformLocation(id, name.c_str());
     }
 
-    mat3Uniform &operator = (const mat3f_t &val)
+    mat3Uniform &operator = (const glm::mat3 &val)
     {
         if (slot != -1)
-            glUniformMatrix3fv(slot, 1, GL_FALSE, val.data());
+            glUniformMatrix3fv(slot, 1, GL_FALSE, glm::value_ptr(val));
         return *this;
     }
 
@@ -151,14 +150,12 @@ public:
     mat4Uniform(GLuint id, cstr_t &name)
     {
         slot = glGetUniformLocation(id, name.c_str());
-        // fmt::printf("Assigned ID %d to %s\n", slot, name);
     }
 
-    mat4Uniform &operator = (const mat4f_t &val)
+    mat4Uniform &operator = (const glm::mat4 &val)
     {
         if (slot != -1)
-            glUniformMatrix4fv(slot, 1, GL_FALSE, val.data());
-        // fmt::printf("Set mat4 data on slot %d\n", slot);
+            glUniformMatrix4fv(slot, 1, GL_FALSE, glm::value_ptr(val));
         return *this;
     }
 
