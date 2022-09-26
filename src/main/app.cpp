@@ -8,6 +8,7 @@
 #include "main/core.h"
 #include "api/graphics.h"
 #include "engine/engine.h"
+#include "engine/camera.h"
 #include "engine/player.h"
 #include "engine/view.h"
 #include "universe/universe.h"
@@ -190,6 +191,8 @@ void CoreApp::init()
         //     SDL_GetError());
         abort();
     }
+
+    camerax = new Camerax(width, height);
 
     // Loading startup modules
     loadStartupModules();

@@ -9,6 +9,7 @@ find_package(ZLIB REQUIRED)
 #find_package(lua REQUIRED)
 
 set(OFS_CPP_SRCS
+    engine/camera.cpp
     engine/engine.cpp
     engine/headup.cpp
     engine/mfdpanel.cpp
@@ -77,6 +78,7 @@ set(OFS_H_SRCS
     api/graphics.h
     api/module.h
     api/ofsapi.h
+    engine/camera.h
     engine/engine.h
     engine/mfdpanel.h
     engine/object.h

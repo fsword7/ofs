@@ -13,6 +13,7 @@ class Engine;
 class Universe;
 class Player;
 class Camera;
+class Camerax;
 class Scene;
 class View;
 class Panel;
@@ -161,6 +162,7 @@ public:
     virtual void run();
 
     inline GraphicsClient *getClient() { return gclient; }
+    inline Camerax *getCamera() { return camerax; }
     inline Universe *getUniverse() { return universe; }
     
     void initEngine();
@@ -219,6 +221,7 @@ protected:
     Universe *universe = nullptr;
     Player   *player = nullptr;
     Camera   *camera = nullptr;
+    Camerax  *camerax = nullptr;
 
     Context  *ctx = nullptr;
     Scene    *scene = nullptr;
