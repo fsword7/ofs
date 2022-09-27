@@ -10,6 +10,7 @@
 Camerax::Camerax(int w, int h)
 {
     resize(w, h);
+    fov = glm::radians(SCR_FOV);
 }
 
 void Camerax::resize(int w, int h)

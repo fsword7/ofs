@@ -364,8 +364,9 @@ void Mesh::upload()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)24);
     glEnableVertexAttribArray(2);
 
+    vbo->unbind();
+
     ibo = new IndexBuffer(idx, nidx);
-    ibo->bind();
 
     vao->unbind();
 }
