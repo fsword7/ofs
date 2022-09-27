@@ -34,6 +34,8 @@ private:
     Camera *camera = nullptr;
 
     std::vector<vObject *> vobjList;
+    std::vector<ObjectHandle *> nearStars;
+    std::vector<ObjectHandle *> visibleStars;
 
     vObject *vEarth = nullptr;
 };

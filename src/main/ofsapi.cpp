@@ -26,6 +26,21 @@ LIBEXPORT glm::dmat3 ofsGetCameraRotationMatrix()
     return ofsAppCore->getCamera()->getGlobalRotation();
 }
 
+LIBEXPORT glm::dmat4 ofsGetCameraViewNatrix()
+{
+    return ofsAppCore->getCamera()->getViewMatrix();
+}
+
+LIBEXPORT glm::dmat4 ofsGetCameraProjectionMatrix()
+{
+    return ofsAppCore->getCamera()->getProjectionMatrix();
+}
+
+LIBEXPORT glm::dmat4 ofsGetCameraViewProjMatrix()
+{
+    return glm::dmat4(1);
+}
+
 LIBEXPORT ObjectHandle ofsGetObjectByName(cstr_t &name)
 {
     return ofsAppCore->getUniverse()->findPath(name);
@@ -44,4 +59,14 @@ LIBEXPORT double ofsGetObjectRadius(ObjectHandle object)
 LIBEXPORT glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object)
 {
     return glm::dvec3(0, 0, 0);
+}
+
+LIBEXPORT void ofsFindClosestStars(std::vector<ObjectHandle *> &nearStars)
+{
+
+}
+
+LIBEXPORT void ofsFindVisibleStars(std::vector<ObjectHandle *> &visibleStars)
+{
+    
 }

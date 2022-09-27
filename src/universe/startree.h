@@ -39,11 +39,17 @@ public:
     void processCloseStars(const vec3d_t &obs, const double radius, const double scale,
         std::vector<const celStar *> &stars);
 
+    void processVisibleStars2(const ofsHandler &handle, const glm::dvec3 &obs,
+        const double limitingFactor, const double scale);
+    void processCloseStars2(const glm::dvec3 &obs, const double radius, const double scale,
+        std::vector<ObjectHandle *> &stars);
+
 private:
     double decay(double factor);
     uint32_t index(const celStar &object, const vec3d_t &cell);
 
     vec3d_t cellCenter;
+    glm::dvec3 cellCenter2;
     double  exclusiveFactor;
 
     std::vector<const celStar *> list;

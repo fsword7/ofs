@@ -41,6 +41,12 @@ void Scene::start()
 void Scene::update()
 {
     camera->update();
+
+    nearStars.clear();
+    visibleStars.clear();
+
+    ofsFindClosestStars(nearStars);
+    ofsFindVisibleStars(visibleStars);
 }
 
 void Scene::render()

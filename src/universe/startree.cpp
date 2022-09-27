@@ -14,6 +14,7 @@ using namespace astro;
 StarTree::StarTree(const vec3d_t &cell, const double factor, StarTree *parent)
 : Tree(parent), cellCenter(cell), exclusiveFactor(factor)
 {
+    cellCenter2 = { cell.x(), cell.y(), cell.z() };
     list.clear();
 }
 
@@ -166,5 +167,60 @@ void StarTree::processCloseStars(const vec3d_t &obs, const double radius, const 
         if (node == nullptr)
             continue;
         node->processCloseStars(obs, radius, scale * 0.5, stars);
+    }
+}
+
+void StarTree::processVisibleStars2(const ofsHandler &handle, const glm::dvec3 &obs,
+    const double limitingFactor, const double scale)
+{
+    double dist = glm::length(obs - cellCenter2) - scale * sqrt(3.0);
+
+    for (int32_t idx = 0; idx < list.size(); idx++)
+    {
+        const celStar &star = *list[idx];
+
+        double dist = glm::length(obs - star.getStarPosition2());
+        double appMag = convertAbsToAppMag(star.getAbsMag(), dist);
+
+        handle.process(star, dist, appMag);
+    }
+
+    if (dist <= 0 || convertAbsToAppMag(exclusiveFactor, dist) <= limitingFactor)
+    {
+        for (int idx = 0; idx < 8; idx++)
+        {
+            StarTree *node = getChild(idx);
+            if (node == nullptr)
+                continue;
+            node->processVisibleStars2(handle, obs, limitingFactor, scale * 0.5);
+        }
+    }
+}
+
+void StarTree::processCloseStars2(const glm::dvec3 &obs, const double radius, const double scale,
+    std::vector<ObjectHandle *> &stars)
+{
+    double dist = glm::length(obs - cellCenter2) - scale * sqrt(3.0);
+    if (dist > radius)
+        return;
+    
+    for (uint32_t idx = 0; idx < list.size(); idx++)
+    {
+        const celStar *star = list[idx];
+
+        if (glm::length(obs - star->getStarPosition2()) < ofs::square(radius))
+        {
+            double dist = glm::length(obs - star->getStarPosition2());
+            if (dist < radius)
+                stars.push_back((ObjectHandle *)star);
+        }
+    }
+
+    for (int idx = 0; idx < 8; idx++)
+    {
+        StarTree *node = getChild(idx);
+        if (node == nullptr)
+            continue;
+        node->processCloseStars2(obs, radius, scale * 0.5, stars);
     }
 }

@@ -29,6 +29,11 @@ public:
     int findCloseStars(const vec3d_t &obs, double radius,
         std::vector<const celStar *> &stars) const;
 
+    void findVisibleStars2(const ofsHandler &handle, const glm::dvec3 &obs,
+        const glm::dquat &rot, double fov, double aspect, double limitMag) const;
+    int findCloseStars2(const glm::dvec3 &obs, double radius,
+        std::vector<ObjectHandle *> &stars) const;
+
     inline celStar *getHIPstar(uint32_t hip) const  { return hipList[hip]; }
     
 private:

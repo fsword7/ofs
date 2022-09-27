@@ -36,7 +36,10 @@ namespace astro
     const quatd_t J2000ObliquityRotation =
         Eigen::Quaternion<double>(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX()));
 
+    const glm::dquat J2000ObliquityRotation2 = glm::dquat({J2000Obliquity, 0, 0});
+
     vec3d_t convertEquatorialToEcliptic(double ra, double de, double pc);
+    glm::dvec3 convertEquatorialToEcliptic2(double ra, double de, double pc);
 
     template <typename T> T convertKilometerToAU(T km)
     {

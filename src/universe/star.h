@@ -53,6 +53,7 @@ public:
     ~celStar() = default;
 
     inline vec3d_t getStarPosition() const      { return spos; }
+    inline glm::dvec3 getStarPosition2() const  { return spos2; }
     inline double  getAbsMag() const            { return absMag; }
     inline int getTemperature() const           { return temp; }
     inline double getLuminosity() const         { return lum; }
@@ -74,6 +75,7 @@ private:
 
     // Star position parameters
     vec3d_t spos;           // Star position [pc]
+    glm::dvec3 spos2;       // Star pisition [pc]
     double  ra, dec, plx;
 
     uint32_t knownFlags = 0; // Known flags

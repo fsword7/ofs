@@ -153,6 +153,12 @@ int Universe::findCloseStars(const vec3d_t &obs, double mdist,
     return stardb.findCloseStars(obs, mdist, closeStars);
 }
 
+int Universe::findCloseStars2(const glm::dvec3 &obs, double mdist,
+    std::vector<ObjectHandle *> &closeStars) const
+{
+    return stardb.findCloseStars2(obs, mdist, closeStars);
+}
+
 Object *Universe::pickPlanet(System *system, const vec3d_t &obs, const vec3d_t &dir, double when)
 {
 

@@ -206,3 +206,20 @@ int StarDatabase::findCloseStars(const vec3d_t &obs, double radius,
     starTree->processCloseStars(obs / KM_PER_PC, radius, STARTREE_ROOTSIZE, stars);
     return stars.size();
 }
+
+void StarDatabase::findVisibleStars2(const ofsHandler &handle, const glm::dvec3 &obs,
+    const glm::dquat &rot, double fov, double aspect, double limitMag) const
+{
+    if (starTree == nullptr)
+        return;
+    starTree->processVisibleStars2(handle, obs / KM_PER_PC, limitMag, STARTREE_ROOTSIZE);
+}
+
+int StarDatabase::findCloseStars2(const glm::dvec3 &obs, double radius,
+    std::vector<ObjectHandle *> &stars) const
+{
+    if (starTree == nullptr)
+        return 0;
+    starTree->processCloseStars2(obs / KM_PER_PC, radius, STARTREE_ROOTSIZE, stars);
+    return stars.size();
+}

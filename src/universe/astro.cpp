@@ -21,4 +21,19 @@ namespace astro
 
         return J2000ObliquityRotation * opos;
     }
+
+    glm::dvec3 convertEquatorialToEcliptic2(double ra, double de, double pc)
+    {
+        double theta, phi;
+        double x, y, z;
+        glm::dvec3 opos;
+
+        theta = ofs::radians(ra) + pi;
+        phi   = ofs::radians(de) - pi/2.0;
+
+        opos  = glm::dvec3(sin(phi)*cos(theta), cos(phi), sin(phi)*-sin(theta)) * pc;
+
+        return J2000ObliquityRotation2 * opos;
+    }
+
 }
