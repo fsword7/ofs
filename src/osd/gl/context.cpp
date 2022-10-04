@@ -50,12 +50,12 @@ void Context::init(int w, int h)
     if (err != GLEW_OK)
     {
         Logger::getLogger()->fatal("GLEW error: {}\n",
-            glewGetErrorString(err));
+            (char *)glewGetErrorString(err));
         abort();
     }
 
-    Logger::getLogger()->info("Using GLEW version: {}\n", glewGetString(GLEW_VERSION));
-    Logger::getLogger()->info("    OpenGL version: {}\n", glGetString(GL_VERSION));
+    Logger::getLogger()->info("Using GLEW version: {}\n", (char *)glewGetString(GLEW_VERSION));
+    Logger::getLogger()->info("    OpenGL version: {}\n", (char *)glGetString(GL_VERSION));
     Logger::getLogger()->info("Using Eigen version {}.{}\n",
         EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
 

@@ -118,13 +118,13 @@ bool glClient::cbCreateRenderingWindow()
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {
-        logger->fatal("GLEW error: {}\n",
-            glewGetErrorString(err));
+        logger->fatal("GLEW error: {:s}\n",
+            (char *)glewGetErrorString(err));
         abort();
     }
 
-    logger->info("Using GLEW version: {}\n", glewGetString(GLEW_VERSION));
-    logger->info("    OpenGL version: {}\n", glGetString(GL_VERSION));
+    logger->info("Using GLEW version: {:s}\n", (char *)glewGetString(GLEW_VERSION));
+    logger->info("    OpenGL version: {:s}\n", (char *)glGetString(GL_VERSION));
     // logger->info("Using Eigen version {}.{}\n",
     //     EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
 
