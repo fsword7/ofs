@@ -10,6 +10,8 @@
 #include "engine/object.h"
 #include "main/app.h"
 #include "universe/universe.h"
+#include "universe/body.h"
+#include "universe/star.h"
 
 LIBEXPORT glm::dvec3 ofsGetCameraGlobalPosition()
 {
@@ -59,6 +61,16 @@ LIBEXPORT double ofsGetObjectRadius(ObjectHandle object)
 LIBEXPORT glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object)
 {
     return glm::dvec3(0, 0, 0);
+}
+
+LIBEXPORT double ofsGetObjectStarTemperature(ObjectHandle object)
+{
+    return static_cast<celStar *>(object)->getTemperature();
+}
+
+LIBEXPORT glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object)
+{
+    return static_cast<celStar *>(object)->getStarPosition2();
 }
 
 LIBEXPORT void ofsFindClosestStars(std::vector<ObjectHandle *> &nearStars)

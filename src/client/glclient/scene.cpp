@@ -21,6 +21,8 @@ void Scene::init()
     camera = new Camera(width, height);
 
     vobjList.clear();
+
+    initStarRenderer();
 }
 
 void Scene::start()

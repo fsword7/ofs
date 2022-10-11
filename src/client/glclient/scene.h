@@ -8,6 +8,10 @@
 #include "shader.h"
 
 class Camera;
+class StarRenderer;
+class StarColors;
+class ShaderProgram;
+class VertexBuffer;
 class vObject;
 class Scene
 {
@@ -26,12 +30,22 @@ public:
     vObject *addVisualObject(ObjectHandle object);
     vObject *getVisualObject(ObjectHandle object, bool bCreate = false);
 
+protected:
+    void initStarRenderer();
+    void renderStars();
+
 private:
     int width, height;
 
     ShaderManager shmgr;
 
     Camera *camera = nullptr;
+
+    StarRenderer *starRenderer = nullptr;
+    StarColors *starColors = nullptr;
+
+    ShaderProgram *pgmStar = nullptr;
+    VertexBuffer *vbufStar = nullptr;
 
     std::vector<vObject *> vobjList;
     std::vector<ObjectHandle *> nearStars;

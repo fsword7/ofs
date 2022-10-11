@@ -51,5 +51,8 @@ OFSAPI ObjectType ofsGetObjectType(ObjectHandle object);
 OFSAPI double ofsGetObjectRadius(ObjectHandle object);
 OFSAPI glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object);
 
+OFSAPI glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object);
+OFSAPI double ofsGetObjectStarTemperature(ObjectHandle object);
+
 OFSAPI void ofsFindClosestStars(std::vector<ObjectHandle *> &nearStars);
 OFSAPI void ofsFindVisibleStars(std::vector<ObjectHandle *> &visibleStars);

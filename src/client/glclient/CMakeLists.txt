@@ -13,6 +13,8 @@ set(OGL_CPP_SRCS
     client.cpp
     scene.cpp
     shader.cpp
+    starcolors.cpp
+    stars.cpp
     surface.cpp
     vbody.cpp
     vobject.cpp
@@ -26,6 +28,8 @@ set(OGL_H_SRCS
     client.h
     scene.h
     shader.h
+    starcolors.h
+    stars.h
     surface.h
     vbody.h
     vobject.h
@@ -36,6 +40,8 @@ set(OGL_H_SRCS
 set (OGL_SHADERS
     shaders/body.fs
     shaders/body.vs
+    shaders/point.fs
+    shaders/point.vs
 )
 
 add_library(glclient SHARED ${OGL_CPP_SRCS} ${OGL_H_SRCS})
