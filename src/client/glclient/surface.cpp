@@ -113,8 +113,8 @@ glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng
     //          { -slng, 0,   clng, 0   },  
     //          { 0,     0,   0,    1.0 }};
 
-    if (nlng <= 8)
-        return prm.dmWorld;
+    // if (nlng <= 8)
+    //     return prm.dmWorld;
 
     double lat = pi * double(nlat / 2-ilat-1) / double(nlat);
     // double lat = pi * double(nlat / 2-ilat) / double(nlat);

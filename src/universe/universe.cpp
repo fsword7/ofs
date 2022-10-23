@@ -28,9 +28,13 @@ void Universe::init()
     PlanetarySystem *system = solSystem->getPlanetarySystem();
 
     Camerax *cam = ofsAppCore->getCamera();
-    cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
+    // cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
+    // cam->update();
+    // cam->look(sun->getStarPosition2());
+
+    cam->setPosition(glm::dvec3(0, 0, -60000));
     cam->update();
-    cam->look(sun->getStarPosition2());
+    cam->look(glm::dvec3(0, 0, 0));
 
     celBody *mercury, *venus, *earth;
     celBody *mars, *jupiter, *saturn;

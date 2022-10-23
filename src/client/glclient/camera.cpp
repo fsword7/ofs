@@ -12,8 +12,8 @@ Camera::Camera(int width, int height)
 {
     setSize(width, height);
     fov = glm::radians(SCR_FOV);
-    zNear = 0.0001;
-    zFar = 10000000;
+    zNear = 1;
+    zFar = 1e18;
 }
 
 void Camera::setSize(int w, int h)
@@ -28,11 +28,9 @@ void Camera::setSize(int w, int h)
 void Camera::update()
 {
     // Get camera position/rotation from server
-    // gpos = ofsGetCameraGlobalPosition();
-    // gdir = ofsGetCameraGlobalDirection();
-    // grot = ofsGetCameraRotationMatrix();
-    gpos = { 0, 0, 60000 };
-    grot = glm::dmat3(1);
+    gpos = ofsGetCameraGlobalPosition();
+    gdir = ofsGetCameraGlobalDirection();
+    grot = ofsGetCameraRotationMatrix();
 
     // Update view/projection matrix
     dmProj = glm::perspective(fov, aspect, zNear, zFar);

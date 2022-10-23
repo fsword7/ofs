@@ -12,6 +12,13 @@ enum extCameraMode {
 
 };
 
+enum travelMode
+{
+    travelFreeFlight,
+    travelExternal,
+    travelCocpkit
+};
+
 class Camerax
 {
 public:
@@ -40,6 +47,7 @@ public:
         { return glm::perspective(fov, aspect, zNear, zFar); }
 
     void resize(int w, int h);
+    void reset();
 
     void look(const glm::dvec3 &opos);
 
@@ -47,7 +55,7 @@ public:
     void orbitPhi(double phi);
     void orbitTheta(double theta);
 
-    void rotate(double dPhi, double dTheta);
+    void rotate(double dx, double dy, double dz);
     void rotatePhi(double phi);
     void rotateTheta(double theta);
 
@@ -71,7 +79,10 @@ private:
     double fov;
     double zNear, zFar;
 
+    // Rotation: X = Phi, Y = Theta
     double ePhi, eTheta;
+    glm::dvec3 erot;        // rotation [radians - object frame]
+    glm::dvec3 clrot;       // local camera rotation [radians]
 
     bool modeExternal = true;
     extCameraMode mode = modeGlobalFrame;

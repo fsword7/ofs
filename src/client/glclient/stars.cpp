@@ -27,7 +27,7 @@ void StarVertex::start()
     pgm->use();
     vao->bind();
 
-    vbo->allocate(120'000 * sizeof(StarVertex), nullptr, GL_STREAM_DRAW);
+    vbo->allocate(120'000 * sizeof(StarVertex), nullptr, GL_DYNAMIC_DRAW);
     vertices = reinterpret_cast<starVertex *>(vbo->map());
     if (vertices == nullptr)
     {
@@ -43,13 +43,13 @@ void StarVertex::start()
     glm::dmat4 view = ofsGetCameraViewMatrix();
     glm::dmat4 proj = ofsGetCameraProjectionMatrix();
 
-    // logger->debug("View Matrix:");
+    // logger->debug("View Matrix:\n");
     // logger->debug("{} {} {} {}\n", view[0][0], view[0][1], view[0][2], view[0][3]);
     // logger->debug("{} {} {} {}\n", view[1][0], view[1][1], view[1][2], view[1][3]);
     // logger->debug("{} {} {} {}\n", view[2][0], view[2][1], view[2][2], view[2][3]);
     // logger->debug("{} {} {} {}\n", view[3][0], view[3][1], view[3][2], view[3][3]);
 
-    // logger->debug("Projection Matrix:");
+    // logger->debug("Projection Matrix:\n");
     // logger->debug("{} {} {} {}\n", proj[0][0], proj[0][1], proj[0][2], proj[0][3]);
     // logger->debug("{} {} {} {}\n", proj[1][0], proj[1][1], proj[1][2], proj[1][3]);
     // logger->debug("{} {} {} {}\n", proj[2][0], proj[2][1], proj[2][2], proj[2][3]);
@@ -161,7 +161,7 @@ void StarRenderer::process(ObjectHandle star, double dist, double appMag) const
     color.setAlpha(alpha);
 
     // logger->info("HIP {}: {} {} {}\n",
-    //     ofsGetObjectStarHIPNumber(star), spos.x, spos.y, spos.z);
+    //     ofsGetObjectStarHIPNumber(star), rpos.x, rpos.y, rpos.z);
     // logger->info("HIP {}: Color ({} {} {} {}) Size {}\n",
     //     ofsGetObjectStarHIPNumber(star), color.getRed(), color.getGreen(), color.getBlue(),
     //     color.getAlpha(), discSize);
