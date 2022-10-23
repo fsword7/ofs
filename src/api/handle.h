@@ -5,11 +5,11 @@
 
 #pragma once
 
-class ofsHandler
+class ofsHandler2
 {
 public:
-    ofsHandler() = default;
-    ~ofsHandler() = default;
+    ofsHandler2() = default;
+    ~ofsHandler2() = default;
 
     virtual void process(ObjectHandle star, double dist, double appMag) const = 0;
 };

@@ -63,7 +63,7 @@ void StarVertex::render()
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)(3 * sizeof(float)));
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)(7 * sizeof(float)));
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)(7 * sizeof(float)));
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -196,7 +196,7 @@ void Scene::renderStars(const StarDatabase &starlib, const Player &player, doubl
     starRenderer->starBuffer->start();
 
     ctx.enableBlend();
-    starlib.findVisibleStars(*starRenderer, obs, rot, fov, aspect, faintest);
+    // starlib.findVisibleStars(*starRenderer, obs, rot, fov, aspect, faintest);
     starRenderer->starBuffer->finish();
     ctx.disableBlend();
 }

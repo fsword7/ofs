@@ -16,6 +16,15 @@ Scene::Scene(int width, int height)
 { 
 }
 
+void Scene::checkErrors()
+{
+    GLenum err;
+    while((err = glGetError()) != GL_NO_ERROR)
+    {
+        logger->debug("OpenGL Error: {}\n", err);
+    }
+}
+
 void Scene::init()
 {
     camera = new Camera(width, height);
@@ -44,11 +53,12 @@ void Scene::update()
 {
     camera->update();
 
+    pixelSize = (2.0 * tan(ofsGetCameraFieldOfView() / 2.0)) / ofsGetCameraHeight();;
+
     nearStars.clear();
     visibleStars.clear();
 
     ofsFindClosestStars(nearStars);
-    ofsFindVisibleStars(visibleStars);
 }
 
 void Scene::render()
@@ -59,5 +69,7 @@ void Scene::render()
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-    vEarth->render();
+    renderStars(faintestMag);
+
+    // vEarth->render();
 }

@@ -15,7 +15,7 @@ ofsLogger *logger = nullptr;
 
 LIBCALL void initModule(ModuleHandle handle)
 {
-    logger = new ofsLogger(ofsLogger::logDebug, "glclient.log");
+    logger = new ofsLogger(ofsLogger::logDebug, "client.log");
     logger->info("--------- OpenGL client --------\n");
 
     gclient = new glClient(handle);
@@ -62,7 +62,6 @@ static void __attribute__ ((destructor)) destroyModule(void)
     exitModule(myHandle);
     printf("OpenGL client module unloaded.\n");
 }
-
 
 bool glClient::cbInitialize()
 {

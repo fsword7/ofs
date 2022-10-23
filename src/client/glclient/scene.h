@@ -26,16 +26,23 @@ public:
     void start();
     void update();
     void render();
+    
+    void checkErrors();
 
     vObject *addVisualObject(ObjectHandle object);
     vObject *getVisualObject(ObjectHandle object, bool bCreate = false);
 
 protected:
     void initStarRenderer();
-    void renderStars();
+    void renderStars(double faintest);
 
 private:
     int width, height;
+
+    double pixelSize = 0.0;
+
+    double faintestMag = 6.0;
+    double saturationMag = 0.0;
 
     ShaderManager shmgr;
 
@@ -48,8 +55,8 @@ private:
     VertexBuffer *vbufStar = nullptr;
 
     std::vector<vObject *> vobjList;
-    std::vector<ObjectHandle *> nearStars;
-    std::vector<ObjectHandle *> visibleStars;
+    std::vector<ObjectHandle> nearStars;
+    std::vector<ObjectHandle> visibleStars;
 
     vObject *vEarth = nullptr;
 };

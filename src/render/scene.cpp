@@ -54,7 +54,7 @@ void Scene::render(Universe &universe, Player &player)
     // find closest stars with player's position
     vec3d_t obs = player.getuPosition();
     prm.jnow    = player.getJulianTime();
-    universe.findCloseStars(obs, 1.0, closeStars);
+    // universe.findCloseStars(obs, 1.0, closeStars);
     setupPrimaryLightSources(closeStars, obs, prm.jnow, lightSources);
 
     ctx.start();

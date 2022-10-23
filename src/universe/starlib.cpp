@@ -4,6 +4,7 @@
 // Date:    Apr 18, 2022
 
 #include "main/core.h"
+#include "api/handle.h"
 #include "universe/star.h"
 #include "universe/startree.h"
 #include "universe/starlib.h"
@@ -190,36 +191,19 @@ celStar *StarDatabase::find(cstr_t &name) const
     return nullptr;
 }
 
-void StarDatabase::findVisibleStars(const ofsHandler &handle, const vec3d_t &obs,
-    const quatd_t &rot, double fov, double aspect, double limitMag) const
+void StarDatabase::findVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &obs,
+    const glm::dmat3 &rot, double fov, double aspect, double limitMag) const
 {
     if (starTree == nullptr)
         return;
     starTree->processVisibleStars(handle, obs / KM_PER_PC, limitMag, STARTREE_ROOTSIZE);
 }
 
-int StarDatabase::findCloseStars(const vec3d_t &obs, double radius,
-    std::vector<const celStar *> &stars) const
+int StarDatabase::findCloseStars(const glm::dvec3 &obs, double radius,
+    std::vector<ObjectHandle> &stars) const
 {
     if (starTree == nullptr)
         return 0;
     starTree->processCloseStars(obs / KM_PER_PC, radius, STARTREE_ROOTSIZE, stars);
-    return stars.size();
-}
-
-void StarDatabase::findVisibleStars2(const ofsHandler &handle, const glm::dvec3 &obs,
-    const glm::dquat &rot, double fov, double aspect, double limitMag) const
-{
-    if (starTree == nullptr)
-        return;
-    starTree->processVisibleStars2(handle, obs / KM_PER_PC, limitMag, STARTREE_ROOTSIZE);
-}
-
-int StarDatabase::findCloseStars2(const glm::dvec3 &obs, double radius,
-    std::vector<ObjectHandle *> &stars) const
-{
-    if (starTree == nullptr)
-        return 0;
-    starTree->processCloseStars2(obs / KM_PER_PC, radius, STARTREE_ROOTSIZE, stars);
     return stars.size();
 }

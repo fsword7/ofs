@@ -48,12 +48,13 @@ protected:
     starVertex *vertices = nullptr;
 
     ShaderProgram *pgm = nullptr;
-    VertexBuffer *vbuf = nullptr;
+    VertexArray *vao = nullptr;
+    VertexBuffer *vbo = nullptr;
 
     mat4Uniform mvp;
 };
 
-class StarRenderer : public ofsHandler
+class StarRenderer : public ofsHandler2
 {
 public:
     StarRenderer() = default;

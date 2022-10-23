@@ -14,6 +14,9 @@
 #include "universe/astro.h"
 #include "scripts/parser.h"
 
+#include "main/app.h"
+#include "engine/camera.h"
+
 void Universe::init()
 {
     stardb.loadXHIPData("data/xhip");
@@ -23,6 +26,11 @@ void Universe::init()
     celStar *sun = stardb.find("Sol");
     System *solSystem = createSolarSystem(sun);
     PlanetarySystem *system = solSystem->getPlanetarySystem();
+
+    Camerax *cam = ofsAppCore->getCamera();
+    cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
+    cam->update();
+    cam->look(sun->getStarPosition2());
 
     celBody *mercury, *venus, *earth;
     celBody *mars, *jupiter, *saturn;
@@ -147,16 +155,24 @@ Object *Universe::findPath(cstr_t &path) const
     return obj;
 }
 
-int Universe::findCloseStars(const vec3d_t &obs, double mdist,
-    std::vector<const celStar *> &closeStars) const
+// int Universe::findCloseStars(const vec3d_t &obs, double mdist,
+//     std::vector<const celStar *> &closeStars) const
+// {
+//     return stardb.findCloseStars(obs, mdist, closeStars);
+// }
+
+int Universe::findCloseStars(const glm::dvec3 &obs, double mdist,
+    std::vector<ObjectHandle> &closeStars) const
 {
     return stardb.findCloseStars(obs, mdist, closeStars);
 }
 
-int Universe::findCloseStars2(const glm::dvec3 &obs, double mdist,
-    std::vector<ObjectHandle *> &closeStars) const
+void Universe::findVisibleStars(ofsHandler2 &handler,
+    const glm::dvec3 &obs, const glm::dmat3 &rot,
+    const double fov, const double aspect,
+    const double faintest)
 {
-    return stardb.findCloseStars2(obs, mdist, closeStars);
+    stardb.findVisibleStars(handler, obs, rot, fov, aspect, faintest);
 }
 
 Object *Universe::pickPlanet(System *system, const vec3d_t &obs, const vec3d_t &dir, double when)
@@ -167,17 +183,18 @@ Object *Universe::pickPlanet(System *system, const vec3d_t &obs, const vec3d_t &
 
 Object *Universe::pick(const vec3d_t &obs, const vec3d_t &dir, double when)
 {
-    std::vector<const celStar *> closeStars;
-    Object *picked = nullptr;
+    // std::vector<const celStar *> closeStars;
+    // Object *picked = nullptr;
 
-    findCloseStars(obs, 1.0, closeStars);
-    for (auto star : closeStars)
-    {
-        if (!star->hasSolarSystem())
-            continue;
-        System *system = star->getSolarSystem();
-        picked = pickPlanet(system, obs, dir, when);
-    }
+    // findCloseStars(obs, 1.0, closeStars);
+    // for (auto star : closeStars)
+    // {
+    //     if (!star->hasSolarSystem())
+    //         continue;
+    //     System *system = star->getSolarSystem();
+    //     picked = pickPlanet(system, obs, dir, when);
+    // }
 
-    return picked;
+    // return picked;
+    return nullptr;
 }

@@ -18,27 +18,44 @@ StarVertex::StarVertex(Scene &scene)
   type(useNotUsed), nStars(0),
   flagStarted(false)
 {
-    vbuf = new VertexBuffer(nullptr, 120'000 * sizeof(StarVertex));
+    vao = new VertexArray(1);
+    vbo = (VertexBuffer *)vao->create(1, VertexArray::VBO);
 }
 
 void StarVertex::start()
 {
     pgm->use();
-    vbuf->bind();
+    vao->bind();
 
-    vertices = reinterpret_cast<starVertex *>(vbuf->map());
+    vbo->allocate(120'000 * sizeof(StarVertex), nullptr, GL_STREAM_DRAW);
+    vertices = reinterpret_cast<starVertex *>(vbo->map());
     if (vertices == nullptr)
     {
         logger->fatal("Can't render stars - aborted (error code: {})\n",
             glGetError());
         pgm->release();
-        vbuf->unbind();
+        vao->unbind();
         return;
     }
 
     glEnable(GL_PROGRAM_POINT_SIZE);
 
-    // mvp = (prm.dmProj * prm.dmView).cast<float>();
+    glm::dmat4 view = ofsGetCameraViewMatrix();
+    glm::dmat4 proj = ofsGetCameraProjectionMatrix();
+
+    // logger->debug("View Matrix:");
+    // logger->debug("{} {} {} {}\n", view[0][0], view[0][1], view[0][2], view[0][3]);
+    // logger->debug("{} {} {} {}\n", view[1][0], view[1][1], view[1][2], view[1][3]);
+    // logger->debug("{} {} {} {}\n", view[2][0], view[2][1], view[2][2], view[2][3]);
+    // logger->debug("{} {} {} {}\n", view[3][0], view[3][1], view[3][2], view[3][3]);
+
+    // logger->debug("Projection Matrix:");
+    // logger->debug("{} {} {} {}\n", proj[0][0], proj[0][1], proj[0][2], proj[0][3]);
+    // logger->debug("{} {} {} {}\n", proj[1][0], proj[1][1], proj[1][2], proj[1][3]);
+    // logger->debug("{} {} {} {}\n", proj[2][0], proj[2][1], proj[2][2], proj[2][3]);
+    // logger->debug("{} {} {} {}\n", proj[3][0], proj[3][1], proj[3][2], proj[3][3]);
+
+    mvp = glm::mat4(proj * view);
 
     nStars = 0;
     type = useSprites;
@@ -47,17 +64,14 @@ void StarVertex::start()
 
 void StarVertex::render()
 {
-    // if (!glUnmapBuffer(GL_ARRAY_BUFFER))
-    // {
-    //     Logger::getLogger()->fatal("Stars: buffer corrupted - aborted (error code: {})\n", glGetError());
-    //     return;
-    // }
-    vbuf->unmap();
+    vbo->unmap();
     vertices = nullptr;
+
+    logger->info("Display {} stars on the screen\n", nStars);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)(3 * sizeof(float)));
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)(7 * sizeof(float)));
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)(7 * sizeof(float)));
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -65,6 +79,7 @@ void StarVertex::render()
  
     glDrawArrays(GL_POINTS, 0, nStars);
     nStars = 0;
+    scene.checkErrors();
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
@@ -82,7 +97,7 @@ void StarVertex::finish()
     case useSprites:
         glDisable(GL_PROGRAM_POINT_SIZE);
 
-        vbuf->unbind();
+        vao->unbind();
         pgm->release();
         break;
 
@@ -96,7 +111,7 @@ void StarVertex::addStar(const glm::dvec3 &pos, const color_t &color, double rad
 {
     vertices[nStars].posStar = pos;
     vertices[nStars].color = color;
-    vertices[nStars].size = radius;
+    vertices[nStars].size = radius;    
     nStars++;
 }
 
@@ -142,9 +157,14 @@ void StarRenderer::process(ObjectHandle star, double dist, double appMag) const
             alpha = 0.0;
     }
 
-    // color = starColors->lookup(ofsGetObjectStarTemperature(star));
-    color = { 0.7, 0.7, 0.7 };
+    color = starColors->lookup(ofsGetObjectStarTemperature(star));
     color.setAlpha(alpha);
+
+    // logger->info("HIP {}: {} {} {}\n",
+    //     ofsGetObjectStarHIPNumber(star), spos.x, spos.y, spos.z);
+    // logger->info("HIP {}: Color ({} {} {} {}) Size {}\n",
+    //     ofsGetObjectStarHIPNumber(star), color.getRed(), color.getGreen(), color.getBlue(),
+    //     color.getAlpha(), discSize);
 
     starBuffer->addStar(rpos, color, discSize);
 }
@@ -168,24 +188,24 @@ void Scene::initStarRenderer()
     starRenderer->starColors = starColors;
 }
 
-void Scene::renderStars(/* const StarDatabase &starlib, const Player &player, double faintest */)
+void Scene::renderStars(double faintest)
 {
-    // vec3d_t obs = player.getuPosition();
-    // quatd_t rot = player.getuOrientation();
-    // Camera *cam = player.getCamera();
-    // double  fov = cam->getFOV();
-    // double  aspect = cam->getAspect();
+    glm::dvec3 obs = ofsGetCameraGlobalPosition();
+    glm::dmat3 rot = ofsGetCameraGlobalRotation();
+    double fov = ofsGetCameraFieldOfView();
+    double aspect = ofsGetCameraAspectRatio();
 
-    // starRenderer->cpos = obs;
-    // starRenderer->pxSize = pixelSize;
-    // starRenderer->baseSize = 5.0;
-    // starRenderer->faintestMag = faintestMag;
-    // starRenderer->faintestNightMag = faintest;
-    // starRenderer->saturationMag = saturationMag;
-    // starRenderer->starBuffer->start();
+    starRenderer->cpos = obs;
+    starRenderer->pxSize = pixelSize;
+    starRenderer->baseSize = 5.0;
+    starRenderer->faintestMag = faintestMag;
+    starRenderer->faintestNightMag = faintest;
+    starRenderer->saturationMag = saturationMag;
+    starRenderer->starBuffer->start();
 
-    // ctx.enableBlend();
-    // starlib.findVisibleStars(*starRenderer, obs, rot, fov, aspect, faintest);
-    // starRenderer->starBuffer->finish();
-    // ctx.disableBlend();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    ofsFindVisibleStars(*starRenderer, obs, rot, fov, aspect, faintest);
+    starRenderer->starBuffer->finish();
+    glDisable(GL_BLEND);
 }

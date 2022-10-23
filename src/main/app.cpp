@@ -235,7 +235,7 @@ void CoreApp::closeSession()
 
 void CoreApp::updateWorld()
 {
-  
+    camerax->update();
 }
 
 bool CoreApp::attachGraphicsClient(GraphicsClient *gc)
@@ -292,6 +292,9 @@ void CoreApp::run()
     while (bRunning)
     {
         SDL_Event event;
+        int mx, my;
+        int state;
+        uint16_t mod;
 
         while (SDL_PollEvent(&event))
         {
@@ -300,7 +303,106 @@ void CoreApp::run()
             case SDL_QUIT:
                 bRunning = false;
                 break;
-            
+
+            // Handling keyboard events
+            case SDL_KEYDOWN:
+                mod = event.key.keysym.mod;
+                // processKeyEvent(&event.key, true);
+                break;
+
+            case SDL_KEYUP:
+                mod = event.key.keysym.mod;
+                // processKeyEvent(&event.key, false);
+                break;
+
+            // Handling mouse events
+            case SDL_MOUSEMOTION:
+                mx = event.motion.x;
+                my = event.motion.y;
+
+                state = 0;
+                if (event.motion.state & SDL_BUTTON_LMASK)
+                    state |= mouseLeftButton;
+                if (event.motion.state & SDL_BUTTON_MMASK)
+                    state |= mouseMiddleButton;
+                if (event.motion.state & SDL_BUTTON_RMASK)
+                    state |= mouseRightButton;
+                if (mod & KMOD_CTRL)
+                    state |= mouseControlButton;
+                if (mod & KMOD_ALT)
+                    state |= mouseAltButton;
+                if (mod & KMOD_SHIFT)
+                    state |= mouseShiftButton;
+
+                // if (activeView != nullptr)
+                // {
+                //     activeView->map(mx / float(width), my / float(height), vx, vy);
+                //     pickRay = player->getPickRay(vx, vy);
+                // }
+
+                // title = fmt::sprintf("%s X: %d Y %d (%f,%f) State: %c%c%c%c%c%c\n",
+                //     APP_SHORT, mx, my, pickRay.x(), pickRay.y(),
+                //     (state & mouseLeftButton    ? 'L' : '-'),
+                //     (state & mouseMiddleButton  ? 'M' : '-'),
+                //     (state & mouseRightButton   ? 'R' : '-'),
+                //     (state & mouseControlButton ? 'C' : '-'),
+                //     (state & mouseAltButton     ? 'A' : '-'),
+                //     (state & mouseShiftButton   ? 'S' : '-'));
+                // ctx->setWindowTitle(title);
+
+                camerax->mouseMove(mx, my, state);
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                mx = event.motion.x;
+                my = event.motion.y;
+
+                state = 0;
+                if (event.motion.state & SDL_BUTTON_LMASK)
+                    state |= mouseLeftButton;
+                if (event.motion.state & SDL_BUTTON_MMASK)
+                    state |= mouseMiddleButton;
+                if (event.motion.state & SDL_BUTTON_RMASK)
+                    state |= mouseRightButton;
+                if (mod & KMOD_CTRL)
+                    state |= mouseControlButton;
+                if (mod & KMOD_ALT)
+                    state |= mouseAltButton;
+                if (mod & KMOD_SHIFT)
+                    state |= mouseShiftButton;
+
+                camerax->mousePressButtonDown(mx, my, state);
+                break;
+
+            case SDL_MOUSEBUTTONUP:
+                mx = event.motion.x;
+                my = event.motion.y;
+
+                state = 0;
+                if (event.motion.state & SDL_BUTTON_LMASK)
+                    state |= mouseLeftButton;
+                if (event.motion.state & SDL_BUTTON_MMASK)
+                    state |= mouseMiddleButton;
+                if (event.motion.state & SDL_BUTTON_RMASK)
+                    state |= mouseRightButton;
+                if (mod & KMOD_CTRL)
+                    state |= mouseControlButton;
+                if (mod & KMOD_ALT)
+                    state |= mouseAltButton;
+                if (mod & KMOD_SHIFT)
+                    state |= mouseShiftButton;
+
+                camerax->mousePressButtonUp(mx, my, state);
+                break;
+
+            case SDL_MOUSEWHEEL:
+                if (event.wheel.y > 0)      // scroll up
+                    camerax->mouseDialWheel(-1.0f, 0);
+                else if (event.wheel.y < 0) // scroll down
+                    camerax->mouseDialWheel(1.0f, 0);
+                break;
+           
+                 
             }
         }
 
@@ -313,6 +415,7 @@ void CoreApp::run()
             // }
         }
 
+        updateWorld();
         renderScene();
         drawHUD();
         displayFrame();
