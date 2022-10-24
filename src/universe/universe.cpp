@@ -32,7 +32,7 @@ void Universe::init()
     // cam->update();
     // cam->look(sun->getStarPosition2());
 
-    cam->setPosition(glm::dvec3(0, 0, -60000));
+    cam->setPosition(glm::dvec3(0, 0, -20000));
     cam->update();
     cam->look(glm::dvec3(0, 0, 0));
 

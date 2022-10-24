@@ -26,11 +26,12 @@ protected:
     ObjectHandle object;
     Scene &scene;
 
+    glm::dvec3 gpos;
     glm::dmat3 grot;
 
     // Camera parameters
-    glm::dvec3 cpos;
-    glm::dvec3 cdist;
+    glm::dvec3 vpos;
+    double     vdist;
 
     glm::dmat4 dmWorld;
 };

@@ -28,5 +28,5 @@ void vBody::update()
 
 void vBody::render()
 {
-    smgr->render();
+    smgr->render(dmWorld);
 }

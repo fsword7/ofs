@@ -71,5 +71,6 @@ void Scene::render()
 
     // renderStars(faintestMag);
 
+    vEarth->update();
     vEarth->render();
 }

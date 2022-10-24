@@ -72,6 +72,54 @@ void SurfaceTile::render()
     mgr.pgmBody->release();
 }
 
+Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
+{
+    double erad, rad = mgr.objSize + gelev;
+    double slat, clat, slng, clng;
+    double tu, tv;
+    glm::dvec3 pos, nml;
+
+    int nvtx = (grid - 1) * (grid + 1) + 2;
+    int nidx = 6 * (grid * (grid - 2) + grid);
+
+    double dang = pi / grid;
+    double lng, lat = dang;
+
+    for (int y = 0; y < grid; y++)
+    {
+        slat = sin(lat), clat = cos(lat);
+        tv = lat / pi;
+
+        for (int x = 0; x < grid; x++)
+        {
+            slng = sin(lng), clng = cos(lng);
+            erad = rad + gelev;
+            if (elev != nullptr)
+                erad += double(elev[(grid+1 - y) * ELEV_STRIDE + x+1]);
+            nml = { slat*clng, clat, slat*slng };
+            pos = nml * erad;
+        }
+
+        lat += dang;
+    }
+
+    for (int y = 0; y < grid-2; y++)
+    {
+        for (int x = 0; x < grid; x++)
+        {
+            // *idx++ = (uint16_t)((y+0)*x2 + (x+0));
+            // *idx++ = (uint16_t)((y+0)*x2 + (x+1));
+            // *idx++ = (uint16_t)((y+1)*x2 + (x+0));
+            // *idx++ = (uint16_t)((y+0)*x2 + (x+1));
+            // *idx++ = (uint16_t)((y+1)*x2 + (x+1));
+            // *idx++ = (uint16_t)((y+1)*x2 + (x+0));
+            // nidx += 6;
+        }
+    }
+    
+    return nullptr;
+}
+
 // ******** Surface Manager ********
 
 SurfaceManager::SurfaceManager(ObjectHandle object, Scene &scene)
@@ -113,8 +161,8 @@ glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng
     //          { -slng, 0,   clng, 0   },  
     //          { 0,     0,   0,    1.0 }};
 
-    // if (nlng <= 8)
-    //     return prm.dmWorld;
+    if (nlng <= 8)
+        return prm.dmWorld;
 
     double lat = pi * double(nlat / 2-ilat-1) / double(nlat);
     // double lat = pi * double(nlat / 2-ilat) / double(nlat);
@@ -128,7 +176,7 @@ glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng
     // Calculate translation with per-tile model matrix
     // Move a center from body center to tile by eliminating
     // jiffery due to round-off errors.
-    glm::dmat4 wrot(1.0);
+    glm::dmat4 wrot = prm.dmWorld;
     wrot[3][0] = (dx*prm.urot[0][0] + dy*prm.urot[0][1] + dz*prm.urot[0][2] + prm.cpos.x) * prm.scale;
     wrot[3][1] = (dx*prm.urot[1][0] + dy*prm.urot[1][1] + dz*prm.urot[1][2] + prm.cpos.y) * prm.scale;
     wrot[3][2] = (dx*prm.urot[2][0] + dy*prm.urot[2][1] + dz*prm.urot[2][2] + prm.cpos.z) * prm.scale;
@@ -136,14 +184,14 @@ glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng
     return wrot;
 }
 
-void SurfaceManager::setRenderParams()
+void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
 {
     glm::dvec3 opos, cpos;
     double cdist;
 
     Camera *cam = scene.getCamera();
     prm.dmViewProj = cam->getViewProjMatrix();
-    prm.dmWorld = glm::dmat4(1);
+    prm.dmWorld = dmWorld;
 
     prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
     opos = ofsGetObjectGlobalPosition(object);
@@ -227,9 +275,9 @@ void SurfaceManager::render(SurfaceTile *tile)
     }
 }
 
-void SurfaceManager::render()
+void SurfaceManager::render(const glm::dmat4 &dmWorld)
 {
-    setRenderParams();
+    setRenderParams(dmWorld);
 
     for (int idx = 0; idx < 2; idx++)
         process(tiles[idx]);
@@ -244,8 +292,8 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
     int nlat = 1 << lod;
     int nlng = 2 << lod;
 
-    double mlat0  = pi * double(nlat / 2-ilat-1) / double(nlat);
-    double mlat1  = pi * double(nlat / 2-ilat) / double(nlat);
+    double mlat0  = pi * double(nlat/2 - ilat-1) / double(nlat);
+    double mlat1  = pi * double(nlat/2 - ilat) / double(nlat);
     double mlng0 = (pi*2.0) * double(ilng) / double(nlng) + pi;
     double mlng1 = (pi*2.0) * double(ilng+1) / double(nlng) + pi;
     // double mlng0  = 0.0;
@@ -282,6 +330,8 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
         lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
         slat = sin(lat), clat = cos(lat);
         tu = range.tumin + tur * float(y)/float(grid);
+
+        // logger->debug("Y {}: {}\n", y, lat);
 
         for (int x = 0; x < grid; x++)
         {

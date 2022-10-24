@@ -83,6 +83,10 @@ public:
     void load();
     void render();
 
+    Mesh *createHemisphere(int grid, int16_t *elev, double gelev);
+    // Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
+    //     int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
+
 private:
     SurfaceManager &mgr;
 
@@ -105,14 +109,15 @@ public:
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 
+    Mesh *createHemisphere(int grid, int16_t *elev, double gelev);
     Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
         int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
 
-    void setRenderParams();
+    void setRenderParams(const glm::dmat4 &dmWorld);
 
     void process(SurfaceTile *tile);
     void render(SurfaceTile *tile); 
-    void render();
+    void render(const glm::dmat4 &dmWorld);
 
     struct renderParams
     {
