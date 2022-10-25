@@ -284,6 +284,12 @@ void CoreApp::displayFrame()
         gclient->cbDisplayFrame();
 }
 
+void CoreApp::setWindowTitle(cstr_t &title)
+{
+    if (gclient != nullptr)
+        gclient->cbSetWindowTitle(title);
+}
+
 void CoreApp::run()
 {
     openSession();
@@ -295,6 +301,7 @@ void CoreApp::run()
         int mx, my;
         int state;
         uint16_t mod;
+        str_t title;
 
         while (SDL_PollEvent(&event))
         {
@@ -340,15 +347,15 @@ void CoreApp::run()
                 //     pickRay = player->getPickRay(vx, vy);
                 // }
 
-                // title = fmt::sprintf("%s X: %d Y %d (%f,%f) State: %c%c%c%c%c%c\n",
-                //     APP_SHORT, mx, my, pickRay.x(), pickRay.y(),
-                //     (state & mouseLeftButton    ? 'L' : '-'),
-                //     (state & mouseMiddleButton  ? 'M' : '-'),
-                //     (state & mouseRightButton   ? 'R' : '-'),
-                //     (state & mouseControlButton ? 'C' : '-'),
-                //     (state & mouseAltButton     ? 'A' : '-'),
-                //     (state & mouseShiftButton   ? 'S' : '-'));
-                // ctx->setWindowTitle(title);
+                title = fmt::format("{} X: {} Y {} ({},{}) State: {}{}{}{}{}{}\n",
+                    APP_SHORT, mx, my, 0, 0, /* pickRay.x(), pickRay.y(), */
+                    (state & mouseLeftButton    ? 'L' : '-'),
+                    (state & mouseMiddleButton  ? 'M' : '-'),
+                    (state & mouseRightButton   ? 'R' : '-'),
+                    (state & mouseControlButton ? 'C' : '-'),
+                    (state & mouseAltButton     ? 'A' : '-'),
+                    (state & mouseShiftButton   ? 'S' : '-'));
+                setWindowTitle(title);
 
                 camerax->mouseMove(mx, my, state);
                 break;

@@ -26,8 +26,6 @@
 #include <thread>
 #include <mutex>
 
-// #include <fmt/printf.h>
-
 typedef const char          cchar_t;
 typedef std::string         str_t;
 typedef const std::string   cstr_t;

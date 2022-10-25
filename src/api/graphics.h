@@ -18,7 +18,7 @@ public:
 
     virtual bool cbCreateRenderingWindow() = 0;
     virtual bool cbDisplayFrame() = 0;
-
+    virtual void cbSetWindowTitle(cstr_t &title) = 0;
     virtual void cbStart() = 0;
     virtual void cbRenderScene() = 0;
 

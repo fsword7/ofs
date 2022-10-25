@@ -146,6 +146,11 @@ bool glClient::cbDisplayFrame()
     return true;
 }
 
+void glClient::cbSetWindowTitle(cstr_t &title)
+{
+    SDL_SetWindowTitle(window, title.c_str());
+}
+
 void glClient::cbStart()
 {
     if (scene != nullptr)

@@ -191,6 +191,7 @@ public:
     void createSceneWindow();
 
     void displayFrame();
+    void setWindowTitle(cstr_t &title);
 
     // Time/date update routines
     bool beginTimeStep(bool running);
