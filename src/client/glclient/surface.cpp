@@ -41,8 +41,10 @@ glm::dvec3 SurfaceTile::getCenter()
 
 void SurfaceTile::load()
 {
-
-    mesh = mgr.createSpherePatch(32, lod, ilat, ilng, range);
+    if (lod == 0)
+        mesh = createHemisphere(32, nullptr, 0);
+    else
+        mesh = mgr.createSpherePatch(32, lod, ilat, ilng, range);
     type = tileActive;
 }
 
@@ -80,44 +82,144 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
     glm::dvec3 pos, nml;
 
     int nvtx = (grid - 1) * (grid + 1) + 2;
-    int nidx = 6 * (grid * (grid - 2) + grid);
+    Vertex *vtx = new Vertex[nvtx];
+    int cvtx = 0;
 
     double dang = pi / grid;
-    double lng, lat = dang;
+    double lng, lat = 0;
+    double du = 0.5 / 512;
+    double a = (1.0 - 2.0 * du) / double(grid);
+    int x1 = grid;
+    int x2 = x1+1;
 
-    for (int y = 0; y < grid; y++)
+    for (int y = 1; y < grid; y++)
     {
+        lat += dang;
         slat = sin(lat), clat = cos(lat);
         tv = lat / pi;
 
-        for (int x = 0; x < grid; x++)
+        for (int x = 0; x < x2; x++)
         {
+            lng = x*dang - pi;
+            if (ilng != 0)
+                lng += pi;
             slng = sin(lng), clng = cos(lng);
             erad = rad + gelev;
             if (elev != nullptr)
                 erad += double(elev[(grid+1 - y) * ELEV_STRIDE + x+1]);
             nml = { slat*clng, clat, slat*slng };
             pos = nml * erad;
-        }
+            tu = a * x + du;
 
-        lat += dang;
+            vtx[cvtx].vx = float(pos.x);
+            vtx[cvtx].vy = float(pos.y);
+            vtx[cvtx].vz = float(pos.z);
+
+            vtx[cvtx].nx = float(nml.x);
+            vtx[cvtx].ny = float(nml.y);
+            vtx[cvtx].nz = float(nml.z);
+
+            vtx[cvtx].tu = tu;
+            vtx[cvtx].tv = tv;
+   
+            cvtx++;
+        }
     }
+
+    // Initialize indices
+    int nidx = 6 * (grid * (grid - 2) + grid);
+    uint16_t *idx = new uint16_t[nidx];
+    int cidx = 0;
 
     for (int y = 0; y < grid-2; y++)
     {
-        for (int x = 0; x < grid; x++)
+        for (int x = 0; x < x1; x++)
         {
-            // *idx++ = (uint16_t)((y+0)*x2 + (x+0));
-            // *idx++ = (uint16_t)((y+0)*x2 + (x+1));
-            // *idx++ = (uint16_t)((y+1)*x2 + (x+0));
-            // *idx++ = (uint16_t)((y+0)*x2 + (x+1));
-            // *idx++ = (uint16_t)((y+1)*x2 + (x+1));
-            // *idx++ = (uint16_t)((y+1)*x2 + (x+0));
-            // nidx += 6;
+            idx[cidx++] = (uint16_t)((y+0)*x2 + (x+0));
+            idx[cidx++] = (uint16_t)((y+0)*x2 + (x+1));
+            idx[cidx++] = (uint16_t)((y+1)*x2 + (x+0));
+            idx[cidx++] = (uint16_t)((y+0)*x2 + (x+1));
+            idx[cidx++] = (uint16_t)((y+1)*x2 + (x+1));
+            idx[cidx++] = (uint16_t)((y+1)*x2 + (x+0));
         }
     }
     
-    return nullptr;
+    // Make top and bottom
+    int wNorth = cvtx;
+    {
+        erad = rad + gelev;
+        if (elev != nullptr)
+        {
+            double mn = 0.0;
+            for (int x = 0; x < x2; x++)
+                mn += elev[(grid+1)*ELEV_STRIDE + x+1];
+            erad += mn / x2;
+        }
+        nml = { 0, 1, 0 };
+        pos = nml * erad;
+        
+        vtx[cvtx].vx = pos.x;
+        vtx[cvtx].vy = pos.y;
+        vtx[cvtx].vz = pos.z;
+
+        vtx[cvtx].nx = nml.x;
+        vtx[cvtx].ny = nml.y;
+        vtx[cvtx].nz = nml.z;
+
+        vtx[cvtx].tu = 0.5;
+        vtx[cvtx].tv = 0.0;
+
+        cvtx++;
+    }
+
+    int wSouth = cvtx;
+    {
+        erad = rad + gelev;
+        if (elev != nullptr)
+        {
+            double mn = 0.0;
+            for (int x = 0; x < x2; x++)
+                mn += elev[ELEV_STRIDE + x+1];
+            erad += mn / x2;
+        }
+        nml = { 0, -1, 0 };
+        pos = nml * erad;
+        
+        vtx[cvtx].vx = pos.x;
+        vtx[cvtx].vy = pos.y;
+        vtx[cvtx].vz = pos.z;
+
+        vtx[cvtx].nx = nml.x;
+        vtx[cvtx].ny = nml.y;
+        vtx[cvtx].nz = nml.z;
+
+        vtx[cvtx].tu = 0.5;
+        vtx[cvtx].tv = 1.0;
+
+        cvtx++;
+    }
+
+    for (int x = 0; x < x1; x++)
+    {
+        idx[cidx++] = wSouth;
+        idx[cidx++] = (grid-2)*x2 + (x+0);
+        idx[cidx++] = (grid-2)*x2 + (x+1);
+    }
+
+    for (int x = 0; x < x1; x++)
+    {
+        idx[cidx++] = wNorth;
+        idx[cidx++] = (0)*x2 + (x+0);
+        idx[cidx++] = (0)*x2 + (x+1);
+    }
+
+    // Regenerate normals for terrain
+    if (elev != nullptr)
+    {
+
+    }
+
+    return new Mesh(cvtx, vtx, cidx, idx);
 }
 
 // ******** Surface Manager ********
@@ -164,8 +266,8 @@ glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng
     if (nlng <= 8)
         return prm.dmWorld;
 
-    double lat = pi * double(nlat / 2-ilat-1) / double(nlat);
-    // double lat = pi * double(nlat / 2-ilat) / double(nlat);
+    double lat = pi * double(nlat/2 - ilat-1) / double(nlat);
+    // double lat = pi * double(nlat/2 - ilat) / double(nlat);
     double lng = (pi*2.0) * (double(ilng) / double(nlng)) + pi;
     double slng = sin(lng), clng = cos(lng);
 
