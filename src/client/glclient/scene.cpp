@@ -39,7 +39,7 @@ void Scene::start()
 
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
-    glFrontFace(GL_CW);
+    glFrontFace(GL_CCW);
     glEnable(GL_CULL_FACE);
 
     ObjectHandle earth = ofsGetObjectByName("Sol/Earth");

@@ -201,16 +201,16 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
 
     for (int x = 0; x < x1; x++)
     {
-        idx[cidx++] = wSouth;
-        idx[cidx++] = (grid-2)*x2 + (x+0);
-        idx[cidx++] = (grid-2)*x2 + (x+1);
+        idx[cidx++] = wNorth;
+        idx[cidx++] = (0)*x2 + (x+1);
+        idx[cidx++] = (0)*x2 + (x+0);
     }
 
     for (int x = 0; x < x1; x++)
     {
-        idx[cidx++] = wNorth;
-        idx[cidx++] = (0)*x2 + (x+0);
-        idx[cidx++] = (0)*x2 + (x+1);
+        idx[cidx++] = wSouth;
+        idx[cidx++] = (grid-2)*x2 + (x+0);
+        idx[cidx++] = (grid-2)*x2 + (x+1);
     }
 
     // Regenerate normals for terrain
