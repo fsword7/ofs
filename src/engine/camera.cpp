@@ -27,15 +27,23 @@ void Camerax::resize(int w, int h)
 
 void Camerax::reset()
 {
-    ePhi   = 0;
-    eTheta = 0;
-
     erot  = { 0, 0, 0 };
     clrot = { 0, 0, 0 };
 
     rpos  = { 0, 0, 0 };
     rrot  = glm::dmat3(1);
     rdist = 0;
+}
+
+void Camerax::setPosition(const glm::dvec3 &pos)
+{
+    rpos  = pos;
+    rdist = glm::length(rpos);
+}
+
+void Camerax::setRotation(const glm::dmat3 &rot)
+{
+    rrot = rot;
 }
 
 void Camerax::look(const glm::dvec3 &opos)
@@ -55,9 +63,6 @@ void Camerax::look(const glm::dvec3 &opos)
 
 void Camerax::setRelativePosition(double phi, double theta, double dist)
 {
-    ePhi = phi;
-    eTheta = theta;
-
     erot.x = phi;
     erot.y = theta;
 
@@ -71,23 +76,32 @@ void Camerax::setRelativePosition(double phi, double theta, double dist)
     };
     rpos  = { rrot[0][2]*dist, rrot[1][2]*dist, rrot[2][2]*dist };
     rdist = dist;
+
+    // Logger::logger->debug("{} {} {} => {} {} {} dist {}\n",
+    //     upos.x, upos.y, upos.z, rpos.x, rpos.y, rpos.z, rdist);
 }
 
-void Camerax::orbit(double dPhi, double dTheta)
+void Camerax::dolly(double dz)
 {
-    setRelativePosition(ePhi+dPhi*0.5, eTheta+dTheta*0.5, rdist);
+    double fact = std::max(1.0/rdist, 1.0/(1.0 - dz));
+    setRelativePosition(erot.x, erot.y, rdist*fact);
+}
+
+void Camerax::orbit(double dx, double dy)
+{
+    setRelativePosition(erot.x+dx*0.5, erot.y+dy*0.5, rdist);
     udir = rrot * glm::dvec3(0, 0, 1);
 }
 
-void Camerax::orbitPhi(double dPhi)
+void Camerax::orbitPhi(double dx)
 {
-    setRelativePosition(ePhi+dPhi*0.5, eTheta, rdist);
+    setRelativePosition(erot.x+dx*0.5, erot.y, rdist);
     udir = rrot * glm::dvec3(0, 0, 1);
 }
 
-void Camerax::orbitTheta(double dTheta)
+void Camerax::orbitTheta(double dy)
 {
-    setRelativePosition(ePhi, eTheta+dTheta*0.5, rdist);
+    setRelativePosition(erot.x, erot.y+dy*0.5, rdist);
     udir = rrot * glm::dvec3(0, 0, 1);
 }
 
@@ -127,7 +141,7 @@ void Camerax::attach(Object *object, extCameraMode nMode)
 
     if (modeExternal == true)
     {
-        setRelativePosition(ePhi, eTheta, rdist);
+        setRelativePosition(erot.x, erot.y, rdist);
 
     }
 }
@@ -156,15 +170,31 @@ void Camerax::processKeyboard()
 
 void Camerax::mouseMove(float mx, float my, int state)
 {
-
-}
-
-void Camerax::mousePressButtonDown(float mx, float my, int state)
-{
+    // Camera rotation controls
     if (state & CoreApp::mouseLeftButton)
     {
 
     }
+
+    // Orbital movement controls
+    if (state & CoreApp::mouseRightButton)
+    {
+        double dx = mlx - mx;
+        double dy = mly - my;
+        
+        orbit(dx * -0.005, dy * -0.005);
+    }
+
+    mlx = mx;
+    mly = my;
+}
+
+void Camerax::mousePressButtonDown(float mx, float my, int state)
+{
+
+    // Reset mouse motion
+    mlx = mx;
+    mly = my;
 }
 
 void Camerax::mousePressButtonUp(float mx, float my, int state)
@@ -186,5 +216,7 @@ void Camerax::mousePressButtonUp(float mx, float my, int state)
 
 void Camerax::mouseDialWheel(float motion, int state)
 {
-
+    int dz = motion;
+    if (modeExternal == true)
+        dolly(-dz * 0.001);
 }

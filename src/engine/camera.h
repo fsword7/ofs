@@ -28,9 +28,6 @@ public:
     inline int getWidth() const                     { return width; }
     inline int getHeight() const                    { return height; }
 
-    inline void setPosition(const glm::dvec3 &pos)  { rpos = pos; }
-    inline void setRotation(const glm::dmat3 &rot)  { rrot = rot; }
-
     inline glm::dvec3 getGlobalPosition() const     { return upos; }
     inline glm::dvec3 getGlobalDirection() const    { return udir; }
     inline glm::dmat3 getGlobalRotation() const     { return urot; }
@@ -49,8 +46,14 @@ public:
     void resize(int w, int h);
     void reset();
 
+
+    void setPosition(const glm::dvec3 &pos);
+    void setRotation(const glm::dmat3 &rot);
+
     void look(const glm::dvec3 &opos);
 
+    void dolly(double dz);
+    
     void orbit(double phi, double theta);
     void orbitPhi(double phi);
     void orbitTheta(double theta);
@@ -79,8 +82,9 @@ private:
     double fov;
     double zNear, zFar;
 
+    int mlx, mly;   // Last moouse motion
+
     // Rotation: X = Phi, Y = Theta
-    double ePhi, eTheta;
     glm::dvec3 erot;        // rotation [radians - object frame]
     glm::dvec3 clrot;       // local camera rotation [radians]
 
