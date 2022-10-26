@@ -286,10 +286,12 @@ glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng
     if (nlng <= 8)
         return prm.dmWorld;
 
-    double lat = pi * double(nlat/2 - ilat-1) / double(nlat);
-    // double lat = pi * double(nlat/2 - ilat) / double(nlat);
-    double lng = (pi*2.0) * (double(ilng) / double(nlng)) + pi;
-    double slng = sin(lng), clng = cos(lng);
+    double lat, lng;
+    if (ilat < nlat/2)
+        lat = pi * double(nlat/2 - ilat-1) / double(nlat);
+    else
+        lat = pi * double(nlat/2 - ilat) / double(nlat);
+    lng = (pi*2.0) * (double(ilng) / double(nlng)) + pi;
 
     double dx = objSize * cos(lng) * cos(lat);
     double dy = objSize * sin(lat);
@@ -449,7 +451,7 @@ void SurfaceManager::process(SurfaceTile *tile)
         }
     }
 
-    prm.dmWorld = tile->mgr.getWorldMatrix(tile->ilat, nlat, tile->ilng, nlng);
+    // prm.dmWorld = tile->mgr.getWorldMatrix(tile->ilat, nlat, tile->ilng, nlng);
 
     // Release all old tiles.
     if (bStepdown == false)
@@ -523,15 +525,13 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
     // glm::dvec3 ey = glm::normalize(glm::dvec3( (clng0+clng1)*(clat1-clat0)*0.5, slat1-slat0, (slng0+slng1)*(clat1-clat0)*0.5 ));
     // glm::dvec3 ez = glm::cross(ey, ex);
 
-    for (int y = 0; y < grid; y++)
+    for (int y = 0; y <= grid; y++)
     {
         lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
         slat = sin(lat), clat = cos(lat);
         tu = range.tumin + tur * float(y)/float(grid);
 
-        // logger->debug("Y {}: {}\n", y, lat);
-
-        for (int x = 0; x < grid; x++)
+        for (int x = 0; x <= grid; x++)
         {
             lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
             slng = sin(lng), clng = cos(lng);
@@ -589,6 +589,11 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
     {
 
     }
+
+    for (int idx = 0, cvtx = nvtx; idx <= grid; idx++)
+        vtx[cvtx++] = vtx[idx*(grid+1) + ((ilng & 1) ? grid : 0)];
+    for (int idx = 0; idx <= grid; idx++)
+        vtx[cvtx++] = vtx[idx + ((ilat & 1) ? 0 : (grid+1)*grid)];
 
     return new Mesh(nvtx, vtx, nidx, idx);
 }
