@@ -59,11 +59,13 @@ void SurfaceTile::setCenter(glm::dvec3 &cnml, glm::dvec3 &wpos)
 
 void SurfaceTile::load()
 {
+    type = tileLoading;
+
     if (lod == 0)
         mesh = createHemisphere(32, nullptr, 0);
     else
         mesh = mgr.createSpherePatch(32, lod, ilat, ilng, range);
-    type = tileActive;
+    type = tileInactive;
 }
 
 void SurfaceTile::render()
@@ -352,11 +354,12 @@ void SurfaceManager::process(SurfaceTile *tile)
             logger->debug("Tile: LOD {} ({},{}) - processing\n",
                 tile->lod+4, tile->ilat, tile->ilng);
 
-            // Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-            //     tile->center.x, tile->center.y, tile->center.z,
-            //     abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
-            //     abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
-        
+            logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+                tile->center.x, tile->center.y, tile->center.z,
+                abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+                abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+            logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
+                prm.cdir.x, prm.cdir.y, prm.cdir.z);        
             logger->debug(" -- Out of view {:.6f} >= {:.6f} - rendering at LOD 1 level\n",
                 ofs::degrees(adist), ofs::degrees(prm.viewap));
         }
@@ -405,8 +408,6 @@ void SurfaceManager::process(SurfaceTile *tile)
 
     if (bStepdown == true)
     {
-        logger->debug("Processing Node: Step 2\n");
-
         bool valid = true;
 
         for (int idx = 0; idx < QTREE_NODES; idx++)
@@ -420,7 +421,7 @@ void SurfaceManager::process(SurfaceTile *tile)
                 valid = false;
         }
 
-        if (valid == false)
+        if (valid == true)
         {
             tile->type = SurfaceTile::tileActive;
             for (int idx = 0; idx < QTREE_NODES; idx++)
