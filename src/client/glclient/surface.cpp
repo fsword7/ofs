@@ -17,7 +17,7 @@ static tcRange range = { 0, 1, 0, 1 };
 SurfaceTile::SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, SurfaceTile *parent)
 : Tree(parent), mgr(mgr), lod(lod), ilat(ilat), ilng(ilng)
 {
-    center = getCenter();
+    setCenter(center, wpos);
 }
 
 SurfaceTile::~SurfaceTile()
@@ -43,17 +43,18 @@ SurfaceTile *SurfaceTile::createChild(int idx)
     return child;
 }
 
-glm::dvec3 SurfaceTile::getCenter()
+void SurfaceTile::setCenter(glm::dvec3 &cnml, glm::dvec3 &wpos)
 {
     int nlat = 1 << lod;
     int nlng = 2 << lod;
 
-    double cntlat = (pi/2.0) - pi * (double(ilat+0.5)/double(nlat));
-    double cntlng = (pi*2.0) * (double(ilng)+0.5 / double(nlng) + pi);
-    double slat = sin(cntlat), clat = cos(cntlat);
-    double slng = sin(cntlng), clng = cos(cntlng);
+    double latc = (pi/2.0) - pi * ((double(ilat)+0.5) / double(nlat));
+    double lngc = (pi*2.0) * ((double(ilng)+0.5) / double(nlng)) + pi;
+    double slat = sin(latc), clat = cos(latc);
+    double slng = sin(lngc), clng = cos(lngc);
 
-    return glm::dvec3(clat*clng, slat, clat*slng);
+    cnml = glm::dvec3(clat*clng, slat, clat*slng);
+    wpos = glm::dvec3(acos(cnml.y) - (pi / 2.0), atan2(cnml.z, -cnml.x), 0);
 }
 
 void SurfaceTile::load()
@@ -431,15 +432,17 @@ void SurfaceManager::process(SurfaceTile *tile)
             logger->debug("Tile: LOD {} ({},{}) - processing\n",
                 tile->lod+4, tile->ilat, tile->ilng);
 
-            // logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-            //     tile->center.x(), tile->center.y(), tile->center.z(),
-            //     abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
-            //     abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
+            logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+                tile->center.x, tile->center.y, tile->center.z,
+                abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+                abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+            logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
+                prm.cdir.x, prm.cdir.y, prm.cdir.z);
             logger->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
                 ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
-            // if (tile->parentTile != nullptr)
-            //     logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
-            //         tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
+            if (tile->parentTile != nullptr)
+                logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
+                    tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
             logger->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
                 ofs::degrees(adist), ofs::degrees(prm.viewap));
         }

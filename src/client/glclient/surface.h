@@ -78,8 +78,11 @@ public:
     SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, SurfaceTile *parent = nullptr);
     ~SurfaceTile();
 
+    inline glm::dvec3 getCenter() const     { return center; }
+    inline glm::dvec3 getWorld() const      { return wpos; }
+
     SurfaceTile *createChild(int idx);
-    glm::dvec3 getCenter();
+    void setCenter(glm::dvec3 &center, glm::dvec3 &wpos);
 
     void load();
     void render();
@@ -96,7 +99,9 @@ private:
     int lod;
     int ilat, ilng;
     glm::dvec3 center;
+    glm::dvec3 wpos;
 
+    SurfaceTile *parentTile = nullptr;
     Mesh *mesh = nullptr;
 };
 
