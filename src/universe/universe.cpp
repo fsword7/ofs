@@ -27,15 +27,6 @@ void Universe::init()
     System *solSystem = createSolarSystem(sun);
     PlanetarySystem *system = solSystem->getPlanetarySystem();
 
-    Camerax *cam = ofsAppCore->getCamera();
-    // cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
-    // cam->update();
-    // cam->look(sun->getStarPosition2());
-
-    cam->setPosition(glm::dvec3(0, 0, -20000));
-    cam->update();
-    cam->look(glm::dvec3(0, 0, 0));
-
     celBody *mercury, *venus, *earth;
     celBody *mars, *jupiter, *saturn;
     celBody *uranus, *neptune, *lunar;
@@ -73,6 +64,15 @@ void Universe::init()
     // lunar->setRotation(Rotation::create("iau-lunar"));
     // lunar->setRadius(1738.14);
     // lunar->setAlbedo(0.136);
+
+    Camerax *cam = ofsAppCore->getCamera();
+    cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
+    cam->look(sun->getStarPosition2());
+    cam->update();
+
+    // cam->setPosition(glm::dvec3(0, 0, -earth->getRadius() * 4.0));
+    // cam->look(glm::dvec3(0, 0, 0));
+    // cam->update();
 
     std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
     System::loadSolarSystemObjects(in, *this, "systems");

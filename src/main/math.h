@@ -168,6 +168,33 @@ namespace ofs
         return m;
     }
 
+    template <typename T> glm::dmat4 glPerspective(T fovy, T aspect, T zNear, T zFar)
+    {
+        if (aspect == static_cast<T>(0))
+            return glm::dmat4(1.0);
+ 
+        T zDelta = zFar - zNear;
+        if (zDelta == static_cast<T>(0))
+            return glm::dmat4(1.0);
+
+        T angle = fovy / static_cast<T>(2);
+        T sine = sin(angle);
+        if (sine == static_cast<T>(0))
+            return glm::dmat4(1.0);
+        T ctg = cos(angle) / sine;
+
+        glm::dmat4 m(1.0);
+
+        m[0][0] = ctg / aspect;
+        m[1][1] = ctg;
+        m[2][2] = -(zFar + zNear) / zDelta;
+        m[2][3] = static_cast<T>(-2) * zNear * zFar / zDelta;
+        m[3][2] = static_cast<T>(-1);
+        m[3][3] = static_cast<T>(0);
+
+        return m;
+    }
+
     template <typename T> bool setProjectPerspective(const Eigen::Matrix<T, 4, 4> &mvp, const int viewport[4],
         const Eigen::Matrix<T, 3, 1> &from, Eigen::Matrix<T, 3, 1> &to)
     {

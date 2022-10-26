@@ -13,7 +13,7 @@ Camerax::Camerax(int w, int h)
     resize(w, h);
     fov = glm::radians(SCR_FOV);
     zNear = 1.0;
-    zFar  = 1e18;
+    zFar  = 1e10;
 
     reset();
 }
@@ -33,6 +33,13 @@ void Camerax::reset()
     rpos  = { 0, 0, 0 };
     rrot  = glm::dmat3(1);
     rdist = 0;
+
+    updateProjectionMatrix();
+}
+
+void Camerax::updateProjectionMatrix()
+{
+    proj = ofs::glPerspective(fov, aspect, zNear, zFar);
 }
 
 void Camerax::setPosition(const glm::dvec3 &pos)
@@ -50,8 +57,7 @@ void Camerax::look(const glm::dvec3 &opos)
 {
     glm::dvec3 up = { 0, 1, 0 };
     
-    urot = glm::lookAt(upos, opos, up);
-    rrot = urot;
+    rrot = glm::lookAt(rpos, opos, up);
 
     // Logger::logger->debug("Camera: {} {} {}\n", upos.x, upos.y, upos.z);
     // Logger::logger->debug("Object: {} {} {}\n", opos.x, opos.y, opos.z);

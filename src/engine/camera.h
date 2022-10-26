@@ -41,12 +41,12 @@ public:
     inline double getTanAp() const                  { return tan(fov); }
 
     inline glm::dmat4 getViewMatrix() const         { return glm::dmat4(urot); }
-    inline glm::dmat4 getProjectionMatrix() const
-        { return glm::perspective(fov, aspect, zNear, zFar); }
+    inline glm::dmat4 getProjectionMatrix() const   { return proj; }
 
     void resize(int w, int h);
     void reset();
 
+    void updateProjectionMatrix();
 
     void setPosition(const glm::dvec3 &pos);
     void setRotation(const glm::dmat3 &rot);
@@ -93,6 +93,9 @@ private:
     extCameraMode mode = modeGlobalFrame;
 
     Object *targetObject = nullptr;
+
+    glm::dmat4 proj = glm::dmat4(1.0);
+    glm::dmat4 view = glm::dmat4(1.0);
 
     // Universe parameters [global frame]
     glm::dvec3 upos = { 0, 0, 0 };

@@ -43,6 +43,10 @@ void StarVertex::start()
     glm::dmat4 view = ofsGetCameraViewMatrix();
     glm::dmat4 proj = ofsGetCameraProjectionMatrix();
 
+    // Set infinity perpsective (hack)
+    // proj[2][2] = 1.0;
+    // proj[3][2] = -1.0;
+
     // logger->debug("View Matrix:\n");
     // logger->debug("{} {} {} {}\n", view[0][0], view[0][1], view[0][2], view[0][3]);
     // logger->debug("{} {} {} {}\n", view[1][0], view[1][1], view[1][2], view[1][3]);
