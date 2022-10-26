@@ -26,6 +26,23 @@ SurfaceTile::~SurfaceTile()
         delete mesh;
 }
 
+SurfaceTile *SurfaceTile::createChild(int idx)
+{
+    SurfaceTile *child = nullptr;
+
+    int nlod = lod + 1;
+    int nlat = ilat*2 + (idx / 2);
+    int nlng = ilng*2 + (idx % 2);
+
+    child = new SurfaceTile(mgr, nlod, nlat, nlng, this);
+    // if (child != nullptr)
+    //     mgr.loader->queue(child);
+    child->load();
+    addChild(idx, child);
+
+    return child;
+}
+
 glm::dvec3 SurfaceTile::getCenter()
 {
     int nlat = 1 << lod;
@@ -291,6 +308,9 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
     glm::dvec3 opos, cpos;
     double cdist;
 
+    prm.maxlod = 19;
+    resScale = 1400.0 / double(ofsGetCameraHeight());
+
     Camera *cam = scene.getCamera();
     prm.dmViewProj = cam->getViewProjMatrix();
     prm.dmWorld = dmWorld;
@@ -310,6 +330,8 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
 
 void SurfaceManager::process(SurfaceTile *tile)
 {
+    static const double scale = 1.1;
+
     int nlat = 1 << tile->lod;
     int nlng = 2 << tile->lod;
 
@@ -317,47 +339,117 @@ void SurfaceManager::process(SurfaceTile *tile)
 
     tile->type = SurfaceTile::tileRendering;
     
-    static const double rad0 = sqrt(2.0)*(pi/2.0);
-    double rad   = rad0 / double(nlat);
+    static const double trad0 = sqrt(2.0)*(pi/2.0);
+    double trad  = trad0 / double(nlat);
     double alpha = acos(glm::dot(prm.cdir, tile->center));
-    double adist = alpha - rad;
+    double adist = alpha - trad;
+    double bias = 4;
 
     if (adist >= prm.viewap)
     {
+        {
+            logger->debug("Tile: LOD {} ({},{}) - processing\n",
+                tile->lod+4, tile->ilat, tile->ilng);
+
+            // Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            //     tile->center.x, tile->center.y, tile->center.z,
+            //     abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
+            //     abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
+        
+            logger->debug(" -- Out of view {:.6f} >= {:.6f} - rendering at LOD 1 level\n",
+                ofs::degrees(adist), ofs::degrees(prm.viewap));
+        }
+
+        if (tile->lod > 0)
+        {
+            // if (tileDebug)
+            // {
+            //     logger->debug("Tile: LOD {} ({},{}) - processing\n",
+            //         tile->lod+4, tile->ilat, tile->ilng);
+
+            //     Logger::getLogger()->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            //         tile->center.x, tile->center.y, tile->center.z,
+            //         abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
+            //         abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
+        
+            //     logger->debug(" -- Out of view {:.6f} >= {:.6f} - rendering at LOD 1 level\n",
+            //         ofs::degrees(adist), ofs::degrees(prm.viewap));
+            // }
+
+            tile->type = SurfaceTile::tileInvisible;
+            return;
+        }
+        else
+            bStepdown = false;
     }
 
-    // {
-    //     double tdist;
-    //     double erad = 1.0; // + tile->meanElev/objSize;
-    //     if (adist < 0.0)
-    //         tdist = prm.cdist - erad;
-    //     else
-    //     {
-    //         double h = erad * sin(adist);
-    //         double a = prm.cdist - erad * cos(adist);
-    //         tdist = sqrt(a*a + h*h);
-    //     }
-    //     double apr = tdist * camera->getTanAp();
+    if (bStepdown == true)
+    {
+        double tdist;
+        double erad = 1.0; // + tile->meanElev/objSize;
+        if (adist < 0.0)
+            tdist = prm.cdist - erad;
+        else
+        {
+            double h = erad * sin(adist);
+            double a = prm.cdist - erad * cos(adist);
+            tdist = sqrt(a*a + h*h);
+        }
+        double apr = tdist * ofsGetCameraTanAperature(); // * resScale;
 
-    //     int tres = (apr < 1e-6 ? prm.maxlod : std::max(0, std::min(prm.maxlod, bias - log(apr)*resScale));
-    //     bStepdown = (tile->lod < tres);
-    // }
+        int tres = apr < 1e-6 ? prm.maxlod : std::max(0, std::min(prm.maxlod, int(bias - log(apr) * scale)));
+        // logger->debug("lod = {}, tres = {}\n", tile->lod, tres);
+        bStepdown = (tile->lod < tres);
+    }
 
-    // if (bStepdown)
-    // {
-    //     for (int idx = 0; idx < QTREE_NODES; idx++)
-    //     {
-    //         SurfaceTile *child = tile->getChild(idx);
-    //         if (child == nullptr)
-    //             tile->loadChild(idx);
-    //         else if (child->type == SurfaceTile::Invalid)
-    //         {
+    if (bStepdown == true)
+    {
+        logger->debug("Processing Node: Step 2\n");
 
-    //         }
-    //     }
-    // }
+        bool valid = true;
+
+        for (int idx = 0; idx < QTREE_NODES; idx++)
+        {
+            SurfaceTile *child = tile->getChild(idx);
+            if (child == nullptr)
+                child = tile->createChild(idx);
+            else if (child->type == SurfaceTile::tileInvalid)
+                child->load();
+            if ((child->type & TILE_VALID) == 0)
+                valid = false;
+        }
+
+        if (valid == false)
+        {
+            tile->type = SurfaceTile::tileActive;
+            for (int idx = 0; idx < QTREE_NODES; idx++)
+                process(tile->getChild(idx));
+            return;
+        }
+
+        {
+            logger->debug("Tile: LOD {} ({},{}) - processing\n",
+                tile->lod+4, tile->ilat, tile->ilng);
+
+            // logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            //     tile->center.x(), tile->center.y(), tile->center.z(),
+            //     abs(ofs::degrees(tile->wpos.x())), (tile->wpos.x() < 0) ? 'S' : 'N',
+            //     abs(ofs::degrees(tile->wpos.y())), (tile->wpos.y() < 0) ? 'W' : 'E');
+            logger->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
+                ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
+            // if (tile->parentTile != nullptr)
+            //     logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
+            //         tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
+            logger->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
+                ofs::degrees(adist), ofs::degrees(prm.viewap));
+        }
+    }
 
     prm.dmWorld = tile->mgr.getWorldMatrix(tile->ilat, nlat, tile->ilng, nlng);
+
+    // Release all old tiles.
+    if (bStepdown == false)
+        tile->deleteChildren();
 }
 
 void SurfaceManager::render(SurfaceTile *tile)

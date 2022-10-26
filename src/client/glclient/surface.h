@@ -78,6 +78,7 @@ public:
     SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, SurfaceTile *parent = nullptr);
     ~SurfaceTile();
 
+    SurfaceTile *createChild(int idx);
     glm::dvec3 getCenter();
 
     void load();
@@ -148,4 +149,6 @@ private:
     SurfaceTile *tiles[2];
 
     double objSize = 0.0;
+    double resScale;
+    double resBias;
 };

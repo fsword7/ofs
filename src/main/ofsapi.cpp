@@ -54,6 +54,10 @@ LIBEXPORT double ofsGetCameraAspectRatio()
     return ofsAppCore->getCamera()->getAspect();
 }
 
+LIBEXPORT double ofsGetCameraTanAperature()
+{
+    return ofsAppCore->getCamera()->getTanAp();
+}
 
 LIBEXPORT glm::dmat4 ofsGetCameraViewMatrix()
 {

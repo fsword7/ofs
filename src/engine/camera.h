@@ -38,6 +38,7 @@ public:
 
     inline double getFOV() const                    { return fov; }
     inline double getAspect() const                 { return aspect; }
+    inline double getTanAp() const                  { return tan(fov); }
 
     inline glm::dmat4 getViewMatrix() const         { return glm::dmat4(urot); }
     inline glm::dmat4 getProjectionMatrix() const

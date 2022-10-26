@@ -218,5 +218,5 @@ void Camerax::mouseDialWheel(float motion, int state)
 {
     int dz = motion;
     if (modeExternal == true)
-        dolly(-dz * 0.001);
+        dolly(-dz * 0.05);
 }

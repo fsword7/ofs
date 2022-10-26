@@ -25,6 +25,7 @@
 #include <map>
 #include <thread>
 #include <mutex>
+#include <algorithm>
 
 typedef const char          cchar_t;
 typedef std::string         str_t;

@@ -48,6 +48,7 @@ OFSAPI glm::dvec3 ofsGetCameraGlobalDirection();
 OFSAPI glm::dmat3 ofsGetCameraGlobalRotation();
 OFSAPI double ofsGetCameraFieldOfView();
 OFSAPI double ofsGetCameraAspectRatio();
+OFSAPI double ofsGetCameraTanAperature();
 
 OFSAPI glm::dmat3 ofsGetCameraRotationMatrix();
 OFSAPI glm::dmat4 ofsGetCameraViewMatrix();
