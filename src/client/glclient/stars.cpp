@@ -71,7 +71,7 @@ void StarVertex::render()
     vbo->unmap();
     vertices = nullptr;
 
-    logger->info("Display {} stars on the screen\n", nStars);
+    // logger->info("Display {} stars on the screen\n", nStars);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(starVertex), (void *)(3 * sizeof(float)));

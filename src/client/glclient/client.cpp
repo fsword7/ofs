@@ -129,7 +129,7 @@ bool glClient::cbCreateRenderingWindow()
 
     // Initialize scene package
     scene = new Scene(width, height);
-    scene->init();
+    // scene->init();
 
     return true;
 }
@@ -154,7 +154,10 @@ void glClient::cbSetWindowTitle(cstr_t &title)
 void glClient::cbStart()
 {
     if (scene != nullptr)
+    {
+        scene->init();
         scene->start();
+    }
 }
 
 void glClient::cbRenderScene()

@@ -11,8 +11,36 @@ class Camera;
 class StarRenderer;
 class StarColors;
 class ShaderProgram;
+class VertexArray;
 class VertexBuffer;
 class vObject;
+
+struct LineVertex
+{
+    LineVertex(glm::vec3 p1, glm::vec3 p2, float s)
+    : point1(p1), point2(p2), scale(s)
+    { }
+
+    glm::vec3 point1, point2;
+    float scale;
+};
+
+struct LineStripVertrex
+{
+    LineStripVertrex(glm::vec3 p, float s)
+    : point(p), scale(s)
+    { }
+
+    glm::vec3 point;
+    float scale;
+};
+
+struct AsterismVertex
+{
+    glm::vec3 spos;
+    color_t   color;
+};
+
 class Scene
 {
 public:
@@ -34,7 +62,9 @@ public:
 
 protected:
     void initStarRenderer();
+    void initConstellations();
     void renderStars(double faintest);
+    void renderConstellations();
 
 private:
     int width, height;
@@ -51,8 +81,13 @@ private:
     StarRenderer *starRenderer = nullptr;
     StarColors *starColors = nullptr;
 
+    ShaderProgram *pgmAsterism = nullptr;
+    VertexArray *vaoAsterism = nullptr;
+    VertexBuffer *vboAsterism = nullptr;
+    uint32_t asterismLines = 0;
+    mat4Uniform mvp;
+
     ShaderProgram *pgmStar = nullptr;
-    VertexBuffer *vbufStar = nullptr;
 
     std::vector<vObject *> vobjList;
     std::vector<ObjectHandle> nearStars;

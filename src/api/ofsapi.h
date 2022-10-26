@@ -30,6 +30,8 @@
 typedef void * ObjectHandle;
 
 class ofsHandler2;
+class Constellations;
+class StarDatabase;
 
 enum ObjectType
 {
@@ -64,6 +66,8 @@ OFSAPI int ofsGetObjectStarHIPNumber(ObjectHandle object);
 OFSAPI glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object);
 OFSAPI double ofsGetObjectStarTemperature(ObjectHandle object);
 
+OFSAPI Constellations &ofsGetConstellations();
+OFSAPI StarDatabase &ofsGetStarDatabase();
 OFSAPI void ofsFindClosestStars(std::vector<ObjectHandle> &nearStars);
 // OFSAPI void ofsFindVisibleStars(std::vector<ObjectHandle> &visibleStars);
 OFSAPI void ofsFindVisibleStars(ofsHandler2 &handler,

@@ -30,8 +30,9 @@ public:
     int findCloseStars(const glm::dvec3 &obs, double radius,
         std::vector<ObjectHandle> &stars) const;
 
-    inline celStar *getHIPstar(uint32_t hip) const  { return hipList[hip]; }
-    
+    inline celStar *getHIPstar(uint32_t hip) const          { return hipList[hip]; }
+    inline ObjectHandle getHIPstar2(uint32_t hip) const     { return hipList[hip]; }
+
 private:
     std::vector<celStar *> uStars;
 

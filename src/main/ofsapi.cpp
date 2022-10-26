@@ -110,6 +110,16 @@ LIBEXPORT glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object)
     return static_cast<celStar *>(object)->getStarPosition2();
 }
 
+LIBEXPORT Constellations &ofsGetConstellations()
+{
+    return ofsAppCore->getUniverse()->getConstellations();
+}
+
+LIBEXPORT StarDatabase &ofsGetStarDatabase()
+{
+    return ofsAppCore->getUniverse()->getStarDatabase();
+}
+
 LIBEXPORT void ofsFindClosestStars(std::vector<ObjectHandle> &nearStars)
 {
 

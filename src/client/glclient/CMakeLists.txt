@@ -11,6 +11,7 @@ set(OGL_CPP_SRCS
     buffer.cpp
     camera.cpp
     client.cpp
+    constellations.cpp
     scene.cpp
     shader.cpp
     starcolors.cpp
@@ -40,6 +41,8 @@ set(OGL_H_SRCS
 set (OGL_SHADERS
     shaders/body.fs
     shaders/body.vs
+    shaders/line.fs
+    shaders/line.vs
     shaders/point.fs
     shaders/point.vs
 )
