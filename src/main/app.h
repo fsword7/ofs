@@ -236,9 +236,11 @@ protected:
     std::chrono::time_point<std::chrono::steady_clock> prevTime, suspendTime;
 
     bool bSession = false;
-    bool bRunning = true;
+    bool bRunningApp = true;            // Running application
+    bool bRunning = true;               // Pause/running 
     bool bRequestRunning = false;
     bool bFreezing = false;
+    bool isPaused = false;
 
     TimeDate td;
 

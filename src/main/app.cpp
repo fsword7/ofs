@@ -294,8 +294,8 @@ void CoreApp::run()
 {
     openSession();
 
-    bRunning = true;
-    while (bRunning)
+    bRunningApp = true;
+    while (bRunningApp)
     {
         SDL_Event event;
         int mx, my;
@@ -308,7 +308,7 @@ void CoreApp::run()
             switch(event.type)
             {
             case SDL_QUIT:
-                bRunning = false;
+                bRunningApp = false;
                 break;
 
             // Handling keyboard events
@@ -415,14 +415,13 @@ void CoreApp::run()
 
         if (bSession)
         {
-            // if (beginTimeStep(bRunning))
-            // {
-            //     updateWorld();
-            //     endTimeStep(bRunning);
-            // }
+            if (beginTimeStep(bRunning))
+            {
+                updateWorld();
+                endTimeStep(bRunning);
+            }
         }
 
-        updateWorld();
         renderScene();
         drawHUD();
         displayFrame();
@@ -438,6 +437,7 @@ bool CoreApp::beginTimeStep(bool running)
     // Check for a pause/resume request
     if (bRequestRunning != running)
         running = bRunning = bRequestRunning;
+    isPaused = !running;
 
     double dt = 0.0;
     auto now = std::chrono::steady_clock::now();
