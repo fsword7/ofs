@@ -58,6 +58,7 @@ OFSAPI glm::dmat4 ofsGetCameraProjectionMatrix();
 OFSAPI glm::dmat4 ofsGetCameraViewProjMatrix();
 
 OFSAPI ObjectHandle ofsGetObjectByName(cstr_t &name);
+OFSAPI cstr_t ofsGetObjectName(ObjectHandle object);
 OFSAPI ObjectType ofsGetObjectType(ObjectHandle object);
 OFSAPI double ofsGetObjectRadius(ObjectHandle object);
 OFSAPI glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object);
@@ -68,8 +69,8 @@ OFSAPI double ofsGetObjectStarTemperature(ObjectHandle object);
 
 OFSAPI Constellations &ofsGetConstellations();
 OFSAPI StarDatabase &ofsGetStarDatabase();
-OFSAPI void ofsFindClosestStars(std::vector<ObjectHandle> &nearStars);
-// OFSAPI void ofsFindVisibleStars(std::vector<ObjectHandle> &visibleStars);
+OFSAPI void ofsFindClosestStars(const glm::dvec3 &obs, const double dist,
+    std::vector<ObjectHandle> &nearStars);
 OFSAPI void ofsFindVisibleStars(ofsHandler2 &handler,
     const glm::dvec3 &obs, const glm::dmat3 &rot,
     const double fov, const double aspect,

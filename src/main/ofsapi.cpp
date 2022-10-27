@@ -75,9 +75,15 @@ LIBEXPORT glm::dmat4 ofsGetCameraViewProjMatrix()
 }
 
 
+
 LIBEXPORT ObjectHandle ofsGetObjectByName(cstr_t &name)
 {
     return ofsAppCore->getUniverse()->findPath(name);
+}
+
+LIBEXPORT cstr_t ofsGetObjectName(ObjectHandle object)
+{
+    return static_cast<Object *>(object)->getName();
 }
 
 LIBEXPORT ObjectType ofsGetObjectType(ObjectHandle object)
@@ -120,15 +126,11 @@ LIBEXPORT StarDatabase &ofsGetStarDatabase()
     return ofsAppCore->getUniverse()->getStarDatabase();
 }
 
-LIBEXPORT void ofsFindClosestStars(std::vector<ObjectHandle> &nearStars)
+LIBEXPORT void ofsFindClosestStars(const glm::dvec3 &obs, const double dist,
+    std::vector<ObjectHandle> &nearStars)
 {
-
+    ofsAppCore->getUniverse()->findCloseStars(obs, dist, nearStars);
 }
-
-// LIBEXPORT void ofsFindVisibleStars(std::vector<ObjectHandle> &visibleStars)
-// {
-    
-// }
 
 LIBEXPORT void ofsFindVisibleStars(ofsHandler2 &handler,
     const glm::dvec3 &obs, const glm::dmat3 &rot,

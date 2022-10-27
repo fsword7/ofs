@@ -59,7 +59,7 @@ void Scene::update()
     nearStars.clear();
     visibleStars.clear();
 
-    ofsFindClosestStars(nearStars);
+    ofsFindClosestStars(ofsGetCameraGlobalPosition(), 1.0, nearStars);
 }
 
 void Scene::render()
@@ -72,6 +72,23 @@ void Scene::render()
 
     renderConstellations();
     renderStars(faintestMag);
+
+    for (auto sun : nearStars)
+    {
+        // logger->info("Sun: {}\n", ofsGetObjectName(sun));
+
+        // if (!sun->hasSolarSystem())
+        //     continue;
+
+        // System *system = sun->getSolarSystem();
+        // PlanetarySystem *objects = system->getPlanetarySystem();
+        // FrameTree *tree = objects->getSystemTree();
+
+        // vec3d_t apos = getAstrocentericPosition(sun, obs, prm.jnow);
+        // vec3d_t vpn = prm.crot.conjugate() * vec3d_t (0, 0, -1);
+
+        // buildNearSystems(tree, player, apos, vpn, { 0, 0, 0 });
+    }
 
     // vEarth->update();
     // vEarth->render();
