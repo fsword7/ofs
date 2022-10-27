@@ -52,8 +52,7 @@ public:
     celStar(cstr_t &name);
     ~celStar() = default;
 
-    inline vec3d_t getStarPosition() const      { return spos; }
-    inline glm::dvec3 getStarPosition2() const  { return spos2; }
+    inline glm::dvec3 getStarPosition() const   { return spos; }
     inline double  getAbsMag() const            { return absMag; }
     inline int getTemperature() const           { return temp; }
     inline double getLuminosity() const         { return lum; }
@@ -74,8 +73,7 @@ private:
     uint32_t hip;           // Hippocrais number
 
     // Star position parameters
-    vec3d_t spos;           // Star position [pc]
-    glm::dvec3 spos2;       // Star pisition [pc]
+    glm::dvec3 spos;        // Star pisition [pc]
     double  ra, dec, plx;
 
     uint32_t knownFlags = 0; // Known flags

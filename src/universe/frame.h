@@ -56,13 +56,13 @@ public:
     int lock() const;
     int release() const;
 
-    virtual quatd_t getOrientation(double tjd) const = 0;
+    virtual glm::dmat3 getOrientation(double tjd) const = 0;
 
-    vec3d_t fromUniversal(const vec3d_t &upos, double tjd);
-    quatd_t fromUniversal(const quatd_t &urot, double tjd);
+    glm::dvec3 fromUniversal(const glm::dvec3 &upos, double tjd);
+    glm::dmat3 fromUniversal(const glm::dmat3 &urot, double tjd);
 
-    vec3d_t toUniversal(const vec3d_t &lpos, double tjd);
-    quatd_t toUniversal(const quatd_t &lrot, double tjd);
+    glm::dvec3 toUniversal(const glm::dvec3 &lpos, double tjd);
+    glm::dmat3 toUniversal(const glm::dmat3 &lrot, double tjd);
 
     static Frame *create(cstr_t &frameName, Object *bodyObject, Object *parentObject);
 
@@ -89,9 +89,9 @@ public:
     J2000EclipticFrame(Object *object, Frame *parent = nullptr);
     ~J2000EclipticFrame() = default;
 
-    quatd_t getOrientation(double) const override
+    glm::dmat3 getOrientation(double) const override
     {
-        return quatd_t::Identity();
+        return glm::dmat3(1.0);
     }
 };
 
@@ -101,10 +101,11 @@ public:
     J2000EquatorFrame(Object *object, Frame *parent = nullptr);
     ~J2000EquatorFrame() = default;
 
-    quatd_t getOrientation(double) const override
+    glm::dmat3 getOrientation(double) const override
     {
         // return quatd_t(vec3d_t(J2000Obliquity, 0, 0));
-        return quatd_t(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX()));
+        // return quatd_t(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX()));
+        return glm::dmat3(1.0);
     }
 };
 
@@ -114,7 +115,7 @@ public:
     BodyFixedFrame(Object *object, Object *target, Frame *parent = nullptr);
     ~BodyFixedFrame() = default;
 
-    quatd_t getOrientation(double) const override;
+    glm::dmat3 getOrientation(double) const override;
 
 private:
     Object *fixedObject = nullptr;
@@ -126,7 +127,7 @@ public:
     BodyMeanEquatorFrame(Object *object, Object *target, Frame *parent = nullptr);
     ~BodyMeanEquatorFrame() = default;
 
-    quatd_t getOrientation(double) const override;
+    glm::dmat3 getOrientation(double) const override;
 
 private:
     Object *equatorObject = nullptr;
@@ -138,7 +139,7 @@ public:
     ObjectSyncFrame(Object *object, Object *target, Frame *parent = nullptr);
     ~ObjectSyncFrame() = default;
 
-    quatd_t getOrientation(double) const override;
+    glm::dmat3 getOrientation(double) const override;
 
 private:
     Object *targetObject = nullptr;

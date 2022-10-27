@@ -7,7 +7,7 @@
 #include "universe/astro.h"
 #include "ephem/orbit.h"
 
-vec3d_t CachingOrbit::getPosition(double jd) const
+glm::dvec3 CachingOrbit::getPosition(double jd) const
 {
     if (jd != lastTime)
     {
@@ -25,7 +25,7 @@ vec3d_t CachingOrbit::getPosition(double jd) const
     return lastPosition;
 }
 
-vec3d_t CachingOrbit::getVelocity(double jd) const
+glm::dvec3 CachingOrbit::getVelocity(double jd) const
 {
     if (jd != lastTime)
     {
@@ -43,7 +43,7 @@ vec3d_t CachingOrbit::getVelocity(double jd) const
     return lastVelocity;
 }
 
-vec3d_t CachingOrbit::calculateVelocity(double jd) const
+glm::dvec3 CachingOrbit::calculateVelocity(double jd) const
 {
-    return vec3d_t(0, 0, 0);
+    return { 0, 0, 0 };
 }

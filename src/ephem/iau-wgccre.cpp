@@ -15,7 +15,7 @@
 
 // ******** IAU Rotational Model ********
 
-quatd_t IAURotation::computeSpin(double tjd) const
+glm::dmat3 IAURotation::computeSpin(double tjd) const
 {
     tjd -= astro::J2000;
 
@@ -24,14 +24,14 @@ quatd_t IAURotation::computeSpin(double tjd) const
     return yRotate(spin);
 }
 
-quatd_t IAURotation::computeEquatorRotation(double tjd) const
+glm::dmat3 IAURotation::computeEquatorRotation(double tjd) const
 {
     tjd -= astro::J2000;
 
-    vec2d_t pole = computePole(tjd);
+    glm::dvec2 pole = computePole(tjd);
 
-    double node = pole.x() + 90.0;        // Right ascension [RA]
-    double inclination = 90.0 - pole.y(); // Declination [DE]
+    double node = pole.x + 90.0;        // Right ascension [RA]
+    double inclination = 90.0 - pole.y; // Declination [DE]
 
     if (reversal != true)
         return xRotate(pi) * xRotate(ofs::radians(-inclination)) * yRotate(ofs::radians(-node));
@@ -41,13 +41,13 @@ quatd_t IAURotation::computeEquatorRotation(double tjd) const
 
 // ******** IAU Precission Rotational Model ********
 
-vec2d_t IAUPrecissionRotation::computePole(double tjd) const
+glm::dvec2 IAUPrecissionRotation::computePole(double tjd) const
 {
     double t = tjd / 36525.0;
-    vec2d_t pole;
+    glm::dvec2 pole;
 
-    pole.x() = poleRA + (poleRARate * tjd);
-    pole.y() = poleDec + (poleDecRate * tjd);
+    pole.x = poleRA + (poleRARate * tjd);
+    pole.y = poleDec + (poleDecRate * tjd);
 
     return pole;
 }

@@ -10,11 +10,11 @@ class Rotation
 public:
     virtual ~Rotation() = default;
 
-    quatd_t getRotation(double tjd) const;
+    glm::dmat3 getRotation(double tjd) const;
 
-    virtual quatd_t spin(double tjd) const = 0;
-    virtual vec3d_t getAngularVelocity(double tjd) const;
-    virtual quatd_t getEquatorRotation(double) const;
+    virtual glm::dmat3 spin(double tjd) const = 0;
+    virtual glm::dvec3 getAngularVelocity(double tjd) const;
+    virtual glm::dmat3 getEquatorRotation(double) const;
 
     virtual double getPeriod() const { return 0.0; }
     virtual bool isPeriodic() const  { return false; }
@@ -32,9 +32,9 @@ public:
         ascendingNode(ascendingNode), period(period)
     { }
 
-    quatd_t spin(double tjd) const;
-    quatd_t getEquatorOrientation(double tjd) const;
-    vec3d_t getAngularVelocity(double tjd) const;
+    glm::dmat3 spin(double tjd) const;
+    glm::dmat3 getEquatorOrientation(double tjd) const;
+    glm::dvec3 getAngularVelocity(double tjd) const;
 
     virtual double getPeriod() const override  { return period; }
     virtual bool   isPeriodic() const override { return true; }
@@ -53,20 +53,20 @@ public:
     CachingRotation() = default;
     virtual ~CachingRotation() = default;
 
-    quatd_t spin(double tjd) const;
-    quatd_t getEquatorRotation(double tjd) const;
-    vec3d_t getAngularVelocity(double tjd) const;
+    glm::dmat3 spin(double tjd) const;
+    glm::dmat3 getEquatorRotation(double tjd) const;
+    glm::dvec3 getAngularVelocity(double tjd) const;
 
-    virtual quatd_t computeSpin(double tjd) const = 0;
-    virtual quatd_t computeEquatorRotation(double tjd) const = 0;
-    virtual vec3d_t computeAngularVelocity(double tjd) const;
+    virtual glm::dmat3 computeSpin(double tjd) const = 0;
+    virtual glm::dmat3 computeEquatorRotation(double tjd) const = 0;
+    virtual glm::dvec3 computeAngularVelocity(double tjd) const;
     virtual double  getPeriod() const = 0;
     virtual bool    isPeriodic() const = 0;
 
 private:
-    mutable quatd_t lastSpin = { 1, 0, 0, 0 };
-    mutable quatd_t lastEquator = { 1, 0, 0, 0 };
-    mutable vec3d_t lastVelocity = { 0, 0, 0 };
+    mutable glm::dmat3 lastSpin = glm::dmat3(1.0);
+    mutable glm::dmat3 lastEquator = glm::dmat3(1.0);
+    mutable glm::dvec3 lastVelocity = { 0, 0, 0 };
 
     mutable double lastTime = 0;
     mutable bool   validSpin = false;
@@ -79,8 +79,8 @@ class EarthRotation : public CachingRotation
 public:
     EarthRotation() = default;
 
-    quatd_t computeSpin(double tjd) const override;
-    quatd_t computeEquatorRotation(double tjd) const override;
+    glm::dmat3 computeSpin(double tjd) const override;
+    glm::dmat3 computeEquatorRotation(double tjd) const override;
 
     double getPeriod() const override   { return 23.9344694 / 24.0; }
     bool isPeriodic() const override    { return true; }
@@ -93,14 +93,14 @@ public:
     { }
     ~IAURotation() = default;
 
-    virtual quatd_t computeSpin(double tjd) const override;
-    virtual quatd_t computeEquatorRotation(double tjd) const override;
-    // virtual vec3d_t computeAngularVelocity(double tjd) const override;
+    virtual glm::dmat3 computeSpin(double tjd) const override;
+    virtual glm::dmat3 computeEquatorRotation(double tjd) const override;
+    // virtual glm::dvec3 computeAngularVelocity(double tjd) const override;
 
     virtual double getPeriod() const override { return period; }
     virtual bool isPeriodic() const override  { return true; }
 
-    virtual vec2d_t computePole(double tjd) const = 0;
+    virtual glm::dvec2 computePole(double tjd) const = 0;
     virtual double computeMeridian(double tjd) const = 0;
 
 protected:
@@ -123,7 +123,7 @@ public:
             reversal = true;
     }
 
-    vec2d_t computePole(double tjd) const override;
+    glm::dvec2 computePole(double tjd) const override;
     double computeMeridian(double tjd) const override;
 
 private:

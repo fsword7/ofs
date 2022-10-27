@@ -47,26 +47,68 @@ template <typename T> inline constexpr T mod2pi(T x)
     return x - tpi * floor((x + pi) / tpi);
 }
 
+// template <typename T>
+// inline Eigen::Quaternion<T> xRotate(T radians)
+// {
+//     T ang = radians * T(0.5); // half angle
+//     return Eigen::Quaternion<T>(cos(ang), sin(ang), 0, 0);
+// }
+
+// template <typename T>
+// inline Eigen::Quaternion<T> yRotate(T radians)
+// {
+//     T ang = radians * T(0.5); // half angle
+//     return Eigen::Quaternion<T>(cos(ang), 0, sin(ang), 0);
+// }
+
+// template <typename T>
+// inline Eigen::Quaternion<T> zRotate(T radians)
+// {
+//     T ang = radians * T(0.5); // half angle
+//     return Eigen::Quaternion<T>(cos(ang), 0, 0, sin(ang));
+// }
+
+
 template <typename T>
-inline Eigen::Quaternion<T> xRotate(T radians)
+inline glm::dmat3 xRotate(T radians)
 {
-    T ang = radians * T(0.5); // half angle
-    return Eigen::Quaternion<T>(cos(ang), sin(ang), 0, 0);
+    return glm::dmat3(1.0);
 }
 
 template <typename T>
-inline Eigen::Quaternion<T> yRotate(T radians)
+inline glm::dmat3 yRotate(T radians)
 {
-    T ang = radians * T(0.5); // half angle
-    return Eigen::Quaternion<T>(cos(ang), 0, sin(ang), 0);
+    return glm::dmat3(1.0);
 }
 
 template <typename T>
-inline Eigen::Quaternion<T> zRotate(T radians)
+inline glm::dmat3 zRotate(T radians)
+{
+    return glm::dmat3(1.0);
+}
+
+
+template <typename T>
+inline glm::dquat xqRotate(T radians)
 {
     T ang = radians * T(0.5); // half angle
-    return Eigen::Quaternion<T>(cos(ang), 0, 0, sin(ang));
+    return glm::dquat(cos(ang), sin(ang), 0, 0);
 }
+
+template <typename T>
+inline glm::dquat yqRotate(T radians)
+{
+    T ang = radians * T(0.5); // half angle
+    return glm::dquat(cos(ang), 0, sin(ang), 0);
+}
+
+template <typename T>
+inline glm::dquat zqRotate(T radians)
+{
+    T ang = radians * T(0.5); // half angle
+    return glm::dquat(cos(ang), 0, 0, sin(ang));
+}
+
 
 // return M * v
 inline glm::dvec3 mul(const glm::dmat4 &m, const glm::dvec3 &val)

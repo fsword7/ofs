@@ -10,24 +10,24 @@
 
 // ******** Rotation Model ********
 
-quatd_t Rotation::getEquatorRotation(double tjd) const
+glm::dmat3 Rotation::getEquatorRotation(double tjd) const
 {
-    return quatd_t(1, 0, 0, 0);
+    return glm::dmat3(1.0);
 }
 
-vec3d_t Rotation::getAngularVelocity(double tjd) const
+glm::dvec3 Rotation::getAngularVelocity(double tjd) const
 {
-    return vec3d_t(0, 0, 0);
+    return { 0, 0, 0 };
 }
 
-quatd_t Rotation::getRotation(double tjd) const
+glm::dmat3 Rotation::getRotation(double tjd) const
 {
     return spin(tjd) * getEquatorRotation(tjd);
 }
 
 // ******** Uniform Rotational Model ********
 
-quatd_t UniformRotation::spin(double tjd) const
+glm::dmat3 UniformRotation::spin(double tjd) const
 {
     double offsetSpin = (tjd - epoch) / period;
     double spin = offsetSpin - floor(offsetSpin);
@@ -35,19 +35,19 @@ quatd_t UniformRotation::spin(double tjd) const
     return yRotate((-spin * pi * 2.0) - offset);
 }
 
-quatd_t UniformRotation::getEquatorOrientation(double tjd) const
+glm::dmat3 UniformRotation::getEquatorOrientation(double tjd) const
 {
     return xRotate(-inclination) * yRotate(-ascendingNode);
 }
 
-vec3d_t UniformRotation::getAngularVelocity(double tjd) const
+glm::dvec3 UniformRotation::getAngularVelocity(double tjd) const
 {
-    return vec3d_t(0, 0, 0);
+    return { 0, 0, 0 };
 }
 
 // ******** Caching Rotation Model ********
 
-quatd_t CachingRotation::spin(double tjd) const
+glm::dmat3 CachingRotation::spin(double tjd) const
 {
     if (tjd != lastTime)
     {
@@ -66,7 +66,7 @@ quatd_t CachingRotation::spin(double tjd) const
     return lastSpin;
 }
 
-quatd_t CachingRotation::getEquatorRotation(double tjd) const
+glm::dmat3 CachingRotation::getEquatorRotation(double tjd) const
 {
     if (tjd != lastTime)
     {
@@ -86,7 +86,7 @@ quatd_t CachingRotation::getEquatorRotation(double tjd) const
     return lastEquator;
 }
 
-vec3d_t CachingRotation::getAngularVelocity(double tjd) const
+glm::dvec3 CachingRotation::getAngularVelocity(double tjd) const
 {
     if (tjd != lastTime)
     {
@@ -105,7 +105,7 @@ vec3d_t CachingRotation::getAngularVelocity(double tjd) const
     return lastVelocity;
 }
 
-vec3d_t CachingRotation::computeAngularVelocity(double tjd) const
+glm::dvec3 CachingRotation::computeAngularVelocity(double tjd) const
 {
-    return vec3d_t( 0, 0, 0 );
+    return { 0, 0, 0 };
 }

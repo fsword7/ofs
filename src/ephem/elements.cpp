@@ -57,20 +57,20 @@ void OrbitalElements::setup(double m, double M, double mjd)
 }
 
 // determine new orbital path
-void OrbitalElements::calculate(const vec3d_t &pos, const vec3d_t &vel, double t)
+void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t)
 {
     // Set radius/velocity vectors
     R = pos;
     V = vel;
-    r = R.norm();
-    v = V.norm();
+    r = glm::length(R);
+    v = glm::length(V);
 
     // a = r * mu / (2.0 * mu - r * V.squaredNorm());
 
 }
 
 // updating position and velocity periodically
-void OrbitalElements::update(vec3d_t &pos, vec3d_t &vel)
+void OrbitalElements::update(glm::dvec3 &pos, glm::dvec3 &vel)
 {
 
 }

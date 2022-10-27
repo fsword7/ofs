@@ -55,9 +55,9 @@ PlanetarySystem *celBody::createPlanetarySystem()
     return ownSystem;
 }
 
-quatd_t celBody::getEquatorial(double tjd) const
+glm::dmat3 celBody::getEquatorial(double tjd) const
 {
-    return quatd_t::Identity();
+    return glm::dmat3(1.0);
 }
 
 double celBody::getLuminosity(double lum, double dist) const
@@ -70,50 +70,50 @@ double celBody::getLuminosity(double lum, double dist) const
     return reflectedEnergy / SOLAR_POWER;
 }
 
-double celBody::getApparentMagnitude(vec3d_t sun, double irradiance, vec3d_t view) const
+double celBody::getApparentMagnitude(glm::dvec3 sun, double irradiance, glm::dvec3 view) const
 {
-    double vdist  = view.norm();
-    double sdist  = sun.norm();
-    double illum  = (1.0 * (sun / sdist).dot(sun / sdist)) / 2.0;
+    double vdist  = glm::length(view);
+    double sdist  = glm::length(sun);
+    double illum  = (1.0 * glm::dot(sun / sdist, sun / sdist)) / 2.0;
     double absMag = getLuminosity(irradiance, sdist) * illum;
 
     return astro::convertLumToAppMag(absMag, astro::convertKilometerToParsec(vdist));
 }
 
-quatd_t celBody::getBodyFixedFromEcliptic(double tjd) const
+glm::dmat3 celBody::getBodyFixedFromEcliptic(double tjd) const
 {
-    return (rotation != nullptr ? rotation->getRotation(tjd) : quatd_t::Identity()) * bodyFrame->getOrientation(tjd);
+    return (rotation != nullptr ? rotation->getRotation(tjd) : glm::dmat3(1.0)) * bodyFrame->getOrientation(tjd);
 }
 
-vec3d_t celBody::getPlanetocentric(vec3d_t pos) const
+glm::dvec3 celBody::getPlanetocentric(glm::dvec3 pos) const
 {
-    vec3d_t w = pos.normalized();
+    glm::dvec3 w = glm::normalize(pos);
 
-    double lat = acos(w.y()) - (pi / 2.0);
-    double lng = atan2(w.z(), -w.x());
+    double lat = acos(w.y) - (pi / 2.0);
+    double lng = atan2(w.z, -w.x);
 
-    return vec3d_t(lat, lng, pos.norm() - radius);
+    return glm::dvec3(lat, lng, glm::length(pos) - radius);
 }
 
-vec3d_t celBody::getPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const
+glm::dvec3 celBody::getPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const
 {
-    vec3d_t lpos = getBodyFixedFromEcliptic(tjd) * pos;
+    glm::dvec3 lpos = getBodyFixedFromEcliptic(tjd) * pos;
 
     return getPlanetocentric(lpos);
 }
 
-vec3d_t celBody::getvPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const
+glm::dvec3 celBody::getvPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const
 {
     return getBodyFixedFromEcliptic(tjd) * pos;
 }
 
-vec3d_t celBody::getHeliocentric(double tjd) const
+glm::dvec3 celBody::getHeliocentric(double tjd) const
 {
-    vec3d_t opos = getuPosition(tjd);
-    vec3d_t hpos = opos.normalized();
+    glm::dvec3 opos = getuPosition(tjd);
+    glm::dvec3 hpos = glm::normalize(opos);
 
-    double lat = acos(hpos.y()) - (pi / 2.0);
-    double lng = atan2(hpos.z(), -hpos.x());
+    double lat = acos(hpos.y) - (pi / 2.0);
+    double lng = atan2(hpos.z, -hpos.x);
 
-    return vec3d_t( lng, lat, opos.norm());
+    return glm::dvec3( lng, lat, glm::length(opos));
 }

@@ -15,12 +15,12 @@ class StateVectors
 {
 public:
     // All state vectors in assciated frame
-    vec3d_t pos;        // position
-    vec3d_t vel;        // linear velocity
+    glm::dvec3 pos;        // position
+    glm::dvec3 vel;        // linear velocity
     
-    mat4d_t R;          // rotation matrix
-    quatd_t Q;          // orientation
-    vec3d_t omega;      // angular velocity
+    glm::dmat4 R;          // rotation matrix
+    glm::dquat Q;          // orientation
+    glm::dvec3 omega;      // angular velocity
 };
 
 class Object
@@ -43,21 +43,21 @@ public:
     
     virtual ~Object() = default;
 
-    inline void setsName(str_t name)        { objNames[0] = name; }    
-    inline str_t getName() const            { return objNames[0]; }
-    inline str_t getsName() const           { return objNames[0]; }
-    inline ObjectType getType() const       { return objType; }
-    inline double getRadius() const         { return radius; }
-    inline double getBoundingRadius() const { return radius * std::numbers::sqrt3; }
-    inline double getCullingRadius() const  { return cullingRadius; }   
-    inline vec3d_t getSemiAxes() const      { return semiAxes; }
+    inline void setsName(str_t name)            { objNames[0] = name; }    
+    inline str_t getName() const                { return objNames[0]; }
+    inline str_t getsName() const               { return objNames[0]; }
+    inline ObjectType getType() const           { return objType; }
+    inline double getRadius() const             { return radius; }
+    inline double getBoundingRadius() const     { return radius * std::numbers::sqrt3; }
+    inline double getCullingRadius() const      { return cullingRadius; }   
+    inline glm::dvec3 getSemiAxes() const       { return semiAxes; }
 
-    inline bool isSphere() const            { return semiAxes.x() == semiAxes.y() && semiAxes.x() == semiAxes.z(); }
+    inline bool isSphere() const                { return semiAxes.x == semiAxes.y && semiAxes.x == semiAxes.z; }
 
-    inline void setMass(double val)         { mass = val; }
-    inline void setAlbedo(double val)       { albedo = val; }
-    inline void setRadius(double val)       { radius = val; semiAxes = { val, val, val }; }
-    inline void setSemiAxes(vec3d_t axes)   { semiAxes = axes; radius = semiAxes.maxCoeff(); }
+    inline void setMass(double val)             { mass = val; }
+    inline void setAlbedo(double val)           { albedo = val; }
+    inline void setRadius(double val)           { radius = val; semiAxes = { val, val, val }; }
+    inline void setSemiAxes(glm::dvec3 axes)    { semiAxes = axes; }
 
     // Virtual function calls
     virtual void setOrbitFrame(Frame *frame) = 0;
@@ -71,9 +71,9 @@ public:
     virtual Orbit *getOrbit() const = 0;
     virtual Rotation *getRotation() const = 0;
 
-    virtual vec3d_t getuPosition(double tjd) const;
-    virtual quatd_t getuOrientation(double tjd) const;
-    virtual vec3d_t getoPosition(double tjd) const;
+    virtual glm::dvec3 getuPosition(double tjd) const;
+    virtual glm::dmat3 getuOrientation(double tjd) const;
+    virtual glm::dvec3 getoPosition(double tjd) const;
 
 private:
     ObjectType objType = objUnknown;
@@ -84,20 +84,19 @@ public:
     StateVectors s1;    // new state vectors at time t0+dt during update function call
 
 protected:
-    vec3d_t objPosition = vec3d_t::Zero();
-    vec3d_t objVelocity = vec3d_t::Zero();
-    quatd_t objRotation = quatd_t::Identity();
-
+    glm::dvec3 objPosition = { 0, 0, 0 };
+    glm::dvec3 objVelocity = { 0, 0, 0 };
+    glm::dmat3 objRotation = glm::dmat3(1.0);
 
     double  mass     = 0.0;
     double  radius   = 0.0;
     double  albedo   = 0.0;
-    vec3d_t semiAxes = vec3d_t::Zero();
+    glm::dvec3 semiAxes = { 0, 0, 0 };
     double  cullingRadius = 0.0;
 
-    vec3d_t rposBase, rposAdd;  // base/incremental of relative position
-    vec3d_t rvelBase, rvelAdd;  // baae/incremental of relative velocity
-    quatd_t rrotBase, rrotAdd;  // base/incremental of relative orientation
+    glm::dvec3 rposBase, rposAdd;  // base/incremental of relative position
+    glm::dvec3 rvelBase, rvelAdd;  // baae/incremental of relative velocity
+    glm::dmat3 rrotBase, rrotAdd;  // base/incremental of relative orientation
 
     Object *cbody = nullptr;    // orbit reference body
 

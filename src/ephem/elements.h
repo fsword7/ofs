@@ -26,8 +26,8 @@ public:
     double getCircularVelocity(double r) const   { return sqrt(mu / r); };
 
     void setup(double m, double M, double mjd);
-    void calculate(const vec3d_t &pos, const vec3d_t &vel, double t);
-    void update(vec3d_t &pos, vec3d_t &vel);
+    void calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t);
+    void update(glm::dvec3 &pos, glm::dvec3 &vel);
 
 public:
     // Primary orbital element parameters
@@ -63,13 +63,13 @@ private:
     double tEpoch;      // reference time
 
     // position parameters (only valid during time through update call)
-    vec3d_t R;          // radius (position) vector
-    vec3d_t V;          // velocity vector
-    double  r;          // radius (position) vector length
-    double  v;          // magnitude of velocity
-    double  ea;         // eccentric anomaly
-    double  ma;         // mean anomaly
-    double  tra;        // true anomaly
-    double  ml;         // mean longitude
-    double  trl;        // true longitude
+    glm::dvec3 R;       // radius (position) vector
+    glm::dvec3 V;       // velocity vector
+    double     r;       // radius (position) vector length
+    double     v;       // magnitude of velocity
+    double     ea;      // eccentric anomaly
+    double     ma;      // mean anomaly
+    double     tra;     // true anomaly
+    double     ml;      // mean longitude
+    double     trl;     // true longitude
 };

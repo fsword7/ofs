@@ -348,7 +348,7 @@ double ELP2000Orbit::computePerturbationSum(int n, int **iPert, double *aPert,
     return sum;
 }
 
-vec3d_t ELP2000Orbit::calculatePosition(double jd) const
+glm::dvec3 ELP2000Orbit::calculatePosition(double jd) const
 {
 	// Julian time since EPOCH J2000.0
 	double T  = (jd - 2451545.0) / 36525.0;
@@ -409,9 +409,9 @@ vec3d_t ELP2000Orbit::calculatePosition(double jd) const
 //	cout << fmt::sprintf("Longtitude: %lf  Latitude: %lf  Distance: %lf\n",
 //		glm::degrees(longM), glm::degrees(latM), r);
 
-	return vec3d_t( sin(latM) * cos(longM) * r,
-					cos(latM) * r,
-					sin(latM) * -sin(longM) * r);
+	return glm::dvec3( sin(latM) * cos(longM) * r,
+					   cos(latM) * r,
+					   sin(latM) * -sin(longM) * r);
 
 //	// Precession matrix
 //	double P = 0.10180391e-4*T + 0.47020439e-6*T2 - 0.5417367e-9*T3

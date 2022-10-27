@@ -36,12 +36,12 @@ CoreApp::CoreApp()
 void CoreApp::initEngine()
 {
     engine = new Engine();
-    engine->init(ctx, width, height);
+    // engine->init(ctx, width, height);
 
-    scene = engine->getScene();
+    // scene = engine->getScene();
     universe = engine->getUniverse();
-    player = engine->getPlayer();
-    camera = player->getCamera();
+    // player = engine->getPlayer();
+    // camera = player->getCamera();
 
     View *view = new View(View::viewMainWindow, player,
         scene, 0.0f, 0.0f, 1.0f, 1.0f);
@@ -67,15 +67,15 @@ void CoreApp::start()
 
 void CoreApp::update()
 {
-    Date *jdate = engine->getDate();
+    // Date *jdate = engine->getDate();
 
-    double  dt = jdate->update();
-    vec3d_t av, tv;
+    // double  dt = jdate->update();
+    // vec3d_t av, tv;
 
-    currentTime += dt;
+    // currentTime += dt;
 
-    av = player->getAngularVelocity();
-    tv = player->getTravelVelocity();
+    // av = player->getAngularVelocity();
+    // tv = player->getTravelVelocity();
 
     // Mouse Wheel control
     // if (dollyMotion != 0.0)
@@ -95,84 +95,84 @@ void CoreApp::update()
 
     // Keyboard attitude control
     // X-axis attitude control
-    if (stateKey[keyPad2] || stateKey[keyDown])
-        av += vec3d_t(dt * keyAttitudeAccel, 0, 0);
-    if (stateKey[keyPad8] || stateKey[keyUp])
-        av += vec3d_t(dt * -keyAttitudeAccel, 0, 0);
+    // if (stateKey[keyPad2] || stateKey[keyDown])
+    //     av += vec3d_t(dt * keyAttitudeAccel, 0, 0);
+    // if (stateKey[keyPad8] || stateKey[keyUp])
+    //     av += vec3d_t(dt * -keyAttitudeAccel, 0, 0);
     
-    // Y-axis attitude control
-    if (stateKey[keyPad6] || stateKey[keyRight])
-        av += vec3d_t(0, dt * keyAttitudeAccel, 0);
-    if (stateKey[keyPad4] || stateKey[keyLeft])
-        av += vec3d_t(0, dt * -keyAttitudeAccel, 0);
+    // // Y-axis attitude control
+    // if (stateKey[keyPad6] || stateKey[keyRight])
+    //     av += vec3d_t(0, dt * keyAttitudeAccel, 0);
+    // if (stateKey[keyPad4] || stateKey[keyLeft])
+    //     av += vec3d_t(0, dt * -keyAttitudeAccel, 0);
 
-    // Z-axis attitude control
-    if (stateKey[keyPad7])
-        av += vec3d_t(0, 0, dt * -keyAttitudeAccel);
-    if (stateKey[keyPad9])
-        av += vec3d_t(0, 0, dt * keyAttitudeAccel);
+    // // Z-axis attitude control
+    // if (stateKey[keyPad7])
+    //     av += vec3d_t(0, 0, dt * -keyAttitudeAccel);
+    // if (stateKey[keyPad9])
+    //     av += vec3d_t(0, 0, dt * keyAttitudeAccel);
 
-    // Keyboard movement control
-    // X-axis move control
-    if (shiftStateKey[keyPad4])
-        tv.x() += dt * keyMovementControl;
-    if (shiftStateKey[keyPad6])
-        tv.x() -= dt * keyMovementControl;
+    // // Keyboard movement control
+    // // X-axis move control
+    // if (shiftStateKey[keyPad4])
+    //     tv.x() += dt * keyMovementControl;
+    // if (shiftStateKey[keyPad6])
+    //     tv.x() -= dt * keyMovementControl;
 
-    // Y-axis move control
-    if (shiftStateKey[keyPad8])
-        tv.y() += dt * keyMovementControl;
-    if (shiftStateKey[keyPad2])
-        tv.y() -= dt * keyMovementControl;
+    // // Y-axis move control
+    // if (shiftStateKey[keyPad8])
+    //     tv.y() += dt * keyMovementControl;
+    // if (shiftStateKey[keyPad2])
+    //     tv.y() -= dt * keyMovementControl;
 
     // Z-axis move control
-    if (stateKey[keyPad3])
-        tv.z() += dt * keyMovementControl;
-    if (stateKey[keyPad1])
-        tv.z() -= dt * keyMovementControl;
+    // if (stateKey[keyPad3])
+    //     tv.z() += dt * keyMovementControl;
+    // if (stateKey[keyPad1])
+    //     tv.z() -= dt * keyMovementControl;
 
-    // Braking control
-    if (stateKey[keyPad5] || stateKey[keyb])
-    {
-        av *= exp(-dt * keyAttitudeBrake);
-        tv *= exp(-dt * keyMovementBrake);
-    }
+    // // Braking control
+    // if (stateKey[keyPad5] || stateKey[keyb])
+    // {
+    //     av *= exp(-dt * keyAttitudeBrake);
+    //     tv *= exp(-dt * keyMovementBrake);
+    // }
 
-    player->setAngularVelocity(av);
-    player->setTravelVelocity(tv);
+    // player->setAngularVelocity(av);
+    // player->setTravelVelocity(tv);
 
-    // Keyboard orbit movement controls
-    {
-        double coarseness = player->computeCoarseness(1.5);
-        quatd_t q = { 1, 0, 0, 0 };
+    // // Keyboard orbit movement controls
+    // {
+    //     double coarseness = player->computeCoarseness(1.5);
+    //     quatd_t q = { 1, 0, 0, 0 };
 
-        if (shiftStateKey[keyLeft])
-            q *= yRotate(dt * -keyRotationAccel * coarseness);
-        if (shiftStateKey[keyRight])
-            q *= yRotate(dt * keyRotationAccel * coarseness);
-        if (shiftStateKey[keyUp])
-            q *= xRotate(dt * -keyRotationAccel * coarseness);
-        if (shiftStateKey[keyDown])
-            q *= xRotate(dt * keyRotationAccel * coarseness);
+    //     if (shiftStateKey[keyLeft])
+    //         q *= yRotate(dt * -keyRotationAccel * coarseness);
+    //     if (shiftStateKey[keyRight])
+    //         q *= yRotate(dt * keyRotationAccel * coarseness);
+    //     if (shiftStateKey[keyUp])
+    //         q *= xRotate(dt * -keyRotationAccel * coarseness);
+    //     if (shiftStateKey[keyDown])
+    //         q *= xRotate(dt * keyRotationAccel * coarseness);
 
-        if (q != quatd_t(1, 0, 0, 0))
-            player->orbit(q);
-    }
+    //     if (q != quatd_t(1, 0, 0, 0))
+    //         player->orbit(q);
+    // }
 
-    // Keyboard dolly control
-    if (shiftStateKey[keyHome])
-        player->dolly(-dt * 2.0);
-    if (shiftStateKey[keyEnd])
-        player->dolly(dt * 2.0);
+    // // Keyboard dolly control
+    // if (shiftStateKey[keyHome])
+    //     player->dolly(-dt * 2.0);
+    // if (shiftStateKey[keyEnd])
+    //     player->dolly(dt * 2.0);
 
-    engine->update(dt);
+    // engine->update(dt);
 }
 
 void CoreApp::render()
 {
-    if (scene != nullptr)
-        scene->render(*universe, *player);
-    engine->renderOverlay();
+    // if (scene != nullptr)
+    //     scene->render(*universe, *player);
+    // engine->renderOverlay();
 }
 
 // ********* new package *********
@@ -633,19 +633,19 @@ void CoreApp::mousePressButtonDown(float mx, float my, int state)
 
 void CoreApp::mousePressButtonUp(float mx, float my, int state)
 {
-    View *view = nullptr;
-    float vx = 0.0f, vy = 0.0f;
+    // View *view = nullptr;
+    // float vx = 0.0f, vy = 0.0f;
 
-    if (state & mouseLeftButton)
-    {
-        view = pickView(mx, my);
-        if (view != nullptr)
-            view->map(mx / float(width), my / float(height), vx, vy);
+    // if (state & mouseLeftButton)
+    // {
+    //     view = pickView(mx, my);
+    //     if (view != nullptr)
+    //         view->map(mx / float(width), my / float(height), vx, vy);
 
-        vec3d_t ray = player->getPickRay(vx, vy);
+    //     vec3d_t ray = player->getPickRay(vx, vy);
 
-        Object *picked = engine->pickObject(ray);
-    }
+    //     Object *picked = engine->pickObject(ray);
+    // }
 }
 
 void CoreApp::mouseDialWheel(float motion, int state)

@@ -9,13 +9,13 @@
 #include "ephem/rotation.h"
 #include "universe/frame.h"
 
-vec3d_t RigidBody::getuPosition(double tjd) const
+glm::dvec3 RigidBody::getuPosition(double tjd) const
 {
     if (getType() == objCelestialStar)
         return { 0, 0, 0 };
 
-    vec3d_t pos = { 0, 0, 0 };
-    vec3d_t opos = getoPosition(tjd);
+    glm::dvec3 pos = { 0, 0, 0 };
+    glm::dvec3 opos = getoPosition(tjd);
     Frame  *frame = orbitFrame;
 
     // fmt::printf("%s: Position: (%lf,%lf,%lf)\n", getsName(), opos.x, opos.y, opos.z);
@@ -38,12 +38,12 @@ vec3d_t RigidBody::getuPosition(double tjd) const
     return pos;
 }
 
-quatd_t RigidBody::getuOrientation(double tjd) const
+glm::dmat3 RigidBody::getuOrientation(double tjd) const
 {
-    return rotation != nullptr ? rotation->getRotation(tjd) : quatd_t( 1, 0, 0, 0 );
+    return glm::dmat3(1.0); // rotation != nullptr ? rotation->getRotation(tjd) : quatd_t( 1, 0, 0, 0 );
 }
 
-vec3d_t RigidBody::getoPosition(double tjd) const
+glm::dvec3 RigidBody::getoPosition(double tjd) const
 {
     return orbit->getPosition(tjd);
 }

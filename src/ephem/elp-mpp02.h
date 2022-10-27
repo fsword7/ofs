@@ -64,8 +64,8 @@ public:
     ELP2000Orbit(dataMode mode);
     virtual ~ELP2000Orbit() = default;
 
-    vec3d_t calculatePosition(double tjd) const override;
-    // vec3d_t calculateVelocity(double tjd) const override;
+    glm::dvec3 calculatePosition(double tjd) const override;
+    // glm::dvec3 calculateVelocity(double tjd) const override;
 
     double getPeriod() const			{ return period; }
     double getBoundingRadius() const	{ return boundingRadius; }

@@ -30,9 +30,9 @@ public:
     Rotation *getRotation() const override  { return rotation; }
 
     // orbtial positions
-    vec3d_t getuPosition(double tjd) const override;
-    quatd_t getuOrientation(double tjd) const override;
-    vec3d_t getoPosition(double tjd) const override;
+    glm::dvec3 getuPosition(double tjd) const override;
+    glm::dmat3 getuOrientation(double tjd) const override;
+    glm::dvec3 getoPosition(double tjd) const override;
 
     void update();
     
@@ -47,5 +47,5 @@ protected:
     OrbitalElements *elements = nullptr;
     bool orbitValid = false;
 
-    vec3d_t cpos, cvel; // state vectors in reference frame
+    glm::dvec3 cpos, cvel; // state vectors in reference frame
 };

@@ -100,7 +100,7 @@ void computePrecissionObliquity(double T, double &pa, double &ea)
 	}
 }
 
-quatd_t EarthRotation::computeSpin(double tjd) const
+glm::dmat3 EarthRotation::computeSpin(double tjd) const
 {
     double t = tjd - astro::J2000;
 
@@ -111,7 +111,7 @@ quatd_t EarthRotation::computeSpin(double tjd) const
     return yRotate(-theta);
 }
 
-quatd_t EarthRotation::computeEquatorRotation(double tjd) const
+glm::dmat3 EarthRotation::computeEquatorRotation(double tjd) const
 {
     double T = (tjd - astro::J2000) / 36525.0;
 
@@ -133,11 +133,11 @@ quatd_t EarthRotation::computeEquatorRotation(double tjd) const
 	double piA = asin(sqrt(P*P + Q*Q));
 	double PiA = atan2(P, Q);
 
-	quatd_t RPi = zRotate(PiA);
-	quatd_t rpi = xRotate(piA);
-	quatd_t eclRotation = RPi.conjugate() * rpi * RPi;
+	glm::dmat3 RPi = zRotate(PiA);
+	glm::dmat3 rpi = xRotate(piA);
+	glm::dmat3 eclRotation = RPi /*.conjugate() */ * rpi * RPi;
 
-	quatd_t q = xRotate(obliquity) * zRotate(-precession) * eclRotation.conjugate();
+	glm::dmat3 q = xRotate(obliquity) * zRotate(-precession) * eclRotation; //.conjugate();
 
 	// fmt::printf("Yes, here equator rotation\n");
 

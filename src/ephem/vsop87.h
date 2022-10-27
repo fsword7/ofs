@@ -33,8 +33,8 @@ public:
 
     static Orbit *create(cstr_t &name);
 
-    vec3d_t calculatePosition(double jd) const override;
-    vec3d_t calculateVelocity(double jd) const override;
+    glm::dvec3 calculatePosition(double jd) const override;
+    glm::dvec3 calculateVelocity(double jd) const override;
 
     double getPeriod() const         { return period; }
     double getBoundingRadius() const { return boundingRadius; }

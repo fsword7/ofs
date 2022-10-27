@@ -33,10 +33,10 @@ void Panel::setHUDMode(int mode)
     switch (mode)
     {
     case HUD_SURFACE:
-        hud = new HUDSurfacePanel(this);
+        // hud = new HUDSurfacePanel(this);
         break;
     case HUD_ORBIT:
-        hud = new HUDOrbitPanel(this);
+        // hud = new HUDOrbitPanel(this);
         break;
     default:
         hud = nullptr;
@@ -50,7 +50,7 @@ void Panel::drawHUD()
         Sketchpad *pad = nullptr; // gc->getSketchpad();
         if (pad != nullptr)
         {
-            hud->draw(pad);
+            // hud->draw(pad);
             // gc->releaseSketchpad();
         }
     }

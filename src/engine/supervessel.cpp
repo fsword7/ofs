@@ -41,7 +41,7 @@ void SuperVessel::detach(Vessel *vessel)
         }
 }
 
-void SuperVessel::getIntermediateMoments(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt)
+void SuperVessel::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double dt)
 {
 
 }

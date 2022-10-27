@@ -67,7 +67,7 @@ void Universe::init()
 
     Camerax *cam = ofsAppCore->getCamera();
     cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
-    cam->look(sun->getStarPosition2());
+    cam->look(sun->getStarPosition());
     cam->update();
 
     // cam->setPosition(glm::dvec3(0, 0, -earth->getRadius() * 4.0));

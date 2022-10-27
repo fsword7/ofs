@@ -11,8 +11,8 @@ public:
     Orbit() = default;
     virtual ~Orbit() = default;
 
-    virtual vec3d_t getPosition(double tjd) const = 0;
-    virtual vec3d_t getVelocity(double tjd) const = 0;
+    virtual glm::dvec3 getPosition(double tjd) const = 0;
+    virtual glm::dvec3 getVelocity(double tjd) const = 0;
 
     virtual bool   isPeriodic() const { return true; }
     virtual double getPeriod() const = 0;
@@ -25,17 +25,17 @@ public:
     CachingOrbit() = default;
     virtual ~CachingOrbit() = default;
 
-    vec3d_t getPosition(double tjd) const override;
-    vec3d_t getVelocity(double tjd) const override;
+    glm::dvec3 getPosition(double tjd) const override;
+    glm::dvec3 getVelocity(double tjd) const override;
  
-    virtual vec3d_t calculatePosition(double jd) const = 0;
-    virtual vec3d_t calculateVelocity(double jd) const;
+    virtual glm::dvec3 calculatePosition(double jd) const = 0;
+    virtual glm::dvec3 calculateVelocity(double jd) const;
 
 private:
     // Must use 'mutable' to allow variables modifiable in const objects
     mutable double lastTime = -std::numeric_limits<double>::infinity();
-    mutable vec3d_t lastPosition = vec3d_t(0, 0, 0);
-    mutable vec3d_t lastVelocity = vec3d_t(0, 0, 0);
+    mutable glm::dvec3 lastPosition = { 0, 0, 0 };
+    mutable glm::dvec3 lastVelocity = { 0, 0, 0 };
 
     mutable bool positionValid = false;
     mutable bool velocityValid = false;

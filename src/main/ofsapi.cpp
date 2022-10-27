@@ -113,7 +113,7 @@ LIBEXPORT double ofsGetObjectStarTemperature(ObjectHandle object)
 
 LIBEXPORT glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object)
 {
-    return static_cast<celStar *>(object)->getStarPosition2();
+    return static_cast<celStar *>(object)->getStarPosition();
 }
 
 LIBEXPORT Constellations &ofsGetConstellations()

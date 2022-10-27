@@ -31,7 +31,7 @@ class SuperVessel;
 struct surface_t
 {
     void setLanded(double lng, double lat, double alt, double dir,
-        const vec3d_t &nml, const Object *object);
+        const glm::dvec3 &nml, const Object *object);
 
     const Object *body;     // celestial body reference
 
@@ -48,7 +48,7 @@ struct surface_t
     double  heading;        // compass orientation [radians]
 
     // ground parameters
-    vec3d_t surfNormal;     // surface normal in local horizon frame
+    glm::dvec3 surfNormal;  // surface normal in local horizon frame
     double  elev;           // ground elevation to relative mean radius
 
     // atomsphere parameters
@@ -58,7 +58,7 @@ struct surface_t
     double  atmTemp;        // atomsphere temperature [K]
     double  atmMach;        // atomsphere mach number
 
-    mat3d_t l2h;            // planet to local horizon [planet frame]
+    glm::dmat3 l2h;            // planet to local horizon [planet frame]
 };
 
 enum AirfoilType_t
@@ -94,8 +94,8 @@ struct tank_t
 
 struct thruster_t
 {
-    vec3d_t pos;            // thruster position in vessel frame
-    vec3d_t dir;            // thrister direction
+    glm::dvec3 pos;            // thruster position in vessel frame
+    glm::dvec3 dir;            // thrister direction
 
     tank_t  *tank;          // propellant resources
 };
@@ -110,7 +110,7 @@ enum thrustType_t
 // touchdown points for collision detection
 struct tdVertex_t
 {
-    vec3d_t pos;            // position in vessel frame
+    glm::dvec3 pos;            // position in vessel frame
     double  stiffness;      // suspension - stiffness [ N/m ] 
     double  damping;        // suspension - damping
     double  compression;    // suspension - compression factor
@@ -130,19 +130,19 @@ public:
     VesselBase();
     virtual ~VesselBase() = default;
 
-    virtual void getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt);
-    virtual bool addSurfaceForces(const StateVectors &state, vec3d_t &acc, vec3d_t &am, double dt);
+    virtual void getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt);
+    virtual bool addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am, double dt);
 
 protected:
     FlightStatus fsType = fsFlight;
 
     surface_t surfParam;    // ship parameters in planet atomsphere
-    mat3d_t   landrot;      // Ship orientation in local planet frame
+    glm::dmat3  landrot;      // Ship orientation in local planet frame
 
-    vec3d_t F;      // Linear moment
-    vec3d_t L;      // Angular moment
-    vec3d_t Fadd;   // collecting linear forces
-    vec3d_t Ladd;   // collecting torque components
+    glm::dvec3 F;      // Linear moment
+    glm::dvec3 L;      // Angular moment
+    glm::dvec3 Fadd;   // collecting linear forces
+    glm::dvec3 Ladd;   // collecting torque components
 
 };
 
@@ -160,8 +160,8 @@ public:
     void initDocked();
     void initOrbiting();
 
-    void getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt) override;
-    bool addSurfaceForces(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt) override;
+    void getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt) override;
+    bool addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt) override;
     
     void setGenericDefaults();
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
@@ -179,8 +179,8 @@ private:
 
     // Collision detection parameters (touchdown points)
     std::vector<tdVertex_t> tpVertices; // touchdown vertices (vessel frame)
-    vec3d_t tpNormal;                   // upward normal of touchdown plane (vessel frame)
-    vec3d_t tpCGravity;                 // center of gravity projection
+    glm::dvec3 tpNormal;                   // upward normal of touchdown plane (vessel frame)
+    glm::dvec3 tpCGravity;                 // center of gravity projection
     double  cogElev;
 
 };

@@ -45,7 +45,7 @@ double VSOP87Orbit::sum(const vsop87s_t &series, double t) const
     return x;
 }
 
-vec3d_t VSOP87Orbit::calculatePosition(double jd) const
+glm::dvec3 VSOP87Orbit::calculatePosition(double jd) const
 {
     // Helicentric coordinate system
     double l = 0.0; // longitude
@@ -75,12 +75,12 @@ vec3d_t VSOP87Orbit::calculatePosition(double jd) const
     b -= pi / 2.0;
 
     // Astrocentric coordinate system
-    return vec3d_t(sin(b)*cos(l), cos(b), sin(b)*-sin(l)) * r;
+    return glm::dvec3( sin(b)*cos(l), cos(b), sin(b)*-sin(l) ) * r;
 }
 
-vec3d_t VSOP87Orbit::calculateVelocity(double jd) const
+glm::dvec3 VSOP87Orbit::calculateVelocity(double jd) const
 {
-    return vec3d_t(0, 0, 0);
+    return { 0, 0, 0 };
 }
 
 Orbit *VSOP87Orbit::create(cstr_t &name)

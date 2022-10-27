@@ -33,7 +33,6 @@ celStar *celStar::createTheSun()
 
     star->hip           = 0;
     star->spos          = { 0, 0, 0 };
-    star->spos2         = { 0, 0, 0 };
     star->objPosition   = { 0, 0, 0 };
     // star->orbitFrame    = nullptr;
 
@@ -47,7 +46,6 @@ celStar *celStar::create(double ra, double de, double pc,
     int temp;
 
     star->spos = astro::convertEquatorialToEcliptic(ra, de, pc);
-    star->spos2 = { star->spos.x(), star->spos.y(), star->spos.z() };
     star->objPosition = star->spos * KM_PER_PC;
 
     temp = (int)(4600 * (1.0 / ((ci * 0.92) + 1.7) + 1.0 / ((ci * 0.92) + 0.62)));

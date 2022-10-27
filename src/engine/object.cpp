@@ -6,17 +6,17 @@
 #include "main/core.h"
 #include "engine/object.h"
 
-vec3d_t Object::getuPosition(double tjd) const
+glm::dvec3 Object::getuPosition(double tjd) const
 {
     return objPosition;
 }
 
-vec3d_t Object::getoPosition(double tjd) const
+glm::dvec3 Object::getoPosition(double tjd) const
 {
     return objPosition;
 }
 
-quatd_t Object::getuOrientation(double tjd) const
+glm::dmat3 Object::getuOrientation(double tjd) const
 {
     return objRotation;
 }

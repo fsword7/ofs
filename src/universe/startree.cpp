@@ -83,7 +83,7 @@ void StarTree::split(double scale)
 
 uint32_t StarTree::index(celStar &star, const glm::dvec3 &cell)
 {
-    glm::dvec3 spos = star.getStarPosition2();
+    glm::dvec3 spos = star.getStarPosition();
 
     return ((spos.x < cell.x) ? 0 : xPos) |
            ((spos.y < cell.y) ? 0 : yPos) |
@@ -123,7 +123,7 @@ void StarTree::processVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &
     {
         celStar *star = list[idx];
 
-        double dist = glm::length(obs - star->getStarPosition2());
+        double dist = glm::length(obs - star->getStarPosition());
         double appMag = convertAbsToAppMag(star->getAbsMag(), dist);
 
         handle.process(star, dist, appMag);
@@ -152,9 +152,9 @@ void StarTree::processCloseStars(const glm::dvec3 &obs, const double radius, con
     {
         celStar *star = list[idx];
 
-        if (glm::length(obs - star->getStarPosition2()) < ofs::square(radius))
+        if (glm::length(obs - star->getStarPosition()) < ofs::square(radius))
         {
-            double dist = glm::length(obs - star->getStarPosition2());
+            double dist = glm::length(obs - star->getStarPosition());
             if (dist < radius)
                 stars.push_back(star);
         }

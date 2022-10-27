@@ -17,7 +17,7 @@ public:
     void attach(Vessel *vessel);
     void detach(Vessel *vessel);
     
-    void getIntermediateMoments(vec3d_t &acc, vec3d_t &am, const StateVectors &state, double dt);
+    void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double dt);
 
     void update();
 

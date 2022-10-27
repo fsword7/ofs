@@ -93,17 +93,17 @@ public:
 
     PlanetarySystem *createPlanetarySystem();
     
-    quatd_t getEquatorial(double tjd) const;
+    glm::dmat3 getEquatorial(double tjd) const;
 
     double getLuminosity(double lum, double dist) const;
-    double getApparentMagnitude(vec3d_t sun, double irradiance, vec3d_t view) const;
+    double getApparentMagnitude(glm::dvec3 sun, double irradiance, glm::dvec3 view) const;
 
-    quatd_t getBodyFixedFromEcliptic(double tjd) const;
+    glm::dmat3 getBodyFixedFromEcliptic(double tjd) const;
 
-    vec3d_t getPlanetocentric(vec3d_t pos) const;
-    vec3d_t getPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const;
-    vec3d_t getvPlanetocentricFromEcliptic(const vec3d_t &pos, double tjd) const;
-    vec3d_t getHeliocentric(double tjd) const;
+    glm::dvec3 getPlanetocentric(glm::dvec3 pos) const;
+    glm::dvec3 getPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const;
+    glm::dvec3 getvPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const;
+    glm::dvec3 getHeliocentric(double tjd) const;
 
 private:
     celType cbType = cbUnknown;

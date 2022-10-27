@@ -8,21 +8,21 @@
 
 namespace astro
 { 
-    vec3d_t convertEquatorialToEcliptic(double ra, double de, double pc)
-    {
-        double theta, phi;
-        double x, y, z;
-        vec3d_t opos;
+    // vec3d_t convertEquatorialToEcliptic(double ra, double de, double pc)
+    // {
+    //     double theta, phi;
+    //     double x, y, z;
+    //     vec3d_t opos;
 
-        theta = ofs::radians(ra) + pi;
-        phi   = ofs::radians(de) - pi/2.0;
+    //     theta = ofs::radians(ra) + pi;
+    //     phi   = ofs::radians(de) - pi/2.0;
 
-        opos  = vec3d_t(sin(phi)*cos(theta), cos(phi), sin(phi)*-sin(theta)) * pc;
+    //     opos  = vec3d_t(sin(phi)*cos(theta), cos(phi), sin(phi)*-sin(theta)) * pc;
 
-        return J2000ObliquityRotation * opos;
-    }
+    //     return J2000ObliquityRotation * opos;
+    // }
 
-    glm::dvec3 convertEquatorialToEcliptic2(double ra, double de, double pc)
+    glm::dvec3 convertEquatorialToEcliptic(double ra, double de, double pc)
     {
         double theta, phi;
         double x, y, z;

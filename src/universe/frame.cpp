@@ -57,38 +57,38 @@ int Frame::release() const
 }
 
 
-vec3d_t Frame::fromUniversal(const vec3d_t &upos, double tjd)
+glm::dvec3 Frame::fromUniversal(const glm::dvec3 &upos, double tjd)
 {
     if (center == nullptr)
         return upos;
     
-    vec3d_t cpos = center->getuPosition(tjd);
-    quatd_t crot = getOrientation(tjd);
-    vec3d_t rpos = crot * (upos - cpos);
+    glm::dvec3 cpos = center->getuPosition(tjd);
+    glm::dmat3 crot = getOrientation(tjd);
+    glm::dvec3 rpos = crot * (upos - cpos);
 
     return rpos;
 }
 
-quatd_t Frame::fromUniversal(const quatd_t &urot, double tjd)
+glm::dmat3 Frame::fromUniversal(const glm::dmat3 &urot, double tjd)
 {
     if (center == nullptr)
         return urot;
-    return urot * getOrientation(tjd).conjugate();
+    return urot * getOrientation(tjd); // .conjugate();
 }
 
-vec3d_t Frame::toUniversal(const vec3d_t &lpos, double tjd)
+glm::dvec3 Frame::toUniversal(const glm::dvec3 &lpos, double tjd)
 {
     if (center == nullptr)
         return lpos;
 
-    vec3d_t cpos = center->getuPosition(tjd);
-    quatd_t crot = getOrientation(tjd);
-    vec3d_t rpos = cpos + (crot.conjugate() * lpos);
+    glm::dvec3 cpos = center->getuPosition(tjd);
+    glm::dmat3 crot = getOrientation(tjd);
+    glm::dvec3 rpos = cpos + (crot /* .conjugate() */ * lpos);
 
     return rpos;
 }
 
-quatd_t Frame::toUniversal(const quatd_t &lrot, double tjd)
+glm::dmat3 Frame::toUniversal(const glm::dmat3 &lrot, double tjd)
 {
     if (center == nullptr)
         return lrot;
@@ -129,10 +129,11 @@ BodyFixedFrame::BodyFixedFrame(Object *object, Object *target, Frame *parent)
     frameName = "Body Fixed Reference Frame";
 }
 
-quatd_t BodyFixedFrame::getOrientation(double tjd) const
+glm::dmat3 BodyFixedFrame::getOrientation(double tjd) const
 {
-    quatd_t yrot180 = { 0, 0, 1, 0 };
-
+    // glm::dquat yrot180 = { 0, 0, 1, 0 };
+    glm::dmat3 yrot180 = glm::dmat3(1.0);
+    
     switch (fixedObject->getType())
     {
     case ObjectType::objCelestialStar:
@@ -151,7 +152,7 @@ BodyMeanEquatorFrame::BodyMeanEquatorFrame(Object *object, Object *target, Frame
     frameName = "Body Mean Equator Reference Frame";
 }
 
-quatd_t BodyMeanEquatorFrame::getOrientation(double tjd) const
+glm::dmat3 BodyMeanEquatorFrame::getOrientation(double tjd) const
 {
     switch (equatorObject->getType())
     {
@@ -159,7 +160,7 @@ quatd_t BodyMeanEquatorFrame::getOrientation(double tjd) const
     case ObjectType::objCelestialBody:
         return dynamic_cast<celBody *>(equatorObject)->getEquatorial(tjd);
     default:
-        return quatd_t::Identity();
+        return glm::dmat3(1.0);
     }
 }
 
@@ -171,10 +172,10 @@ ObjectSyncFrame::ObjectSyncFrame(Object *object, Object *target, Frame *parent)
     frameName = "Object Sync Reference Frame";
 }
 
-quatd_t ObjectSyncFrame::getOrientation(double tjd) const
+glm::dmat3 ObjectSyncFrame::getOrientation(double tjd) const
 {
-    vec3d_t opos = center->getuPosition(tjd);
-    vec3d_t tpos = targetObject->getuPosition(tjd);
+    glm::dvec3 opos = center->getuPosition(tjd);
+    glm::dvec3 tpos = targetObject->getuPosition(tjd);
 
-    return ofs::lookAt(opos, tpos, vec3d_t(0, 1, 0));
+    return glm::lookAt(opos, tpos, { 0, 1, 0 });
 }

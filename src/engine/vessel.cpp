@@ -10,7 +10,7 @@
 #include "universe/astro.h"
 
 void surface_t::setLanded(double _lng, double _lat, double alt, double dir,
-    const vec3d_t &nml, const Object *object)
+    const glm::dvec3 &nml, const Object *object)
 {
     static const double eps = 1e-6;
 
@@ -21,9 +21,9 @@ void surface_t::setLanded(double _lng, double _lat, double alt, double dir,
     altitude = alt;
     heading = dir;
 
-    pitch = atan2(nml.z(), nml.y());
-    bank = (fabs(nml.x()) > eps || fabs(nml.y()) > eps)
-        ? atan2(nml.x(), nml.y()) : 0.0;
+    pitch = atan2(nml.z, nml.y);
+    bank = (fabs(nml.x) > eps || fabs(nml.y) > eps)
+        ? atan2(nml.x, nml.y) : 0.0;
 
     airSpeed = groundSpeed = 0.0;
 
@@ -43,11 +43,11 @@ VesselBase::VesselBase()
     
 }
 
-void VesselBase::getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt)
+void VesselBase::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
 {
 }
 
-bool VesselBase::addSurfaceForces(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt)
+bool VesselBase::addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
 {
     return false;
 }
@@ -92,16 +92,16 @@ void Vessel::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
         tpVertices[idx].damping = tdvtx[idx].damping;
     }
 
-    vec3d_t tp[3] = { tpVertices[0].pos, tpVertices[1].pos, tpVertices[2].pos };
+    glm::dvec3 tp[3] = { tpVertices[0].pos, tpVertices[1].pos, tpVertices[2].pos };
 
-    tpNormal = (tp[0] - (tp[1] + tp[2])*0.5).cross(tp[2] - tp[1]);
-    double len = tpNormal.norm();
+    tpNormal = glm::cross(tp[0] - (tp[1] + tp[2])*0.5, tp[2] - tp[1]);
+    double len = glm::length(tpNormal);
     tpNormal /= len;
 
-    double a = tp[0].y() * (tp[1].z() - tp[2].z()) - tp[1].y() * (tp[0].z() - tp[2].z()) + tp[2].y() * (tp[0].z() - tp[1].z());
-    double b = tp[0].x() * (tp[1].z() - tp[2].z()) - tp[1].x() * (tp[0].z() - tp[2].z()) + tp[2].x() * (tp[0].z() - tp[1].z());
-    double c = tp[0].x() * (tp[1].y() - tp[2].y()) - tp[1].x() * (tp[0].y() - tp[2].y()) + tp[2].x() * (tp[0].y() - tp[1].y());
-    double d = -tp[0].x()*a - tp[0].y()*b - tp[0].z()*c;
+    double a = tp[0].y * (tp[1].z - tp[2].z) - tp[1].y * (tp[0].z - tp[2].z) + tp[2].y * (tp[0].z - tp[1].z);
+    double b = tp[0].x * (tp[1].z - tp[2].z) - tp[1].x * (tp[0].z - tp[2].z) + tp[2].x * (tp[0].z - tp[1].z);
+    double c = tp[0].x * (tp[1].y - tp[2].y) - tp[1].x * (tp[0].y - tp[2].y) + tp[2].x * (tp[0].y - tp[1].y);
+    double d = -tp[0].x*a - tp[0].y*b - tp[0].z*c;
     double scl = sqrt(a*a + b*b + c*c);
 
     cogElev = fabs(d / scl);
@@ -142,10 +142,10 @@ void Vessel::initOrbiting()
 
 }
 
-void Vessel::getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt)
+void Vessel::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
 {
-    vec3d_t F = Fadd;
-    vec3d_t M = Ladd;
+    glm::dvec3 F = Fadd;
+    glm::dvec3 M = Ladd;
 
     // Check for surface forces and collision detection
     addSurfaceForces(state, F, M, dt);
@@ -155,7 +155,7 @@ void Vessel::getIntermediateMoments(const StateVectors &state, vec3d_t &acc, vec
     am  += M/mass;
 }
 
-bool Vessel::addSurfaceForces(const StateVectors &state, vec3d_t &acc, vec3d_t &am,  double dt)
+bool Vessel::addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
 {
     return false;
 }
