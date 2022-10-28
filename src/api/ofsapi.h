@@ -32,6 +32,7 @@ typedef void * ObjectHandle;
 class ofsHandler2;
 class Constellations;
 class StarDatabase;
+class System;
 
 enum ObjectType
 {
@@ -66,6 +67,9 @@ OFSAPI glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object);
 OFSAPI int ofsGetObjectStarHIPNumber(ObjectHandle object);
 OFSAPI glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object);
 OFSAPI double ofsGetObjectStarTemperature(ObjectHandle object);
+
+OFSAPI bool ofsStarHasSolarSystem(ObjectHandle object);
+OFSAPI System *ofsStarGetSolarSystem(ObjectHandle object);
 
 OFSAPI Constellations &ofsGetConstellations();
 OFSAPI StarDatabase &ofsGetStarDatabase();

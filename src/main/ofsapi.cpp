@@ -116,6 +116,16 @@ LIBEXPORT glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object)
     return static_cast<celStar *>(object)->getStarPosition();
 }
 
+LIBEXPORT bool ofsStarHasSolarSystem(ObjectHandle object)
+{
+    return static_cast<celStar *>(object)->hasSolarSystem();
+}
+
+LIBEXPORT System *ofsStarGetSolarSystem(ObjectHandle object)
+{
+    return static_cast<celStar *>(object)->getSolarSystem();
+}
+
 LIBEXPORT Constellations &ofsGetConstellations()
 {
     return ofsAppCore->getUniverse()->getConstellations();

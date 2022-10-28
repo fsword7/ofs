@@ -5,6 +5,10 @@
 
 #include "main/core.h"
 #include "engine/object.h"
+#include "universe/universe.h"
+#include "universe/body.h"
+#include "universe/star.h"
+
 #include "client.h"
 #include "camera.h"
 #include "vobject.h"
@@ -88,6 +92,14 @@ void Scene::render()
         // vec3d_t vpn = prm.crot.conjugate() * vec3d_t (0, 0, -1);
 
         // buildNearSystems(tree, player, apos, vpn, { 0, 0, 0 });
+
+        if (!ofsStarHasSolarSystem(sun))
+            continue;
+        System *system = ofsStarGetSolarSystem(sun);
+
+        PlanetarySystem *objects = system->getPlanetarySystem();
+        FrameTree *tree = objects->getSystemTree();
+
     }
 
     // vEarth->update();
