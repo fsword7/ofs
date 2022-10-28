@@ -191,7 +191,7 @@ void CoreApp::init()
         abort();
     }
 
-    camerax = new Camerax(width, height);
+    camera = new Camera(width, height);
 
     // Loading startup modules
     loadStartupModules();
@@ -234,7 +234,7 @@ void CoreApp::closeSession()
 
 void CoreApp::updateWorld()
 {
-    camerax->update();
+    camera->update();
 }
 
 bool CoreApp::attachGraphicsClient(GraphicsClient *gc)
@@ -356,7 +356,7 @@ void CoreApp::run()
                     (state & mouseShiftButton   ? 'S' : '-'));
                 setWindowTitle(title);
 
-                camerax->mouseMove(mx, my, state);
+                camera->mouseMove(mx, my, state);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -377,7 +377,7 @@ void CoreApp::run()
                 if (mod & KMOD_SHIFT)
                     state |= mouseShiftButton;
 
-                camerax->mousePressButtonDown(mx, my, state);
+                camera->mousePressButtonDown(mx, my, state);
                 break;
 
             case SDL_MOUSEBUTTONUP:
@@ -398,14 +398,14 @@ void CoreApp::run()
                 if (mod & KMOD_SHIFT)
                     state |= mouseShiftButton;
 
-                camerax->mousePressButtonUp(mx, my, state);
+                camera->mousePressButtonUp(mx, my, state);
                 break;
 
             case SDL_MOUSEWHEEL:
                 if (event.wheel.y > 0)      // scroll up
-                    camerax->mouseDialWheel(-1.0f, 0);
+                    camera->mouseDialWheel(-1.0f, 0);
                 else if (event.wheel.y < 0) // scroll down
-                    camerax->mouseDialWheel(1.0f, 0);
+                    camera->mouseDialWheel(1.0f, 0);
                 break;
            
                  

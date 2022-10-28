@@ -19,11 +19,11 @@ enum travelMode
     travelCocpkit
 };
 
-class Camerax
+class Camera
 {
 public:
-    Camerax(int w, int h);
-    ~Camerax() = default;
+    Camera(int w, int h);
+    ~Camera() = default;
 
     inline int getWidth() const                     { return width; }
     inline int getHeight() const                    { return height; }

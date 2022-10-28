@@ -65,7 +65,7 @@ void Universe::init()
     // lunar->setRadius(1738.14);
     // lunar->setAlbedo(0.136);
 
-    Camerax *cam = ofsAppCore->getCamera();
+    Camera *cam = ofsAppCore->getCamera();
     cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
     cam->look(sun->getStarPosition());
     cam->update();

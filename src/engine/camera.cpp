@@ -8,7 +8,7 @@
 #include "engine/object.h"
 #include "engine/camera.h"
 
-Camerax::Camerax(int w, int h)
+Camera::Camera(int w, int h)
 {
     resize(w, h);
     fov = glm::radians(SCR_FOV);
@@ -18,14 +18,14 @@ Camerax::Camerax(int w, int h)
     reset();
 }
 
-void Camerax::resize(int w, int h)
+void Camera::resize(int w, int h)
 {
     width  = w;
     height = h;
     aspect = float(width) / float(height);
 }
 
-void Camerax::reset()
+void Camera::reset()
 {
     erot  = { 0, 0, 0 };
     clrot = { 0, 0, 0 };
@@ -37,23 +37,23 @@ void Camerax::reset()
     updateProjectionMatrix();
 }
 
-void Camerax::updateProjectionMatrix()
+void Camera::updateProjectionMatrix()
 {
     proj = ofs::glPerspective(fov, aspect, zNear, zFar);
 }
 
-void Camerax::setPosition(const glm::dvec3 &pos)
+void Camera::setPosition(const glm::dvec3 &pos)
 {
     rpos  = pos;
     rdist = glm::length(rpos);
 }
 
-void Camerax::setRotation(const glm::dmat3 &rot)
+void Camera::setRotation(const glm::dmat3 &rot)
 {
     rrot = rot;
 }
 
-void Camerax::look(const glm::dvec3 &opos)
+void Camera::look(const glm::dvec3 &opos)
 {
     glm::dvec3 up = { 0, 1, 0 };
     
@@ -67,7 +67,7 @@ void Camerax::look(const glm::dvec3 &opos)
     // Logger::logger->debug("{} {} {}\n", urot[2][0], urot[2][1], urot[2][2]);
 }
 
-void Camerax::setRelativePosition(double phi, double theta, double dist)
+void Camera::setRelativePosition(double phi, double theta, double dist)
 {
     erot.x = phi;
     erot.y = theta;
@@ -87,31 +87,31 @@ void Camerax::setRelativePosition(double phi, double theta, double dist)
     //     upos.x, upos.y, upos.z, rpos.x, rpos.y, rpos.z, rdist);
 }
 
-void Camerax::dolly(double dz)
+void Camera::dolly(double dz)
 {
     double fact = std::max(1.0/rdist, 1.0/(1.0 - dz));
     setRelativePosition(erot.x, erot.y, rdist*fact);
 }
 
-void Camerax::orbit(double dx, double dy)
+void Camera::orbit(double dx, double dy)
 {
     setRelativePosition(erot.x+dx*0.5, erot.y+dy*0.5, rdist);
     udir = rrot * glm::dvec3(0, 0, 1);
 }
 
-void Camerax::orbitPhi(double dx)
+void Camera::orbitPhi(double dx)
 {
     setRelativePosition(erot.x+dx*0.5, erot.y, rdist);
     udir = rrot * glm::dvec3(0, 0, 1);
 }
 
-void Camerax::orbitTheta(double dy)
+void Camera::orbitTheta(double dy)
 {
     setRelativePosition(erot.x, erot.y+dy*0.5, rdist);
     udir = rrot * glm::dvec3(0, 0, 1);
 }
 
-void Camerax::rotate(double dx, double dy, double dz)
+void Camera::rotate(double dx, double dy, double dz)
 {
     // Update current X (Phi), Y (Theta), and Z.
     clrot.x += dx;
@@ -129,17 +129,17 @@ void Camerax::rotate(double dx, double dy, double dz)
     };
 }
 
-void Camerax::rotatePhi(double dPhi)
+void Camera::rotatePhi(double dPhi)
 {
 
 }
 
-void Camerax::rotateTheta(double dTheta)
+void Camera::rotateTheta(double dTheta)
 {
 
 }
 
-void Camerax::attach(Object *object, extCameraMode nMode)
+void Camera::attach(Object *object, extCameraMode nMode)
 {
     // Assign object (planet, vessel, etc) to target
     // as relative coordinates
@@ -152,7 +152,7 @@ void Camerax::attach(Object *object, extCameraMode nMode)
     }
 }
 
-void Camerax::update()
+void Camera::update()
 {
 
 
@@ -167,14 +167,14 @@ void Camerax::update()
     }
 }
 
-void Camerax::processKeyboard()
+void Camera::processKeyboard()
 {
 
 }
 
 // ******** Mouse Controls ********
 
-void Camerax::mouseMove(float mx, float my, int state)
+void Camera::mouseMove(float mx, float my, int state)
 {
     // Camera rotation controls
     if (state & CoreApp::mouseLeftButton)
@@ -195,7 +195,7 @@ void Camerax::mouseMove(float mx, float my, int state)
     mly = my;
 }
 
-void Camerax::mousePressButtonDown(float mx, float my, int state)
+void Camera::mousePressButtonDown(float mx, float my, int state)
 {
 
     // Reset mouse motion
@@ -203,7 +203,7 @@ void Camerax::mousePressButtonDown(float mx, float my, int state)
     mly = my;
 }
 
-void Camerax::mousePressButtonUp(float mx, float my, int state)
+void Camera::mousePressButtonUp(float mx, float my, int state)
 {
     // View *view = nullptr;
     // float vx = 0.0f, vy = 0.0f;
@@ -220,7 +220,7 @@ void Camerax::mousePressButtonUp(float mx, float my, int state)
     // }
 }
 
-void Camerax::mouseDialWheel(float motion, int state)
+void Camera::mouseDialWheel(float motion, int state)
 {
     int dz = motion;
     if (modeExternal == true)

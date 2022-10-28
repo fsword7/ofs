@@ -8,13 +8,10 @@
 #include "main/timedate.h"
 #include <SDL2/SDL.h>
 
-class Context;
 class Engine;
 class Universe;
-class Player;
+// class Player;
 class Camera;
-class Camerax;
-class Scene;
 class View;
 class Panel;
 class GraphicsClient;
@@ -162,7 +159,7 @@ public:
     virtual void run();
 
     inline GraphicsClient *getClient() { return gclient; }
-    inline Camerax *getCamera() { return camerax; }
+    inline Camera *getCamera() { return camera; }
     inline Universe *getUniverse() { return universe; }
     
     void initEngine();
@@ -220,12 +217,12 @@ public:
 protected:
     Engine   *engine = nullptr;
     Universe *universe = nullptr;
-    Player   *player = nullptr;
+    // Player   *player = nullptr;
     Camera   *camera = nullptr;
-    Camerax  *camerax = nullptr;
+    // Camerax  *camerax = nullptr;
 
-    Context  *ctx = nullptr;
-    Scene    *scene = nullptr;
+    // Context  *ctx = nullptr;
+    // Scene    *scene = nullptr;
     Panel    *panel = nullptr;
 
     GraphicsClient *gclient = nullptr;
