@@ -11,27 +11,27 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <Eigen/Core>
-#include <Eigen/Geometry>
+// #include <Eigen/Core>
+// #include <Eigen/Geometry>
 
-typedef Eigen::Vector2<float> vec2f_t;
-typedef Eigen::Vector3<float> vec3f_t;
-typedef Eigen::Vector4<float> vec4f_t;
+// typedef Eigen::Vector2<float> vec2f_t;
+// typedef Eigen::Vector3<float> vec3f_t;
+// typedef Eigen::Vector4<float> vec4f_t;
 
-typedef Eigen::Quaternion<float> quatf_t;
+// typedef Eigen::Quaternion<float> quatf_t;
 
-typedef Eigen::Matrix3<float> mat3f_t;
-typedef Eigen::Matrix4<float> mat4f_t;
+// typedef Eigen::Matrix3<float> mat3f_t;
+// typedef Eigen::Matrix4<float> mat4f_t;
 
 
-typedef Eigen::Vector2<double> vec2d_t;
-typedef Eigen::Vector3<double> vec3d_t;
-typedef Eigen::Vector4<double> vec4d_t;
+// typedef Eigen::Vector2<double> vec2d_t;
+// typedef Eigen::Vector3<double> vec3d_t;
+// typedef Eigen::Vector4<double> vec4d_t;
 
-typedef Eigen::Quaternion<double> quatd_t;
+// typedef Eigen::Quaternion<double> quatd_t;
 
-typedef Eigen::Matrix3<double> mat3d_t;
-typedef Eigen::Matrix4<double> mat4d_t;
+// typedef Eigen::Matrix3<double> mat3d_t;
+// typedef Eigen::Matrix4<double> mat4d_t;
 
 
 constexpr static const double pi = 3.14159265358979323846;
@@ -168,47 +168,47 @@ namespace ofs
         return 4.0 * pi_v<T> * r * r;
     }
 
-    template <typename T> Eigen::Quaternion<T> lookAt(const Eigen::Matrix<T, 3, 1> &from, const Eigen::Matrix<T, 3, 1> &to,
-        const Eigen::Matrix<T, 3, 1> &up)
-    {
-        Eigen::Matrix<T, 3, 1> n = to - from;
-        n.normalize();
-        Eigen::Matrix<T, 3, 1> v = n.cross(up).normalized();
-        Eigen::Matrix<T, 3, 1> u = v.cross(n);
+    // template <typename T> Eigen::Quaternion<T> lookAt(const Eigen::Matrix<T, 3, 1> &from, const Eigen::Matrix<T, 3, 1> &to,
+    //     const Eigen::Matrix<T, 3, 1> &up)
+    // {
+    //     Eigen::Matrix<T, 3, 1> n = to - from;
+    //     n.normalize();
+    //     Eigen::Matrix<T, 3, 1> v = n.cross(up).normalized();
+    //     Eigen::Matrix<T, 3, 1> u = v.cross(n);
 
-        Eigen::Matrix<T, 3, 3> m;
-        m.col(0) = v;
-        m.col(1) = u;
-        m.col(2) = -n;
+    //     Eigen::Matrix<T, 3, 3> m;
+    //     m.col(0) = v;
+    //     m.col(1) = u;
+    //     m.col(2) = -n;
 
-        return Eigen::Quaternion<T>(m).conjugate();
-    }
+    //     return Eigen::Quaternion<T>(m).conjugate();
+    // }
 
-    template <typename T> Eigen::Matrix<T, 4, 4> perspective(T fovy, T aspect, T zNear, T zFar)
-    {
-        if (aspect == static_cast<T>(0))
-            return Eigen::Matrix<T, 4, 4>::Identity();
+    // template <typename T> Eigen::Matrix<T, 4, 4> perspective(T fovy, T aspect, T zNear, T zFar)
+    // {
+    //     if (aspect == static_cast<T>(0))
+    //         return Eigen::Matrix<T, 4, 4>::Identity();
         
-        T zDelta = zFar - zNear;
-        if (zDelta == static_cast<T>(0))
-            return Eigen::Matrix<T, 4, 4>::Identity();
+    //     T zDelta = zFar - zNear;
+    //     if (zDelta == static_cast<T>(0))
+    //         return Eigen::Matrix<T, 4, 4>::Identity();
 
-        T angle = fovy / static_cast<T>(2);
-        T sine = sin(angle);
-        if (sine == static_cast<T>(0))
-            return Eigen::Matrix<T, 4, 4>::Identity();
-        T ctg = cos(angle) / sine;
+    //     T angle = fovy / static_cast<T>(2);
+    //     T sine = sin(angle);
+    //     if (sine == static_cast<T>(0))
+    //         return Eigen::Matrix<T, 4, 4>::Identity();
+    //     T ctg = cos(angle) / sine;
 
-        Eigen::Matrix<T, 4, 4> m = Eigen::Matrix<T, 4, 4>::Identity();
-        m(0, 0) = ctg / aspect;
-        m(1, 1) = ctg;
-        m(2, 2) = -(zFar + zNear) / zDelta;
-        m(2, 3) = static_cast<T>(-2) * zNear * zFar / zDelta;
-        m(3, 2) = static_cast<T>(-1);
-        m(3, 3) = static_cast<T>(0);
+    //     Eigen::Matrix<T, 4, 4> m = Eigen::Matrix<T, 4, 4>::Identity();
+    //     m(0, 0) = ctg / aspect;
+    //     m(1, 1) = ctg;
+    //     m(2, 2) = -(zFar + zNear) / zDelta;
+    //     m(2, 3) = static_cast<T>(-2) * zNear * zFar / zDelta;
+    //     m(3, 2) = static_cast<T>(-1);
+    //     m(3, 3) = static_cast<T>(0);
 
-        return m;
-    }
+    //     return m;
+    // }
 
     template <typename T> glm::dmat4 glPerspective(T fovy, T aspect, T zNear, T zFar)
     {
@@ -237,106 +237,106 @@ namespace ofs
         return m;
     }
 
-    template <typename T> bool setProjectPerspective(const Eigen::Matrix<T, 4, 4> &mvp, const int viewport[4],
-        const Eigen::Matrix<T, 3, 1> &from, Eigen::Matrix<T, 3, 1> &to)
-    {
-        Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
-        Eigen::Matrix<T, 4, 1> out = mvp * in;
-        if (out.w() == static_cast<T>(0))
-            return false;
+    // template <typename T> bool setProjectPerspective(const Eigen::Matrix<T, 4, 4> &mvp, const int viewport[4],
+    //     const Eigen::Matrix<T, 3, 1> &from, Eigen::Matrix<T, 3, 1> &to)
+    // {
+    //     Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
+    //     Eigen::Matrix<T, 4, 1> out = mvp * in;
+    //     if (out.w() == static_cast<T>(0))
+    //         return false;
 
-        out = out.array() / out.w();
-        out = static_cast<T>(0.5) + out.array() * static_cast<T>(0.5);
-        out.x() = viewport[0] + out.x() * viewport[2];
-        out.y() = viewport[1] + out.y() * viewport[3];
+    //     out = out.array() / out.w();
+    //     out = static_cast<T>(0.5) + out.array() * static_cast<T>(0.5);
+    //     out.x() = viewport[0] + out.x() * viewport[2];
+    //     out.y() = viewport[1] + out.y() * viewport[3];
 
-        to = { out.x(), out.y(), out.z() };
+    //     to = { out.x(), out.y(), out.z() };
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    template <typename T> bool setProjectPerspective(const Eigen::Matrix<T, 4, 4> &dmProj, const Eigen::Matrix<T, 4, 4> &dmView,
-        const int viewport[4], const Eigen::Matrix<T, 3, 1> &from, Eigen::Matrix<T, 3, 1> &to)
-    {
-        Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
-        Eigen::Matrix<T, 4, 1> out = dmProj * dmView * in;
+    // template <typename T> bool setProjectPerspective(const Eigen::Matrix<T, 4, 4> &dmProj, const Eigen::Matrix<T, 4, 4> &dmView,
+    //     const int viewport[4], const Eigen::Matrix<T, 3, 1> &from, Eigen::Matrix<T, 3, 1> &to)
+    // {
+    //     Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
+    //     Eigen::Matrix<T, 4, 1> out = dmProj * dmView * in;
 
-        // Outside of prospective area, do nothing and return with false condition.
-        if (out.w() == static_cast<T>(0))
-            return false;
+    //     // Outside of prospective area, do nothing and return with false condition.
+    //     if (out.w() == static_cast<T>(0))
+    //         return false;
 
-        out = out.array() / out.w();
-        out = static_cast<T>(0.5) + out.array() * static_cast<T>(0.5);
+    //     out = out.array() / out.w();
+    //     out = static_cast<T>(0.5) + out.array() * static_cast<T>(0.5);
 
-        out.x() = viewport[0] + out.x() * viewport[2];
-        out.y() = viewport[1] + out.y() * viewport[3];
+    //     out.x() = viewport[0] + out.x() * viewport[2];
+    //     out.y() = viewport[1] + out.y() * viewport[3];
 
-        double depth = from.x() * dmView(2, 0) +
-                       from.y() * dmView(2, 1) +
-                       from.z() * dmView(2, 2);
-        out.z() = -depth;
+    //     double depth = from.x() * dmView(2, 0) +
+    //                    from.y() * dmView(2, 1) +
+    //                    from.z() * dmView(2, 2);
+    //     out.z() = -depth;
 
-        to = { out.x(), out.y(), out.z() };
+    //     to = { out.x(), out.y(), out.z() };
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    template <typename T> Eigen::Matrix<T, 4, 4> ortho(T left, T right, T top, T bottom, T zNear = -1, T zFar = 1)
-    {
-        T rl = right - left;
-        T tb = top - bottom;
-        T fn = zFar - zNear;
+    // template <typename T> Eigen::Matrix<T, 4, 4> ortho(T left, T right, T top, T bottom, T zNear = -1, T zFar = 1)
+    // {
+    //     T rl = right - left;
+    //     T tb = top - bottom;
+    //     T fn = zFar - zNear;
 
-        Eigen::Matrix<T, 4, 4> m;
-        m << static_cast<T>(2)/rl, static_cast<T>(0),    static_cast<T>(0),     -(right + left) / rl,
-             static_cast<T>(0),    static_cast<T>(2)/tb, static_cast<T>(0),     -(top + bottom)/tb,
-             static_cast<T>(0),    static_cast<T>(0),    static_cast<T>(-2)/fn, -(zFar + zNear)/fn,
-             static_cast<T>(0),    static_cast<T>(0),    static_cast<T>(0),     static_cast<T>(1);
+    //     Eigen::Matrix<T, 4, 4> m;
+    //     m << static_cast<T>(2)/rl, static_cast<T>(0),    static_cast<T>(0),     -(right + left) / rl,
+    //          static_cast<T>(0),    static_cast<T>(2)/tb, static_cast<T>(0),     -(top + bottom)/tb,
+    //          static_cast<T>(0),    static_cast<T>(0),    static_cast<T>(-2)/fn, -(zFar + zNear)/fn,
+    //          static_cast<T>(0),    static_cast<T>(0),    static_cast<T>(0),     static_cast<T>(1);
 
-        return m;
-    }
+    //     return m;
+    // }
 
 
-    // scale function calls
+    // // scale function calls
 
-    template <typename T>
-    Eigen::Matrix<T, 4, 4> scale(T s)
-    {
-        return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s)).matrix();
-    }
+    // template <typename T>
+    // Eigen::Matrix<T, 4, 4> scale(T s)
+    // {
+    //     return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s)).matrix();
+    // }
 
-    // rotate function calls
+    // // rotate function calls
 
-    template <typename T>
-    Eigen::Matrix<T, 4, 4> rotate(const Eigen::Quaternion<T> &q)
-    {
-        return Eigen::Transform<T, 3, Eigen::Affine>(q).matrix();
-    }
+    // template <typename T>
+    // Eigen::Matrix<T, 4, 4> rotate(const Eigen::Quaternion<T> &q)
+    // {
+    //     return Eigen::Transform<T, 3, Eigen::Affine>(q).matrix();
+    // }
 
-    template <typename T>
-    Eigen::Matrix<T, 4, 4> rotate(T angle, const Eigen::Matrix<T, 3, 1> &axis)
-    {
-        return rotate(Eigen::AngleAxis<T>(angle, axis));
-    }
+    // template <typename T>
+    // Eigen::Matrix<T, 4, 4> rotate(T angle, const Eigen::Matrix<T, 3, 1> &axis)
+    // {
+    //     return rotate(Eigen::AngleAxis<T>(angle, axis));
+    // }
 
-    template <typename T>
-    Eigen::Matrix<T, 4, 4> rotate(Eigen::AngleAxis<T> &a)
-    {
-        return Eigen::Transform<T, 3, Eigen::Affine>(a).matrix();
-    }
+    // template <typename T>
+    // Eigen::Matrix<T, 4, 4> rotate(Eigen::AngleAxis<T> &a)
+    // {
+    //     return Eigen::Transform<T, 3, Eigen::Affine>(a).matrix();
+    // }
     
-    // translate function calls
+    // // translate function calls
 
-    template <typename T>
-    Eigen::Matrix<T, 4, 4> translate(T x, T y, T z)
-    {
-        return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(Eigen::Matrix<T, 3, 1>(x, y, z))).matrix();
-    }
+    // template <typename T>
+    // Eigen::Matrix<T, 4, 4> translate(T x, T y, T z)
+    // {
+    //     return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(Eigen::Matrix<T, 3, 1>(x, y, z))).matrix();
+    // }
 
-    template <typename T>
-    Eigen::Matrix<T, 4, 4> translate(const Eigen::Matrix<T, 3, 1> &v)
-    {
-        return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(v)).matrix();
-    }
+    // template <typename T>
+    // Eigen::Matrix<T, 4, 4> translate(const Eigen::Matrix<T, 3, 1> &v)
+    // {
+    //     return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(v)).matrix();
+    // }
 
 }

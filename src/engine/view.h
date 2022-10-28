@@ -15,9 +15,9 @@ public:
         viewMultiFunction = 2,
     };
 
-    View(viewType type, Player *player, Scene *scene,
+    View(viewType type, /* Player *player, Scene *scene, */
         float wx, float wy, float width, float height)
-    : type(type), player(player), scene(scene),
+    : type(type), /* player(player), scene(scene), */
       width(width), height(height), x(wx), y(wy)
     { }
     ~View() = default;
@@ -34,8 +34,8 @@ protected:
     View *silding = nullptr;
     View *child = nullptr;
 
-    Player *player = nullptr;
-    Scene *scene = nullptr;
+    // Player *player = nullptr;
+    // Scene *scene = nullptr;
 
     // View screen parameter
     float width = 1.0f;

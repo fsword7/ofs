@@ -4,7 +4,7 @@
 // Date:    Aug 28, 2022
 
 #include "main/core.h"
-#include "engine/player.h"
+// #include "engine/player.h"
 #include "engine/panel.h"
 
 Panel::Panel(int w, int h, int d)
@@ -45,13 +45,13 @@ void Panel::setHUDMode(int mode)
 
 void Panel::drawHUD()
 {
-    if (hud != nullptr && !camera->isExternal())
-    {
-        Sketchpad *pad = nullptr; // gc->getSketchpad();
-        if (pad != nullptr)
-        {
-            // hud->draw(pad);
-            // gc->releaseSketchpad();
-        }
-    }
+    // if (hud != nullptr && !camera->isExternal())
+    // {
+    //     Sketchpad *pad = nullptr; // gc->getSketchpad();
+    //     if (pad != nullptr)
+    //     {
+    //         // hud->draw(pad);
+    //         // gc->releaseSketchpad();
+    //     }
+    // }
 }

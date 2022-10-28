@@ -19,10 +19,10 @@ public:
     Engine() = default;
     ~Engine() = default;
 
-    inline Scene *getScene()        { return scene; }
+    // inline Scene *getScene()        { return scene; }
     inline Universe *getUniverse()  { return universe; }
-    inline Player *getPlayer()      { return player; }
-    inline Date *getDate()          { return &realDate; }
+    // inline Player *getPlayer()      { return player; }
+    // inline Date *getDate()          { return &realDate; }
 
     inline Object *getFoucsedObject()   { return focusObject; }
     inline double getRealTime()         { return realTime; }
@@ -41,11 +41,11 @@ public:
     void displayPlanetInfo();
     void displayPlanetocentric(double lat, double lng, double alt);
 
-    Object *pickObject(const vec3d_t &pickRay);
+    Object *pickObject(const glm::dvec3 &pickRay);
 
 private:
     Universe *universe = nullptr;
-    Player *player = nullptr;
+    // Player *player = nullptr;
 
     Date    realDate;
     double  realTime;
@@ -54,11 +54,11 @@ private:
     Object *focusObject = nullptr;
 
     // Renderer
-    Scene *scene = nullptr;
+    // Scene *scene = nullptr;
 
     // Overlay
     TextureFont *titleFont = nullptr;
     TextureFont *textFont = nullptr;
-    Overlay *overlay = nullptr;
-    vec3d_t lastView;
+    // Overlay *overlay = nullptr;
+    glm::dvec3 lastView;
 };

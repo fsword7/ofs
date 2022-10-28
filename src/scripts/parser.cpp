@@ -66,7 +66,7 @@ bool Group::getString(cstr_t &key, str_t &val) const
     return true;
 }
 
-bool Group::getVector(cstr_t &key, vec3d_t &val) const
+bool Group::getVector(cstr_t &key, glm::dvec3 &val) const
 {
     Value *v = getValue(key);
     if (v == nullptr || v->getType() != Value::vtArray)
@@ -84,12 +84,12 @@ bool Group::getVector(cstr_t &key, vec3d_t &val) const
         z->getType() != Value::vtNumber)
         return false;
     
-    val = vec3d_t(x->getNumber(), y->getNumber(), z->getNumber());
+    val = glm::dvec3(x->getNumber(), y->getNumber(), z->getNumber());
 
     return true;
 }
 
-bool Group::getVector(cstr_t &key, vec4d_t &val) const
+bool Group::getVector(cstr_t &key, glm::dvec4 &val) const
 {
     Value *v = getValue(key);
     if (v == nullptr || v->getType() != Value::vtArray)
@@ -109,7 +109,7 @@ bool Group::getVector(cstr_t &key, vec4d_t &val) const
         w->getType() != Value::vtNumber)
         return false;
     
-    val = vec4d_t(x->getNumber(), y->getNumber(),
+    val = glm::dvec4(x->getNumber(), y->getNumber(),
         z->getNumber(), w->getNumber());
 
     return true;
@@ -128,17 +128,17 @@ bool Group::getPath(cstr_t &key, fs::path &path) const
 
 bool Group::getColor(cstr_t &key, color_t &color) const
 {
-    vec4d_t vec4;
+    glm::dvec4 vec4;
     if (getVector(key, vec4))
     {
-        color = color_t(vec4.x(), vec4.y(), vec4.z(), vec4.w());
+        color = color_t(vec4.x, vec4.y, vec4.z, vec4.w);
         return true;
     }
 
-    vec3d_t vec3;
+    glm::dvec3 vec3;
     if (getVector(key, vec3))
     {
-        color = color_t(vec3.x(), vec3.y(), vec3.z());
+        color = color_t(vec3.x, vec3.y, vec3.z);
         return true;
     }
 

@@ -105,8 +105,8 @@ public:
     bool getNumber(cstr_t &key, float &val) const;
     bool getBoolean(cstr_t &key, bool &val) const;
     bool getString(cstr_t &key, str_t &val) const;   
-    bool getVector(cstr_t &key, vec3d_t &val) const;
-    bool getVector(cstr_t &key, vec4d_t &val) const;
+    bool getVector(cstr_t &key, glm::dvec3 &val) const;
+    bool getVector(cstr_t &key, glm::dvec4 &val) const;
 
     bool getPath(cstr_t &key, fs::path &path) const;
     bool getColor(cstr_t &key, color_t &color) const;

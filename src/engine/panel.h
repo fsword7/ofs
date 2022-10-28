@@ -27,7 +27,7 @@ private:
     int width, height;  // screen size
     int depth;          // color depth
 
-    Camera *camera = nullptr;
+    // Camera *camera = nullptr;
     HUDPanel *hud = nullptr;
     int hudMode = HUD_NONE;
 

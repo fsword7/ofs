@@ -4,17 +4,17 @@
 // Date:    Apr 16, 2022
 
 #include "main/core.h"
-#include "osd/gl/context.h"
-#include "osd/gl/buffers.h"
-#include "osd/gl/shader.h"
+// #include "osd/gl/context.h"
+// #include "osd/gl/buffers.h"
+// #include "osd/gl/shader.h"
 #include "engine/engine.h"
 #include "engine/object.h"
-#include "engine/player.h"
+// #include "engine/player.h"
 #include "universe/universe.h"
 #include "universe/star.h"
-#include "render/gl/fonts.h"
-#include "render/scene.h"
-#include "render/overlay.h"
+// #include "render/gl/fonts.h"
+// #include "render/scene.h"
+// #include "render/overlay.h"
 
 void Engine::init(Context *ctx, int width, int height)
 {
@@ -77,7 +77,7 @@ void Engine::render()
     // renderOverlay();
 }
 
-Object *Engine::pickObject(const vec3d_t &pickRay)
+Object *Engine::pickObject(const glm::dvec3 &pickRay)
 {
     // return universe->pick(player->getuPosition(),
     //     player->getuOrientation().conjugate() * pickRay,

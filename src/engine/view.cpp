@@ -4,8 +4,8 @@
 // Date:    Apr 28, 2022
 
 #include "main/core.h"
-#include "engine/player.h"
-#include "render/scene.h"
+// #include "engine/player.h"
+// #include "render/scene.h"
 #include "engine/view.h"
 
 // Convert window X, Y to view X, Y [-1:1]

@@ -179,13 +179,13 @@ void Universe::findVisibleStars(ofsHandler2 &handler,
     stardb.findVisibleStars(handler, obs, rot, fov, aspect, faintest);
 }
 
-Object *Universe::pickPlanet(System *system, const vec3d_t &obs, const vec3d_t &dir, double when)
+Object *Universe::pickPlanet(System *system, const glm::dvec3 &obs, const glm::dvec3 &dir, double when)
 {
 
     return nullptr;
 }
 
-Object *Universe::pick(const vec3d_t &obs, const vec3d_t &dir, double when)
+Object *Universe::pick(const glm::dvec3 &obs, const glm::dvec3 &dir, double when)
 {
     // std::vector<const celStar *> closeStars;
     // Object *picked = nullptr;

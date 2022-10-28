@@ -9,12 +9,12 @@
 #include "api/graphics.h"
 #include "engine/engine.h"
 #include "engine/camera.h"
-#include "engine/player.h"
+// #include "engine/player.h"
 #include "engine/view.h"
 #include "universe/universe.h"
-#include "render/scene.h"
+// #include "render/scene.h"
 #include "engine/panel.h"
-#include "render/hudpanel.h"
+// #include "render/hudpanel.h"
 #include "main/app.h"
 
 // Global variables
@@ -43,8 +43,7 @@ void CoreApp::initEngine()
     // player = engine->getPlayer();
     // camera = player->getCamera();
 
-    View *view = new View(View::viewMainWindow, player,
-        scene, 0.0f, 0.0f, 1.0f, 1.0f);
+    View *view = new View(View::viewMainWindow, 0.0f, 0.0f, 1.0f, 1.0f);
     views.push_back(view);
     activeView = view;
 }

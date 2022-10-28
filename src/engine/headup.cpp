@@ -4,15 +4,15 @@
 // Date:    Apr 28, 2022
 
 #include "main/core.h"
-#include "osd/gl/context.h"
-#include "osd/gl/buffers.h"
-#include "osd/gl/shader.h"
+// #include "osd/gl/context.h"
+// #include "osd/gl/buffers.h"
+// #include "osd/gl/shader.h"
 #include "engine/engine.h"
 #include "engine/object.h"
-#include "engine/player.h"
+// #include "engine/player.h"
 // #include "engine/headup.h"
 #include "universe/body.h"
-#include "render/overlay.h"
+// #include "render/overlay.h"
 
 void Engine::renderOverlay()
 {

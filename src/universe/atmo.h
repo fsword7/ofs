@@ -43,6 +43,6 @@ protected:
     
     // Scattering parameters
     color_t atmColor;       // Atmospheric color
-    vec3d_t atmWave;        // Wavelength
+    glm::dvec3 atmWave;        // Wavelength
 
 };

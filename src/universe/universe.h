@@ -39,8 +39,8 @@ public:
         const double fov, const double aspect,
         const double faintest);
 
-    Object *pickPlanet(System *system, const vec3d_t &obs, const vec3d_t &dir, double when);
-    Object *pick(const vec3d_t &obs, const vec3d_t &dir, double when);
+    Object *pickPlanet(System *system, const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
+    Object *pick(const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
 
 private:
     StarDatabase stardb;
