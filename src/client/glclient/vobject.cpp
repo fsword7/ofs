@@ -28,10 +28,10 @@ vObject *vObject::create(ObjectHandle object, Scene &scene)
     return nullptr;
 }
 
-void vObject::update()
+void vObject::update(int now)
 {
 
-    gpos  = ofsGetObjectGlobalPosition(object);
+    gpos  = ofsGetObjectGlobalPosition(object, now);
     vpos  = gpos - ofsGetCameraGlobalPosition();
     vdist = glm::length(vpos);
 

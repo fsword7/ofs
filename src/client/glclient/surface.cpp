@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "buffer.h"
+#include "vobject.h"
 #include "surface.h"
 
 // ******** Surface Tile ********
@@ -321,7 +322,7 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
     prm.dmWorld = dmWorld;
 
     prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
-    opos = ofsGetObjectGlobalPosition(object);
+    opos = ofsGetObjectGlobalPosition(object, 0);
     cpos = ofsGetCameraGlobalPosition();
 
     prm.cpos = opos - cpos;
@@ -475,7 +476,7 @@ void SurfaceManager::render(SurfaceTile *tile)
     }
 }
 
-void SurfaceManager::render(const glm::dmat4 &dmWorld)
+void SurfaceManager::render(const glm::dmat4 &dmWorld, const ObjectProperties &op)
 {
     setRenderParams(dmWorld);
 

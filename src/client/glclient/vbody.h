@@ -13,8 +13,8 @@ public:
     vBody(ObjectHandle object, Scene &scene);
     ~vBody();
 
-    void update() override;
-    void render() override;
+    void update(int now) override;
+    void render(const ObjectProperties &op) override;
 
 private:
     SurfaceManager *smgr = nullptr;

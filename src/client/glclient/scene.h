@@ -15,6 +15,9 @@ class VertexArray;
 class VertexBuffer;
 class vObject;
 
+class FrameTree;
+class Object;
+
 struct LineVertex
 {
     LineVertex(glm::vec3 p1, glm::vec3 p2, float s)
@@ -41,6 +44,25 @@ struct AsterismVertex
     color_t   color;
 };
 
+struct ObjectListEntry
+{   
+    Object *object;     // Object
+
+    // Sun and position [km]
+    glm::dvec3 opos;    // Object position
+    glm::dmat3 orot;    // Object orientation
+    glm::dvec3 spos;    // Sun position
+
+    double  vdist;      // View distance
+    double  objSize;    // Object size in pixel width
+    double  appMag;     // Apparent magnitude
+
+    // Clipping parameters
+    double  zNear;      // Near Z clipping
+    double  zCenter;    // Center Z clipping
+    double  zFat;       // Far Z clipping
+};
+
 class Scene
 {
 public:
@@ -60,11 +82,19 @@ public:
     vObject *addVisualObject(ObjectHandle object);
     vObject *getVisualObject(ObjectHandle object, bool bCreate = false);
 
+    glm::dvec3 getAstrocentricPosition(ObjectHandle object, const glm::dvec3 &vpos, int time);
+
 protected:
     void initStarRenderer();
     void initConstellations();
     void renderStars(double faintest);
     void renderConstellations();
+
+    void renderObjectAsPoint(ObjectListEntry &ole);
+    void renderCelestialBody(ObjectListEntry &ole);
+
+    void buildSystems(FrameTree *tree, const glm::dvec3 &obs,
+        const glm::dvec3 &vpnorm, const glm::dvec3 &origin);
 
 private:
     int width, height;
@@ -73,6 +103,8 @@ private:
 
     double faintestMag = 6.0;
     double saturationMag = 0.0;
+
+    int now = 0;
 
     ShaderManager shmgr;
 
@@ -93,5 +125,5 @@ private:
     std::vector<ObjectHandle> nearStars;
     std::vector<ObjectHandle> visibleStars;
 
-    vObject *vEarth = nullptr;
+    // vObject *vEarth = nullptr;
 };

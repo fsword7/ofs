@@ -34,12 +34,12 @@ void FrameTree::addObject(Object *object)
     objects.push_back(object);
 }
 
-Object *FrameTree::getObject(int idx) const
-{
-    if (idx >= 0 && idx < objects.size())
-        return objects[idx];
-    return nullptr;
-}
+// Object *FrameTree::getObject(int idx) const
+// {
+//     if (idx >= 0 && idx < objects.size())
+//         return objects[idx];
+//     return nullptr;
+// }
 
 // ******** Reference Frame ********
 

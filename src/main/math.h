@@ -11,28 +11,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// #include <Eigen/Core>
-// #include <Eigen/Geometry>
-
-// typedef Eigen::Vector2<float> vec2f_t;
-// typedef Eigen::Vector3<float> vec3f_t;
-// typedef Eigen::Vector4<float> vec4f_t;
-
-// typedef Eigen::Quaternion<float> quatf_t;
-
-// typedef Eigen::Matrix3<float> mat3f_t;
-// typedef Eigen::Matrix4<float> mat4f_t;
-
-
-// typedef Eigen::Vector2<double> vec2d_t;
-// typedef Eigen::Vector3<double> vec3d_t;
-// typedef Eigen::Vector4<double> vec4d_t;
-
-// typedef Eigen::Quaternion<double> quatd_t;
-
-// typedef Eigen::Matrix3<double> mat3d_t;
-// typedef Eigen::Matrix4<double> mat4d_t;
-
 
 constexpr static const double pi = 3.14159265358979323846;
 
@@ -47,44 +25,38 @@ template <typename T> inline constexpr T mod2pi(T x)
     return x - tpi * floor((x + pi) / tpi);
 }
 
-// template <typename T>
-// inline Eigen::Quaternion<T> xRotate(T radians)
-// {
-//     T ang = radians * T(0.5); // half angle
-//     return Eigen::Quaternion<T>(cos(ang), sin(ang), 0, 0);
-// }
-
-// template <typename T>
-// inline Eigen::Quaternion<T> yRotate(T radians)
-// {
-//     T ang = radians * T(0.5); // half angle
-//     return Eigen::Quaternion<T>(cos(ang), 0, sin(ang), 0);
-// }
-
-// template <typename T>
-// inline Eigen::Quaternion<T> zRotate(T radians)
-// {
-//     T ang = radians * T(0.5); // half angle
-//     return Eigen::Quaternion<T>(cos(ang), 0, 0, sin(ang));
-// }
-
 
 template <typename T>
 inline glm::dmat3 xRotate(T radians)
 {
-    return glm::dmat3(1.0);
+    double sang = sin(radians), cang = cos(radians);
+    return glm::dmat3(
+        { 1.0,   0.0,   0.0  },
+        { 0.0,   cang,  sang },
+        { 0.0,  -sang,  cang }
+    );
 }
 
 template <typename T>
 inline glm::dmat3 yRotate(T radians)
 {
-    return glm::dmat3(1.0);
+    double sang = sin(radians), cang = cos(radians);
+    return glm::dmat3(
+        { cang,  0.0,  -sang  },
+        { 0.0,   1.0,   0.0   },
+        { sang,  0.0,   cang  }
+    );
 }
 
 template <typename T>
 inline glm::dmat3 zRotate(T radians)
 {
-    return glm::dmat3(1.0);
+    double sang = sin(radians), cang = cos(radians);
+    return glm::dmat3(
+        { cang,  sang,  0.0   },
+        {-sang,  cang,  0.0   },
+        { 0.0 ,  0.0,   1.0   }
+    );
 }
 
 
@@ -184,33 +156,7 @@ namespace ofs
     //     return Eigen::Quaternion<T>(m).conjugate();
     // }
 
-    // template <typename T> Eigen::Matrix<T, 4, 4> perspective(T fovy, T aspect, T zNear, T zFar)
-    // {
-    //     if (aspect == static_cast<T>(0))
-    //         return Eigen::Matrix<T, 4, 4>::Identity();
-        
-    //     T zDelta = zFar - zNear;
-    //     if (zDelta == static_cast<T>(0))
-    //         return Eigen::Matrix<T, 4, 4>::Identity();
-
-    //     T angle = fovy / static_cast<T>(2);
-    //     T sine = sin(angle);
-    //     if (sine == static_cast<T>(0))
-    //         return Eigen::Matrix<T, 4, 4>::Identity();
-    //     T ctg = cos(angle) / sine;
-
-    //     Eigen::Matrix<T, 4, 4> m = Eigen::Matrix<T, 4, 4>::Identity();
-    //     m(0, 0) = ctg / aspect;
-    //     m(1, 1) = ctg;
-    //     m(2, 2) = -(zFar + zNear) / zDelta;
-    //     m(2, 3) = static_cast<T>(-2) * zNear * zFar / zDelta;
-    //     m(3, 2) = static_cast<T>(-1);
-    //     m(3, 3) = static_cast<T>(0);
-
-    //     return m;
-    // }
-
-    template <typename T> glm::dmat4 glPerspective(T fovy, T aspect, T zNear, T zFar)
+    template <typename T> glm::dmat4 perspective(T fovy, T aspect, T zNear, T zFar)
     {
         if (aspect == static_cast<T>(0))
             return glm::dmat4(1.0);
@@ -294,49 +240,6 @@ namespace ofs
     //          static_cast<T>(0),    static_cast<T>(0),    static_cast<T>(0),     static_cast<T>(1);
 
     //     return m;
-    // }
-
-
-    // // scale function calls
-
-    // template <typename T>
-    // Eigen::Matrix<T, 4, 4> scale(T s)
-    // {
-    //     return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s)).matrix();
-    // }
-
-    // // rotate function calls
-
-    // template <typename T>
-    // Eigen::Matrix<T, 4, 4> rotate(const Eigen::Quaternion<T> &q)
-    // {
-    //     return Eigen::Transform<T, 3, Eigen::Affine>(q).matrix();
-    // }
-
-    // template <typename T>
-    // Eigen::Matrix<T, 4, 4> rotate(T angle, const Eigen::Matrix<T, 3, 1> &axis)
-    // {
-    //     return rotate(Eigen::AngleAxis<T>(angle, axis));
-    // }
-
-    // template <typename T>
-    // Eigen::Matrix<T, 4, 4> rotate(Eigen::AngleAxis<T> &a)
-    // {
-    //     return Eigen::Transform<T, 3, Eigen::Affine>(a).matrix();
-    // }
-    
-    // // translate function calls
-
-    // template <typename T>
-    // Eigen::Matrix<T, 4, 4> translate(T x, T y, T z)
-    // {
-    //     return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(Eigen::Matrix<T, 3, 1>(x, y, z))).matrix();
-    // }
-
-    // template <typename T>
-    // Eigen::Matrix<T, 4, 4> translate(const Eigen::Matrix<T, 3, 1> &v)
-    // {
-    //     return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(v)).matrix();
     // }
 
 }

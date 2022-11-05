@@ -47,11 +47,11 @@ void Scene::start()
     glFrontFace(GL_CCW);
     glEnable(GL_CULL_FACE);
 
-    ObjectHandle earth = ofsGetObjectByName("Sol/Earth");
-    if (earth != nullptr)
-        vEarth = addVisualObject(earth);
-    else
-        printf("Can't find planet Earth for visual object\n");
+    // ObjectHandle earth = ofsGetObjectByName("Sol/Earth");
+    // if (earth != nullptr)
+    //     vEarth = addVisualObject(earth);
+    // else
+    //     printf("Can't find planet Earth for visual object\n");
 }
 
 void Scene::update()
@@ -66,6 +66,11 @@ void Scene::update()
     ofsFindClosestStars(ofsGetCameraGlobalPosition(), 1.0, nearStars);
 }
 
+glm::dvec3 Scene::getAstrocentricPosition(ObjectHandle object, const glm::dvec3 &vpos, int time)
+{
+    return vpos - ofsGetObjectGlobalPosition(object, time);
+}
+
 void Scene::render()
 {
     update();
@@ -77,21 +82,11 @@ void Scene::render()
     renderConstellations();
     renderStars(faintestMag);
 
+    glm::dvec3 obs = ofsGetCameraGlobalPosition();
+
     for (auto sun : nearStars)
     {
         // logger->info("Sun: {}\n", ofsGetObjectName(sun));
-
-        // if (!sun->hasSolarSystem())
-        //     continue;
-
-        // System *system = sun->getSolarSystem();
-        // PlanetarySystem *objects = system->getPlanetarySystem();
-        // FrameTree *tree = objects->getSystemTree();
-
-        // vec3d_t apos = getAstrocentericPosition(sun, obs, prm.jnow);
-        // vec3d_t vpn = prm.crot.conjugate() * vec3d_t (0, 0, -1);
-
-        // buildNearSystems(tree, player, apos, vpn, { 0, 0, 0 });
 
         if (!ofsStarHasSolarSystem(sun))
             continue;
@@ -100,6 +95,10 @@ void Scene::render()
         PlanetarySystem *objects = system->getPlanetarySystem();
         FrameTree *tree = objects->getSystemTree();
 
+        glm::dvec3 apos = getAstrocentricPosition(sun, obs, now);
+        glm::dvec3 vpn = ofsGetCameraRotationMatrix() * glm::dvec3(0, 0, -1);
+
+        buildSystems(tree, apos, vpn, { 0, 0, 0 });
     }
 
     // vEarth->update();

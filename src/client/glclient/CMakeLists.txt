@@ -17,6 +17,7 @@ set(OGL_CPP_SRCS
     starcolors.cpp
     stars.cpp
     surface.cpp
+    systems.cpp
     vbody.cpp
     vobject.cpp
     vstar.cpp

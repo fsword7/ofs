@@ -62,7 +62,7 @@ OFSAPI ObjectHandle ofsGetObjectByName(cstr_t &name);
 OFSAPI cstr_t ofsGetObjectName(ObjectHandle object);
 OFSAPI ObjectType ofsGetObjectType(ObjectHandle object);
 OFSAPI double ofsGetObjectRadius(ObjectHandle object);
-OFSAPI glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object);
+OFSAPI glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object, int time);
 
 OFSAPI int ofsGetObjectStarHIPNumber(ObjectHandle object);
 OFSAPI glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object);

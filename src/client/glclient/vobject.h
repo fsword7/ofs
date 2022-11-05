@@ -6,6 +6,32 @@
 #pragma once
 
 class Scene;
+class celBody;
+
+struct ObjectProperties
+{
+    celBody *body;
+
+    color_t     color;
+    uint32_t    maxLOD;
+    uint32_t    biasLOD;
+    glm::dvec3  opos;
+    glm::dmat3  orot;
+    double      orad;
+    glm::dvec3  wpos;      // world coordinates (longitude/latitude)
+    glm::dvec3  lpos;      // local planetocentric coordinates
+
+    glm::dmat4  mvp;
+
+    glm::dvec3  cpos;
+    glm::dvec3  cqrot;
+    glm::dmat3  crot;
+    glm::dvec3  cdir;
+    double      cdist;
+
+    double   viewap;
+    double   tanap;
+};
 
 class vObject
 {
@@ -19,8 +45,8 @@ public:
 
     static vObject *create(ObjectHandle object, Scene &scene);
 
-    virtual void update();
-    virtual void render() {}
+    virtual void update(int now);
+    virtual void render(const ObjectProperties &op) {}
 
 protected:
     ObjectHandle object;

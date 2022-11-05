@@ -26,7 +26,15 @@ public:
     inline bool isRoot() const              { return parentBody == nullptr; }
     
     void addObject(Object *object);
-    Object *getObject(int idx) const;
+    // Object *getObject(int idx) const;
+
+    Object *getObject(int idx) const
+    {
+        if (idx >= 0 && idx < objects.size())
+            return objects[idx];
+        return nullptr;
+    }
+
 
 private:
     celStar *parentStar = nullptr;

@@ -123,7 +123,7 @@ public:
 
     void process(SurfaceTile *tile);
     void render(SurfaceTile *tile); 
-    void render(const glm::dmat4 &dmWorld);
+    void render(const glm::dmat4 &dmWorld, const ObjectProperties &op);
 
     struct renderParams
     {

@@ -39,7 +39,7 @@ void Camera::reset()
 
 void Camera::updateProjectionMatrix()
 {
-    proj = ofs::glPerspective(fov, aspect, zNear, zFar);
+    proj = ofs::perspective(fov, aspect, zNear, zFar);
 }
 
 void Camera::setPosition(const glm::dvec3 &pos)
@@ -122,11 +122,11 @@ void Camera::rotate(double dx, double dy, double dz)
     double sy = sin(clrot.y), cy = cos(clrot.y);
     double sz = sin(clrot.z), cz = cos(clrot.z);
 
-    rrot = {
-        { cx,   sx*sy,  -sx*cy },
-        { 0.0,  cy,      sy    },
-        { sx,  -cx*sy,   cx*cy }
-    };
+    // rrot = {
+    //     { cx*cz, sz,     -sx*cy },
+    //     { -sz,   cy*cz,   sy    },
+    //     { sx,   -cx*sy,   cx*cy }
+    // };
 }
 
 void Camera::rotatePhi(double dPhi)

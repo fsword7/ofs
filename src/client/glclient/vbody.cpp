@@ -20,13 +20,13 @@ vBody::~vBody()
     
 }
 
-void vBody::update()
+void vBody::update(int now)
 {
-    vObject::update();
+    vObject::update(now);
 
 }
 
-void vBody::render()
+void vBody::render(const ObjectProperties &op)
 {
-    smgr->render(dmWorld);
+    smgr->render(dmWorld, op);
 }

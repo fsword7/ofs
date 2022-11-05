@@ -96,9 +96,9 @@ LIBEXPORT double ofsGetObjectRadius(ObjectHandle object)
     return static_cast<Object *>(object)->getRadius(); 
 }
 
-LIBEXPORT glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object)
+LIBEXPORT glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object, int time)
 {
-    return glm::dvec3(0, 0, 0);
+    return static_cast<Object *>(object)->getuPosition(time);
 }
 
 LIBEXPORT int ofsGetObjectStarHIPNumber(ObjectHandle object)
