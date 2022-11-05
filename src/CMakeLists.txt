@@ -25,6 +25,7 @@ set(OFS_CPP_SRCS
     ephem/earth/nrlmsise00_math.cpp
     ephem/earth/nrlmsise00_p.cpp
     ephem/earth/nrlmsise00.cpp
+    ephem/moon/elp82.cpp
     ephem/earth-p03lp.cpp
     ephem/elements.cpp
     ephem/elp-mpp02.cpp
@@ -32,6 +33,7 @@ set(OFS_CPP_SRCS
     ephem/orbit.cpp
     ephem/rotation.cpp
     ephem/vsop87.cpp
+    ephem/vsop87a.cpp
     main/app.cpp
     # main/date.cpp
     main/graphics.cpp
@@ -92,11 +94,13 @@ set(OFS_H_SRCS
     ephem/earth/nrlmsise00_math.hpp
     ephem/earth/nrlmsise00_p.hpp
     ephem/earth/nrlmsise00.hpp
+    ephem/moon/elp82.h
     ephem/elements.h
     ephem/elp-mpp02.h
     ephem/orbit.h
     ephem/rotation.h
     ephem/vsop87.h
+    ephem/vsop87a.h
     # main/sdl/app.h
     main/app.h
     main/core.h
