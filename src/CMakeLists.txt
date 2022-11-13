@@ -21,6 +21,7 @@ set(OFS_CPP_SRCS
     engine/vessel.cpp
     engine/view.cpp
     ephem/earth/atmo.cpp
+    ephem/earth/earth.cpp
     ephem/earth/nrlmsise00_data.cpp
     ephem/earth/nrlmsise00_math.cpp
     ephem/earth/nrlmsise00_p.cpp

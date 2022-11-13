@@ -8,12 +8,12 @@
 #include "api/celbody.h"
 #include "ephem/moon/elp82.h"
 
-void ELP82Orbit::load(cstr_t &name)
+void OrbitELP82::load(cstr_t &name)
 {
 
 }
 
-void ELP82Orbit::init()
+void OrbitELP82::init()
 {
     // Constant initializations
     cpi     = 3.141592653589793;
@@ -111,7 +111,7 @@ void ELP82Orbit::init()
 	q5 = -0.320334e-14;
 }
 
-void ELP82Orbit::getEphemeris(double mjd, double *res)
+void OrbitELP82::getEphemeris(double mjd, double *res)
 {
 	int k, iv, nt;
 	double t[5];

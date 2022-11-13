@@ -8,8 +8,17 @@
 #include "api/celbody.h"
 #include "ephem/vsop87a.h"
 
+OrbitVSOP87::OrbitVSOP87(ObjectHandle object)
+{
 
-void VSOP87Orbit::setSeries(char series)
+}
+
+OrbitVSOP87::~OrbitVSOP87()
+{
+
+}
+
+void OrbitVSOP87::setSeries(char series)
 {
     sid = std::toupper(series);
 
@@ -30,7 +39,7 @@ void VSOP87Orbit::setSeries(char series)
 	}
 }
 
-void VSOP87Orbit::load(cstr_t &name)
+void OrbitVSOP87::load(cstr_t &name)
 {
 
 
@@ -95,7 +104,7 @@ void VSOP87Orbit::load(cstr_t &name)
 	vsopFile.close();
 }
 
-void VSOP87Orbit::getEphemeris(double mjd, double *ret)
+void OrbitVSOP87::getEphemeris(double mjd, double *ret)
 {
 	static const double mjd2000 = 51544.5;
 	static const double a1000 = 365250.0;

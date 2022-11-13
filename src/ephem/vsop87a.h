@@ -6,23 +6,30 @@
 #define VSOP_PARAMS     6   // XYZ position/velocity parameters
 #define VSOP_MAXALPHA   5
 
-class VSOP87Orbit
+class OrbitVSOP87
 {
 public:
-    VSOP87Orbit(ObjectHandle object);
-    ~VSOP87Orbit();
-
-    void getEphemeris(double mjd, double *ret);
+    OrbitVSOP87(ObjectHandle object);
+    virtual ~OrbitVSOP87();
+    
+    virtual uint16_t getOrbitData(double mjd, uint16_t req, double *ret) = 0;
 
 protected:
     void setSeries(char series);
     void init();
     void load(cstr_t &name);
+    
+    void getEphemeris(double mjd, double *ret);
 
     int index[3];
     double terms[3];
 
-    char sid;
+    double a0;      // semi-major axis [AU]
+
+    int nalpha;
     int16_t fmtFlags = 0;
+
+private:
+    char sid;
 
 };
