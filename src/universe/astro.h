@@ -41,6 +41,9 @@ namespace astro
     // vec3d_t convertEquatorialToEcliptic(double ra, double de, double pc);
     glm::dvec3 convertEquatorialToEcliptic(double ra, double de, double pc);
 
+    str_t getMJDDateStr(double mjd);
+    struct tm *getMJDDate(double mjd);
+
     template <typename T> T convertKilometerToAU(T km)
     {
         return km / (T)KM_PER_AU;

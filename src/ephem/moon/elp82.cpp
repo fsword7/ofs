@@ -158,8 +158,10 @@ void OrbitELP82::getEphemeris(double mjd, double *res)
 	res[4] = res[4]/rad;
 	res[2] = res[2]*a0/ath;
 	res[5] = res[5]*a0/ath;
+
 	cosr0 = cos(res[0]), sinr0 = sin(res[0]);
 	cosr1 = cos(res[1]), sinr1 = sin(res[1]);
+
 	x1       = res[2]*cosr1;
 	x1_dot   = res[5]*cosr1 - res[2]*sinr1*res[4];
 	x2       = x1*sinr0;

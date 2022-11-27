@@ -121,7 +121,7 @@ void OrbitVSOP87::getEphemeris(double mjd, double *ret)
 		ret[idx] = 0.0;
 
 	double a, b, c;
-	double arg, tm, termdot;
+	double arg, tm, tmdot;
 	double *pterm[3];
 
 	// Set up time series
@@ -137,20 +137,22 @@ void OrbitVSOP87::getEphemeris(double mjd, double *ret)
 		for (int alpha = 0; ; alpha++)
 		{
 			// pterm = nullptr;
-			tm = termdot = 0.0;
+			tm = tmdot = 0.0;
 
 			for (int term = 0; ; term++)
 			{
+				// f(tm) = a * cos (b * c * T)
+				// f'(tm) = a * -sin (b * c * T) * c
 				a = pterm[term][0];
 				b = pterm[term][1];
 				c = pterm[term][2];
 				arg = b * c * t[1];
 				tm += a * cos(arg);
-				termdot -= c * a * sin(arg);
+				tmdot -= c * a * sin(arg);
 			}
 
 			ret[idx]  += t[alpha] * tm;
-			ret[idx+3] += t[alpha] * termdot +
+			ret[idx+3] += t[alpha] * tmdot +
 				(alpha > 0 ? alpha * t[alpha - 1] * tm : 0.0);
 		}		
 	}
