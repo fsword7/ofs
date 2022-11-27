@@ -6,6 +6,10 @@
 #include "main/core.h"
 #include "engine/object.h"
 
+void Object::update(bool force)
+{
+}
+
 glm::dvec3 Object::getuPosition(double tjd) const
 {
     return objPosition;

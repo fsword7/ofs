@@ -65,6 +65,7 @@ public:
     virtual void setOrbit(Orbit *nOrbit) = 0;
     virtual void setRotation(Rotation *nRotation) = 0;
     virtual void updateCullingRadius();
+    virtual void update(bool force);
 
     virtual Frame *getOrbitFrame() const = 0;
     virtual Frame *getBodyFrame() const = 0;

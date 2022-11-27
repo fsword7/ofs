@@ -169,12 +169,12 @@ void Vessel::updateMass()
     mass = emass + fmass;
 }
 
-void Vessel::update()
+void Vessel::update(bool force)
 {
 
     if (fsType == fsFlight)
     {
-        RigidBody::update();
+        RigidBody::update(force);
     } 
     else if (fsType == fsLanded)
     {

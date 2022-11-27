@@ -167,7 +167,7 @@ public:
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
 
     void updateMass();
-    void update();
+    virtual void update(bool force);
 
 private:
     SuperVessel *superVessel = nullptr;

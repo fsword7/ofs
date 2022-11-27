@@ -34,7 +34,7 @@ public:
     glm::dmat3 getuOrientation(double tjd) const override;
     glm::dvec3 getoPosition(double tjd) const override;
 
-    void update();
+    virtual void update(bool force);
     
 protected:
     // Reference frame parameters

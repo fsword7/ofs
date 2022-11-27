@@ -48,6 +48,8 @@ glm::dvec3 RigidBody::getoPosition(double tjd) const
     return orbit->getPosition(tjd);
 }
 
-void RigidBody::update()
+void RigidBody::update(bool force)
 {
+
+    Object::update(force);
 }
