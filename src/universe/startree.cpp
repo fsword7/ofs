@@ -27,12 +27,12 @@ double StarTree::decay(double factor)
     return convertLumToAbsMag(convertAbsMagToLum(factor) / 4.0);
 }
 
-void StarTree::add(celStar &star)
+void StarTree::add(CelestialStar &star)
 {
     list.push_back(&star);
 }
 
-void StarTree::insert(celStar &star, double scale)
+void StarTree::insert(CelestialStar &star, double scale)
 {
     StarTree *child;
 
@@ -54,7 +54,7 @@ void StarTree::split(double scale)
 
     for (int idx = 0; idx < list.size(); idx++)
     {
-        celStar &star = *list[idx];
+        CelestialStar &star = *list[idx];
 
         if (star.getAbsMag() < exclusiveFactor)
             list[count++] = list[idx];
@@ -81,7 +81,7 @@ void StarTree::split(double scale)
     list.resize(count);
 }
 
-uint32_t StarTree::index(celStar &star, const glm::dvec3 &cell)
+uint32_t StarTree::index(CelestialStar &star, const glm::dvec3 &cell)
 {
     glm::dvec3 spos = star.getStarPosition();
 
@@ -121,7 +121,7 @@ void StarTree::processVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &
 
     for (int32_t idx = 0; idx < list.size(); idx++)
     {
-        celStar *star = list[idx];
+        CelestialStar *star = list[idx];
 
         double dist = glm::length(obs - star->getStarPosition());
         double appMag = convertAbsToAppMag(star->getAbsMag(), dist);
@@ -150,7 +150,7 @@ void StarTree::processCloseStars(const glm::dvec3 &obs, const double radius, con
     
     for (uint32_t idx = 0; idx < list.size(); idx++)
     {
-        celStar *star = list[idx];
+        CelestialStar *star = list[idx];
 
         if (glm::length(obs - star->getStarPosition()) < ofs::square(radius))
         {

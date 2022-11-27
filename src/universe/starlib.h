@@ -6,7 +6,7 @@
 #pragma once
 
 class StarTree;
-class celStar;
+class CelestialStar;
 class ofsHandler;
 class ofsHandler2;
 
@@ -18,25 +18,25 @@ public:
 
     bool loadXHIPData(const fs::path &pname);
 
-    void initOctreeData(std::vector<celStar *> stars);
+    void initOctreeData(std::vector<CelestialStar *> stars);
     void finish();
 
-    void addStar(celStar *star);
+    void addStar(CelestialStar *star);
 
-    celStar *find(cstr_t &name) const;
+    CelestialStar *find(cstr_t &name) const;
 
     void findVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &obs,
         const glm::dmat3 &rot, double fov, double aspect, double limitMag) const;
     int findCloseStars(const glm::dvec3 &obs, double radius,
         std::vector<ObjectHandle> &stars) const;
 
-    inline celStar *getHIPstar(uint32_t hip) const          { return hipList[hip]; }
+    inline CelestialStar *getHIPstar(uint32_t hip) const    { return hipList[hip]; }
     inline ObjectHandle getHIPstar2(uint32_t hip) const     { return hipList[hip]; }
 
 private:
-    std::vector<celStar *> uStars;
+    std::vector<CelestialStar *> uStars;
 
-    celStar **hipList = nullptr;
+    CelestialStar **hipList = nullptr;
 
     StarTree *starTree = nullptr;
 };

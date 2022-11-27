@@ -21,10 +21,10 @@ public:
 
     void init();
 
-    System *createSolarSystem(celStar *star);
-    System *getSolarSystem(celStar *star) const;
+    System *createSolarSystem(CelestialStar *star);
+    System *getSolarSystem(CelestialStar *star) const;
 
-    celStar *findStar(cstr_t &name) const;
+    CelestialStar *findStar(cstr_t &name) const;
 
     Object *findObject(const Object *obj, const std::string &name) const;
     Object *findPath(cstr_t &path) const;

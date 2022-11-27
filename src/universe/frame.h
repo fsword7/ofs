@@ -9,18 +9,18 @@
 
 class Object;
 class Frame;
-class celBody;
-class celStar;
+class CelestialBody;
+class CelestialStar;
 
 class FrameTree
 {
 public:
-    FrameTree(celBody *body);
-    FrameTree(celStar *star);
+    FrameTree(CelestialBody *body);
+    FrameTree(CelestialStar *star);
     virtual ~FrameTree();
 
-    inline celStar *getStar() const         { return parentStar; }
-    inline celBody *getBody() const         { return parentBody; }
+    inline CelestialStar *getStar() const   { return parentStar; }
+    inline CelestialBody *getBody() const   { return parentBody; }
     inline Frame *getDefaultFrame() const   { return defaultFrame; }
     inline int getSystemSize() const        { return objects.size(); }
     inline bool isRoot() const              { return parentBody == nullptr; }
@@ -37,8 +37,8 @@ public:
 
 
 private:
-    celStar *parentStar = nullptr;
-    celBody *parentBody = nullptr;
+    CelestialStar *parentStar = nullptr;
+    CelestialBody *parentBody = nullptr;
 
     std::vector<Object *> objects;
 

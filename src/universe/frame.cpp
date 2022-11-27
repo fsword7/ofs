@@ -11,13 +11,13 @@
 
 // ******** Reference Frame Tree ********
 
-FrameTree::FrameTree(celStar *star)
+FrameTree::FrameTree(CelestialStar *star)
 : parentStar(star)
 {
     defaultFrame = new J2000EclipticFrame(star);
 }
 
-FrameTree::FrameTree(celBody *body)
+FrameTree::FrameTree(CelestialBody *body)
 : parentBody(body)
 {
     defaultFrame = new BodyMeanEquatorFrame(body, body);
@@ -138,7 +138,7 @@ glm::dmat3 BodyFixedFrame::getOrientation(double tjd) const
     {
     case ObjectType::objCelestialStar:
     case ObjectType::objCelestialBody:
-        return yrot180 * dynamic_cast<celBody *>(fixedObject)->getuOrientation(tjd);
+        return yrot180 * dynamic_cast<CelestialBody *>(fixedObject)->getuOrientation(tjd);
     default:
         return yrot180; // { 1, 0, 0, 0 };
     }
@@ -158,7 +158,7 @@ glm::dmat3 BodyMeanEquatorFrame::getOrientation(double tjd) const
     {
     case ObjectType::objCelestialStar:
     case ObjectType::objCelestialBody:
-        return dynamic_cast<celBody *>(equatorObject)->getEquatorial(tjd);
+        return dynamic_cast<CelestialBody *>(equatorObject)->getEquatorial(tjd);
     default:
         return glm::dmat3(1.0);
     }

@@ -15,17 +15,17 @@
 
 // ******** Solar System ********
 
-System::System(celStar *star)
+System::System(CelestialStar *star)
 : objects(star)
 {
     stars.push_back(star);
     star->setSolarSystem(this);
 }
 
-celBody *System::createBody(cstr_t &name, PlanetarySystem *system,
+CelestialBody *System::createBody(cstr_t &name, PlanetarySystem *system,
     celType type, cstr_t &orbitFrameName, cstr_t &bodyFrameName)
 {
-    celBody *body = new celBody(system, name, type);
+    CelestialBody *body = new CelestialBody(system, name, type);
 
     Object *parentObject = system->getPrimaryBody();
     if (parentObject == nullptr)
@@ -216,7 +216,7 @@ Rotation *System::createRotation(Object *centerObject, Group *objData, const fs:
     return nullptr;
 }
 
-celBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem, Universe &universe, Group *objData)
+CelestialBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem, Universe &universe, Group *objData)
 {
     // Determine body classification first
     std::string className;
@@ -224,7 +224,7 @@ celBody *System::createBody2(cstr_t &name, celType type, PlanetarySystem *pSyste
     if (objData->getString("Class", className));
         bodyType = getClassification(className);
 
-    celBody *body = new celBody(pSystem, name, bodyType);
+    CelestialBody *body = new CelestialBody(pSystem, name, bodyType);
 
 
     double val;
@@ -351,20 +351,20 @@ bool System::loadSolarSystemObjects(std::istream &in, Universe &universe, const 
 
         if (parent->getType() == ObjectType::objCelestialStar)
         {
-            celStar *star = dynamic_cast<celStar *>(parent);
+            CelestialStar *star = dynamic_cast<CelestialStar *>(parent);
             System *system = universe.createSolarSystem(star);
             pSystem = system->getPlanetarySystem();
         }
         else if (parent->getType() == ObjectType::objCelestialBody)
         {
-            celBody *body = dynamic_cast<celBody *>(parent);
+            CelestialBody *body = dynamic_cast<CelestialBody *>(parent);
             pSystem = body->createPlanetarySystem();
         }
         else
             return logError(parser, fmt::format("Parent celestial body '{}' of '{}' not found",
                 parentName, primaryName));
 
-        celBody *existingBody = pSystem->find(primaryName);
+        CelestialBody *existingBody = pSystem->find(primaryName);
         if (existingBody != nullptr)
         {
             logError(parser, fmt::format("Body '{}' already created", primaryName));
@@ -372,7 +372,7 @@ bool System::loadSolarSystemObjects(std::istream &in, Universe &universe, const 
             continue;
         }
 
-        celBody *body = createBody2(primaryName, celType::cbUnknown, pSystem, universe, objData);
+        CelestialBody *body = createBody2(primaryName, celType::cbUnknown, pSystem, universe, objData);
 
         // All done, delete all object definitions
         delete group;

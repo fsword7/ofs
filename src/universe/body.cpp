@@ -11,29 +11,29 @@
 
 // ******** Planetary System ********
 
-PlanetarySystem::PlanetarySystem(celBody *body)
+PlanetarySystem::PlanetarySystem(CelestialBody *body)
 : body(body), tree(body)
 {
     bodies.clear();
 }
 
-PlanetarySystem::PlanetarySystem(celStar *star)
+PlanetarySystem::PlanetarySystem(CelestialStar *star)
 : star(star), tree(star)
 {
     bodies.clear();
 }
 
-void PlanetarySystem::addBody(celBody *body)
+void PlanetarySystem::addBody(CelestialBody *body)
 {
     bodies.push_back(body);
     body->setInSystem(this);
 }
 
-void PlanetarySystem::removeBody(celBody *body)
+void PlanetarySystem::removeBody(CelestialBody *body)
 {
 }
 
-celBody *PlanetarySystem::find(cstr_t &name) const
+CelestialBody *PlanetarySystem::find(cstr_t &name) const
 {
     for (auto body : bodies)
     {
@@ -45,7 +45,7 @@ celBody *PlanetarySystem::find(cstr_t &name) const
 
 // ******** Celestial Body ********
 
-PlanetarySystem *celBody::createPlanetarySystem()
+PlanetarySystem *CelestialBody::createPlanetarySystem()
 {
     if (ownSystem != nullptr)
         return ownSystem;
@@ -55,12 +55,19 @@ PlanetarySystem *celBody::createPlanetarySystem()
     return ownSystem;
 }
 
-glm::dmat3 celBody::getEquatorial(double tjd) const
+void CelestialBody::update(bool force)
+{
+
+
+    RigidBody::update(force);
+}
+
+glm::dmat3 CelestialBody::getEquatorial(double tjd) const
 {
     return glm::dmat3(1.0);
 }
 
-double celBody::getLuminosity(double lum, double dist) const
+double CelestialBody::getLuminosity(double lum, double dist) const
 {
     double power = lum * SOLAR_POWER;
     double irradiance = power / ofs::sphereArea(dist * 1000.0);
@@ -70,7 +77,7 @@ double celBody::getLuminosity(double lum, double dist) const
     return reflectedEnergy / SOLAR_POWER;
 }
 
-double celBody::getApparentMagnitude(glm::dvec3 sun, double irradiance, glm::dvec3 view) const
+double CelestialBody::getApparentMagnitude(glm::dvec3 sun, double irradiance, glm::dvec3 view) const
 {
     double vdist  = glm::length(view);
     double sdist  = glm::length(sun);
@@ -80,12 +87,12 @@ double celBody::getApparentMagnitude(glm::dvec3 sun, double irradiance, glm::dve
     return astro::convertLumToAppMag(absMag, astro::convertKilometerToParsec(vdist));
 }
 
-glm::dmat3 celBody::getBodyFixedFromEcliptic(double tjd) const
+glm::dmat3 CelestialBody::getBodyFixedFromEcliptic(double tjd) const
 {
     return (rotation != nullptr ? rotation->getRotation(tjd) : glm::dmat3(1.0)) * bodyFrame->getOrientation(tjd);
 }
 
-glm::dvec3 celBody::getPlanetocentric(glm::dvec3 pos) const
+glm::dvec3 CelestialBody::getPlanetocentric(glm::dvec3 pos) const
 {
     glm::dvec3 w = glm::normalize(pos);
 
@@ -95,19 +102,19 @@ glm::dvec3 celBody::getPlanetocentric(glm::dvec3 pos) const
     return glm::dvec3(lat, lng, glm::length(pos) - radius);
 }
 
-glm::dvec3 celBody::getPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const
+glm::dvec3 CelestialBody::getPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const
 {
     glm::dvec3 lpos = getBodyFixedFromEcliptic(tjd) * pos;
 
     return getPlanetocentric(lpos);
 }
 
-glm::dvec3 celBody::getvPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const
+glm::dvec3 CelestialBody::getvPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const
 {
     return getBodyFixedFromEcliptic(tjd) * pos;
 }
 
-glm::dvec3 celBody::getHeliocentric(double tjd) const
+glm::dvec3 CelestialBody::getHeliocentric(double tjd) const
 {
     glm::dvec3 opos = getuPosition(tjd);
     glm::dvec3 hpos = glm::normalize(opos);

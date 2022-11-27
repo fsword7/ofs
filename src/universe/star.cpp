@@ -4,18 +4,19 @@
 // Date:    Apr 16, 2022
 
 #include "main/core.h"
+#include "universe/body.h"
 #include "universe/star.h"
 #include "universe/astro.h"
 
-celStar::celStar(cstr_t &name)
-: RigidBody(name, objCelestialStar)
+CelestialStar::CelestialStar(cstr_t &name)
+: CelestialBody(name, cbStar)
 {
 
 }
 
-celStar *celStar::createTheSun()
+CelestialStar *CelestialStar::createTheSun()
 {
-    celStar *star = new celStar("Sol");
+    CelestialStar *star = new CelestialStar("Sol");
 
     star->ra            = 0.0;
     star->dec           = 0.0;
@@ -39,10 +40,10 @@ celStar *celStar::createTheSun()
     return star;
 }
 
-celStar *celStar::create(double ra, double de, double pc,
+CelestialStar *CelestialStar::create(double ra, double de, double pc,
     cchar_t *spType, double appMag, double ci, double lum)
 {
-    celStar *star = new celStar("(unknown)");
+    CelestialStar *star = new CelestialStar("(unknown)");
     int temp;
 
     star->spos = astro::convertEquatorialToEcliptic(ra, de, pc);

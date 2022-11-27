@@ -5,7 +5,7 @@
 
 #pragma once
 
-class celStar;
+class CelestialStar;
 class Universe;
 class Parser;
 class Value;
@@ -16,12 +16,12 @@ class Group;
 class System
 {
 public:
-    System(celStar *star);
+    System(CelestialStar *star);
     ~System() = default;
 
     inline PlanetarySystem *getPlanetarySystem()    { return &objects; }
 
-    static celBody *createBody(cstr_t &name, PlanetarySystem *system,
+    static CelestialBody *createBody(cstr_t &name, PlanetarySystem *system,
         celType type, cstr_t &orbitFrameName, cstr_t &bodyFrameName);
 
     // Loading SSO system file
@@ -36,12 +36,12 @@ public:
     static Orbit *createOrbit(Object *centerObject, Group *objData, const fs::path &path);
     static Rotation *createRotation(Object *centerObject, Group *objData, const fs::path &path);
     static void setSurface(celSurface &surface, Group *objData);
-    static celBody *createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem,
+    static CelestialBody *createBody2(cstr_t &name, celType type, PlanetarySystem *pSystem,
         Universe &universe, Group *objData);
     static bool loadSolarSystemObjects(std::istream &in, Universe &universe, const fs::path &path);
 
 private:
-    std::vector<celStar *> stars; // Multi-star systems
+    std::vector<CelestialStar *> stars; // Multi-star systems
     PlanetarySystem objects;
 };
 

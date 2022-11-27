@@ -23,13 +23,13 @@ void Universe::init()
     constellations.load("data/constellations/western/constellationship.fab");
     // constellations.load("constellations/western_rey/constellationship.fab");
 
-    celStar *sun = stardb.find("Sol");
+    CelestialStar *sun = stardb.find("Sol");
     System *solSystem = createSolarSystem(sun);
     PlanetarySystem *system = solSystem->getPlanetarySystem();
 
-    celBody *mercury, *venus, *earth;
-    celBody *mars, *jupiter, *saturn;
-    celBody *uranus, *neptune, *lunar;
+    CelestialBody *mercury, *venus, *earth;
+    CelestialBody *mars, *jupiter, *saturn;
+    CelestialBody *uranus, *neptune, *lunar;
 
     // mercury = System::createBody("Mercury", system, celType::cbPlanet,
     //     "EclipticJ2000", "EquatorJ2000");
@@ -79,7 +79,7 @@ void Universe::init()
     in.close();
 }
 
-System *Universe::createSolarSystem(celStar *star)
+System *Universe::createSolarSystem(CelestialStar *star)
 {
     System *system = getSolarSystem(star);
     if (system != nullptr)
@@ -92,7 +92,7 @@ System *Universe::createSolarSystem(celStar *star)
     return system;
 }
 
-System *Universe::getSolarSystem(celStar *star) const
+System *Universe::getSolarSystem(CelestialStar *star) const
 {
     if (star == nullptr)
         return nullptr;
@@ -103,7 +103,7 @@ System *Universe::getSolarSystem(celStar *star) const
     return nullptr;
 }
 
-celStar *Universe::findStar(cstr_t &name) const
+CelestialStar *Universe::findStar(cstr_t &name) const
 {
     return stardb.find(name);
 }
@@ -111,21 +111,21 @@ celStar *Universe::findStar(cstr_t &name) const
 Object *Universe::findObject(const Object *obj, cstr_t &name) const
 {
     System *system;
-    const celStar *sun;
-    const celBody *body;
+    const CelestialStar *sun;
+    const CelestialBody *body;
     const PlanetarySystem *objects;
 
     switch (obj->getType())
     {
     case ObjectType::objCelestialStar:
-        sun = dynamic_cast<const celStar *>(obj);
+        sun = dynamic_cast<const CelestialStar *>(obj);
         if ((system = sun->getSolarSystem()) == nullptr)
             break;
         objects = system->getPlanetarySystem();
         return objects->find(name);
 
     case ObjectType::objCelestialBody:
-        body = dynamic_cast<const celBody *>(obj);
+        body = dynamic_cast<const CelestialBody *>(obj);
         objects = body->getOwnSystem();
         if (objects != nullptr)
             return objects->find(name);

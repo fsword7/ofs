@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "engine/rigidbody.h"
+#include "universe/body.h"
 
 enum SpectralClass
 {
@@ -39,18 +39,11 @@ enum SpectralClass
 
 class System;
 
-class celStar : public RigidBody
+class CelestialStar : public CelestialBody
 {
 public:
-    enum {
-        cbKnownRadius   = 1,
-        cbKnownRotation = 2,
-        cbKnownSurface  = 4,
-        cbKnownObject   = (cbKnownRadius|cbKnownRotation|cbKnownSurface)
-    };
-
-    celStar(cstr_t &name);
-    ~celStar() = default;
+    CelestialStar(cstr_t &name);
+    ~CelestialStar() = default;
 
     inline glm::dvec3 getStarPosition() const   { return spos; }
     inline double  getAbsMag() const            { return absMag; }
@@ -64,8 +57,8 @@ public:
     inline System *getSolarSystem() const       { return system; }
     inline void setSolarSystem(System *sys)     { system = sys; }
 
-    static celStar *createTheSun();
-    static celStar *create(double ra, double de, double pc,
+    static CelestialStar *createTheSun();
+    static CelestialStar *create(double ra, double de, double pc,
         cchar_t *spType, double appMag, double ci, double lum);
 
 private: 
@@ -75,8 +68,6 @@ private:
     // Star position parameters
     glm::dvec3 spos;        // Star pisition [pc]
     double  ra, dec, plx;
-
-    uint32_t knownFlags = 0; // Known flags
 
     // Spectral class/type
     str_t   specName;

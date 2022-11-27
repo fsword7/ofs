@@ -17,7 +17,7 @@ void Scene::renderObjectAsPoint(ObjectListEntry &ole)
 
 void Scene::renderCelestialBody(ObjectListEntry &ole)
 {
-    celBody *body = dynamic_cast<celBody *>(ole.object);
+    CelestialBody *body = dynamic_cast<CelestialBody *>(ole.object);
 
     vObject *vobj = getVisualObject(ole.object, true);
     if (ole.objSize > 1.0)
@@ -56,7 +56,7 @@ void Scene::buildSystems(FrameTree *tree, const glm::dvec3 &apos,
 
     for (int idx = 0; idx < nObjects; idx++)
     {
-        celBody *body = dynamic_cast<celBody *>(tree->getObject(idx));
+        CelestialBody *body = dynamic_cast<CelestialBody *>(tree->getObject(idx));
         if (body == nullptr)
             continue;
     

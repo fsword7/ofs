@@ -46,7 +46,7 @@ bool StarDatabase::loadXHIPData(const fs::path &pname)
         return false;
     }
 
-    celStar *star;
+    CelestialStar *star;
     str_t mline, pline, bline;
     int lineno = 0;
     int hip, phip, bhip;
@@ -60,7 +60,7 @@ bool StarDatabase::loadXHIPData(const fs::path &pname)
     int    cnplx = 0, czplx = 0;
 
     // Create the Sun (Sol)
-    star = celStar::createTheSun();
+    star = CelestialStar::createTheSun();
     uStars.push_back(star);
 
     while (std::getline(mdata, mline) &&
@@ -123,7 +123,7 @@ bool StarDatabase::loadXHIPData(const fs::path &pname)
             dist = 1000.0 / plx;
         }
 
-        star = celStar::create(ra, de, dist, spType, vMag, ci, lum);
+        star = CelestialStar::create(ra, de, dist, spType, vMag, ci, lum);
         if (star != nullptr)
         {
             star->setHIPnumber(hip);
@@ -144,12 +144,12 @@ bool StarDatabase::loadXHIPData(const fs::path &pname)
     return true;
 }
 
-void StarDatabase::addStar(celStar *star)
+void StarDatabase::addStar(CelestialStar *star)
 {
     uStars.push_back(star);
 }
 
-void StarDatabase::initOctreeData(std::vector<celStar *> stars)
+void StarDatabase::initOctreeData(std::vector<CelestialStar *> stars)
 {
     double absMag = astro::convertAppToAbsMag(STARTREE_MAGNITUDE,
         STARTREE_ROOTSIZE * sqrt(3.0));
@@ -176,14 +176,14 @@ void StarDatabase::finish()
         if (hip > maxHip)
             maxHip = hip;
     }
-    hipList = new celStar*[maxHip];
+    hipList = new CelestialStar*[maxHip];
     for (int idx = 0; idx < maxHip; idx++)
         hipList[idx] = nullptr;
     for (int idx = 0; idx < uStars.size(); idx++)
         hipList[uStars[idx]->getHIPnumber()] = uStars[idx];
 }
 
-celStar *StarDatabase::find(cstr_t &name) const
+CelestialStar *StarDatabase::find(cstr_t &name) const
 {
     for (int idx = 0; idx < uStars.size(); idx++)
         if (uStars[idx]->getName() == name)

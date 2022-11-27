@@ -13,7 +13,7 @@
 #define STARTREE_ROOTSIZE       (10'000'000.0 / LY_PER_PARSEC)
 #define STARTREE_THRESHOLD      75
 
-class celStar;
+class CelestialStar;
 
 class StarTree : public Tree<StarTree, OTREE_NODES>
 {
@@ -28,8 +28,8 @@ public:
     StarTree(const glm::dvec3 &cell, const double factor, StarTree *parent = nullptr);
     ~StarTree();
 
-    void insert(celStar &object, double scale);
-    void add(celStar &object);
+    void insert(CelestialStar &object, double scale);
+    void add(CelestialStar &object);
     void split(double scale);
 
     uint32_t countNodes();
@@ -42,10 +42,10 @@ public:
 
 private:
     double decay(double factor);
-    uint32_t index(celStar &object, const glm::dvec3 &cell);
+    uint32_t index(CelestialStar &object, const glm::dvec3 &cell);
 
     glm::dvec3 cellCenter;
     double  exclusiveFactor;
 
-    std::vector<celStar *> list;
+    std::vector<CelestialStar *> list;
 };

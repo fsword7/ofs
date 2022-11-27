@@ -9,36 +9,36 @@
 #include "universe/frame.h"
 #include "universe/surface.h"
 
-class celStar;
-class celBody;
+class CelestialStar;
+class CelestialBody;
 
 class PlanetarySystem
 {
 public:
-    PlanetarySystem(celBody *body = nullptr);
-    PlanetarySystem(celStar *star);
+    PlanetarySystem(CelestialBody *body = nullptr);
+    PlanetarySystem(CelestialStar *star);
     ~PlanetarySystem() = default;
 
-    inline celBody *getPrimaryBody() const      { return body; }
-    inline celStar *getStar() const             { return star; }
-    inline FrameTree *getSystemTree()           { return &tree; }
+    inline CelestialBody *getPrimaryBody() const    { return body; }
+    inline CelestialStar *getStar() const           { return star; }
+    inline FrameTree *getSystemTree()               { return &tree; }
 
-    inline void setStar(celStar *nStar)     { star = nStar; }
+    inline void setStar(CelestialStar *nStar)       { star = nStar; }
 
-    void addBody(celBody *body);
-    void removeBody(celBody *body);
+    void addBody(CelestialBody *body);
+    void removeBody(CelestialBody *body);
 
-    celBody *find(cstr_t &name) const;
+    CelestialBody *find(cstr_t &name) const;
     
 private:
     FrameTree tree;
 
     // Planetary system parameters
     // System *solarSystem = nullptr;
-    celBody *body = nullptr;
-    celStar *star = nullptr;
+    CelestialBody *body = nullptr;
+    CelestialStar *star = nullptr;
 
-    std::vector<celBody *> bodies;
+    std::vector<CelestialBody *> bodies;
 };
 
 enum celType
@@ -53,7 +53,7 @@ enum celType
     cbComet
 };
 
-class celBody : public RigidBody
+class CelestialBody : public RigidBody
 {
 public:
     enum {
@@ -63,14 +63,16 @@ public:
         cbKnownObject   = (cbKnownRadius|cbKnownRotation|cbKnownSurface)
     };
 
-    celBody(PlanetarySystem *system, cstr_t &name, celType type)
-    : RigidBody(name, objCelestialBody), cbType(type), inSystem(system)
+    CelestialBody(PlanetarySystem *system, cstr_t &name, celType type)
+    : RigidBody(name, (type == cbStar) ? objCelestialStar : objCelestialBody),
+      cbType(type), inSystem(system)
     {
         inSystem->addBody(this);
     }
 
-    celBody(cstr_t &name, celType type, celBody *body = nullptr)
-    : RigidBody(name, objCelestialBody), cbType(type)
+    CelestialBody(cstr_t &name, celType type, CelestialBody *body = nullptr)
+    : RigidBody(name, (type == cbStar) ? objCelestialStar : objCelestialBody),
+      cbType(type)
     {
         if (body != nullptr)
         {
@@ -79,7 +81,9 @@ public:
         }
     }
 
-    virtual ~celBody() = default;
+    virtual ~CelestialBody() = default;
+
+    virtual void update(bool force);
 
     inline celType getCelestialType() const { return cbType; }
 

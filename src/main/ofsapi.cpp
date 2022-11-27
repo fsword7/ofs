@@ -103,27 +103,27 @@ LIBEXPORT glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object, int time)
 
 LIBEXPORT int ofsGetObjectStarHIPNumber(ObjectHandle object)
 {
-    return static_cast<celStar *>(object)->getHIPnumber();
+    return static_cast<CelestialStar *>(object)->getHIPnumber();
 }
 
 LIBEXPORT double ofsGetObjectStarTemperature(ObjectHandle object)
 {
-    return static_cast<celStar *>(object)->getTemperature();
+    return static_cast<CelestialStar *>(object)->getTemperature();
 }
 
 LIBEXPORT glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object)
 {
-    return static_cast<celStar *>(object)->getStarPosition();
+    return static_cast<CelestialStar *>(object)->getStarPosition();
 }
 
 LIBEXPORT bool ofsStarHasSolarSystem(ObjectHandle object)
 {
-    return static_cast<celStar *>(object)->hasSolarSystem();
+    return static_cast<CelestialStar *>(object)->hasSolarSystem();
 }
 
 LIBEXPORT System *ofsStarGetSolarSystem(ObjectHandle object)
 {
-    return static_cast<celStar *>(object)->getSolarSystem();
+    return static_cast<CelestialStar *>(object)->getSolarSystem();
 }
 
 LIBEXPORT Constellations &ofsGetConstellations()
