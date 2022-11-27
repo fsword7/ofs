@@ -140,6 +140,18 @@ namespace ofs
         return 4.0 * pi_v<T> * r * r;
     }
 
+    template <typename T> inline constexpr T normangle(T angle)
+    {
+        T ang = fmod(angle, pi*2.0);
+        return (ang >= pi) ? ang - (pi*2.0) : (ang < -pi) ? ang + (pi*2.0) : ang;
+    }
+
+    template <typename T> inline constexpr T posangle(T angle)
+    {
+        T ang = fmod(angle, pi*2.0);
+        return (ang >= 0.0 ? ang : ang + (pi*2.0));
+    }
+
     // template <typename T> Eigen::Quaternion<T> lookAt(const Eigen::Matrix<T, 3, 1> &from, const Eigen::Matrix<T, 3, 1> &to,
     //     const Eigen::Matrix<T, 3, 1> &up)
     // {

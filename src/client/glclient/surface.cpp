@@ -517,7 +517,6 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
     float tvr = range.tvmax - range.tvmin;
     float tu, tv;
 
-
     // double clat0 = cos(mlat0), slat0 = sin(mlat0);
     // double clat1 = cos(mlat1), slat1 = sin(mlat1);
     // double clng0 = cos(mlng0), slng0 = sin(mlng0);
@@ -566,7 +565,48 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
 
     if (elev != nullptr)
     {
+        int16_t *elev1, *elev1n; 
+        int16_t *elev2, *elev2n;
+        int16_t err1, err2;
 
+        for (int y = 0, nofs0 = 0; y < grid; y++)
+        {
+            int nofs1 = nofs0+grid+1;
+            for (int x = 0; x < grid; x++)
+            {
+                elev1  = elev + ELEV_STRIDE+2 + x+ELEV_STRIDE*y;
+                elev2  = elev1 + ELEV_STRIDE-1;
+                elev1n = elev1 - ELEV_STRIDE+1;
+                elev2n = elev2 + ELEV_STRIDE-1;
+                err1 = abs(*elev1*2 - *elev2 - *elev1n) + abs(*elev2*2 - *elev1 - *elev2n);
+                
+                elev1  = elev + ELEV_STRIDE+1 + x+ELEV_STRIDE*y;
+                elev2  = elev1 + ELEV_STRIDE+1;
+                elev1n = elev1 - ELEV_STRIDE-1;
+                elev2n = elev2 + ELEV_STRIDE+1;
+                err2 = abs(*elev1*2 - *elev2 - *elev1n) + abs(*elev2*2 - *elev1 - *elev2n);
+              
+                if (err1 < err2)
+                {
+                    idx[cidx++] = nofs0+x;
+                    idx[cidx++] = nofs1+x;
+                    idx[cidx++] = nofs0+x+1;
+                    idx[cidx++] = nofs0+x+1;
+                    idx[cidx++] = nofs1+x;
+                    idx[cidx++] = nofs1+x+1;
+                }
+                else
+                {
+                    idx[cidx++] = nofs0+x;
+                    idx[cidx++] = nofs1+x+1;
+                    idx[cidx++] = nofs0+x+1;
+                    idx[cidx++] = nofs1+x+1;
+                    idx[cidx++] = nofs0+x;
+                    idx[cidx++] = nofs1+x;
+                }
+            }
+            nofs0 = nofs1;
+        }
     }
     else
     {
@@ -588,7 +628,39 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
 
     if (elev != nullptr)
     {
+        double dy, dz, dydz, nx1, ny1, nz1;
+        int en;
 
+        dy = radius * pi/(nlat*grid);
+
+        for (int y = 0, n = 0; y <= grid; y++)
+        {
+            lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
+            slat = sin(lat), clat = cos(lat);
+            dz = radius * (pi*2.0)*cos(lat) / (nlng * grid);
+            dydz = dy*dz;
+
+            for (int x = 0; x <= grid; x++)
+            {
+                lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
+                slng = sin(lng), clng = cos(lng);
+                en = (y+1)*ELEV_STRIDE + (x+1);
+
+                nml = glm::dvec3(2.0*dydz,
+                    dz*selev*(elev[en-ELEV_STRIDE]-elev[en+ELEV_STRIDE]),
+                    dy*selev*(elev[en-1]-elev[en+1]));
+                nml = glm::normalize(nml);
+
+                nx1 = nml.x*clat - nml.y*slat;
+                ny1 = nml.x*slat - nml.y*clat;
+                nz1 = nml.z;
+
+                vtx[n].nx = nx1*clng - nz1*slng;
+                vtx[n].ny = ny1;
+                vtx[n].nz = nx1*slng + nz1*clng;
+                n++;
+            }
+        }
     }
 
     for (int idx = 0, cvtx = nvtx; idx <= grid; idx++)
