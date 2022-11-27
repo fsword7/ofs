@@ -5,29 +5,47 @@
 
 #pragma once
 
-class OrbitalElements
+class OrbitElements
 {
 public:
-    OrbitalElements() = default;
-    ~OrbitalElements() = default;
+    OrbitElements() = default;
+    ~OrbitElements() = default;
 
-    OrbitalElements(double a, double e, double i, double theta, double omegab, double L, double mjd);
+    OrbitElements(double a, double e, double i, double theta, double omegab, double L, double mjd);
 
-    inline double getLinearEccentricity() const  { return le; }
-    inline double getApoapsis() const            { return ad; }
-    inline double getPeriapsis() const           { return pd; }
-    inline double getSemiMinorAxis() const       { return b; }
-    inline double getArgumentOfPeriapsis() const { return omega; }
-    inline double getOrbitalPeriod() const       { return T; }
+    inline double getLinearEccentricity() const         { return le; }
+    inline double getApoapsis() const                   { return ad; }
+    inline double getPeriapsis() const                  { return pd; }
+    inline double getSemiMinorAxis() const              { return b; }
+    inline double getArgumentOfPeriapsis() const        { return omega; }
+    inline double getOrbitalPeriod() const              { return T; }
 
-    inline double getMJDEpoch() const            { return mjdEpoch; }
-    
+    inline double getMJDEpoch() const                   { return mjdEpoch; }
+
+    inline double getCircularVelocity(double r) const   { return sqrt(mu / r); };
+
+    inline double getMeanLongitude(double t) const      { return n*t + L; }
+    inline double getMeanAnomaly(double t) const        { return n * (t-tau); }
+    inline double getTrueAnomaly(double ma) const
+        { return getTrueAnomalyE(getEccentricAnomaly(ma)); }
+
+    inline glm::dvec3 getoPosition() const              { return R; }
+    inline glm::dvec3 getoVelocity() const              { return V; }
+
     void setMasses(double m, double M);
-    double getCircularVelocity(double r) const   { return sqrt(mu / r); };
+    
+    double getEccentricAnomaly(double ma) const;
+    double getEccentricAnomalyTA(double ta) const;
+    double getTrueAnomalyE(double ea) const;
+    double getMeanAnomalyE(double ea) const;
 
     void setup(double m, double M, double mjd);
     void calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t);
-    void update(glm::dvec3 &pos, glm::dvec3 &vel);
+    void update(double mjd);
+
+    void getPolarPosition(double t, double &r, double &ta);
+    glm::dvec3 convertXYZ(double r, double ta);
+    void getPositionVelocity(double t, glm::dvec3 &pos, glm::dvec3 &vel);
 
 public:
     // Primary orbital element parameters
@@ -48,10 +66,17 @@ private:
     double n;           // 2pi/T
     double tmp;         // calculation of true anomaly if e < 1
 
+    double p;           // parameter of conic section
+
+    double sint, cost;  // sin/cos of theta
+    double sini, cosi;  // sin/cos of i (inclination)
+    double sino, coso;  // sin/cos of omega
+
     // Mass parameters
     double m;           // mass of orbiter [kg]
     double M;           // mass of central object [kg]
     double mu;          // standard gravitational parameter G * (M+m)
+    double muh;
 
     // Time parameters
     double T;           // orbital period [s]
@@ -72,4 +97,7 @@ private:
     double     tra;     // true anomaly
     double     ml;      // mean longitude
     double     trl;     // true longitude
+
+    mutable double ma0 = 1e10;
+    mutable double ea0 = 0.0;
 };
