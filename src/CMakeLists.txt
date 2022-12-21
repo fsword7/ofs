@@ -191,5 +191,6 @@ install(FILES $<TARGET_LINKER_FILE:ofs>
     DESTINATION ${OFS_INSTALL_ROOT_DIR}/lib
 )
 
+add_subdirectory(tools/vsop87)
 add_subdirectory(client/glclient)
 # add_subdirectory(client/vkclient)

@@ -11,33 +11,55 @@
 
 #include <iostream>
 #include <fstream>
-#include <fmt/printf.h>
+#include <filesystem>
+#include <fmt/format.h>
 
 using namespace std;
 
-//namespace fs = std::filesystem;
+namespace fs = std::filesystem;
 
 void usage(char *name)
 {
-	cout << fmt::sprintf("Usage: %s <planet name>\n", name);
+	cout << fmt::format("Usage: {} <planet name>\n", name);
 	exit(1);
 }
 
 void print(double data[2000][3], const char *planet, int lbr, int deg, int terms)
 {
-	fmt::fprintf(cout, "static vsop87_t %s_%c%d[%d] = {\n",
+	cout << fmt::format("static vsop87_t {}_{}{}[{}] = {{\n",
 		planet, "lbr"[lbr], deg, terms);
 
 	for (int idx = 0; idx < terms; idx++) {
-		fmt::fprintf(cout, "\t{ %16.12lf, %16.12lf, %20.12lf }%c\n",
+		cout << fmt::format("\t{{ {:18.12f}, {:18.12f}, {:20.12f} }}{}\n",
 			data[idx][0], data[idx][1], data[idx][2],
 			(idx < terms-1) ? ',' : ' ');
 	}
 
-	fmt::fprintf(cout, "};\n\n");
+	cout << fmt::format("}};\n\n");
 }
 
 int main(int argc, char **argv)
+{
+	const char *list = nullptr;
+
+	if (argc > 1)
+		list = argv[1];
+	else
+		usage(argv[0]);
+
+	fs::path path(list);
+	for(auto &file : fs::recursive_directory_iterator(list,
+		fs::directory_options::skip_permission_denied))
+	{
+		fs::path infile = file;
+
+		cout << infile.string() << endl;
+	}
+
+	exit(EXIT_SUCCESS);
+}
+
+int oldmain(int argc, char **argv)
 {
 	const char *planet = "earth"; // default planet name
 
