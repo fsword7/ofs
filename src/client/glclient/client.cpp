@@ -66,6 +66,8 @@ static void __attribute__ ((destructor)) destroyModule(void)
 void cbPrintError(int, cchar_t *errMessage)
 {
     printf("GLFW Error: %s\n", errMessage);
+    if (logger != nullptr)
+        logger->fatal("GLFW Error: {}\n", errMessage);
 }
 
 bool glClient::cbInitialize()
@@ -92,7 +94,7 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
 {
     // Set OpenGL core profile request
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    // glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     
     // Set OpenGL version request
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -101,7 +103,6 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
     window = glfwCreateWindow(width, height, "OFS", NULL, NULL);
     if (window == nullptr)
     {
-        // Logger::getLogger()->fatal("SDL2 Window can't be created: {}\n", SDL_GetError());
         printf("GLFW Window can't be created");
         abort();
     }
