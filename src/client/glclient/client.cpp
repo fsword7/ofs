@@ -63,10 +63,17 @@ static void __attribute__ ((destructor)) destroyModule(void)
     printf("OpenGL client module unloaded.\n");
 }
 
+void cbPrintError(int, cchar_t *errMessage)
+{
+    printf("GLFW Error: %s\n", errMessage);
+}
+
 bool glClient::cbInitialize()
 {
     width  = 1920;
     height = 1080;
+
+    glfwSetErrorCallback(cbPrintError);
 
     return true;
 }
@@ -85,17 +92,17 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
 {
     // Set OpenGL core profile request
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    // glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     
     // Set OpenGL version request
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     window = glfwCreateWindow(width, height, "OFS", NULL, NULL);
     if (window == nullptr)
     {
         // Logger::getLogger()->fatal("SDL2 Window can't be created: {}\n", SDL_GetError());
-        printf("GLFW Window can't be created: %s\n", "(unknown)");
+        printf("GLFW Window can't be created");
         abort();
     }
     glfwMakeContextCurrent(window);

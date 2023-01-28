@@ -1,4 +1,4 @@
-#version 450
+#version 430
 
 // vertex buffer objects
 layout (location = 0) in vec3 vPosition;

@@ -1,4 +1,4 @@
-#version 450
+#version 430
 
 #define NLIGHTS 8
 
