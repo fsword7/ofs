@@ -5,11 +5,14 @@
 
 #pragma once
 
-#include "glad/gl.h"
-
 #include "api/logger.h"
 #include "api/module.h"
 #include "api/graphics.h"
+
+#include <GL/glew.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 class Scene;
 
@@ -22,7 +25,7 @@ public:
     bool cbInitialize() override;
     void cbCleanup() override;
 
-    GLFWwindow *cbCreateRenderingWindow() override;
+    bool cbCreateRenderingWindow() override;
     bool cbDisplayFrame() override;
     void cbSetWindowTitle(cstr_t &title) override;
 
@@ -32,7 +35,8 @@ public:
 private:
     int width, height;
 
-    GLFWwindow *window = nullptr;
+    SDL_Window *window = nullptr;
+    SDL_GLContext ctx = nullptr;
 
     Scene *scene = nullptr;
 };

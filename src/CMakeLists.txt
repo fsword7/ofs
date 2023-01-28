@@ -1,7 +1,8 @@
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
+# find_package(SDL2 REQUIRED)
+# find_package(SDL2_image REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
+#find_package(GLEW REQUIRED)
 #find_package(Eigen3 REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(fmt REQUIRED)
@@ -167,9 +168,10 @@ set(OFSGL_H_SRCS
 add_executable(ofs ${OFS_CPP_SRCS} ${OFSGL_CPP_SRCS} ${OFS_H_SRCS} ${OFSGL_H_SRCS})
 target_link_libraries(ofs
     Freetype::Freetype
-    SDL2::Main
-    SDL2::Image
-    GLEW::GLEW
+    # SDL2::Main
+    # SDL2::Image
+    # GLEW::GLEW
+    glfw
     OpenGL::GL
 #    Eigen3::Eigen
     fmt::fmt

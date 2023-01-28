@@ -6,7 +6,7 @@
 #pragma once
 
 #include "main/timedate.h"
-#include <SDL2/SDL.h>
+#include <GLFW/glfw3.h>
 
 class Engine;
 class Universe;
@@ -226,6 +226,7 @@ protected:
     Panel    *panel = nullptr;
 
     GraphicsClient *gclient = nullptr;
+    GLFWwindow *window = nullptr;
 
     int width, height;
 

@@ -65,6 +65,20 @@ static void __attribute__ ((destructor)) destroyModule(void)
 
 bool glClient::cbInitialize()
 {
+    // // Initialize GLEW package
+    // GLenum err = glewInit();
+    // if (err != GLEW_OK)
+    // {
+    //     logger->fatal("GLEW error: {}\n",
+    //         glewGetErrorString(err));
+    //     abort();
+    // }
+
+    // logger->info("Using GLEW version: {}\n", glewGetString(GLEW_VERSION));
+    // logger->info("    OpenGL version: {}\n", glGetString(GL_VERSION));
+    // // logger->info("Using Eigen version {}.{}\n",
+    // //     EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
+
     width  = 1920;
     height = 1080;
 
@@ -73,55 +87,57 @@ bool glClient::cbInitialize()
 
 void glClient::cbCleanup()
 {
-    if (window != nullptr)
-        glfwDestroyWindow(window);
-    window = nullptr;
 
-    // Release GLFW inteface
-    glfwTerminate();
 }
 
-GLFWwindow *glClient::cbCreateRenderingWindow()
+bool glClient::cbCreateRenderingWindow()
 {
-    // Set OpenGL core profile request
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    window = SDL_CreateWindow("OFS" /* ofsGetAppShortName() */,
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-    // Set OpenGL version request
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-
-    window = glfwCreateWindow(width, height, "OFS", NULL, NULL);
     if (window == nullptr)
     {
         // Logger::getLogger()->fatal("SDL2 Window can't be created: {}\n", SDL_GetError());
-        printf("GLFW Window can't be created: %s\n", "(unknown)");
+        printf("SDL2 Window can't be created: %s\n", SDL_GetError());
         abort();
     }
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    SDL_ShowWindow(window);
 
-    // Initialize OpenGL interface
-    int version = gladLoadGL(glfwGetProcAddress);
-    if (version == 0)
+    // Select OpenGL version before starting up
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    ctx = SDL_GL_CreateContext(window);
+    SDL_GL_SetSwapInterval(1);
+
+    // Initialize GLEW package
+    GLenum err = glewInit();
+    if (err != GLEW_OK)
     {
-        printf("GLAD: Failed to initialize OpenGL interface - aborted\n");
+        logger->fatal("GLEW error: {:s}\n",
+            (char *)glewGetErrorString(err));
         abort();
     }
 
-    logger->info("Loaded OpenGL version: {}.{}\n",
-        GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    logger->info("Using GLEW version: {:s}\n", (char *)glewGetString(GLEW_VERSION));
+    logger->info("    OpenGL version: {:s}\n", (char *)glGetString(GL_VERSION));
+    // logger->info("Using Eigen version {}.{}\n",
+    //     EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
 
     // Initialize scene package
     scene = new Scene(width, height);
     // scene->init();
 
-    return window;
+    return true;
 }
 
 bool glClient::cbDisplayFrame()
 {
     // Swap frame buffers
-    glfwSwapBuffers(window);
+    SDL_GL_SwapWindow(window);
 
     // Clear all framebuffer
     // glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -132,7 +148,7 @@ bool glClient::cbDisplayFrame()
 
 void glClient::cbSetWindowTitle(cstr_t &title)
 {
-    glfwSetWindowTitle(window, title.c_str());
+    SDL_SetWindowTitle(window, title.c_str());
 }
 
 void glClient::cbStart()

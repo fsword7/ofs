@@ -1,10 +1,7 @@
 
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
-#find_package(Eigen3 REQUIRED)
 find_package(fmt REQUIRED)
 
 set(OGL_CPP_SRCS
@@ -12,6 +9,7 @@ set(OGL_CPP_SRCS
     camera.cpp
     client.cpp
     constellations.cpp
+    glad.cpp
     scene.cpp
     shader.cpp
     starcolors.cpp
@@ -52,12 +50,9 @@ add_library(glclient SHARED ${OGL_CPP_SRCS} ${OGL_H_SRCS})
 
 target_link_libraries(glclient
     Freetype::Freetype
-    SDL2::Main
-    SDL2::Image
-    GLEW::GLEW
+    glfw
     OpenGL::GL
     fmt::fmt
-#    Eigen3::Eigen
 )
 if (MINGW)
 target_link_libraries(glclient

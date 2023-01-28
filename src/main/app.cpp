@@ -182,14 +182,13 @@ void CoreApp::init()
 {
     Logger::create(Logger::logDebug, "ofs.log");
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    if (glfwInit() != GLFW_TRUE)
     {
-        Logger::getLogger()->fatal("OFS: Unable to initialize SDL2 interface: {}\n",
-            SDL_GetError());
-        // fmt::printf("OFS: Unable to initialize SDL2 inteface: %s\n",
-        //     SDL_GetError());
+        Logger::getLogger()->fatal("OFS: Unable to initialize GLFW interface.\n");
         abort();
     }
+    Logger::getLogger()->info("OFS: Loaded GLFW version: {}\n",
+        glfwGetVersionString());
 
     camera = new Camera(width, height);
 
@@ -212,8 +211,8 @@ void CoreApp::cleanup()
 {
     // Unloading modules
 
-    // Clear and relese all SDL2 interface
-    SDL_Quit();
+    // Clear and release all GLFW 3.3 interface
+    glfwTerminate();
 }
 
 void CoreApp::openSession()
@@ -258,7 +257,8 @@ void CoreApp::createSceneWindow()
 {
     if (gclient != nullptr)
     {
-        if (!gclient->cbCreateRenderingWindow())
+        window = gclient->cbCreateRenderingWindow();
+        if (window == nullptr)
             exit(0);
     }
     else
@@ -296,134 +296,140 @@ void CoreApp::run()
     bRunningApp = true;
     while (bRunningApp)
     {
-        SDL_Event event;
+        // SDL_Event event;
         int mx, my;
         int state;
         uint16_t mod;
         str_t title;
+        
+        // while (SDL_PollEvent(&event))
+        // {
+        //     switch(event.type)
+        //     {
+        //     case SDL_QUIT:
+        //         bRunningApp = false;
+        //         break;
 
-        while (SDL_PollEvent(&event))
-        {
-            switch(event.type)
-            {
-            case SDL_QUIT:
-                bRunningApp = false;
-                break;
+        //     // Handling keyboard events
+        //     case SDL_KEYDOWN:
+        //         mod = event.key.keysym.mod;
+        //         // processKeyEvent(&event.key, true);
+        //         break;
 
-            // Handling keyboard events
-            case SDL_KEYDOWN:
-                mod = event.key.keysym.mod;
-                // processKeyEvent(&event.key, true);
-                break;
+        //     case SDL_KEYUP:
+        //         mod = event.key.keysym.mod;
+        //         // processKeyEvent(&event.key, false);
+        //         break;
 
-            case SDL_KEYUP:
-                mod = event.key.keysym.mod;
-                // processKeyEvent(&event.key, false);
-                break;
+        //     // Handling mouse events
+        //     case SDL_MOUSEMOTION:
+        //         mx = event.motion.x;
+        //         my = event.motion.y;
 
-            // Handling mouse events
-            case SDL_MOUSEMOTION:
-                mx = event.motion.x;
-                my = event.motion.y;
+        //         state = 0;
+        //         if (event.motion.state & SDL_BUTTON_LMASK)
+        //             state |= mouseLeftButton;
+        //         if (event.motion.state & SDL_BUTTON_MMASK)
+        //             state |= mouseMiddleButton;
+        //         if (event.motion.state & SDL_BUTTON_RMASK)
+        //             state |= mouseRightButton;
+        //         if (mod & KMOD_CTRL)
+        //             state |= mouseControlButton;
+        //         if (mod & KMOD_ALT)
+        //             state |= mouseAltButton;
+        //         if (mod & KMOD_SHIFT)
+        //             state |= mouseShiftButton;
 
-                state = 0;
-                if (event.motion.state & SDL_BUTTON_LMASK)
-                    state |= mouseLeftButton;
-                if (event.motion.state & SDL_BUTTON_MMASK)
-                    state |= mouseMiddleButton;
-                if (event.motion.state & SDL_BUTTON_RMASK)
-                    state |= mouseRightButton;
-                if (mod & KMOD_CTRL)
-                    state |= mouseControlButton;
-                if (mod & KMOD_ALT)
-                    state |= mouseAltButton;
-                if (mod & KMOD_SHIFT)
-                    state |= mouseShiftButton;
+        //         // if (activeView != nullptr)
+        //         // {
+        //         //     activeView->map(mx / float(width), my / float(height), vx, vy);
+        //         //     pickRay = player->getPickRay(vx, vy);
+        //         // }
 
-                // if (activeView != nullptr)
-                // {
-                //     activeView->map(mx / float(width), my / float(height), vx, vy);
-                //     pickRay = player->getPickRay(vx, vy);
-                // }
+        //         title = fmt::format("{} X: {} Y {} ({},{}) State: {}{}{}{}{}{}\n",
+        //             APP_SHORT, mx, my, 0, 0, /* pickRay.x(), pickRay.y(), */
+        //             (state & mouseLeftButton    ? 'L' : '-'),
+        //             (state & mouseMiddleButton  ? 'M' : '-'),
+        //             (state & mouseRightButton   ? 'R' : '-'),
+        //             (state & mouseControlButton ? 'C' : '-'),
+        //             (state & mouseAltButton     ? 'A' : '-'),
+        //             (state & mouseShiftButton   ? 'S' : '-'));
+        //         setWindowTitle(title);
 
-                title = fmt::format("{} X: {} Y {} ({},{}) State: {}{}{}{}{}{}\n",
-                    APP_SHORT, mx, my, 0, 0, /* pickRay.x(), pickRay.y(), */
-                    (state & mouseLeftButton    ? 'L' : '-'),
-                    (state & mouseMiddleButton  ? 'M' : '-'),
-                    (state & mouseRightButton   ? 'R' : '-'),
-                    (state & mouseControlButton ? 'C' : '-'),
-                    (state & mouseAltButton     ? 'A' : '-'),
-                    (state & mouseShiftButton   ? 'S' : '-'));
-                setWindowTitle(title);
+        //         camera->mouseMove(mx, my, state);
+        //         break;
 
-                camera->mouseMove(mx, my, state);
-                break;
+        //     case SDL_MOUSEBUTTONDOWN:
+        //         mx = event.motion.x;
+        //         my = event.motion.y;
 
-            case SDL_MOUSEBUTTONDOWN:
-                mx = event.motion.x;
-                my = event.motion.y;
+        //         state = 0;
+        //         if (event.motion.state & SDL_BUTTON_LMASK)
+        //             state |= mouseLeftButton;
+        //         if (event.motion.state & SDL_BUTTON_MMASK)
+        //             state |= mouseMiddleButton;
+        //         if (event.motion.state & SDL_BUTTON_RMASK)
+        //             state |= mouseRightButton;
+        //         if (mod & KMOD_CTRL)
+        //             state |= mouseControlButton;
+        //         if (mod & KMOD_ALT)
+        //             state |= mouseAltButton;
+        //         if (mod & KMOD_SHIFT)
+        //             state |= mouseShiftButton;
 
-                state = 0;
-                if (event.motion.state & SDL_BUTTON_LMASK)
-                    state |= mouseLeftButton;
-                if (event.motion.state & SDL_BUTTON_MMASK)
-                    state |= mouseMiddleButton;
-                if (event.motion.state & SDL_BUTTON_RMASK)
-                    state |= mouseRightButton;
-                if (mod & KMOD_CTRL)
-                    state |= mouseControlButton;
-                if (mod & KMOD_ALT)
-                    state |= mouseAltButton;
-                if (mod & KMOD_SHIFT)
-                    state |= mouseShiftButton;
+        //         camera->mousePressButtonDown(mx, my, state);
+        //         break;
 
-                camera->mousePressButtonDown(mx, my, state);
-                break;
+        //     case SDL_MOUSEBUTTONUP:
+        //         mx = event.motion.x;
+        //         my = event.motion.y;
 
-            case SDL_MOUSEBUTTONUP:
-                mx = event.motion.x;
-                my = event.motion.y;
+        //         state = 0;
+        //         if (event.motion.state & SDL_BUTTON_LMASK)
+        //             state |= mouseLeftButton;
+        //         if (event.motion.state & SDL_BUTTON_MMASK)
+        //             state |= mouseMiddleButton;
+        //         if (event.motion.state & SDL_BUTTON_RMASK)
+        //             state |= mouseRightButton;
+        //         if (mod & KMOD_CTRL)
+        //             state |= mouseControlButton;
+        //         if (mod & KMOD_ALT)
+        //             state |= mouseAltButton;
+        //         if (mod & KMOD_SHIFT)
+        //             state |= mouseShiftButton;
 
-                state = 0;
-                if (event.motion.state & SDL_BUTTON_LMASK)
-                    state |= mouseLeftButton;
-                if (event.motion.state & SDL_BUTTON_MMASK)
-                    state |= mouseMiddleButton;
-                if (event.motion.state & SDL_BUTTON_RMASK)
-                    state |= mouseRightButton;
-                if (mod & KMOD_CTRL)
-                    state |= mouseControlButton;
-                if (mod & KMOD_ALT)
-                    state |= mouseAltButton;
-                if (mod & KMOD_SHIFT)
-                    state |= mouseShiftButton;
+        //         camera->mousePressButtonUp(mx, my, state);
+        //         break;
 
-                camera->mousePressButtonUp(mx, my, state);
-                break;
-
-            case SDL_MOUSEWHEEL:
-                if (event.wheel.y > 0)      // scroll up
-                    camera->mouseDialWheel(-1.0f, 0);
-                else if (event.wheel.y < 0) // scroll down
-                    camera->mouseDialWheel(1.0f, 0);
-                break;
+        //     case SDL_MOUSEWHEEL:
+        //         if (event.wheel.y > 0)      // scroll up
+        //             camera->mouseDialWheel(-1.0f, 0);
+        //         else if (event.wheel.y < 0) // scroll down
+        //             camera->mouseDialWheel(1.0f, 0);
+        //         break;
            
                  
-            }
-        }
+        //     }
+        // }
 
-        if (bSession)
+        while (!glfwWindowShouldClose(window))
         {
-            if (beginTimeStep(bRunning))
-            {
-                updateWorld();
-                endTimeStep(bRunning);
-            }
-        }
+            // Process polling events
 
-        renderScene();
-        drawHUD();
-        displayFrame();
+            
+            if (bSession)
+            {
+                if (beginTimeStep(bRunning))
+                {
+                    updateWorld();
+                    endTimeStep(bRunning);
+                }
+            }
+
+            renderScene();
+            drawHUD();
+            displayFrame();
+        }
     }
 
     closeSession();
