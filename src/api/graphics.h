@@ -23,6 +23,8 @@ public:
     virtual void cbStart() = 0;
     virtual void cbRenderScene() = 0;
 
+    virtual void hideWindow() = 0;
+    virtual void showWindow() = 0;
 };
 
 OFSAPI bool ofsRegisterGraphicsClient(GraphicsClient *gc);

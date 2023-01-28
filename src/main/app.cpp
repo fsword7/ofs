@@ -221,13 +221,17 @@ void CoreApp::openSession()
     td.reset(time(nullptr));
 
     if (gclient != nullptr)
+    {
         gclient->cbStart();
-
+        gclient->showWindow();
+    }
     bSession = true;
 }
 
 void CoreApp::closeSession()
 {
+    if (gclient != nullptr)
+        gclient->hideWindow();
     bSession = false;
 }
 

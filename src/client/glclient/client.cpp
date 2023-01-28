@@ -85,7 +85,8 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
 {
     // Set OpenGL core profile request
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    
     // Set OpenGL version request
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -116,6 +117,16 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
     // scene->init();
 
     return window;
+}
+
+void glClient::showWindow()
+{
+    glfwShowWindow(window);
+}
+
+void glClient::hideWindow()
+{
+    glfwHideWindow(window);
 }
 
 bool glClient::cbDisplayFrame()

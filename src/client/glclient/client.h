@@ -29,6 +29,9 @@ public:
     void cbStart() override;
     void cbRenderScene() override;
 
+    void showWindow() override;
+    void hideWindow() override;
+
 private:
     int width, height;
 
