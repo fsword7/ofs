@@ -116,6 +116,14 @@ struct tdVertex_t
     double  compression;    // suspension - compression factor
 };
 
+// docking port definition
+struct port_t
+{
+    glm::dvec3 port;    // docking port position
+    glm::dvec3 dir;     // approaching direction
+    glm::dvec3 rot;     // longitudional rotation alignment direction
+};
+
 class VesselBase : public RigidBody
 {
 public:
@@ -183,4 +191,5 @@ private:
     glm::dvec3 tpCGravity;                 // center of gravity projection
     double  cogElev;
 
+    std::vector<port_t *> ports;        // docking port list
 };

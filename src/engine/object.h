@@ -51,6 +51,7 @@ public:
     inline double getBoundingRadius() const     { return radius * std::numbers::sqrt3; }
     inline double getCullingRadius() const      { return cullingRadius; }   
     inline glm::dvec3 getSemiAxes() const       { return semiAxes; }
+    inline double getMass() const               { return mass; }
 
     inline bool isSphere() const                { return semiAxes.x == semiAxes.y && semiAxes.x == semiAxes.z; }
 
@@ -88,6 +89,8 @@ protected:
     glm::dvec3 objPosition = { 0, 0, 0 };
     glm::dvec3 objVelocity = { 0, 0, 0 };
     glm::dmat3 objRotation = glm::dmat3(1.0);
+
+    glm::dvec3 cg = { 0, 0, 0 };    // center gravity for position/rotation
 
     double  mass     = 0.0;
     double  radius   = 0.0;
