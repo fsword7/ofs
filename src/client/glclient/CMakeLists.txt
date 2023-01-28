@@ -4,7 +4,7 @@ find_package(SDL2_image REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
-find_package(Eigen3 REQUIRED)
+#find_package(Eigen3 REQUIRED)
 find_package(fmt REQUIRED)
 
 set(OGL_CPP_SRCS
@@ -57,7 +57,7 @@ target_link_libraries(glclient
     GLEW::GLEW
     OpenGL::GL
     fmt::fmt
-    Eigen3::Eigen
+#    Eigen3::Eigen
 )
 if (MINGW)
 target_link_libraries(glclient

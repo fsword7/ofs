@@ -2,7 +2,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(Eigen3 REQUIRED)
+#find_package(Eigen3 REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(fmt REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -171,7 +171,7 @@ target_link_libraries(ofs
     SDL2::Image
     GLEW::GLEW
     OpenGL::GL
-    Eigen3::Eigen
+#    Eigen3::Eigen
     fmt::fmt
     ZLIB::ZLIB
     libdl.a

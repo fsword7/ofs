@@ -45,7 +45,7 @@ OFSAPI int ofsGetDateInteger(cstr_t &date)
     int day, month, year;
     int val;
 
-    sscanf(date.c_str(), "%s%d%d", mstr, &day, &year);
+    sscanf(date.c_str(), "%s%d%d", ms, &day, &year);
     for (int month = 0; month < 12; month++)
         if (!strncmp(ms, mstr[month], 3))
             break;

@@ -506,7 +506,8 @@ ModuleHandle CoreApp::loadModule(cstr_t &path, cstr_t &name)
 
     if (handle == nullptr)
     {
-        printf("Failed loading module %s: %s\n", name, ofsGetModuleError());
+        printf("Failed loading module %s: %s\n",
+            name.c_str(), ofsGetModuleError());
         return nullptr;
     }
 
