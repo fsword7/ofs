@@ -1,4 +1,4 @@
-// guimgr.cpp - GUI manager package
+// guimgr.cpp - GUI manager package for GLFW interface
 //
 // Author:  Tim Stark
 // Date:    Jan 28, 2023
@@ -214,6 +214,20 @@ void GUIManager::processScroll(GLFWwindow *window, double xoff, double yoff)
 
 void GUIManager::processCursorPosition(GLFWwindow *window, double xpos, double ypos)
 {
+    std::string title;
+
+    // title = fmt::format("{} X: {} Y {} ({},{}) State: {}{}{}{}{}{}\n",
+    //     APP_SHORT, xpos, ypos, 0, 0, /* pickRay.x(), pickRay.y(), */
+    //     (state & mouseLeftButton    ? 'L' : '-'),
+    //     (state & mouseMiddleButton  ? 'M' : '-'),
+    //     (state & mouseRightButton   ? 'R' : '-'),
+    //     (state & mouseControlButton ? 'C' : '-'),
+    //     (state & mouseAltButton     ? 'A' : '-'),
+    //     (state & mouseShiftButton   ? 'S' : '-'));
+    // setWindowTitle(title);
+
+    title = fmt::format("{} X: {} Y: {}\n", APP_SHORT, xpos, ypos);
+    glfwSetWindowTitle(window, title.c_str());
 }
 
 void GUIManager::processMouseButton(GLFWwindow *window, int button, int action, int mods)
