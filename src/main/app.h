@@ -200,6 +200,8 @@ public:
 
     inline void togglePause() { pause(bRunning); }
 
+    void pollEvents();
+    
     // Keyboard controls
     void keyPress(keyCode code, int modifiers, bool down);
     void keyEntered(char32_t ch, int modifiers);
