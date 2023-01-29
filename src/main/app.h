@@ -6,7 +6,6 @@
 #pragma once
 
 #include "main/timedate.h"
-#include <GLFW/glfw3.h>
 
 class Engine;
 class Universe;
@@ -15,6 +14,7 @@ class Camera;
 class View;
 class Panel;
 class GraphicsClient;
+class GUIManager;
 
 struct ModuleEntry
 {
@@ -199,8 +199,6 @@ public:
     void resume();
 
     inline void togglePause() { pause(bRunning); }
-
-    void pollEvents();
     
     // Keyboard controls
     void keyPress(keyCode code, int modifiers, bool down);
@@ -223,12 +221,12 @@ protected:
     Camera   *camera = nullptr;
     // Camerax  *camerax = nullptr;
 
+    GUIManager *gui = nullptr;
     // Context  *ctx = nullptr;
     // Scene    *scene = nullptr;
     Panel    *panel = nullptr;
 
     GraphicsClient *gclient = nullptr;
-    GLFWwindow *window = nullptr;
 
     int width, height;
 

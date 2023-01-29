@@ -4,19 +4,42 @@
 // Date:    Jan 28, 2023
 
 #include "main/core.h"
+#include "api/graphics.h"
 #include "main/guimgr.h"
 
-void GUIManager::init()
+GUIManager::GUIManager(GraphicsClient *gclient)
+: gclient(gclient)
 {
-    if (glfwInit() != GLFW_TRUE)
+    // Initialize GLFW interface
+
+    if (!glfwInit())
     {
-        printf("OFS: Can't initialize GLFW v3 interface - aborted.\n");
-        abort();
+        printf("OFS: Can't initialize GLFW interface - aborted.\n");
+        exit(EXIT_FAILURE);
     }
+
+    window = gclient->cbCreateRenderingWindow();
+    if (window == nullptr)
+        exit(EXIT_FAILURE);
+}
+
+GUIManager::~GUIManager()
+{
+    glfwTerminate();
+}
+
+// Initialize GLFW callbacks for events
+void GUIManager::setupCallbacks()
+{
 
 }
 
-void GUIManager::cleanup()
+bool GUIManager::shouldClose()
 {
-    glfwTerminate();
+    return glfwWindowShouldClose(window);
+}
+
+void GUIManager::pollEvents()
+{
+    glfwPollEvents();
 }

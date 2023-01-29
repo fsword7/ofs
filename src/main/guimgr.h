@@ -8,11 +8,15 @@
 class GUIManager
 {
 public:
-    GUIManager() = default;
-    ~GUIManager() = default;
+    GUIManager(GraphicsClient *gclient);
+    ~GUIManager();
 
-    void init();
-    void cleanup();
+    void setupCallbacks();
+
+    bool shouldClose();
+    void pollEvents();
 
 private:
+    GraphicsClient *gclient = nullptr;
+    GLFWwindow *window = nullptr;
 };

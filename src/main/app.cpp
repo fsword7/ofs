@@ -15,6 +15,7 @@
 // #include "render/scene.h"
 #include "engine/panel.h"
 // #include "render/hudpanel.h"
+#include "main/guimgr.h"
 #include "main/app.h"
 
 // Global variables
@@ -211,8 +212,8 @@ void CoreApp::cleanup()
 {
     // Unloading modules
 
-    // Clear and release all GLFW 3.3 interface
-    glfwTerminate();
+    if (gui != nullptr)
+        delete gui;
 }
 
 void CoreApp::openSession()
@@ -259,14 +260,20 @@ bool CoreApp::detachGraphicsClient(GraphicsClient *gc)
 
 void CoreApp::createSceneWindow()
 {
-    if (gclient != nullptr)
-    {
-        window = gclient->cbCreateRenderingWindow();
-        if (window == nullptr)
-            exit(0);
-    }
-    else
-        exit(0);
+    // if (gclient != nullptr)
+    // {
+    //     window = gclient->cbCreateRenderingWindow();
+    //     if (window == nullptr)
+    //         exit(0);
+    // }
+    // else
+    //     exit(0);
+
+    if (gclient == nullptr)
+        exit(EXIT_FAILURE);
+    gui = new GUIManager(gclient);
+
+    gui->setupCallbacks();
 }
 
 void CoreApp::renderScene()
@@ -291,11 +298,6 @@ void CoreApp::setWindowTitle(cstr_t &title)
 {
     if (gclient != nullptr)
         gclient->cbSetWindowTitle(title);
-}
-
-void CoreApp::pollEvents()
-{
-    glfwPollEvents();
 }
 
 void CoreApp::run()
@@ -421,10 +423,10 @@ void CoreApp::run()
     //     }
     // }
 
-    while (!glfwWindowShouldClose(window))
+    while (!gui->shouldClose())
     {
         // Process polling events
-        pollEvents();
+        gui->pollEvents();
         
         if (bSession)
         {
