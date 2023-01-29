@@ -260,15 +260,6 @@ bool CoreApp::detachGraphicsClient(GraphicsClient *gc)
 
 void CoreApp::createSceneWindow()
 {
-    // if (gclient != nullptr)
-    // {
-    //     window = gclient->cbCreateRenderingWindow();
-    //     if (window == nullptr)
-    //         exit(0);
-    // }
-    // else
-    //     exit(0);
-
     if (gclient == nullptr)
         exit(EXIT_FAILURE);
     gui = new GUIManager(gclient);
