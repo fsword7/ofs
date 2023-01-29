@@ -154,6 +154,16 @@ void glClient::cbSetWindowTitle(cstr_t &title)
     glfwSetWindowTitle(window, title.c_str());
 }
 
+void glClient::setViewportSize(int w, int h)
+{
+    // Update resolution
+    width = w;
+    height = h;
+
+    if (scene != nullptr)
+        scene->resize(width, height);
+}
+
 void glClient::cbStart()
 {
     if (scene != nullptr)

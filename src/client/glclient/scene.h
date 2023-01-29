@@ -77,6 +77,8 @@ public:
     void update();
     void render();
     
+    void resize(int width, int height);
+
     void checkErrors();
 
     vObject *addVisualObject(ObjectHandle object);

@@ -23,6 +23,7 @@ public:
     virtual void cbStart() = 0;
     virtual void cbRenderScene() = 0;
 
+    virtual void setViewportSize(int width, int height) = 0;
     virtual void hideWindow() = 0;
     virtual void showWindow() = 0;
 };

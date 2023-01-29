@@ -29,6 +29,7 @@ public:
     void cbStart() override;
     void cbRenderScene() override;
 
+    void setViewportSize(int width, int height) override;
     void showWindow() override;
     void hideWindow() override;
 

@@ -54,6 +54,14 @@ void Scene::start()
     //     printf("Can't find planet Earth for visual object\n");
 }
 
+void Scene::resize(int w, int h)
+{
+    width = w;
+    height = h;
+    if (camera != nullptr)
+        camera->setSize(width, height);
+}
+
 void Scene::update()
 {
     camera->update();

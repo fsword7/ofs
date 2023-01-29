@@ -212,8 +212,8 @@ void CoreApp::cleanup()
 {
     // Unloading modules
 
-    if (gui != nullptr)
-        delete gui;
+    if (guimgr != nullptr)
+        delete guimgr;
 }
 
 void CoreApp::openSession()
@@ -262,9 +262,10 @@ void CoreApp::createSceneWindow()
 {
     if (gclient == nullptr)
         exit(EXIT_FAILURE);
-    gui = new GUIManager(gclient);
+    guimgr = new GUIManager(gclient);
 
-    gui->setupCallbacks();
+    // Initialize callbacks for window events
+    guimgr->setupCallbacks();
 }
 
 void CoreApp::renderScene()
@@ -295,129 +296,10 @@ void CoreApp::run()
 {
     openSession();
 
-    // bRunningApp = true;
-    // while (bRunningApp)
-    // {
-    //     int mx, my;
-    //     int state;
-    //     uint16_t mod;
-    //     str_t title;
-        
-    //     while (SDL_PollEvent(&event))
-    //     {
-    //         switch(event.type)
-    //         {
-    //         case SDL_QUIT:
-    //             bRunningApp = false;
-    //             break;
-
-    //         // Handling keyboard events
-    //         case SDL_KEYDOWN:
-    //             mod = event.key.keysym.mod;
-    //             // processKeyEvent(&event.key, true);
-    //             break;
-
-    //         case SDL_KEYUP:
-    //             mod = event.key.keysym.mod;
-    //             // processKeyEvent(&event.key, false);
-    //             break;
-
-    //         // Handling mouse events
-    //         case SDL_MOUSEMOTION:
-    //             mx = event.motion.x;
-    //             my = event.motion.y;
-
-    //             state = 0;
-    //             if (event.motion.state & SDL_BUTTON_LMASK)
-    //                 state |= mouseLeftButton;
-    //             if (event.motion.state & SDL_BUTTON_MMASK)
-    //                 state |= mouseMiddleButton;
-    //             if (event.motion.state & SDL_BUTTON_RMASK)
-    //                 state |= mouseRightButton;
-    //             if (mod & KMOD_CTRL)
-    //                 state |= mouseControlButton;
-    //             if (mod & KMOD_ALT)
-    //                 state |= mouseAltButton;
-    //             if (mod & KMOD_SHIFT)
-    //                 state |= mouseShiftButton;
-
-    //             // if (activeView != nullptr)
-    //             // {
-    //             //     activeView->map(mx / float(width), my / float(height), vx, vy);
-    //             //     pickRay = player->getPickRay(vx, vy);
-    //             // }
-
-    //             title = fmt::format("{} X: {} Y {} ({},{}) State: {}{}{}{}{}{}\n",
-    //                 APP_SHORT, mx, my, 0, 0, /* pickRay.x(), pickRay.y(), */
-    //                 (state & mouseLeftButton    ? 'L' : '-'),
-    //                 (state & mouseMiddleButton  ? 'M' : '-'),
-    //                 (state & mouseRightButton   ? 'R' : '-'),
-    //                 (state & mouseControlButton ? 'C' : '-'),
-    //                 (state & mouseAltButton     ? 'A' : '-'),
-    //                 (state & mouseShiftButton   ? 'S' : '-'));
-    //             setWindowTitle(title);
-
-    //             camera->mouseMove(mx, my, state);
-    //             break;
-
-    //         case SDL_MOUSEBUTTONDOWN:
-    //             mx = event.motion.x;
-    //             my = event.motion.y;
-
-    //             state = 0;
-    //             if (event.motion.state & SDL_BUTTON_LMASK)
-    //                 state |= mouseLeftButton;
-    //             if (event.motion.state & SDL_BUTTON_MMASK)
-    //                 state |= mouseMiddleButton;
-    //             if (event.motion.state & SDL_BUTTON_RMASK)
-    //                 state |= mouseRightButton;
-    //             if (mod & KMOD_CTRL)
-    //                 state |= mouseControlButton;
-    //             if (mod & KMOD_ALT)
-    //                 state |= mouseAltButton;
-    //             if (mod & KMOD_SHIFT)
-    //                 state |= mouseShiftButton;
-
-    //             camera->mousePressButtonDown(mx, my, state);
-    //             break;
-
-    //         case SDL_MOUSEBUTTONUP:
-    //             mx = event.motion.x;
-    //             my = event.motion.y;
-
-    //             state = 0;
-    //             if (event.motion.state & SDL_BUTTON_LMASK)
-    //                 state |= mouseLeftButton;
-    //             if (event.motion.state & SDL_BUTTON_MMASK)
-    //                 state |= mouseMiddleButton;
-    //             if (event.motion.state & SDL_BUTTON_RMASK)
-    //                 state |= mouseRightButton;
-    //             if (mod & KMOD_CTRL)
-    //                 state |= mouseControlButton;
-    //             if (mod & KMOD_ALT)
-    //                 state |= mouseAltButton;
-    //             if (mod & KMOD_SHIFT)
-    //                 state |= mouseShiftButton;
-
-    //             camera->mousePressButtonUp(mx, my, state);
-    //             break;
-
-    //         case SDL_MOUSEWHEEL:
-    //             if (event.wheel.y > 0)      // scroll up
-    //                 camera->mouseDialWheel(-1.0f, 0);
-    //             else if (event.wheel.y < 0) // scroll down
-    //                 camera->mouseDialWheel(1.0f, 0);
-    //             break;
-           
-                 
-    //         }
-    //     }
-    // }
-
-    while (!gui->shouldClose())
+    while (!guimgr->shouldClose())
     {
         // Process polling events
-        gui->pollEvents();
+        guimgr->pollEvents();
         
         if (bSession)
         {

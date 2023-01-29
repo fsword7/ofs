@@ -221,9 +221,7 @@ protected:
     Camera   *camera = nullptr;
     // Camerax  *camerax = nullptr;
 
-    GUIManager *gui = nullptr;
-    // Context  *ctx = nullptr;
-    // Scene    *scene = nullptr;
+    GUIManager *guimgr = nullptr;
     Panel    *panel = nullptr;
 
     GraphicsClient *gclient = nullptr;
