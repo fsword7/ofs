@@ -38,6 +38,7 @@ set(OFS_CPP_SRCS
     ephem/vsop87a.cpp
     main/app.cpp
     # main/date.cpp
+    main/guimgr.cpp
     main/graphics.cpp
     main/main.cpp
     main/module.cpp
@@ -107,6 +108,7 @@ set(OFS_H_SRCS
     main/app.h
     main/core.h
     # main/date.h
+    main/guimgr.h
     main/math.h
     main/timedate.h
     # render/elevmgr.h
