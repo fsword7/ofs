@@ -25,6 +25,40 @@ set(OFS_INSTALL_PLUGIN_DIR ${OFS_INSTALL_MODULE_DIR}/plugin)
 
 set(OFS_LIB $<TARGET_LINKER_FILE:ofs>)
 
+set(EXTERN_DIR ${CMAKE_SOURCE_DIR}/externs)
+
+# ImGUI libraries
+
+set(IMGUI_LIBRARY_DIR "${EXTERN_DIR}/imgui")
+set(IMGUI_INCLUDE_PATH "${IMGUI_LIBRARY_DIR}")
+
+set(IMGUI_SOURCES
+    "${IMGUI_LIBRARY_DIR}/imgui.cpp"
+    "${IMGUI_LIBRARY_DIR}/imgui_demo.cpp"
+    "${IMGUI_LIBRARY_DIR}/imgui_draw.cpp"
+    "${IMGUI_LIBRARY_DIR}/imgui_tables.cpp"
+    "${IMGUI_LIBRARY_DIR}/imgui_widgets.cpp"
+)
+
+set(IMGUI_HEADERS
+    "${IMGUI_LIBRARY_DIR}/imgui.h"
+)
+
+add_library(imgui OBJECT
+    ${IMGUI_SOURCES}
+    ${IMGUI_HEADERS}
+)
+
+target_compile_definitions(imgui PRIVATE
+    IMGUI_IMPL_OPENGL_LOADER_GLAD=1
+)
+
+target_include_directories(imgui PUBLIC
+    "${IMGUI_INCLUDE_PATH}"
+)
+
+# end of ImGUI libraries
+
 include_directories(src)
 add_subdirectory(src)
 

@@ -8,6 +8,8 @@
 #include "main/app.h"
 #include "engine/camera.h"
 #include "main/guimgr.h"
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
 
 GUIManager::GUIManager(GraphicsClient *gclient)
 : gclient(gclient)
@@ -19,6 +21,10 @@ GUIManager::GUIManager(GraphicsClient *gclient)
         printf("OFS: Can't initialize GLFW interface - aborted.\n");
         exit(EXIT_FAILURE);
     }
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
 
     window = gclient->cbCreateRenderingWindow();
     if (window == nullptr)

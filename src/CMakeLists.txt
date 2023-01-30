@@ -76,6 +76,7 @@ set(OFS_CPP_SRCS
     universe/universe.cpp
     utils/logger.cpp
     utils/string.cpp
+    ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_glfw.cpp
 )
 
 set(OFS_H_SRCS
@@ -170,14 +171,11 @@ set(OFSGL_H_SRCS
 add_executable(ofs ${OFS_CPP_SRCS} ${OFSGL_CPP_SRCS} ${OFS_H_SRCS} ${OFSGL_H_SRCS})
 target_link_libraries(ofs
     Freetype::Freetype
-    # SDL2::Main
-    # SDL2::Image
-    # GLEW::GLEW
-    glfw
-    OpenGL::GL
-#    Eigen3::Eigen
     fmt::fmt
     ZLIB::ZLIB
+    imgui
+    glfw
+    OpenGL::GL
     libdl.a
 )
 
