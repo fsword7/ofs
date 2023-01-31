@@ -1,9 +1,5 @@
-# find_package(SDL2 REQUIRED)
-# find_package(SDL2_image REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
-#find_package(GLEW REQUIRED)
-#find_package(Eigen3 REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(fmt REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -177,6 +173,10 @@ target_link_libraries(ofs
     glfw
     OpenGL::GL
     libdl.a
+)
+
+target_include_directories(ofs PUBLIC
+    ${IMGUI_INCLUDE_DIR}
 )
 
 set_target_properties(ofs

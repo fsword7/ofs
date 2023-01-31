@@ -30,7 +30,7 @@ set(EXTERN_DIR ${CMAKE_SOURCE_DIR}/externs)
 # ImGUI libraries
 
 set(IMGUI_LIBRARY_DIR "${EXTERN_DIR}/imgui")
-set(IMGUI_INCLUDE_PATH "${IMGUI_LIBRARY_DIR}")
+set(IMGUI_INCLUDE_DIR "${IMGUI_LIBRARY_DIR}")
 
 set(IMGUI_SOURCES
     "${IMGUI_LIBRARY_DIR}/imgui.cpp"
@@ -54,7 +54,7 @@ target_compile_definitions(imgui PRIVATE
 )
 
 target_include_directories(imgui PUBLIC
-    "${IMGUI_INCLUDE_PATH}"
+    "${IMGUI_INCLUDE_DIR}"
 )
 
 # end of ImGUI libraries

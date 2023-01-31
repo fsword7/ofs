@@ -20,6 +20,7 @@ set(OGL_CPP_SRCS
     vobject.cpp
     vstar.cpp
     vvessel.cpp
+    # ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
 set(OGL_H_SRCS
@@ -60,6 +61,10 @@ target_link_libraries(glclient
     libdl.a
 )
 endif()
+
+target_include_directories(glclient PUBLIC
+    ${IMGUI_INCLUDE_DIR}
+)
 
 set_target_properties(glclient
     PROPERTIES

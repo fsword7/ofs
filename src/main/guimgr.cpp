@@ -8,8 +8,8 @@
 #include "main/app.h"
 #include "engine/camera.h"
 #include "main/guimgr.h"
-#include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
+
+// LIBEXPORT *GImGui = nullptr;
 
 GUIManager::GUIManager(GraphicsClient *gclient)
 : gclient(gclient)
@@ -29,11 +29,20 @@ GUIManager::GUIManager(GraphicsClient *gclient)
     window = gclient->cbCreateRenderingWindow();
     if (window == nullptr)
         exit(EXIT_FAILURE);
+
+    // Clear all key mapping table
+    memset(keys, 0, GLFW_KEY_LAST);
 }
 
 GUIManager::~GUIManager()
 {
     glfwTerminate();
+}
+
+// Rendering GUI user interface
+void GUIManager::render()
+{
+
 }
 
 // Window event callback function calls
@@ -44,14 +53,14 @@ static void cbProcessFramebufferSize(GLFWwindow *window, int width, int height)
     guiManager->processFramebufferSize(window, width, height);
 }
 
-static void cbProcessScroll(GLFWwindow *window, double xoff, double yoff)
+static void cbProcessMouseWheel(GLFWwindow *window, double xoff, double yoff)
 {
-    guiManager->processScroll(window, xoff, yoff);
+    guiManager->processMouseWheel(window, xoff, yoff);
 }
 
-static void cbProcessCursorPosition(GLFWwindow *window, double xpos, double ypos)
+static void cbProcessMousePosition(GLFWwindow *window, double xpos, double ypos)
 {
-    guiManager->processCursorPosition(window, xpos, ypos);
+    guiManager->processMousePosition(window, xpos, ypos);
 }
 
 static void cbProcessMouseButton(GLFWwindow *window, int button, int action, int mods)
@@ -70,10 +79,10 @@ void GUIManager::setupCallbacks()
     guiManager = this;
 
     glfwSetFramebufferSizeCallback(window, cbProcessFramebufferSize);
-    glfwSetScrollCallback(window, cbProcessScroll);
-    glfwSetCursorPosCallback(window, cbProcessCursorPosition);
-    glfwSetMouseButtonCallback(window, cbProcessMouseButton);
-    glfwSetKeyCallback(window, cbProcessKey);
+    pcbProcessMouseWheel = glfwSetScrollCallback(window, cbProcessMouseWheel);
+    pcbProcessMousePosition = glfwSetCursorPosCallback(window, cbProcessMousePosition);
+    pcbProcessMouseButton = glfwSetMouseButtonCallback(window, cbProcessMouseButton);
+    pcbProcessKey = glfwSetKeyCallback(window, cbProcessKey);
 }
 
 bool GUIManager::shouldClose()
@@ -214,12 +223,26 @@ void GUIManager::processFramebufferSize(GLFWwindow *window, int width, int heigh
     gclient->setViewportSize(width, height);
 }
 
-void GUIManager::processScroll(GLFWwindow *window, double xoff, double yoff)
+void GUIManager::processMouseWheel(GLFWwindow *window, double xoff, double yoff)
 {
+    ImGuiIO &io = ImGui::GetIO();
+    io.MouseWheelH += xoff;
+    io.MouseWheel += yoff;
+    if (pcbProcessMouseWheel != nullptr)
+        pcbProcessMouseWheel(window, xoff, yoff);
+    if (io.WantCaptureMouse)
+        return;
+
 }
 
-void GUIManager::processCursorPosition(GLFWwindow *window, double xpos, double ypos)
+void GUIManager::processMousePosition(GLFWwindow *window, double xpos, double ypos)
 {
+    ImGuiIO &io = ImGui::GetIO();
+    if (pcbProcessMousePosition != nullptr)
+        pcbProcessMousePosition(window, xpos, ypos);
+    if (io.WantCaptureMouse)
+        return;
+
     std::string title;
 
     // title = fmt::format("{} X: {} Y {} ({},{}) State: {}{}{}{}{}{}\n",
@@ -237,9 +260,29 @@ void GUIManager::processCursorPosition(GLFWwindow *window, double xpos, double y
 }
 
 void GUIManager::processMouseButton(GLFWwindow *window, int button, int action, int mods)
-{
+{    
+    ImGuiIO &io = ImGui::GetIO();
+    if (pcbProcessMouseButton != nullptr)
+        pcbProcessMouseButton(window, button, action, mods);
+    if (io.WantCaptureMouse)
+        return;
 }
 
 void GUIManager::processKey(GLFWwindow *window, int gkey, int scancode, int action, int mods)
-{
+{    
+    ImGuiIO &io = ImGui::GetIO();
+    if (pcbProcessKey != nullptr)
+        pcbProcessKey(window, gkey, scancode, action, mods);
+    if (io.WantCaptureKeyboard)
+        return;
+    if (gkey == GLFW_KEY_UNKNOWN)
+        return;
+    
+    // Process keyboard movement control
+
+    // Just ignore repeating action
+    if (action == GLFW_REPEAT)
+        return;
+    // Process pressed keys
+
 }

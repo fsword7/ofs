@@ -312,6 +312,7 @@ void CoreApp::run()
 
         renderScene();
         drawHUD();
+        guimgr->render();
         displayFrame();
     }
 
