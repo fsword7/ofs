@@ -8,6 +8,7 @@
 #include "main/core.h"
 #include "api/module.h"
 #include "api/graphics.h"
+#include "main/guimgr.h"
 #include "main/app.h"
 
 GraphicsClient::GraphicsClient(ModuleHandle handle)
@@ -28,4 +29,9 @@ LIBEXPORT bool ofsRegisterGraphicsClient(GraphicsClient *gc)
 LIBEXPORT bool ofsUnregisterGraphicsClient(GraphicsClient *gc)
 {
     return ofsAppCore->detachGraphicsClient(gc);
+}
+
+LIBEXPORT void ofsInitGLFW(GLFWwindow *window)
+{
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
 }

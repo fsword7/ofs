@@ -11,8 +11,9 @@
 #include "api/module.h"
 #include "api/graphics.h"
 
-// #include <imgui.h>
-// #include <backends/imgui_impl_opengl3.h>
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 
 class Scene;
 
@@ -35,6 +36,9 @@ public:
     void setViewportSize(int width, int height) override;
     void showWindow() override;
     void hideWindow() override;
+
+    void startImGuiNewFrame() override;
+    void renderImGuiDrawData() override;
 
 private:
     int width, height;

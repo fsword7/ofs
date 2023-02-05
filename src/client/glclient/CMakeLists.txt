@@ -20,7 +20,7 @@ set(OGL_CPP_SRCS
     vobject.cpp
     vstar.cpp
     vvessel.cpp
-    # ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_opengl3.cpp
+    ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
 set(OGL_H_SRCS
@@ -52,6 +52,7 @@ add_library(glclient SHARED ${OGL_CPP_SRCS} ${OGL_H_SRCS})
 target_link_libraries(glclient
     Freetype::Freetype
     glfw
+    imgui
     OpenGL::GL
     fmt::fmt
 )

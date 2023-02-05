@@ -26,7 +26,11 @@ public:
     virtual void setViewportSize(int width, int height) = 0;
     virtual void hideWindow() = 0;
     virtual void showWindow() = 0;
+
+    virtual void startImGuiNewFrame() = 0;
+    virtual void renderImGuiDrawData() = 0;
 };
 
 OFSAPI bool ofsRegisterGraphicsClient(GraphicsClient *gc);
 OFSAPI bool ofsUnregisterGraphicsClient(GraphicsClient *gc);
+OFSAPI void ofsInitGLFW(GLFWwindow *window);

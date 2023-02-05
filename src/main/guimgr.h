@@ -5,13 +5,19 @@
 
 #include <GLFW/glfw3.h>
 
+#define OFSAPI_SERVER_BUILD
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
+
 class GUIManager
 {
 public:
     GUIManager(GraphicsClient *gclient);
     ~GUIManager();
+
+    void resetKeys();
+
+    void toggleFullScreen();
 
     void render();
 

@@ -8,7 +8,7 @@
 #ifdef __WIN32__
 
 #define LIBEXPORT   __declspec(dllexport)
-#define LIBIMPORT   __declspec(dllimport)
+#define LIBIMPORT   /* __declspec(dllimport) */
 #define LIBCALL     extern "C" LIBEXPORT
 
 #ifdef OFSAPI_SERVER_BUILD

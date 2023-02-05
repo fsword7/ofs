@@ -124,6 +124,9 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
     scene = new Scene(width, height);
     // scene->init();
 
+    ofsInitGLFW(window);
+    ImGui_ImplOpenGL3_Init("#version 430");
+
     return window;
 }
 
@@ -135,6 +138,18 @@ void glClient::showWindow()
 void glClient::hideWindow()
 {
     glfwHideWindow(window);
+}
+
+void glClient::startImGuiNewFrame()
+{
+    ImGui_ImplOpenGL3_NewFrame();
+}
+
+void glClient::renderImGuiDrawData()
+{
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    ImGuiIO &io = ImGui::GetIO();
 }
 
 bool glClient::cbDisplayFrame()
