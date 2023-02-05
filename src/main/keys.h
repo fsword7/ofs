@@ -1,0 +1,167 @@
+// keys.h - Key code definition
+//
+// Author:  Tim Stark
+// Date:    Feb 5, 2023
+
+namespace ofs
+{
+    enum keyCode
+    {
+        keyUndefined    = 0x00,
+
+        keySpace        = 0x20,
+        keySlash        = 0x21,
+        keyBackslash    = 0x22,
+        keyPeriod       = 0x23,
+        keyComma        = 0x24,
+        keyMinus        = 0x25,
+        keyEqual        = 0x26,
+        keySemicolon    = 0x27,
+        keyApostrophe   = 0x28,
+        keyGraveAccent  = 0x29,
+
+        key0            = 0x30,
+        key1            = 0x31,
+        key2            = 0x32,
+        key3            = 0x33,
+        key4            = 0x34,
+        key5            = 0x35,
+        key6            = 0x36,
+        key7            = 0x37,
+        key8            = 0x38,
+        key9            = 0x39,
+
+        keyA            = 0x41,
+        keyB            = 0x42,
+        keyC            = 0x43,
+        keyD            = 0x44,
+        keyE            = 0x45,
+        keyF            = 0x46,
+        keyG            = 0x47,
+        keyH            = 0x48,
+        keyI            = 0x49,
+        keyJ            = 0x4A,
+        keyK            = 0x4B,
+        keyL            = 0x4C,
+        keyM            = 0x4D,
+        keyN            = 0x4E,
+        keyO            = 0x4F,
+        keyP            = 0x50,
+        keyQ            = 0x51,
+        keyR            = 0x52,
+        keyS            = 0x53,
+        keyT            = 0x54,
+        keyU            = 0x55,
+        keyV            = 0x56,
+        keyW            = 0x57,
+        keyX            = 0x58,
+        keyY            = 0x59,
+        keyZ            = 0x5A,
+
+        kaya            = 0x61,
+        keyb            = 0x62,
+        keyc            = 0x63,
+        keyd            = 0x64,
+        keye            = 0x65,
+        keyf            = 0x66,
+        keyg            = 0x67,
+        keyh            = 0x68,
+        keyi            = 0x69,
+        keyj            = 0x6A,
+        keyk            = 0x6B,
+        keyl            = 0x6C,
+        keym            = 0x6D,
+        keyn            = 0x6E,
+        keyo            = 0x6F,
+        keyp            = 0x70,
+        keyq            = 0x71,
+        keyr            = 0x72,
+        keys            = 0x73,
+        keyt            = 0x74,
+        keyu            = 0x75,
+        keyv            = 0x76,
+        keyw            = 0x77,
+        keyx            = 0x78,
+        keyy            = 0x79,
+        keyz            = 0x7A,
+
+        keyF1           = 0xF1,
+        keyF2           = 0xF2,
+        keyF3           = 0xF3,
+        keyF4           = 0xF4,
+        keyF5           = 0xF5,
+        keyF6           = 0xF6,
+        keyF7           = 0xF7,
+        keyF8           = 0xF8,
+        keyF9           = 0xF9,
+        keyF10          = 0xFA,
+        keyF11          = 0xFB,
+        keyF12          = 0xFC,
+
+        keyPad0         = 0xE0,
+        keyPad1         = 0xE1,
+        keyPad2         = 0xE2,
+        keyPad3         = 0xE3,
+        keyPad4         = 0xE4,
+        keyPad5         = 0xE5,
+        keyPad6         = 0xE6,
+        keyPad7         = 0xE7,
+        keyPad8         = 0xE8,
+        keyPad9         = 0xE9,
+        keyPadDecimal   = 0xEA,
+        keyPadDivide    = 0xEB,
+        keyPadMultiply  = 0xEC,
+        keyPadAdd       = 0xED,
+        keyPadSubtract  = 0xEE,
+        keyPadEnter     = 0xEF,
+
+        keyTab          = 0xC0,
+        keyBackspace    = 0xC1,
+        keyEnter        = 0xC2,
+        keyLeftBracket  = 0xC3,
+        keyRightBracket = 0xC4,
+        keyEscape       = 0xC5,
+        keyLeftAlt      = 0xC6,
+        keyLeftControl  = 0xC7,
+        keyLeftShift    = 0xC8,
+        keyRightAlt     = 0xC9,
+        keyRightControl = 0xCA,
+        keyRightShift   = 0xCB,
+
+        keyCapsLock     = 0xD0,
+        keyScrollLock   = 0xD1,
+        keyNumLock      = 0xD2,
+        keyPrintScreen  = 0xD3,
+        keyPause        = 0xD4,
+
+        keyUp           = 0xD5,
+        keyDown         = 0xD6,
+        keyLeft         = 0xD7,
+        keyRight        = 0xD8,
+        keyHome         = 0xD9,
+        keyEnd          = 0xDA,
+        keyPageUp       = 0xDB,
+        keyPageDown     = 0xDC,
+        keyInsert       = 0xDD,
+        keyDelete       = 0xDE,
+
+    };
+
+    enum keyButton
+    {
+        keyShift   = 0x01,
+        keyControl = 0x02,
+        keyAlt     = 0x04
+    };
+    
+    enum mouseButton
+    {
+        mouseLeftButton     = 0x01,
+        mouseMiddleButton   = 0x02,
+        mouseRightButton    = 0x04,
+        mouseShiftButton    = 0x08,
+        mouseControlButton  = 0x10,
+        mouseAltButton      = 0x20
+    };
+
+}

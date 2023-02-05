@@ -176,20 +176,20 @@ void Camera::processKeyboard()
 
 void Camera::mouseMove(float mx, float my, int state)
 {
-    // Camera rotation controls
-    if (state & CoreApp::mouseLeftButton)
-    {
+    // // Camera rotation controls
+    // if (state & ofs::mouseButton::mouseLeftButton)
+    // {
 
-    }
+    // }
 
-    // Orbital movement controls
-    if (state & CoreApp::mouseRightButton)
-    {
-        double dx = mlx - mx;
-        double dy = mly - my;
+    // // Orbital movement controls
+    // if (state & ofs::mouseButton::mouseRightButton)
+    // {
+    //     double dx = mlx - mx;
+    //     double dy = mly - my;
         
-        orbit(dx * -0.005, dy * -0.005);
-    }
+    //     orbit(dx * -0.005, dy * -0.005);
+    // }
 
     mlx = mx;
     mly = my;
@@ -222,7 +222,7 @@ void Camera::mousePressButtonUp(float mx, float my, int state)
 
 void Camera::mouseDialWheel(float motion, int state)
 {
-    int dz = motion;
-    if (modeExternal == true)
-        dolly(-dz * 0.05);
+    // int dz = motion;
+    // if (modeExternal == true)
+    //     dolly(-dz * 0.05);
 }

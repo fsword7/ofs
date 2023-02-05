@@ -17,6 +17,7 @@
 // #include "render/hudpanel.h"
 #include "main/guimgr.h"
 #include "main/app.h"
+#include "main/keys.h"
 
 // Global variables
 CoreApp *ofsAppCore = nullptr;
@@ -472,13 +473,15 @@ void *CoreApp::findModuleProcAddress(ModuleHandle handle, cchar_t *funcName)
 
 // ******** Keyboard Controls ********
 
-void CoreApp::keyPress(keyCode code, int modifiers, bool down)
+void CoreApp::keyPress(char32_t code, int modifiers, bool down)
 {
+    if (code >= 512)
+        return;
     if (down == true)
     {
-        if (modifiers & keyShift)
+        if (modifiers & ofs::keyButton::keyShift)
             shiftStateKey[code] = true;
-        else if (modifiers & keyControl)
+        else if (modifiers & ofs::keyButton::keyControl)
             ctrlStateKey[code] = true;
         else
             stateKey[code] = true;
@@ -491,22 +494,22 @@ void CoreApp::keyPress(keyCode code, int modifiers, bool down)
     }
 }
 
-void CoreApp::keyEntered(char32_t ch, int modifiers)
+void CoreApp::keyProcess(char32_t ch, int modifiers)
 {
-    switch (ch)
-    {
-        case L'j':  // Reset time warp scale
-            engine->setTimeWarp(1);
-            break;
+    // switch (ch)
+    // {
+    //     case L'j':  // Reset time warp scale
+    //         engine->setTimeWarp(1);
+    //         break;
 
-        case L'k':  // Increase time warp scale
-            engine->setTimeWarp(engine->getTimeWarp() * 2.0);
-            break;
+    //     case L'k':  // Increase time warp scale
+    //         engine->setTimeWarp(engine->getTimeWarp() * 2.0);
+    //         break;
 
-        case L'l':  // Decrease time warp scale
-            engine->setTimeWarp(engine->getTimeWarp() / 2.0);
-            break;
-    }
+    //     case L'l':  // Decrease time warp scale
+    //         engine->setTimeWarp(engine->getTimeWarp() / 2.0);
+    //         break;
+    // }
 }
 
 // ******** Mouse Controls ********
