@@ -7,72 +7,71 @@
 
 #include "main/core.h"
 #include "api/handle.h"
-#include "engine/camera.h"
 #include "engine/object.h"
 #include "main/app.h"
 #include "universe/universe.h"
 #include "universe/body.h"
 #include "universe/star.h"
 
-LIBEXPORT int ofsGetCameraHeight()
-{
-    return ofsAppCore->getCamera()->getHeight();
-}
+// LIBEXPORT int ofsGetCameraHeight()
+// {
+//     return ofsAppCore->getCamera()->getHeight();
+// }
 
-LIBEXPORT int ofsGetCameraWidth()
-{
-    return ofsAppCore->getCamera()->getWidth();
-}
+// LIBEXPORT int ofsGetCameraWidth()
+// {
+//     return ofsAppCore->getCamera()->getWidth();
+// }
 
-LIBEXPORT glm::dvec3 ofsGetCameraGlobalPosition()
-{
-    return ofsAppCore->getCamera()->getGlobalPosition();
-}
+// LIBEXPORT glm::dvec3 ofsGetCameraGlobalPosition()
+// {
+//     return ofsAppCore->getCamera()->getGlobalPosition();
+// }
 
-LIBEXPORT glm::dvec3 ofsGetCameraGlobalDirection()
-{
-    return ofsAppCore->getCamera()->getGlobalDirection();
-}
+// LIBEXPORT glm::dvec3 ofsGetCameraGlobalDirection()
+// {
+//     return ofsAppCore->getCamera()->getGlobalDirection();
+// }
 
-LIBEXPORT glm::dmat3 ofsGetCameraGlobalRotation()
-{
-    return ofsAppCore->getCamera()->getGlobalRotation();
-}
+// LIBEXPORT glm::dmat3 ofsGetCameraGlobalRotation()
+// {
+//     return ofsAppCore->getCamera()->getGlobalRotation();
+// }
 
-LIBEXPORT glm::dmat3 ofsGetCameraRotationMatrix()
-{
-    return ofsAppCore->getCamera()->getGlobalRotation();
-}
+// LIBEXPORT glm::dmat3 ofsGetCameraRotationMatrix()
+// {
+//     return ofsAppCore->getCamera()->getGlobalRotation();
+// }
 
-LIBEXPORT double ofsGetCameraFieldOfView()
-{
-    return ofsAppCore->getCamera()->getFOV();
-}
+// LIBEXPORT double ofsGetCameraFieldOfView()
+// {
+//     return ofsAppCore->getCamera()->getFOV();
+// }
 
-LIBEXPORT double ofsGetCameraAspectRatio()
-{
-    return ofsAppCore->getCamera()->getAspect();
-}
+// LIBEXPORT double ofsGetCameraAspectRatio()
+// {
+//     return ofsAppCore->getCamera()->getAspect();
+// }
 
-LIBEXPORT double ofsGetCameraTanAperature()
-{
-    return ofsAppCore->getCamera()->getTanAp();
-}
+// LIBEXPORT double ofsGetCameraTanAperature()
+// {
+//     return ofsAppCore->getCamera()->getTanAp();
+// }
 
-LIBEXPORT glm::dmat4 ofsGetCameraViewMatrix()
-{
-    return ofsAppCore->getCamera()->getViewMatrix();
-}
+// LIBEXPORT glm::dmat4 ofsGetCameraViewMatrix()
+// {
+//     return ofsAppCore->getCamera()->getViewMatrix();
+// }
 
-LIBEXPORT glm::dmat4 ofsGetCameraProjectionMatrix()
-{
-    return ofsAppCore->getCamera()->getProjectionMatrix();
-}
+// LIBEXPORT glm::dmat4 ofsGetCameraProjectionMatrix()
+// {
+//     return ofsAppCore->getCamera()->getProjectionMatrix();
+// }
 
-LIBEXPORT glm::dmat4 ofsGetCameraViewProjMatrix()
-{
-    return glm::dmat4(1);
-}
+// LIBEXPORT glm::dmat4 ofsGetCameraViewProjMatrix()
+// {
+//     return glm::dmat4(1);
+// }
 
 
 

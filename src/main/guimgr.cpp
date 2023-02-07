@@ -7,7 +7,6 @@
 #include "api/graphics.h"
 #include "main/keys.h"
 #include "main/app.h"
-#include "engine/camera.h"
 #include "main/guimgr.h"
 
 IMGUI_API ImGuiContext *GImGui = nullptr;

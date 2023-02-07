@@ -6,13 +6,12 @@ find_package(ZLIB REQUIRED)
 #find_package(lua REQUIRED)
 
 set(OFS_CPP_SRCS
-    engine/camera.cpp
     engine/engine.cpp
     engine/headup.cpp
     engine/mfdpanel.cpp
     engine/object.cpp
     engine/panel.cpp
-    # engine/player.cpp
+    engine/player.cpp
     engine/rigidbody.cpp
     engine/supervessel.cpp
     engine/vessel.cpp
@@ -33,7 +32,6 @@ set(OFS_CPP_SRCS
     ephem/vsop87.cpp
     ephem/vsop87a.cpp
     main/app.cpp
-    # main/date.cpp
     main/guimgr.cpp
     main/graphics.cpp
     main/main.cpp
@@ -80,12 +78,11 @@ set(OFS_H_SRCS
     api/graphics.h
     api/module.h
     api/ofsapi.h
-    engine/camera.h
     engine/engine.h
     engine/mfdpanel.h
     engine/object.h
     engine/panel.h
-    # engine/player.h
+    engine/player.h
     engine/rigidbody.h
     engine/supervessel.h
     engine/vessel.h
@@ -101,10 +98,8 @@ set(OFS_H_SRCS
     ephem/rotation.h
     ephem/vsop87.h
     ephem/vsop87a.h
-    # main/sdl/app.h
     main/app.h
     main/core.h
-    # main/date.h
     main/guimgr.h
     main/math.h
     main/timedate.h

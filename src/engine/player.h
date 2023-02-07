@@ -1,178 +1,218 @@
 // player.h - Player/Observer Package
 //
 // Author:  Tim Stark
-// Date:    Apt 17, 2022
+// Date:    Feb 6, 2023
 
 #pragma once
 
-#include "universe/frame.h"
-#include "engine/rigidbody.h"
-
+class Object;
 class Player;
-class PlayerFrame;
 
-class Camera
+enum cameraMode {
+    camGlobalFrame,
+
+};
+
+enum travelMode
 {
+    travelFreeFlight,
+    travelExternal,
+    travelCocpkit
+};
+
+class OFSAPI Camera
+{
+    friend class Player;
+
 public:
-    Camera(Player &player) : player(player)
-    { }
+    Camera(int width, int height);
     ~Camera() = default;
 
-    inline int getWidth() const     { return width; }
-    inline int getHeight() const    { return height; }
-    inline double getAspect() const { return aspect; }
-    inline double getFOV() const    { return fov; }
-    inline double getTanAp() const  { return tan(fov); }
-    inline bool isExternal() const  { return external; }
-    
-    vec3d_t getuPosition() const;
-    quatd_t getuOrientation() const;
-    vec3d_t getlPosition() const;
-    quatd_t getlOrientation() const;
-    
-    vec3d_t getPickRay(float vx, float vy) const;
+    inline int getWidth()               { return width; }
+    inline int getHeight()              { return height; }
 
-    void setViewport(int w, int h);
+    inline double getAspect()           { return aspect; }
+    inline double getFOV()              { return fov; }
+    inline double getAperature()        { return tan(fov); }
+
+    inline glm::dvec3 getGlobalPosition() { return rpos; }
+    inline glm::dmat3 getGlobalRotation() { return rrot; }
+
+    inline glm::dmat4 getProjMatrix() { return proj; }
+    inline glm::dmat4 getViewMatrix() { return view; }
+
+    void resize(int width, int height);
+
+    void setPosition(const glm::dvec3 &vpos);
+    void setRotation(const glm::dmat3 &vrot);
+    void look(const glm::dvec3 &opos);
+
+    void update();
+
+    void updateProjMatrix();
+    void updateViewMatrix();
 
 private:
-    Player &player;
+    int    width, height;
+    double aspect;
+    double fov;
+    double zNear, zFar;
 
-    vec3d_t rpos = vec3d_t::Zero();         // Relative position [player frame]
-    quatd_t rrot = quatd_t::Identity();     // Relative orientation [player frame]
+    glm::dvec3 rpos  = glm::dvec3(0, 0, 0);
+    glm::dmat3 rrot  = glm::dmat3(1);
+    double     rdist = glm::length(rpos);
 
-    uint32_t width = 1, height = 1;
-    double   aspect = double(width) / double(height);
-    double   fov = ofs::radians(SCR_FOV);
-    bool     external = false;
+    // Projection/view matrix
+    glm::dmat4 proj;
+    glm::dmat4 view;
 };
 
-class PlayerFrame
+class OFSAPI Player
 {
 public:
-    enum coordType
-    {
-        csUniversal  = 0,
-        csEcliptical = 1,
-        csEquatorial = 2,
-        csBodyFixed  = 3,
-        csBodyMeanEquator = 4,
-        csObjectSync = 5
-    };
-
-    PlayerFrame();
-    PlayerFrame(coordType csType, Object *center = nullptr, Object *targer = nullptr);
-    ~PlayerFrame();
-
-    static Frame *create(coordType csType, Object *center = nullptr, Object *targer = nullptr);
-
-    coordType getType() const   { return type; }
-    Frame *getFrame() const     { return frame; }
-
-    str_t getsName() const
-    { 
-        return frame != nullptr ? frame->getCenter()->getsName() : "(Unknown)";
-    }
-
-    Object *getCenter() const
-    {
-        return frame != nullptr ? frame->getCenter() : nullptr;
-    }
-
-    vec3d_t fromUniversal(vec3d_t upos, double tjd);
-    quatd_t fromUniversal(quatd_t urot, double tjd);
-    vec3d_t toUniversal(vec3d_t lpos, double tjd);
-    quatd_t toUniversal(quatd_t lrot, double tjd);
-    
-private:
-    coordType type = csUniversal;
-    Frame *frame = nullptr;
-};
-
-class Player : public RigidBody
-{
-public:
-    enum travelMode
-    {
-        tvFreeMode
-    };
-
-    enum followMode
-    {
-        fwEcliptic,
-        fwEquatorial,
-        fwBodyFixed,
-        fwHelioSync
-    };
-
-    enum goMode
-    {
-        goEcliptic,
-        goEquartorial,
-        goBodyFixed,
-        goFrontHelioSync,
-        goBackHelioSync
-    };
-
     Player();
-    virtual ~Player();
+    ~Player();
 
-    inline Camera *getCamera(int idx = 0) const
-    { 
-        return (idx >= 0 && idx < cameras.size() ? cameras[idx] : nullptr);
-    }
+    inline bool isExternal() const              { return modeExternal; }
+    inline bool isInternal() const              { return !modeExternal; }
+    inline travelMode getTravelMode() const     { return modeTravel; }
+    inline Camera *getCamera()                  { return &cam; }
 
-    inline Object *getCenter() const            { return frame != nullptr ? frame->getCenter() : nullptr; }
-    inline Object *getTrackingObject() const    { return trackingObject; }
-    inline vec3d_t getuPosition() const         { return upos; }
-    inline quatd_t getuOrientation() const      { return urot; }
-    inline vec3d_t getlPosition() const         { return lpos; }
-    inline quatd_t getlOrientation() const      { return lrot; }
-
-    inline vec3d_t getAngularVelocity() const   { return av; }
-    inline vec3d_t getTravelVelocity() const    { return tv; }
-    inline double  getJulianTime() const        { return jdTime; }
-
-    vec3d_t getPickRay(float vx, float vy);
+    inline glm::dvec3 getGlobalPosition()       { return gpos; }
+    inline glm::dmat3 getGlobalRotation()       { return grot; }
     
-    void setFrame(PlayerFrame::coordType cs, Object *center = nullptr, Object *target = nullptr);
-    void updateFrame(PlayerFrame *nFrame);
+    void attach(Object *object);
 
-    void setTrackingObject(Object *object)      { trackingObject = object; }
-    void setAngularVelocity(vec3d_t av);
-    void setTravelVelocity(vec3d_t tv);
+    void update();
 
-    void updateUniversal();
-    void start(double tjd);
-    void update(double dt, double timeTravel);
+    void rotatePhi(double phi);     // X rotation
+    void rotateTheta(double theta); // Y rotation
 
-    void move(Object *object, double altitude, goMode mode);
-    void follow(Object *object, followMode mode);
-    void look(Object *object);
+    void addPhi(double dphi);     // X rotation
+    void addTheta(double dtheta); // Y rotation
 
-    double computeCoarseness(double maxCoarseness);
-    void dolly(double delta);
-    void orbit(quatd_t rot);
+    void orbit(double phi, double theta, double dist);
+    void rotateView(double phi, double theta);
 
 private:
-    PlayerFrame *frame = nullptr;
+    Camera cam;
 
-    std::vector<Camera *> cameras;
-    
-    travelMode mode = tvFreeMode;
+    Object *tgtObject = nullptr;
 
-    vec3d_t  upos = vec3d_t::Zero();
-    quatd_t  urot = quatd_t::Identity();
-    vec3d_t  lpos = vec3d_t::Zero();
-    quatd_t  lrot = quatd_t::Identity();
-    
-    // Movement control
-    vec3d_t av = vec3d_t::Zero();   // angular velocity control
-    // quatd_t wv = { 1, 0, 0, 0}; //   quaternion control
-    vec3d_t tv = vec3d_t::Zero();   // travel velocity control
+    // Global (universal) parmeters
+    glm::dvec3 gpos;
+    glm::dmat3 grot;
 
-    double  realTime;
-    double  jdTime;
-    double  deltaTime;
+    double ephi = 0.0;      // current phi rotation (external)
+    double etheta = 0.0;    // current theta rotation (external)
+    double cphi = 0.0;      // current phi rotation (free)
+    double ctheta = 0.0;    // current theta rotation (free)
 
-    Object *trackingObject = nullptr;
+    bool modeExternal = true;
+    travelMode modeTravel = travelFreeFlight;
+    cameraMode modeCamera = camGlobalFrame;
+
 };
+
+// class Camera
+// {
+// public:
+//     Camera(int w, int h);
+//     ~Camera() = default;
+
+//     inline int getWidth() const                     { return width; }
+//     inline int getHeight() const                    { return height; }
+
+//     inline glm::dvec3 getGlobalPosition() const     { return upos; }
+//     inline glm::dvec3 getGlobalDirection() const    { return udir; }
+//     inline glm::dmat3 getGlobalRotation() const     { return urot; }
+
+//     inline glm::dvec3 getLocalPosition() const      { return lpos; }
+//     inline glm::dvec3 getLocalDirection() const     { return ldir; }
+//     inline glm::dmat3 getLocalRotation() const      { return lrot; }
+
+//     inline double getFOV() const                    { return fov; }
+//     inline double getAspect() const                 { return aspect; }
+//     inline double getTanAp() const                  { return tan(fov); }
+
+//     inline glm::dmat4 getViewMatrix() const         { return glm::dmat4(urot); }
+//     inline glm::dmat4 getProjectionMatrix() const   { return proj; }
+
+//     void resize(int w, int h);
+//     void reset();
+
+//     void updateProjectionMatrix();
+
+//     void setPosition(const glm::dvec3 &pos);
+//     void setRotation(const glm::dmat3 &rot);
+
+//     void look(const glm::dvec3 &opos);
+
+//     void dolly(double dz);
+    
+//     void orbit(double phi, double theta);
+//     void orbitPhi(double phi);
+//     void orbitTheta(double theta);
+
+//     void rotate(double dx, double dy, double dz);
+//     void rotatePhi(double phi);
+//     void rotateTheta(double theta);
+
+//     void setRelativePosition(double phi, double theta, double dist);
+
+//     void attach(Object *object, extCameraMode mode);
+
+//     void update();
+
+//     void processKeyboard();
+
+//     // Mouse contols
+//     void mouseMove(float mx, float my, int state);
+//     void mousePressButtonDown(float mx, float my, int state);
+//     void mousePressButtonUp(float mx, float my, int state);
+//     void mouseDialWheel(float motion, int state);
+
+// private:
+//     int    width, height;
+//     double aspect;
+//     double fov;
+//     double zNear, zFar;
+
+//     int mlx, mly;   // Last moouse motion
+
+//     // Rotation: X = Phi, Y = Theta
+//     glm::dvec3 erot;        // rotation [radians - object frame]
+//     glm::dvec3 clrot;       // local camera rotation [radians]
+
+//     bool modeExternal = true;
+//     extCameraMode mode = modeGlobalFrame;
+
+//     Object *targetObject = nullptr;
+
+//     glm::dmat4 proj = glm::dmat4(1.0);
+//     glm::dmat4 view = glm::dmat4(1.0);
+
+//     // Universe parameters [global frame]
+//     glm::dvec3 upos = { 0, 0, 0 };
+//     glm::dvec3 udir = { 0, 0, 1 };
+//     glm::dmat3 urot = glm::dmat3(1);
+
+//     // Local parameters [planet frame]
+//     glm::dvec3 lpos = { 0, 0, 0 };
+//     glm::dvec3 ldir = { 0, 0, 1 };
+//     glm::dmat3 lrot = glm::dmat3(1);
+
+//     // Vessel parameters [vessel frame]
+//     glm::dvec3 vpos = { 0, 0, 0 };
+//     glm::dvec3 vdir = { 0, 0, 1 };
+//     glm::dmat3 vrot = glm::dmat3(1);
+
+//     // Cockpit parameters [vessel frame]
+//     glm::dvec3 cpos = { 0, 0, 0 };
+//     glm::dvec3 cdir = { 0, 0, 1 };
+//     glm::dmat3 crot = glm::dmat3(1);
+
+//     glm::dvec3 rpos;
+//     double     rdist;
+//     glm::dmat3 rrot;
+// };

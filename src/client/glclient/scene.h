@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "main/core.h"
+#include "engine/player.h"
 #include "shader.h"
 
 class Camera;
@@ -70,12 +72,12 @@ public:
     ~Scene() = default;
 
     inline ShaderManager &getShaderManager()        { return shmgr; }
-    inline Camera *getCamera(int idx = 0) const     { return camera; }
+    inline Camera *getCamera() const                { return camera; }
 
     void init();
     void start();
-    void update();
-    void render();
+    void update(Player *player);
+    void render(Player *player);
     
     void resize(int width, int height);
 

@@ -15,7 +15,7 @@
 #include "scripts/parser.h"
 
 #include "main/app.h"
-#include "engine/camera.h"
+#include "engine/player.h"
 
 void Universe::init()
 {
@@ -66,9 +66,12 @@ void Universe::init()
     // lunar->setAlbedo(0.136);
 
     Camera *cam = ofsAppCore->getCamera();
+    Player *player = ofsAppCore->getPlayer();
     cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
     cam->look(sun->getStarPosition());
     cam->update();
+    player->attach(sun);
+    player->update();
 
     // cam->setPosition(glm::dvec3(0, 0, -earth->getRadius() * 4.0));
     // cam->look(glm::dvec3(0, 0, 0));

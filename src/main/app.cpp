@@ -8,8 +8,7 @@
 #include "main/core.h"
 #include "api/graphics.h"
 #include "engine/engine.h"
-#include "engine/camera.h"
-// #include "engine/player.h"
+#include "engine/player.h"
 #include "engine/view.h"
 #include "universe/universe.h"
 // #include "render/scene.h"
@@ -38,6 +37,7 @@ CoreApp::CoreApp()
 void CoreApp::initEngine()
 {
     engine = new Engine();
+    player = new Player();
     // engine->init(ctx, width, height);
 
     // scene = engine->getScene();
@@ -45,6 +45,7 @@ void CoreApp::initEngine()
     // player = engine->getPlayer();
     // camera = player->getCamera();
 
+ 
     View *view = new View(View::viewMainWindow, 0.0f, 0.0f, 1.0f, 1.0f);
     views.push_back(view);
     activeView = view;
@@ -192,7 +193,7 @@ void CoreApp::init()
     Logger::getLogger()->info("OFS: Loaded GLFW version: {}\n",
         glfwGetVersionString());
 
-    camera = new Camera(width, height);
+    // camera = new Camera(width, height);
 
     // Loading startup modules
     loadStartupModules();
@@ -203,6 +204,9 @@ void CoreApp::init()
     // Initialize graphics client module
     if (gclient != nullptr)
         createSceneWindow();
+
+    // Initialize player/camera first
+    player = new Player();
 
     // Initialize universe
     universe = new Universe();
@@ -239,7 +243,7 @@ void CoreApp::closeSession()
 
 void CoreApp::updateWorld()
 {
-    camera->update();
+    player->update();
 }
 
 bool CoreApp::attachGraphicsClient(GraphicsClient *gc)
@@ -272,7 +276,7 @@ void CoreApp::createSceneWindow()
 void CoreApp::renderScene()
 {
     if (gclient != nullptr)
-        gclient->cbRenderScene();
+        gclient->cbRenderScene(player);
 }
 
 void CoreApp::drawHUD()
@@ -309,6 +313,8 @@ void CoreApp::run()
                 updateWorld();
                 endTimeStep(bRunning);
             }
+
+            processUserInputs();
         }
 
         renderScene();
@@ -510,6 +516,47 @@ void CoreApp::keyProcess(char32_t ch, int modifiers)
     //         engine->setTimeWarp(engine->getTimeWarp() / 2.0);
     //         break;
     // }
+}
+
+void CoreApp::processUserInputs()
+{
+    // process keyboard controls
+    keyImmediateSystem();
+    if (bRunning)
+        keyImmediateOnRunning();
+}
+
+void CoreApp::keyBufferedSystem(char32_t key, int mods)
+{
+
+}
+
+void CoreApp::keyBufferedOnRunning(char32_t key, int mods)
+{
+
+}
+
+void CoreApp::keyImmediateSystem()
+{
+
+    if (player->isExternal())
+    {
+        // External camera view
+
+        if (stateKey[ofs::keyCode::keyPad4] || stateKey[ofs::keyCode::keyPad6])
+        {
+
+        }
+    }
+    else
+    {
+        // Internal camera view (in cocpkit)
+    }
+}
+
+void CoreApp::keyImmediateOnRunning()
+{
+
 }
 
 // ******** Mouse Controls ********

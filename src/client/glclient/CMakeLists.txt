@@ -6,7 +6,7 @@ find_package(fmt REQUIRED)
 
 set(OGL_CPP_SRCS
     buffer.cpp
-    camera.cpp
+    # camera.cpp
     client.cpp
     constellations.cpp
     glad.cpp
@@ -25,7 +25,7 @@ set(OGL_CPP_SRCS
 
 set(OGL_H_SRCS
     buffer.h
-    camera.h
+    # camera.h
     client.h
     scene.h
     shader.h

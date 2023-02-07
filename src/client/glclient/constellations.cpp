@@ -38,7 +38,7 @@ void Scene::renderConstellations()
     const StarDatabase &starlib = ofsGetStarDatabase();
     const std::vector<Asterism *> &asterisms = constellations.getAsterisms();
 
-    glm::dvec3 vpos = ofsGetCameraGlobalPosition();
+    glm::dvec3 vpos = camera->getGlobalPosition();
     int cLines = 0;
 
     AsterismVertex *vertices = nullptr;
@@ -98,8 +98,8 @@ void Scene::renderConstellations()
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
-    glm::dmat4 proj = ofsGetCameraProjectionMatrix();
-    glm::dmat4 view = ofsGetCameraViewMatrix();
+    glm::dmat4 proj = camera->getProjMatrix();
+    glm::dmat4 view = camera->getViewMatrix();
     mvp = glm::mat4(proj * view);
 
     glDrawArrays(GL_LINES, 0, rLines);

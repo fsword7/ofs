@@ -5,12 +5,13 @@
 
 #include "main/core.h"
 #include "engine/object.h"
+#include "engine/player.h"
 #include "universe/universe.h"
 #include "universe/body.h"
 #include "universe/star.h"
 
 #include "client.h"
-#include "camera.h"
+// #include "camera.h"
 #include "vobject.h"
 #include "scene.h"
 
@@ -31,7 +32,7 @@ void Scene::checkErrors()
 
 void Scene::init()
 {
-    camera = new Camera(width, height);
+    // camera = new Camera(width, height);
 
     vobjList.clear();
 
@@ -58,20 +59,21 @@ void Scene::resize(int w, int h)
 {
     width = w;
     height = h;
-    if (camera != nullptr)
-        camera->setSize(width, height);
+    // if (camera != nullptr)
+    //     camera->setSize(width, height);
 }
 
-void Scene::update()
+void Scene::update(Player *player)
 {
-    camera->update();
+    camera = player->getCamera();
 
-    pixelSize = (2.0 * tan(ofsGetCameraFieldOfView() / 2.0)) / ofsGetCameraHeight();;
+    // pixelSize = (2.0 * tan(ofsGetCameraFieldOfView() / 2.0)) / ofsGetCameraHeight();;
+    pixelSize = (2.0 * tan(camera->getFOV() / 2.0)) / camera->getHeight();
 
     nearStars.clear();
     visibleStars.clear();
 
-    ofsFindClosestStars(ofsGetCameraGlobalPosition(), 1.0, nearStars);
+    ofsFindClosestStars(camera->getGlobalPosition(), 1.0, nearStars);
 }
 
 glm::dvec3 Scene::getAstrocentricPosition(ObjectHandle object, const glm::dvec3 &vpos, int time)
@@ -79,9 +81,9 @@ glm::dvec3 Scene::getAstrocentricPosition(ObjectHandle object, const glm::dvec3 
     return vpos - ofsGetObjectGlobalPosition(object, time);
 }
 
-void Scene::render()
+void Scene::render(Player *player)
 {
-    update();
+    // update(player);
 
     // Clear all framebuffer
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -90,7 +92,7 @@ void Scene::render()
     renderConstellations();
     renderStars(faintestMag);
 
-    glm::dvec3 obs = ofsGetCameraGlobalPosition();
+    glm::dvec3 obs = camera->getGlobalPosition();
 
     for (auto sun : nearStars)
     {
@@ -104,7 +106,7 @@ void Scene::render()
         FrameTree *tree = objects->getSystemTree();
 
         glm::dvec3 apos = getAstrocentricPosition(sun, obs, now);
-        glm::dvec3 vpn = ofsGetCameraRotationMatrix() * glm::dvec3(0, 0, -1);
+        glm::dvec3 vpn = camera->getGlobalRotation() * glm::dvec3(0, 0, -1);
 
         buildSystems(tree, apos, vpn, { 0, 0, 0 });
     }

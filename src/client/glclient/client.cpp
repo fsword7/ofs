@@ -4,6 +4,7 @@
 // Date:    Aug 30, 2022
 
 #include "main/core.h"
+#include "engine/player.h"
 #include "client.h"
 #include "scene.h"
 
@@ -188,11 +189,11 @@ void glClient::cbStart()
     }
 }
 
-void glClient::cbRenderScene()
+void glClient::cbRenderScene(Player *player)
 {
     if (scene != nullptr)
     {
-        scene->update();
-        scene->render();
+        scene->update(player);
+        scene->render(player);
     }
 }

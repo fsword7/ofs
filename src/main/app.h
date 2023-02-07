@@ -6,10 +6,11 @@
 #pragma once
 
 #include "main/timedate.h"
+#include "engine/player.h"
 
 class Engine;
 class Universe;
-// class Player;
+class Player;
 class Camera;
 class View;
 class Panel;
@@ -35,8 +36,9 @@ public:
     virtual void run();
 
     inline GraphicsClient *getClient() { return gclient; }
-    inline Camera *getCamera() { return camera; }
-    inline Universe *getUniverse() { return universe; }
+    inline Camera    *getCamera() { return player->getCamera(); }
+    inline Player    *getPlayer() { return player; }
+    inline Universe  *getUniverse() { return universe; }
     
     void initEngine();
 
@@ -80,6 +82,12 @@ public:
     void keyPress(char32_t code, int modifiers, bool down);
     void keyProcess(char32_t ch, int modifiers);
 
+    void processUserInputs();
+    void keyBufferedSystem(char32_t key, int mods);
+    void keyBufferedOnRunning(char32_t key, int mods);
+    void keyImmediateSystem();
+    void keyImmediateOnRunning();
+
     // Mouse contols
     void mouseMove(float mx, float my, int state);
     void mousePressButtonDown(float mx, float my, int state);
@@ -93,8 +101,8 @@ public:
 protected:
     Engine   *engine = nullptr;
     Universe *universe = nullptr;
-    // Player   *player = nullptr;
-    Camera   *camera = nullptr;
+    Player   *player = nullptr;
+    // Camera   *camera = nullptr;
     // Camerax  *camerax = nullptr;
 
     GUIManager *guimgr = nullptr;

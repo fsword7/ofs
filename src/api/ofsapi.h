@@ -43,20 +43,20 @@ enum ObjectType
     objCelestialBody,
 };
 
-OFSAPI int ofsGetCameraHeight();
-OFSAPI int ofsGetCameraWidth();
+// OFSAPI int ofsGetCameraHeight();
+// OFSAPI int ofsGetCameraWidth();
 
-OFSAPI glm::dvec3 ofsGetCameraGlobalPosition();
-OFSAPI glm::dvec3 ofsGetCameraGlobalDirection();
-OFSAPI glm::dmat3 ofsGetCameraGlobalRotation();
-OFSAPI double ofsGetCameraFieldOfView();
-OFSAPI double ofsGetCameraAspectRatio();
-OFSAPI double ofsGetCameraTanAperature();
+// OFSAPI glm::dvec3 ofsGetCameraGlobalPosition();
+// OFSAPI glm::dvec3 ofsGetCameraGlobalDirection();
+// OFSAPI glm::dmat3 ofsGetCameraGlobalRotation();
+// OFSAPI double ofsGetCameraFieldOfView();
+// OFSAPI double ofsGetCameraAspectRatio();
+// OFSAPI double ofsGetCameraTanAperature();
 
-OFSAPI glm::dmat3 ofsGetCameraRotationMatrix();
-OFSAPI glm::dmat4 ofsGetCameraViewMatrix();
-OFSAPI glm::dmat4 ofsGetCameraProjectionMatrix();
-OFSAPI glm::dmat4 ofsGetCameraViewProjMatrix();
+// OFSAPI glm::dmat3 ofsGetCameraRotationMatrix();
+// OFSAPI glm::dmat4 ofsGetCameraViewMatrix();
+// OFSAPI glm::dmat4 ofsGetCameraProjectionMatrix();
+// OFSAPI glm::dmat4 ofsGetCameraViewProjMatrix();
 
 OFSAPI ObjectHandle ofsGetObjectByName(cstr_t &name);
 OFSAPI cstr_t ofsGetObjectName(ObjectHandle object);

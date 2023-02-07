@@ -40,8 +40,8 @@ void StarVertex::start()
 
     glEnable(GL_PROGRAM_POINT_SIZE);
 
-    glm::dmat4 view = ofsGetCameraViewMatrix();
-    glm::dmat4 proj = ofsGetCameraProjectionMatrix();
+    glm::dmat4 view = scene.getCamera()->getViewMatrix();
+    glm::dmat4 proj = scene.getCamera()->getProjMatrix();
 
     // Set infinity perpsective (hack)
     // proj[2][2] = 1.0;
@@ -194,10 +194,10 @@ void Scene::initStarRenderer()
 
 void Scene::renderStars(double faintest)
 {
-    glm::dvec3 obs = ofsGetCameraGlobalPosition();
-    glm::dmat3 rot = ofsGetCameraGlobalRotation();
-    double fov = ofsGetCameraFieldOfView();
-    double aspect = ofsGetCameraAspectRatio();
+    glm::dvec3 obs = camera->getGlobalPosition();
+    glm::dmat3 rot = camera->getGlobalRotation();
+    double fov = camera->getFOV();
+    double aspect = camera->getAspect();
 
     starRenderer->cpos = obs;
     starRenderer->pxSize = pixelSize;

@@ -4,8 +4,9 @@
 // Date:    Sep 12, 2022
 
 #include "main/core.h"
+#include "engine/player.h"
 #include "client.h"
-#include "camera.h"
+// #include "camera.h"
 #include "scene.h"
 #include "buffer.h"
 #include "vobject.h"
@@ -313,17 +314,18 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
 {
     glm::dvec3 opos, cpos;
     double cdist;
+    Camera *camera = scene.getCamera();
 
     prm.maxlod = 19;
-    resScale = 1400.0 / double(ofsGetCameraHeight());
+    resScale = 1400.0 / double(camera->getHeight());
 
-    Camera *cam = scene.getCamera();
-    prm.dmViewProj = cam->getViewProjMatrix();
+    // Camera *cam = scene.getCamera();
+    prm.dmViewProj = camera->getProjMatrix() * camera->getViewMatrix();
     prm.dmWorld = dmWorld;
 
     prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
     opos = ofsGetObjectGlobalPosition(object, 0);
-    cpos = ofsGetCameraGlobalPosition();
+    cpos = camera->getGlobalPosition();
 
     prm.cpos = opos - cpos;
     prm.cdir = tmul(prm.urot, -prm.cpos);
@@ -402,7 +404,7 @@ void SurfaceManager::process(SurfaceTile *tile)
             double a = prm.cdist - erad * cos(adist);
             tdist = sqrt(a*a + h*h);
         }
-        double apr = tdist * ofsGetCameraTanAperature(); // * resScale;
+        double apr = tdist * scene.getCamera()->getAperature(); // * resScale;
 
         int tres = apr < 1e-6 ? prm.maxlod : std::max(0, std::min(prm.maxlod, int(bias - log(apr) * scale)));
         // logger->debug("lod = {}, tres = {}\n", tile->lod, tres);
