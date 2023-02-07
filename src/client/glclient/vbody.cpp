@@ -4,12 +4,13 @@
 // Date:    Sep 13, 2022
 
 #include "main/core.h"
+#include "engine/object.h"
 #include "client.h"
 #include "vobject.h"
 #include "vbody.h"
 #include "surface.h"
 
-vBody::vBody(ObjectHandle object, Scene &scene)
+vBody::vBody(const Object *object, Scene &scene)
 : vObject(object, scene)
 {
     smgr = new SurfaceManager(object, scene);

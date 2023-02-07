@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Apr 15, 2022
 
+#define OPSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "engine/object.h"
 

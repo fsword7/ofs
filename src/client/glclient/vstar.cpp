@@ -4,10 +4,11 @@
 // Date:    Sep 13, 2022
 
 #include "main/core.h"
+#include "engine/object.h"
 #include "vobject.h"
 #include "vstar.h"
 
-vStar::vStar(ObjectHandle object, Scene &scene)
+vStar::vStar(const Object *object, Scene &scene)
 : vObject(object, scene)
 {
 

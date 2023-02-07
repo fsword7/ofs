@@ -58,23 +58,23 @@ enum ObjectType
 // OFSAPI glm::dmat4 ofsGetCameraProjectionMatrix();
 // OFSAPI glm::dmat4 ofsGetCameraViewProjMatrix();
 
-OFSAPI ObjectHandle ofsGetObjectByName(cstr_t &name);
-OFSAPI cstr_t ofsGetObjectName(ObjectHandle object);
-OFSAPI ObjectType ofsGetObjectType(ObjectHandle object);
+// OFSAPI ObjectHandle ofsGetObjectByName(cstr_t &name);
+// OFSAPI cstr_t ofsGetObjectName(ObjectHandle object);
+// OFSAPI ObjectType ofsGetObjectType(ObjectHandle object);
 OFSAPI double ofsGetObjectRadius(ObjectHandle object);
-OFSAPI glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object, int time);
+// OFSAPI glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object, int time);
 
 OFSAPI int ofsGetObjectStarHIPNumber(ObjectHandle object);
 OFSAPI glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object);
 OFSAPI double ofsGetObjectStarTemperature(ObjectHandle object);
 
-OFSAPI bool ofsStarHasSolarSystem(ObjectHandle object);
-OFSAPI System *ofsStarGetSolarSystem(ObjectHandle object);
+// OFSAPI bool ofsStarHasSolarSystem(ObjectHandle object);
+// OFSAPI System *ofsStarGetSolarSystem(ObjectHandle object);
 
 OFSAPI Constellations &ofsGetConstellations();
 OFSAPI StarDatabase &ofsGetStarDatabase();
-OFSAPI void ofsFindClosestStars(const glm::dvec3 &obs, const double dist,
-    std::vector<ObjectHandle> &nearStars);
+// OFSAPI void ofsFindClosestStars(const glm::dvec3 &obs, const double dist,
+//     std::vector<ObjectHandle> &nearStars);
 OFSAPI void ofsFindVisibleStars(ofsHandler2 &handler,
     const glm::dvec3 &obs, const glm::dmat3 &rot,
     const double fov, const double aspect,

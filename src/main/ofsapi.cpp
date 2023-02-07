@@ -75,30 +75,30 @@
 
 
 
-LIBEXPORT ObjectHandle ofsGetObjectByName(cstr_t &name)
-{
-    return ofsAppCore->getUniverse()->findPath(name);
-}
+// LIBEXPORT ObjectHandle ofsGetObjectByName(cstr_t &name)
+// {
+//     return ofsAppCore->getUniverse()->findPath(name);
+// }
 
-LIBEXPORT cstr_t ofsGetObjectName(ObjectHandle object)
-{
-    return static_cast<Object *>(object)->getName();
-}
+// LIBEXPORT cstr_t ofsGetObjectName(ObjectHandle object)
+// {
+//     return static_cast<Object *>(object)->getName();
+// }
 
-LIBEXPORT ObjectType ofsGetObjectType(ObjectHandle object)
-{
-    return static_cast<Object *>(object)->getType();
-}
+// LIBEXPORT ObjectType ofsGetObjectType(ObjectHandle object)
+// {
+//     return static_cast<Object *>(object)->getType();
+// }
 
 LIBEXPORT double ofsGetObjectRadius(ObjectHandle object)
 {
     return static_cast<Object *>(object)->getRadius(); 
 }
 
-LIBEXPORT glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object, int time)
-{
-    return static_cast<Object *>(object)->getuPosition(time);
-}
+// LIBEXPORT glm::dvec3 ofsGetObjectGlobalPosition(ObjectHandle object, int time)
+// {
+//     return static_cast<Object *>(object)->getuPosition(time);
+// }
 
 LIBEXPORT int ofsGetObjectStarHIPNumber(ObjectHandle object)
 {
@@ -115,15 +115,15 @@ LIBEXPORT glm::dvec3 ofsGetObjectStarPosition(ObjectHandle object)
     return static_cast<CelestialStar *>(object)->getStarPosition();
 }
 
-LIBEXPORT bool ofsStarHasSolarSystem(ObjectHandle object)
-{
-    return static_cast<CelestialStar *>(object)->hasSolarSystem();
-}
+// LIBEXPORT bool ofsStarHasSolarSystem(ObjectHandle object)
+// {
+//     return static_cast<CelestialStar *>(object)->hasSolarSystem();
+// }
 
-LIBEXPORT System *ofsStarGetSolarSystem(ObjectHandle object)
-{
-    return static_cast<CelestialStar *>(object)->getSolarSystem();
-}
+// LIBEXPORT System *ofsStarGetSolarSystem(ObjectHandle object)
+// {
+//     return static_cast<CelestialStar *>(object)->getSolarSystem();
+// }
 
 LIBEXPORT Constellations &ofsGetConstellations()
 {
@@ -135,11 +135,11 @@ LIBEXPORT StarDatabase &ofsGetStarDatabase()
     return ofsAppCore->getUniverse()->getStarDatabase();
 }
 
-LIBEXPORT void ofsFindClosestStars(const glm::dvec3 &obs, const double dist,
-    std::vector<ObjectHandle> &nearStars)
-{
-    ofsAppCore->getUniverse()->findCloseStars(obs, dist, nearStars);
-}
+// LIBEXPORT void ofsFindClosestStars(const glm::dvec3 &obs, const double dist,
+//     std::vector<ObjectHandle> &nearStars)
+// {
+//     ofsAppCore->getUniverse()->findCloseStars(obs, dist, nearStars);
+// }
 
 LIBEXPORT void ofsFindVisibleStars(ofsHandler2 &handler,
     const glm::dvec3 &obs, const glm::dmat3 &rot,

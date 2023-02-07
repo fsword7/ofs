@@ -4,6 +4,7 @@
 // Date:    Sep 12, 2022
 
 #include "main/core.h"
+#include "engine/object.h"
 #include "engine/player.h"
 #include "client.h"
 // #include "camera.h"
@@ -246,7 +247,7 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
 
 // ******** Surface Manager ********
 
-SurfaceManager::SurfaceManager(ObjectHandle object, Scene &scene)
+SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 : object(object), scene(scene)
 {
     ShaderManager &shmgr = scene.getShaderManager();
@@ -262,7 +263,7 @@ SurfaceManager::SurfaceManager(ObjectHandle object, Scene &scene)
 
     pgmBody->release();
 
-    objSize = ofsGetObjectRadius(object);
+    objSize = object->getRadius(); // ofsGetObjectRadius(object);
 
     for (int idx = 0; idx < 2; idx++)
     {
@@ -324,7 +325,7 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
     prm.dmWorld = dmWorld;
 
     prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
-    opos = ofsGetObjectGlobalPosition(object, 0);
+    opos = object->getuPosition(0);
     cpos = camera->getGlobalPosition();
 
     prm.cpos = opos - cpos;

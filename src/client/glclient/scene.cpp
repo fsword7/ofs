@@ -63,7 +63,7 @@ void Scene::resize(int w, int h)
     //     camera->setSize(width, height);
 }
 
-void Scene::update(Player *player)
+void Scene::update(Universe *universe, Player *player)
 {
     camera = player->getCamera();
 
@@ -73,15 +73,16 @@ void Scene::update(Player *player)
     nearStars.clear();
     visibleStars.clear();
 
-    ofsFindClosestStars(camera->getGlobalPosition(), 1.0, nearStars);
+    // ofsFindClosestStars(camera->getGlobalPosition(), 1.0, nearStars);
+    universe->findCloseStars(camera->getGlobalPosition(), 1.0, nearStars);
 }
 
-glm::dvec3 Scene::getAstrocentricPosition(ObjectHandle object, const glm::dvec3 &vpos, int time)
+glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3 &vpos, int time)
 {
-    return vpos - ofsGetObjectGlobalPosition(object, time);
+    return vpos - object->getuPosition(time);
 }
 
-void Scene::render(Player *player)
+void Scene::render(Universe *universe, Player *player)
 {
     // update(player);
 
@@ -98,9 +99,9 @@ void Scene::render(Player *player)
     {
         // logger->info("Sun: {}\n", ofsGetObjectName(sun));
 
-        if (!ofsStarHasSolarSystem(sun))
+        if (!sun->hasSolarSystem())
             continue;
-        System *system = ofsStarGetSolarSystem(sun);
+        System *system = sun->getSolarSystem(); 
 
         PlanetarySystem *objects = system->getPlanetarySystem();
         FrameTree *tree = objects->getSystemTree();

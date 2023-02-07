@@ -10,7 +10,7 @@
 #include "universe/system.h"
 #include "api/handle.h"
 
-class Universe
+class OFSAPI Universe
 {
 public:
     Universe() = default;
@@ -32,7 +32,7 @@ public:
     // int findCloseStars(const vec3d_t &obs, double mdist,
     //     std::vector<const celStar *> &closeStars) const;
     int findCloseStars(const glm::dvec3 &obs, double mdist,
-        std::vector<ObjectHandle> &closeStars) const;
+        std::vector<const CelestialStar *> &closeStars) const;
 
     void findVisibleStars(ofsHandler2 &handler,
         const glm::dvec3 &obs, const glm::dmat3 &rot,

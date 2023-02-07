@@ -110,7 +110,7 @@ class SurfaceManager
     friend class SurfaceTile;
 
 public:
-    SurfaceManager(ObjectHandle object, Scene &scene);
+    SurfaceManager(const Object *object, Scene &scene);
     ~SurfaceManager();
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
@@ -143,7 +143,7 @@ public:
     } prm;
 
 private:
-    ObjectHandle object;
+    const Object *object;
     Scene &scene;
 
     ShaderProgram *pgmBody = nullptr;

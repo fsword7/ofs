@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Apr 18, 2022
 
+#define OFSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "ephem/orbit.h"
 #include "ephem/vsop87.h"
@@ -169,7 +171,7 @@ Object *Universe::findPath(cstr_t &path) const
 // }
 
 int Universe::findCloseStars(const glm::dvec3 &obs, double mdist,
-    std::vector<ObjectHandle> &closeStars) const
+    std::vector<const CelestialStar *> &closeStars) const
 {
     return stardb.findCloseStars(obs, mdist, closeStars);
 }

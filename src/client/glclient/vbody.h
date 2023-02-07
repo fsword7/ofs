@@ -10,7 +10,7 @@ class SurfaceManager;
 class vBody : public vObject
 {
 public:
-    vBody(ObjectHandle object, Scene &scene);
+    vBody(const Object *object, Scene &scene);
     ~vBody();
 
     void update(int now) override;

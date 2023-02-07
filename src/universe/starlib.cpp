@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Apr 18, 2022
 
+#define OFSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "api/handle.h"
 #include "universe/star.h"
@@ -200,7 +202,7 @@ void StarDatabase::findVisibleStars(const ofsHandler2 &handle, const glm::dvec3 
 }
 
 int StarDatabase::findCloseStars(const glm::dvec3 &obs, double radius,
-    std::vector<ObjectHandle> &stars) const
+    std::vector<const CelestialStar *> &stars) const
 {
     if (starTree == nullptr)
         return 0;

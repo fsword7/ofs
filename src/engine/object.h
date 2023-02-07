@@ -11,7 +11,7 @@ class Orbit;
 class Rotation;
 class Frame;
 
-class StateVectors
+class OFSAPI StateVectors
 {
 public:
     // All state vectors in assciated frame
@@ -23,7 +23,7 @@ public:
     glm::dvec3 omega;      // angular velocity
 };
 
-class Object
+class OFSAPI Object
 {
 public:
     // enum oldObjectType

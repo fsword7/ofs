@@ -8,7 +8,7 @@
 class vVessel : public vObject
 {
 public:
-    vVessel(ObjectHandle object, Scene &scene);
+    vVessel(const Object *object, Scene &scene);
     ~vVessel();
 
 private:

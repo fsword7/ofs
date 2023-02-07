@@ -276,7 +276,7 @@ void CoreApp::createSceneWindow()
 void CoreApp::renderScene()
 {
     if (gclient != nullptr)
-        gclient->cbRenderScene(player);
+        gclient->cbRenderScene(universe, player);
 }
 
 void CoreApp::drawHUD()

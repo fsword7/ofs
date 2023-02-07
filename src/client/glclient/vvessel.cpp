@@ -4,10 +4,11 @@
 // Date:    Sep 13, 2022
 
 #include "main/core.h"
+#include "engine/object.h"
 #include "vobject.h"
 #include "vvessel.h"
 
-vVessel::vVessel(ObjectHandle object, Scene &scene)
+vVessel::vVessel(const Object *object, Scene &scene)
 : vObject(object, scene)
 {
 

@@ -15,6 +15,7 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
+class Universe;
 class Player;
 class Scene;
 
@@ -32,7 +33,7 @@ public:
     void cbSetWindowTitle(cstr_t &title) override;
 
     void cbStart() override;
-    void cbRenderScene(Player *player) override;
+    void cbRenderScene(Universe *universe, Player *player) override;
 
     void setViewportSize(int width, int height) override;
     void showWindow() override;

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "main/core.h"
+#include "universe/universe.h"
 #include "engine/player.h"
 #include "shader.h"
 
@@ -19,6 +20,8 @@ class vObject;
 
 class FrameTree;
 class Object;
+class CelestialStar;
+
 
 struct LineVertex
 {
@@ -76,17 +79,17 @@ public:
 
     void init();
     void start();
-    void update(Player *player);
-    void render(Player *player);
+    void update(Universe *universe, Player *player);
+    void render(Universe *universe, Player *player);
     
     void resize(int width, int height);
 
     void checkErrors();
 
-    vObject *addVisualObject(ObjectHandle object);
-    vObject *getVisualObject(ObjectHandle object, bool bCreate = false);
+    vObject *addVisualObject(const Object *object);
+    vObject *getVisualObject(const Object *object, bool bCreate = false);
 
-    glm::dvec3 getAstrocentricPosition(ObjectHandle object, const glm::dvec3 &vpos, int time);
+    glm::dvec3 getAstrocentricPosition(const Object *object, const glm::dvec3 &vpos, int time);
 
 protected:
     void initStarRenderer();
@@ -126,8 +129,8 @@ private:
     ShaderProgram *pgmStar = nullptr;
 
     std::vector<vObject *> vobjList;
-    std::vector<ObjectHandle> nearStars;
-    std::vector<ObjectHandle> visibleStars;
+    std::vector<const CelestialStar *> nearStars;
+    std::vector<const CelestialStar *> visibleStars;
 
     // vObject *vEarth = nullptr;
 };

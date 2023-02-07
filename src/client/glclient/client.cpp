@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "engine/player.h"
+#include "universe/universe.h"
 #include "client.h"
 #include "scene.h"
 
@@ -189,11 +190,11 @@ void glClient::cbStart()
     }
 }
 
-void glClient::cbRenderScene(Player *player)
+void glClient::cbRenderScene(Universe *universe, Player *player)
 {
     if (scene != nullptr)
     {
-        scene->update(player);
-        scene->render(player);
+        scene->update(universe, player);
+        scene->render(universe, player);
     }
 }

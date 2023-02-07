@@ -8,7 +8,7 @@
 class vStar : public vObject
 {
 public:
-    vStar(ObjectHandle object, Scene &scene);
+    vStar(const Object *object, Scene &scene);
     ~vStar();
 
 private:

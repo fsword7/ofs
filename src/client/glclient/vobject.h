@@ -36,20 +36,20 @@ struct ObjectProperties
 class vObject
 {
 public:
-    vObject(ObjectHandle obj, Scene &scene)
+    vObject(const Object *obj, Scene &scene)
     : object(obj), scene(scene)
     { }
     virtual ~vObject() = default;
 
-    inline ObjectHandle getObject() const   { return object; }
+    inline const Object *getObject() const   { return object; }
 
-    static vObject *create(ObjectHandle object, Scene &scene);
+    static vObject *create(const Object *object, Scene &scene);
 
     virtual void update(int now);
     virtual void render(const ObjectProperties &op) {}
 
 protected:
-    ObjectHandle object;
+    const Object *object;
     Scene &scene;
 
     glm::dvec3 gpos;

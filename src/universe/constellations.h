@@ -13,7 +13,7 @@ struct Asterism
     std::vector<int>    hipList;
 };
 
-class Constellations
+class OFSAPI Constellations
 {
 public:
     Constellations() = default;

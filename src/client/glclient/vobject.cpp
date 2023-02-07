@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "api/ofsapi.h"
+#include "engine/object.h"
 #include "client.h"
 #include "scene.h"
 #include "vobject.h"
@@ -13,9 +14,9 @@
 #include "vvessel.h"
 
 
-vObject *vObject::create(ObjectHandle object, Scene &scene)
+vObject *vObject::create(const Object *object, Scene &scene)
 {
-    switch (ofsGetObjectType(object))
+    switch (object->getType())
     {
     case ObjectType::objCelestialStar:
         return new vStar(object, scene);
@@ -31,7 +32,7 @@ vObject *vObject::create(ObjectHandle object, Scene &scene)
 void vObject::update(int now)
 {
 
-    gpos  = ofsGetObjectGlobalPosition(object, now);
+    gpos  = object->getuPosition(now);
     vpos  = gpos - scene.getCamera()->getGlobalPosition();
     vdist = glm::length(vpos);
 
@@ -47,7 +48,7 @@ void vObject::update(int now)
 
 // ******** Scene ********
 
-vObject *Scene::addVisualObject(ObjectHandle object)
+vObject *Scene::addVisualObject(const Object *object)
 {
     vObject *vobj = nullptr;
 
@@ -57,10 +58,10 @@ vObject *Scene::addVisualObject(ObjectHandle object)
     return vobj;
 }
 
-vObject *Scene::getVisualObject(ObjectHandle object, bool bCreate)
+vObject *Scene::getVisualObject(const Object *object, bool bCreate)
 {
     for (int idx = 0; idx < vobjList.size(); idx++)
-        if (vobjList[idx]->getObject() == &object)
+        if (vobjList[idx]->getObject() == object)
             return vobjList[idx];
 
     if (bCreate == true)

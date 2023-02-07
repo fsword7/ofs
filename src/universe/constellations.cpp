@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Apr 23, 2022
 
+#define OFSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "universe/constellations.h"
 

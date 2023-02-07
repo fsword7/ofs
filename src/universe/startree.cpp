@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Apr 19, 2022
 
+#define OFSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "engine/object.h"
 #include "universe/star.h"
@@ -142,7 +144,7 @@ void StarTree::processVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &
 }
 
 void StarTree::processCloseStars(const glm::dvec3 &obs, const double radius, const double scale,
-    std::vector<ObjectHandle> &stars)
+    std::vector<const CelestialStar *> &stars)
 {
     double dist = glm::length(obs - cellCenter) - scale * sqrt(3.0);
     if (dist > radius)

@@ -15,7 +15,7 @@
 
 class CelestialStar;
 
-class StarTree : public Tree<StarTree, OTREE_NODES>
+class OFSAPI StarTree : public Tree<StarTree, OTREE_NODES>
 {
 public:
     enum
@@ -38,7 +38,7 @@ public:
     void processVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &obs,
         const double limitingFactor, const double scale);
     void processCloseStars(const glm::dvec3 &obs, const double radius, const double scale,
-        std::vector<ObjectHandle> &stars);
+        std::vector<const CelestialStar *> &stars);
 
 private:
     double decay(double factor);
