@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "api/handle.h"
+#include "universe/handle.h"
 
 class StarVertex
 {
@@ -54,13 +54,13 @@ protected:
     mat4Uniform mvp;
 };
 
-class StarRenderer : public ofsHandler2
+class StarRenderer : public ofsHandler
 {
 public:
     StarRenderer() = default;
     ~StarRenderer() = default;
 
-    void process(ObjectHandle star, double dist, double appMag) const;
+    void process(const CelestialStar &star, double dist, double appMag) const;
 
 public:
     glm::dvec3 obsPos = { 0, 0, 0 }; // Observer's camera position

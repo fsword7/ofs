@@ -6,7 +6,6 @@
 #pragma once
 
 #include "utils/tree.h"
-#include "api/handle.h"
 #include "universe/handle.h"
 
 #define STARTREE_MAGNITUDE      6.0
@@ -35,7 +34,7 @@ public:
     uint32_t countNodes();
     uint32_t countObjects();
 
-    void processVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &obs,
+    void processVisibleStars(const ofsHandler &handle, const glm::dvec3 &obs,
         const double limitingFactor, const double scale);
     void processCloseStars(const glm::dvec3 &obs, const double radius, const double scale,
         std::vector<const CelestialStar *> &stars);

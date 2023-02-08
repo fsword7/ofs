@@ -23,8 +23,8 @@ public:
     virtual GLFWwindow *cbCreateRenderingWindow() = 0;
     virtual bool cbDisplayFrame() = 0;
     virtual void cbSetWindowTitle(cstr_t &title) = 0;
-    virtual void cbStart() = 0;
-    virtual void cbRenderScene(Universe *universe, Player *player) = 0;
+    virtual void cbStart(Universe *universe) = 0;
+    virtual void cbRenderScene(Player *player) = 0;
 
     virtual void setViewportSize(int width, int height) = 0;
     virtual void hideWindow() = 0;

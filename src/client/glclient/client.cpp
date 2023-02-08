@@ -181,20 +181,20 @@ void glClient::setViewportSize(int w, int h)
         scene->resize(width, height);
 }
 
-void glClient::cbStart()
+void glClient::cbStart(Universe *universe)
 {
     if (scene != nullptr)
     {
-        scene->init();
+        scene->init(universe);
         scene->start();
     }
 }
 
-void glClient::cbRenderScene(Universe *universe, Player *player)
+void glClient::cbRenderScene(Player *player)
 {
     if (scene != nullptr)
     {
-        scene->update(universe, player);
-        scene->render(universe, player);
+        scene->update(player);
+        scene->render(player);
     }
 }

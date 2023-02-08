@@ -228,7 +228,7 @@ void CoreApp::openSession()
 
     if (gclient != nullptr)
     {
-        gclient->cbStart();
+        gclient->cbStart(universe);
         gclient->showWindow();
     }
     bSession = true;
@@ -276,7 +276,7 @@ void CoreApp::createSceneWindow()
 void CoreApp::renderScene()
 {
     if (gclient != nullptr)
-        gclient->cbRenderScene(universe, player);
+        gclient->cbRenderScene(player);
 }
 
 void CoreApp::drawHUD()

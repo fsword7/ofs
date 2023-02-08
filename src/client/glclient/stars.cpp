@@ -4,6 +4,8 @@
 // Date:    Oct 10, 2022
 
 #include "main/core.h"
+#include "universe/universe.h"
+#include "universe/star.h"
 #include "universe/astro.h"
 #include "client.h"
 #include "scene.h"
@@ -121,7 +123,7 @@ void StarVertex::addStar(const glm::dvec3 &pos, const color_t &color, double rad
 
 // ******** Star Renderer ********
 
-void StarRenderer::process(ObjectHandle star, double dist, double appMag) const
+void StarRenderer::process(const CelestialStar &star, double dist, double appMag) const
 {
     glm::dvec3 spos, rpos;
     double  srad;
@@ -134,12 +136,12 @@ void StarRenderer::process(ObjectHandle star, double dist, double appMag) const
 
     // Calculate relative position between star and
     // camera position in universal reference frame
-    spos  = ofsGetObjectStarPosition(star) * KM_PER_PC;
+    spos  = star.getStarPosition() * KM_PER_PC;
     rpos  = spos - cpos;
     rdist = glm::length(rpos);
 
     // Calculate apparent size of star in view field
-    srad    = ofsGetObjectRadius(star);
+    srad    = star.getRadius();
     objSize = ((srad / rdist) * 2.0) / pxSize;
 
     if (objSize > pxSize)
@@ -161,7 +163,7 @@ void StarRenderer::process(ObjectHandle star, double dist, double appMag) const
             alpha = 0.0;
     }
 
-    color = starColors->lookup(ofsGetObjectStarTemperature(star));
+    color = starColors->lookup(star.getTemperature());
     color.setAlpha(alpha);
 
     // logger->info("HIP {}: {} {} {}\n",
@@ -209,7 +211,7 @@ void Scene::renderStars(double faintest)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    ofsFindVisibleStars(*starRenderer, obs, rot, fov, aspect, faintest);
+    universe->findVisibleStars(*starRenderer, obs, rot, fov, aspect, faintest);
     starRenderer->starBuffer->finish();
     glDisable(GL_BLEND);
 }

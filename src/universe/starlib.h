@@ -8,7 +8,6 @@
 class StarTree;
 class CelestialStar;
 class ofsHandler;
-class ofsHandler2;
 class Object;
 class OFSAPI StarDatabase
 {
@@ -25,13 +24,13 @@ public:
 
     CelestialStar *find(cstr_t &name) const;
 
-    void findVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &obs,
+    void findVisibleStars(const ofsHandler &handle, const glm::dvec3 &obs,
         const glm::dmat3 &rot, double fov, double aspect, double limitMag) const;
     int findCloseStars(const glm::dvec3 &obs, double radius,
         std::vector<const CelestialStar *> &stars) const;
 
     inline CelestialStar *getHIPstar(uint32_t hip) const    { return hipList[hip]; }
-    inline ObjectHandle getHIPstar2(uint32_t hip) const     { return hipList[hip]; }
+    // inline ObjectHandle getHIPstar2(uint32_t hip) const     { return hipList[hip]; }
 
 private:
     std::vector<CelestialStar *> uStars;

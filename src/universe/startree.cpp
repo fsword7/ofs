@@ -116,17 +116,17 @@ uint32_t StarTree::countObjects()
     return count;
 }
 
-void StarTree::processVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &obs,
+void StarTree::processVisibleStars(const ofsHandler &handle, const glm::dvec3 &obs,
     const double limitingFactor, const double scale)
 {
     double dist = glm::length(obs - cellCenter) - scale * sqrt(3.0);
 
     for (int32_t idx = 0; idx < list.size(); idx++)
     {
-        CelestialStar *star = list[idx];
+        CelestialStar &star = *list[idx];
 
-        double dist = glm::length(obs - star->getStarPosition());
-        double appMag = convertAbsToAppMag(star->getAbsMag(), dist);
+        double dist = glm::length(obs - star.getStarPosition());
+        double appMag = convertAbsToAppMag(star.getAbsMag(), dist);
 
         handle.process(star, dist, appMag);
     }

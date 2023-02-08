@@ -8,7 +8,7 @@
 #include "universe/constellations.h"
 #include "universe/starlib.h"
 #include "universe/system.h"
-#include "api/handle.h"
+#include "universe/handle.h"
 
 class OFSAPI Universe
 {
@@ -34,7 +34,7 @@ public:
     int findCloseStars(const glm::dvec3 &obs, double mdist,
         std::vector<const CelestialStar *> &closeStars) const;
 
-    void findVisibleStars(ofsHandler2 &handler,
+    void findVisibleStars(ofsHandler &handler,
         const glm::dvec3 &obs, const glm::dmat3 &rot,
         const double fov, const double aspect,
         const double faintest);

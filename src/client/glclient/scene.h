@@ -77,10 +77,10 @@ public:
     inline ShaderManager &getShaderManager()        { return shmgr; }
     inline Camera *getCamera() const                { return camera; }
 
-    void init();
+    void init(Universe *universe);
     void start();
-    void update(Universe *universe, Player *player);
-    void render(Universe *universe, Player *player);
+    void update(Player *player);
+    void render(Player *player);
     
     void resize(int width, int height);
 
@@ -115,6 +115,8 @@ private:
 
     ShaderManager shmgr;
 
+    Universe *universe = nullptr;
+    Player *player = nullptr;
     Camera *camera = nullptr;
 
     StarRenderer *starRenderer = nullptr;

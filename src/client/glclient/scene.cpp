@@ -30,9 +30,11 @@ void Scene::checkErrors()
     }
 }
 
-void Scene::init()
+void Scene::init(Universe *uv)
 {
     // camera = new Camera(width, height);
+
+    universe = uv;
 
     vobjList.clear();
 
@@ -63,7 +65,7 @@ void Scene::resize(int w, int h)
     //     camera->setSize(width, height);
 }
 
-void Scene::update(Universe *universe, Player *player)
+void Scene::update(Player *player)
 {
     camera = player->getCamera();
 
@@ -82,7 +84,7 @@ glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3
     return vpos - object->getuPosition(time);
 }
 
-void Scene::render(Universe *universe, Player *player)
+void Scene::render(Player *player)
 {
     // update(player);
 
@@ -111,7 +113,4 @@ void Scene::render(Universe *universe, Player *player)
 
         buildSystems(tree, apos, vpn, { 0, 0, 0 });
     }
-
-    // vEarth->update();
-    // vEarth->render();
 }

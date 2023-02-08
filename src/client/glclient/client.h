@@ -32,8 +32,8 @@ public:
     bool cbDisplayFrame() override;
     void cbSetWindowTitle(cstr_t &title) override;
 
-    void cbStart() override;
-    void cbRenderScene(Universe *universe, Player *player) override;
+    void cbStart(Universe *universe) override;
+    void cbRenderScene(Player *player) override;
 
     void setViewportSize(int width, int height) override;
     void showWindow() override;

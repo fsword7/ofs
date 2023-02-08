@@ -6,13 +6,14 @@
 #include "main/core.h"
 #include "universe/astro.h"
 #include "universe/universe.h"
+#include "universe/star.h"
 #include "client.h"
 #include "scene.h"
 #include "buffer.h"
 
 void Scene::initConstellations()
 {
-    const Constellations &constellations = ofsGetConstellations();
+    const Constellations &constellations = universe->getConstellations();
     const std::vector<Asterism *> &asterisms = constellations.getAsterisms();
 
     pgmAsterism = shmgr.createShader("line");
@@ -34,8 +35,8 @@ void Scene::initConstellations()
 
 void Scene::renderConstellations()
 {
-    const Constellations &constellations = ofsGetConstellations();
-    const StarDatabase &starlib = ofsGetStarDatabase();
+    const Constellations &constellations = universe->getConstellations();
+    const StarDatabase &starlib = universe->getStarDatabase();
     const std::vector<Asterism *> &asterisms = constellations.getAsterisms();
 
     glm::dvec3 vpos = camera->getGlobalPosition();
@@ -64,8 +65,8 @@ void Scene::renderConstellations()
         Asterism *aster = asterisms[idx];
         for (int sidx = 0; sidx < aster->hipList.size(); sidx += 2)
         {
-            ObjectHandle star1 = starlib.getHIPstar2(aster->hipList[sidx]);
-            ObjectHandle star2 = starlib.getHIPstar2(aster->hipList[sidx+1]);
+            const CelestialStar *star1 = starlib.getHIPstar(aster->hipList[sidx]);
+            const CelestialStar *star2 = starlib.getHIPstar(aster->hipList[sidx+1]);
 
             if (star1 == nullptr)
                 logger->warn("HIP {} not found in catalogue\n", aster->hipList[sidx]);
@@ -74,10 +75,10 @@ void Scene::renderConstellations()
             if (star1 == nullptr || star2 == nullptr)
                 continue;
 
-            vertices[rLines].spos = (ofsGetObjectStarPosition(star1) * KM_PER_PC) - vpos;
+            vertices[rLines].spos = (star1->getStarPosition() * KM_PER_PC) - vpos;
             vertices[rLines].color = color_t(0.5, 0.5, 0.5, 1.0);
             rLines++;
-            vertices[rLines].spos = (ofsGetObjectStarPosition(star2) * KM_PER_PC) - vpos;
+            vertices[rLines].spos = (star2->getStarPosition() * KM_PER_PC) - vpos;
             vertices[rLines].color = color_t(0.5, 0.5, 0.5, 1.0);
             rLines++;
         }

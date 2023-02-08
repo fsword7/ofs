@@ -6,7 +6,6 @@
 #define OFSAPI_SERVER_BUILD
 
 #include "main/core.h"
-#include "api/handle.h"
 #include "universe/star.h"
 #include "universe/startree.h"
 #include "universe/starlib.h"
@@ -193,7 +192,7 @@ CelestialStar *StarDatabase::find(cstr_t &name) const
     return nullptr;
 }
 
-void StarDatabase::findVisibleStars(const ofsHandler2 &handle, const glm::dvec3 &obs,
+void StarDatabase::findVisibleStars(const ofsHandler &handle, const glm::dvec3 &obs,
     const glm::dmat3 &rot, double fov, double aspect, double limitMag) const
 {
     if (starTree == nullptr)

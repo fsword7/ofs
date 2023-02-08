@@ -164,19 +164,13 @@ Object *Universe::findPath(cstr_t &path) const
     return obj;
 }
 
-// int Universe::findCloseStars(const vec3d_t &obs, double mdist,
-//     std::vector<const celStar *> &closeStars) const
-// {
-//     return stardb.findCloseStars(obs, mdist, closeStars);
-// }
-
 int Universe::findCloseStars(const glm::dvec3 &obs, double mdist,
     std::vector<const CelestialStar *> &closeStars) const
 {
     return stardb.findCloseStars(obs, mdist, closeStars);
 }
 
-void Universe::findVisibleStars(ofsHandler2 &handler,
+void Universe::findVisibleStars(ofsHandler &handler,
     const glm::dvec3 &obs, const glm::dmat3 &rot,
     const double fov, const double aspect,
     const double faintest)
