@@ -34,7 +34,7 @@ set(IMGUI_INCLUDE_DIR "${IMGUI_LIBRARY_DIR}")
 
 set(IMGUI_SOURCES
     "${IMGUI_LIBRARY_DIR}/imgui.cpp"
-    "${IMGUI_LIBRARY_DIR}/imgui_demo.cpp"
+    # "${IMGUI_LIBRARY_DIR}/imgui_demo.cpp"
     "${IMGUI_LIBRARY_DIR}/imgui_draw.cpp"
     "${IMGUI_LIBRARY_DIR}/imgui_tables.cpp"
     "${IMGUI_LIBRARY_DIR}/imgui_widgets.cpp"
