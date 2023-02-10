@@ -6,8 +6,8 @@
 #include <GLFW/glfw3.h>
 
 #define OFSAPI_SERVER_BUILD
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 class GUIManager
 {

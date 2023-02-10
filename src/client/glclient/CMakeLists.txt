@@ -20,6 +20,7 @@ set(OGL_CPP_SRCS
     vobject.cpp
     vstar.cpp
     vvessel.cpp
+    ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_glfw.cpp
     ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
