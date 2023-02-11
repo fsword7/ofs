@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(ofs VERSION 0.1.0)
 
+set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED YES)
 
@@ -34,7 +35,7 @@ set(IMGUI_INCLUDE_DIR "${IMGUI_LIBRARY_DIR}")
 
 set(IMGUI_SOURCES
     "${IMGUI_LIBRARY_DIR}/imgui.cpp"
-    # "${IMGUI_LIBRARY_DIR}/imgui_demo.cpp"
+    "${IMGUI_LIBRARY_DIR}/imgui_demo.cpp"
     "${IMGUI_LIBRARY_DIR}/imgui_draw.cpp"
     "${IMGUI_LIBRARY_DIR}/imgui_tables.cpp"
     "${IMGUI_LIBRARY_DIR}/imgui_widgets.cpp"
