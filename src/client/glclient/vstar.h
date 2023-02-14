@@ -11,5 +11,8 @@ public:
     vStar(const Object *object, Scene &scene);
     ~vStar();
 
+    // Creating star surface
+    void createSphere(int maxlod);
+
 private:
 };
