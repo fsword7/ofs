@@ -1,15 +1,22 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.16)
 project(ofs VERSION 0.1.0)
 
-set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED YES)
+set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/bin" CACHE PATH "..." FORCE)
 endif()
 
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
+
+find_package(glfw3 3.3 REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(Freetype REQUIRED)
+find_package(fmt REQUIRED)
+find_package(ZLIB REQUIRED)
+#find_package(lua REQUIRED)
 
 set(OFS_SOURCE_ROOT_DIR ${CMAKE_SOURCE_DIR})
 
@@ -61,6 +68,11 @@ target_include_directories(imgui PUBLIC
 # end of ImGUI libraries
 
 include_directories(src)
+
+# Compiling for creating orbital data headers
+add_subdirectory(src/tools/vsop87)
+
+# Compiling OFS server
 add_subdirectory(src)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
