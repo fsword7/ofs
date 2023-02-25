@@ -5,14 +5,17 @@
 
 #pragma once
 
+class SurfaceManager;
+
 class vStar : public vObject
 {
 public:
     vStar(const Object *object, Scene &scene);
     ~vStar();
-
-    // Creating star surface
-    void createSphere(int maxlod);
+    
+    void update(int now) override;
+    void render(const ObjectProperties &op) override;
 
 private:
+    SurfaceManager *smgr = nullptr;
 };

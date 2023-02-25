@@ -102,6 +102,11 @@ inline glm::dvec3 tmul(const glm::dmat4 &m, const glm::dvec3 &val)
     );
 }
 
+inline glm::dvec3 getMidpoints(const glm::dvec3 &v1, const glm::dvec3 &v2)
+{
+    return glm::normalize(glm::dvec3((v1.x + v2.x) / 2.0, (v1.y + v2.y) / 2.0, (v1.z + v2.z) / 2.0));
+}
+
 namespace ofs
 {
     template <typename T> inline constexpr T square(T x)

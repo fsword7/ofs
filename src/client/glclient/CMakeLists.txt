@@ -46,6 +46,8 @@ set (OGL_SHADERS
     shaders/line.vs
     shaders/point.fs
     shaders/point.vs
+    shaders/star.fs
+    shaders/star.vs
 )
 
 add_library(glclient SHARED ${OGL_CPP_SRCS} ${OGL_H_SRCS})

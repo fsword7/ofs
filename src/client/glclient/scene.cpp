@@ -69,14 +69,16 @@ void Scene::update(Player *player)
 {
     camera = player->getCamera();
 
-    // pixelSize = (2.0 * tan(ofsGetCameraFieldOfView() / 2.0)) / ofsGetCameraHeight();;
     pixelSize = (2.0 * tan(camera->getFOV() / 2.0)) / camera->getHeight();
 
     nearStars.clear();
     visibleStars.clear();
 
-    // ofsFindClosestStars(camera->getGlobalPosition(), 1.0, nearStars);
     universe->findCloseStars(camera->getGlobalPosition(), 1.0, nearStars);
+    for (auto star : nearStars)
+    {
+        vObject *vstar = getVisualObject(star, true);
+    }
 }
 
 glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3 &vpos, int time)

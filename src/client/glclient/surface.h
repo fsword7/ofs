@@ -115,9 +115,13 @@ public:
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 
+    // Creating planet surface - quadsphere
     Mesh *createHemisphere(int grid, int16_t *elev, double gelev);
     Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
         int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
+
+    // Creating star surface - icosphere
+    Mesh *createIcosphere(int maxlod);
 
     void setRenderParams(const glm::dmat4 &dmWorld);
 
@@ -147,13 +151,17 @@ private:
     Scene &scene;
 
     ShaderProgram *pgmBody = nullptr;
+    ShaderProgram *pgmStar = nullptr;
+    Mesh *meshStar = nullptr;
+
     mat4Uniform uViewProj;
     mat4Uniform uView;
     mat4Uniform uModel;
 
     SurfaceTile *tiles[2];
 
-    double objSize = 0.0;
-    double resScale;
-    double resBias;
+    ObjectType objType = objUnknown;
+    double     objSize = 0.0;
+    double     resScale;
+    double     resBias;
 };
