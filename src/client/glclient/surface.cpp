@@ -89,11 +89,11 @@ void SurfaceTile::render()
     // Load per-tile model matrix into GLSL space
     mgr.uModel = glm::mat4(mgr.prm.dmWorld);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     glDrawElements(GL_TRIANGLES, mesh->ibo->getCount(), GL_UNSIGNED_SHORT, 0);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     mesh->vao->unbind();
     mgr.pgm->release();

@@ -11,12 +11,14 @@ uniform mat4 uModel;
 // out vec4 eyePosition;
 // out vec3 normal;
 out vec2 texCoord;
+out vec3 fPosition;
 
 void main()
 {
     gl_Position = uViewProj * uModel * vec4(vPosition, 1.0);
     texCoord = vTexCoord;
     // normal = mat3(transpose(inverse(uModel))) * vNormal;
+    fPosition = vPosition;
 
     // eyePosition = uViewProj * uModel * vec4(vPosition, 1.0);
 }
