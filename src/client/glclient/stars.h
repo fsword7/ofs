@@ -60,7 +60,7 @@ public:
     StarRenderer() = default;
     ~StarRenderer() = default;
 
-    void process(const CelestialStar &star, double dist, double appMag) const;
+    void process(CelestialStar &star, double dist, double appMag) const;
 
 public:
     glm::dvec3 obsPos = { 0, 0, 0 }; // Observer's camera position

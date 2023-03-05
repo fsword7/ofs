@@ -40,6 +40,7 @@ set(OGL_H_SRCS
 )
 
 set (OGL_SHADERS
+    shaders/noise/snoise3.glsl
     shaders/body.fs
     shaders/body.vs
     shaders/line.fs

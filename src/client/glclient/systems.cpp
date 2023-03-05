@@ -9,6 +9,7 @@
 
 #include "client.h"
 #include "scene.h"
+#include "vobject.h"
 
 void Scene::renderObjectAsPoint(ObjectListEntry &ole)
 {
@@ -47,6 +48,32 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
     }
     else
         renderObjectAsPoint(ole);
+}
+
+void Scene::renderSystemObjects()
+{
+    if (renderList.empty())
+        return;
+
+    glm::dmat4 view = camera->getViewMatrix();
+    glm::dmat4 proj = camera->getProjMatrix();
+
+    for (auto ole : renderList)
+    {
+        ObjectProperties op;
+
+        op.color = ole.color;
+        op.orad  = ole.objSize;
+        op.opos  = ole.opos;
+        op.orot  = glm::dmat3(1);
+
+        op.mvp = glm::dmat4(view * proj);
+
+        // logger->debug("Rendering {}...\n", ole.object->getName());
+
+        ole.visual->update(now);
+        ole.visual->render(op);
+    }
 }
 
 void Scene::buildSystems(FrameTree *tree, const glm::dvec3 &apos,

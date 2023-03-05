@@ -11,5 +11,5 @@ public:
     ofsHandler() = default;
     ~ofsHandler() = default;
 
-    virtual void process(const CelestialStar &star, double dist, double appMag) const = 0;
+    virtual void process(CelestialStar &star, double dist, double appMag) const = 0;
 };

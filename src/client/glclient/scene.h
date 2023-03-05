@@ -51,21 +51,25 @@ struct AsterismVertex
 
 struct ObjectListEntry
 {   
-    Object *object;     // Object
+    Object  *object = nullptr;     // Object
+    vObject *visual = nullptr;
 
     // Sun and position [km]
     glm::dvec3 opos;    // Object position
     glm::dmat3 orot;    // Object orientation
     glm::dvec3 spos;    // Sun position
 
+    color_t    color;   // default surface color
+
     double  vdist;      // View distance
     double  objSize;    // Object size in pixel width
     double  appMag;     // Apparent magnitude
 
+    double  zCenter;    // Center Z depth sorting
+
     // Clipping parameters
+    double  zFar;       // Far Z clipping
     double  zNear;      // Near Z clipping
-    double  zCenter;    // Center Z clipping
-    double  zFat;       // Far Z clipping
 };
 
 class Scene
@@ -76,6 +80,8 @@ public:
 
     inline ShaderManager &getShaderManager()        { return shmgr; }
     inline Camera *getCamera() const                { return camera; }
+
+    inline void addRenderList(ObjectListEntry &ole) { renderList.push_back(ole); }
 
     void init(Universe *universe);
     void start();
@@ -102,6 +108,8 @@ protected:
 
     void buildSystems(FrameTree *tree, const glm::dvec3 &obs,
         const glm::dvec3 &vpnorm, const glm::dvec3 &origin);
+
+    void renderSystemObjects();
 
 private:
     int width, height;
@@ -134,5 +142,5 @@ private:
     std::vector<const CelestialStar *> nearStars;
     std::vector<const CelestialStar *> visibleStars;
 
-    // vObject *vEarth = nullptr;
+    std::vector<ObjectListEntry> renderList;
 };

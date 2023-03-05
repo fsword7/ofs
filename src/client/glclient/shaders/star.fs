@@ -1,11 +1,13 @@
 #version 430
 
-layout (binding = 0) uniform sampler2D sTile;
+// layout (binding = 0) uniform sampler2D sTile;
 
 in vec4 texCoord;
 in vec3 normal;
 
 out vec4 fragColor;
+
+#include "snoise3.glsl"
 
 void main()
 {

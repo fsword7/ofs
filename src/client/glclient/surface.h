@@ -128,6 +128,7 @@ public:
     void process(SurfaceTile *tile);
     void render(SurfaceTile *tile); 
     void render(const glm::dmat4 &dmWorld, const ObjectProperties &op);
+    void renderStar(const glm::dmat4 &dmWorld, const ObjectProperties &op);
 
     struct renderParams
     {
@@ -150,8 +151,7 @@ private:
     const Object *object;
     Scene &scene;
 
-    ShaderProgram *pgmBody = nullptr;
-    ShaderProgram *pgmStar = nullptr;
+    ShaderProgram *pgm = nullptr;
     Mesh *meshStar = nullptr;
 
     mat4Uniform uViewProj;

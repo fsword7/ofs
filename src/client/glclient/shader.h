@@ -5,7 +5,7 @@
 
 #pragma once
 
-class Context;
+class ShaderManager;
 
 enum ShaderType
 {
@@ -166,7 +166,7 @@ private:
 class ShaderSource
 {
 public:
-    ShaderSource(ShaderType type);
+    ShaderSource(ShaderManager &shmgr, ShaderType type);
     ~ShaderSource();
 
     GLuint getID() const { return id; }
@@ -177,7 +177,7 @@ public:
     cstr_t getLogInfo();
     ShaderStatus compile(const std::vector<str_t> &source);
 
-    static ShaderStatus create(ShaderType type, const std::vector<str_t>& source, ShaderSource **shader);
+    static ShaderStatus create(ShaderManager *shmgr, ShaderType type, const std::vector<str_t>& source, ShaderSource **shader);
 
 private:
     bool isWhiteSpace(char c) { return (c == '\n' || c == '\t' || c == '\r' || c == ' '); }
@@ -193,6 +193,7 @@ private:
     bool parseInclude(str_t &str, size_t idx);
 
 private:
+    ShaderManager &shmgr;
     ShaderType type = shrUnknown;
     GLuint id = 0;
 
@@ -246,6 +247,9 @@ private:
 
 class ShaderManager
 {
+    friend class ShaderSource;
+    friend class ShaderProgram;
+
 public:
     ShaderManager(cstr_t &folder);
     ~ShaderManager() = default;

@@ -13,7 +13,8 @@
 
 // ******** Shader Source ********
 
-ShaderSource::ShaderSource(ShaderType type)
+ShaderSource::ShaderSource(ShaderManager &shmgr, ShaderType type)
+: shmgr(shmgr)
 {
     GLenum idType;
 
@@ -39,7 +40,7 @@ ShaderSource::~ShaderSource()
 
 bool ShaderSource::readsFile(const fs::path &fname, std::string &data)
 {
-    fs::path fullPath = fname;
+    fs::path fullPath = shmgr.shaderFolder / fname;
     std::ifstream file(fullPath.string().c_str());
 
     if (!file.good())
@@ -215,9 +216,9 @@ ShaderStatus ShaderSource::compile(const std::vector<str_t> &source)
     return shrSuccessful;
 }
 
-ShaderStatus ShaderSource::create(ShaderType type, const std::vector<str_t>& source, ShaderSource **shader)
+ShaderStatus ShaderSource::create(ShaderManager *shmgr, ShaderType type, const std::vector<str_t>& source, ShaderSource **shader)
 {
-    ShaderSource *newShader = new ShaderSource(type);
+    ShaderSource *newShader = new ShaderSource(*shmgr, type);
     if (newShader == nullptr)
         return shrOutOfMemory;
 
@@ -478,8 +479,8 @@ ShaderStatus ShaderManager::createProgram(cstr_t &vsSource, cstr_t &fsSource, Sh
     vsSourcev.push_back(vsSource);
     fsSourcev.push_back(fsSource);
 
-    st = ShaderSource::create(shrVertexProcessor, vsSourcev, &vsShader);
-    st = ShaderSource::create(shrFragmentProcessor, fsSourcev, &fsShader);
+    st = ShaderSource::create(this, shrVertexProcessor, vsSourcev, &vsShader);
+    st = ShaderSource::create(this, shrFragmentProcessor, fsSourcev, &fsShader);
    
     ShaderProgram *npgm = new ShaderProgram();
     if (vsShader != nullptr)

@@ -65,6 +65,11 @@ void Scene::resize(int w, int h)
     //     camera->setSize(width, height);
 }
 
+glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3 &vpos, int time)
+{
+    return vpos - object->getuPosition(time);
+}
+
 void Scene::update(Player *player)
 {
     camera = player->getCamera();
@@ -73,17 +78,13 @@ void Scene::update(Player *player)
 
     nearStars.clear();
     visibleStars.clear();
+    renderList.clear();
 
     universe->findCloseStars(camera->getGlobalPosition(), 1.0, nearStars);
     for (auto star : nearStars)
     {
         vObject *vstar = getVisualObject(star, true);
     }
-}
-
-glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3 &vpos, int time)
-{
-    return vpos - object->getuPosition(time);
 }
 
 void Scene::render(Player *player)
@@ -115,4 +116,6 @@ void Scene::render(Player *player)
 
         buildSystems(tree, apos, vpn, { 0, 0, 0 });
     }
+
+    renderSystemObjects();
 }

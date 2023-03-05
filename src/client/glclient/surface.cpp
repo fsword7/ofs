@@ -80,7 +80,7 @@ void SurfaceTile::render()
     if (mesh->vao == nullptr)
         mesh->upload();
 
-    mgr.pgmBody->use();
+    mgr.pgm->use();
 
     mesh->vao->bind();
 
@@ -96,7 +96,7 @@ void SurfaceTile::render()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     mesh->vao->unbind();
-    mgr.pgmBody->release();
+    mgr.pgm->release();
 }
 
 Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
@@ -259,32 +259,45 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 
     switch (objType)
     {
-    case objCelestialBody:
-        pgmBody = shmgr.createShader("body");
-        if (pgmBody == nullptr)
+    case objCelestialStar:
+        pgm = shmgr.createShader("star");
+        if (pgm == nullptr)
             return;
 
-        pgmBody->use();
+        pgm->use();
 
-        uViewProj = mat4Uniform(pgmBody->getID(), "uViewProj");
-        uView = mat4Uniform(pgmBody->getID(), "uView");
-        uModel = mat4Uniform(pgmBody->getID(), "uModel");
+        uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
+        uView = mat4Uniform(pgm->getID(), "uView");
+        uModel = mat4Uniform(pgm->getID(), "uModel");
 
-        pgmBody->release();
+        pgm->release();
 
         for (int idx = 0; idx < 2; idx++)
         {
             tiles[idx] = new SurfaceTile(*this, 0, 0, idx);
             tiles[idx]->load();
         }
+        // meshStar = createIcosphere(4);
         break;
-
-    case objCelestialStar:
-        pgmStar = shmgr.createShader("star");
-        if (pgmStar == nullptr)
+  
+    case objCelestialBody:
+        pgm = shmgr.createShader("body");
+        if (pgm == nullptr)
             return;
 
-        meshStar = createIcosphere(4);
+        pgm->use();
+
+        uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
+        uView = mat4Uniform(pgm->getID(), "uView");
+        uModel = mat4Uniform(pgm->getID(), "uModel");
+
+        pgm->release();
+
+        for (int idx = 0; idx < 2; idx++)
+        {
+            tiles[idx] = new SurfaceTile(*this, 0, 0, idx);
+            tiles[idx]->load();
+        }
         break;
     }
 }
@@ -328,18 +341,29 @@ glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng
     return wrot;
 }
 
+void logMatrix(const glm::dmat4 &m, cstr_t &desc)
+{
+    logger->debug("{} matrix:\n", desc);
+    logger->debug("{} {} {} {}\n", m[0][0], m[0][1], m[0][2], m[0][3]);
+    logger->debug("{} {} {} {}\n", m[1][0], m[1][1], m[1][2], m[1][3]);
+    logger->debug("{} {} {} {}\n", m[2][0], m[2][1], m[2][2], m[2][3]);
+    logger->debug("{} {} {} {}\n", m[3][0], m[3][1], m[3][2], m[3][3]);
+}
+
 void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
 {
     glm::dvec3 opos, cpos;
     double cdist;
     Camera *camera = scene.getCamera();
 
-    prm.maxlod = 19;
+    prm.maxlod = 1; // 19;
     resScale = 1400.0 / double(camera->getHeight());
 
-    // Camera *cam = scene.getCamera();
     prm.dmViewProj = camera->getProjMatrix() * camera->getViewMatrix();
     prm.dmWorld = dmWorld;
+
+    // logMatrix(prm.dmViewProj, "View/Projection");
+    // logMatrix(prm.dmWorld, "Model");
 
     prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
     opos = object->getuPosition(0);
@@ -352,6 +376,11 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
     prm.cdir = glm::normalize(prm.cdir);
     prm.viewap = acos(1.0 / (std::max(prm.cdist, 1.0)));
     prm.scale = 1.0;
+
+    // logger->debug("Object name:     {}\n", object->getName());
+    // logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
+    // logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
+    // logger->debug("Camera distance: {}\n", prm.cdist);
 }
 
 void SurfaceManager::process(SurfaceTile *tile)
@@ -505,6 +534,35 @@ void SurfaceManager::render(const glm::dmat4 &dmWorld, const ObjectProperties &o
 
     for (int idx = 0; idx < 2; idx++)
         render(tiles[idx]);
+}
+
+void SurfaceManager::renderStar(const glm::dmat4 &dmWorld, const ObjectProperties &op)
+{
+    // if (meshStar == nullptr)
+    //     return;
+    setRenderParams(dmWorld);
+    // if (meshStar->vao == nullptr)
+    //     meshStar->upload();
+
+    pgm->use();
+
+    // meshStar->vao->bind();
+
+    uViewProj = glm::mat4(prm.dmViewProj);
+    uModel = glm::mat4(prm.dmWorld);
+
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    // glDrawElements(GL_TRIANGLES, meshStar->ibo->getCount(), GL_UNSIGNED_SHORT, 0);
+    // checkErrors();
+
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    for (int idx = 0; idx < 2; idx++)
+        tiles[idx]->render();
+
+    // meshStar->vao->unbind();
+    pgm->release();
 }
 
 Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
@@ -863,21 +921,25 @@ Mesh *SurfaceManager::createIcosphere(int maxlod)
 
     for (int ivtx = 0; ivtx < nvtx; ivtx++)
     {
-        vtx[ivtx].vx = float(vertices[ivtx].x);
-        vtx[ivtx].vy = float(vertices[ivtx].y);
-        vtx[ivtx].vz = float(vertices[ivtx].z);
+        logger->debug("Vertex {:04d}: {} {} {}\n" ,ivtx, vertices[ivtx].x, vertices[ivtx].y, vertices[ivtx].z);
 
-        glm::dvec3 nml = glm::normalize(vertices[ivtx]);
-        vtx[ivtx].nx = float(nml.x);
-        vtx[ivtx].ny = float(nml.y);
-        vtx[ivtx].nz = float(nml.z);
+        vtx[ivtx].vx = float(vertices[ivtx].x * objSize);
+        vtx[ivtx].vy = float(vertices[ivtx].y * objSize);
+        vtx[ivtx].vz = float(vertices[ivtx].z * objSize);
+
+        vtx[ivtx].nx = float(vertices[ivtx].x);
+        vtx[ivtx].ny = float(vertices[ivtx].y);
+        vtx[ivtx].nz = float(vertices[ivtx].z);
 
         vtx[ivtx].tu = 0.0;
         vtx[ivtx].tv = 0.0;
     }
 
     for (int iidx = 0; iidx < nidx; iidx++)
+    {
+        // logger->debug("Index {:04d}: {} {} {}\n" , iidx, 
         idx[iidx] = indices[iidx];
+    }
 
     logger->debug("Done - Creating mesh...\n");
 
@@ -1059,12 +1121,15 @@ void Mesh::upload()
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
     glEnableVertexAttribArray(0);
+    checkErrors();
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)12);
     glEnableVertexAttribArray(1);
+    checkErrors();
 
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)24);
     glEnableVertexAttribArray(2);
+    checkErrors();
 
     vbo->unbind();
 

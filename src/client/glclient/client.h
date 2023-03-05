@@ -51,3 +51,12 @@ private:
 };
 
 extern ofsLogger *logger;
+
+inline void checkErrors()
+{
+    GLenum err;
+    while((err = glGetError()) != GL_NO_ERROR)
+    {
+        logger->debug("OpenGL Error: {}\n", err);
+    }
+}

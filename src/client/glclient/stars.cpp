@@ -123,7 +123,7 @@ void StarVertex::addStar(const glm::dvec3 &pos, const color_t &color, double rad
 
 // ******** Star Renderer ********
 
-void StarRenderer::process(const CelestialStar &star, double dist, double appMag) const
+void StarRenderer::process(CelestialStar &star, double dist, double appMag) const
 {
     glm::dvec3 spos, rpos;
     double  srad;
@@ -144,10 +144,30 @@ void StarRenderer::process(const CelestialStar &star, double dist, double appMag
     srad    = star.getRadius();
     objSize = ((srad / rdist) * 2.0) / pxSize;
 
+    // Determine color temperature
+    color   = starColors->lookup(star.getTemperature());
+
     if (objSize > pxSize)
     {
         discSize = objSize;
-        alpha = 1.0;
+
+        ObjectListEntry ole;
+
+        ole.object  = &star;
+        ole.visual  = scene->getVisualObject(ole.object);
+    
+        ole.spos    = spos;
+        ole.opos    = spos;
+        ole.vdist   = rdist;
+        ole.objSize = objSize;
+        ole.appMag  = appMag;
+        ole.color   = color;
+
+        ole.zCenter = 0.0;
+        ole.zFar    = 1e10;
+        ole.zNear   = 0.1;
+
+        scene->addRenderList(ole);
     }
     else
     {
@@ -161,18 +181,17 @@ void StarRenderer::process(const CelestialStar &star, double dist, double appMag
         }
         else if (alpha < 0.0)
             alpha = 0.0;
+
+        color.setAlpha(alpha);
+
+        // logger->info("HIP {}: {} {} {}\n",
+        //     ofsGetObjectStarHIPNumber(star), rpos.x, rpos.y, rpos.z);
+        // logger->info("HIP {}: Color ({} {} {} {}) Size {}\n",
+        //     ofsGetObjectStarHIPNumber(star), color.getRed(), color.getGreen(), color.getBlue(),
+        //     color.getAlpha(), discSize);
+
+        starBuffer->addStar(rpos, color, discSize);
     }
-
-    color = starColors->lookup(star.getTemperature());
-    color.setAlpha(alpha);
-
-    // logger->info("HIP {}: {} {} {}\n",
-    //     ofsGetObjectStarHIPNumber(star), rpos.x, rpos.y, rpos.z);
-    // logger->info("HIP {}: Color ({} {} {} {}) Size {}\n",
-    //     ofsGetObjectStarHIPNumber(star), color.getRed(), color.getGreen(), color.getBlue(),
-    //     color.getAlpha(), discSize);
-
-    starBuffer->addStar(rpos, color, discSize);
 }
 
 // ******** Scene (star rendering section) ********
