@@ -16,9 +16,9 @@
 #include "scene.h"
 
 Scene::Scene(int width, int height)
-: width(width), height(height),
-  shmgr("shaders/gl")
-{ 
+: shmgr("shaders/gl")
+{
+    resize(width, height);
 }
 
 void Scene::checkErrors()
@@ -61,8 +61,8 @@ void Scene::resize(int w, int h)
 {
     width = w;
     height = h;
-    // if (camera != nullptr)
-    //     camera->setSize(width, height);
+    
+    glViewport(0, 0, width, height);
 }
 
 glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3 &vpos, int time)

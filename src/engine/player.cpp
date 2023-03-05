@@ -14,10 +14,11 @@
 
 Camera::Camera(int width, int height)
 {
-    resize(width, height);
     fov = glm::radians(SCR_FOV);
     zNear = 1.0;
     zFar = 1e10;
+
+    resize(width, height);
 }
 
 void Camera::resize(int w, int h)
@@ -25,6 +26,8 @@ void Camera::resize(int w, int h)
     width  = w;
     height = h;
     aspect = (double)width / (double)height;
+
+    updateProjMatrix();
 }
 
 void Camera::setPosition(const glm::dvec3 &vpos)
