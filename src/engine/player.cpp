@@ -46,6 +46,7 @@ void Camera::look(const glm::dvec3 &opos)
     glm::dvec3 up = { 0, 1, 0 };
     
     rrot = glm::lookAt(rpos, opos, up);
+    rqrot = glm::quat_cast(rrot);
 
     // Logger::logger->debug("Camera: {} {} {}\n", upos.x, upos.y, upos.z);
     // Logger::logger->debug("Object: {} {} {}\n", opos.x, opos.y, opos.z);
