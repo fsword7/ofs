@@ -74,8 +74,8 @@ void cbPrintError(int, cchar_t *errMessage)
 
 bool glClient::cbInitialize()
 {
-    width  = 1920;
-    height = 1080;
+    width  = SCR_WIDTH;
+    height = SCR_HEIGHT;
 
     glfwSetErrorCallback(cbPrintError);
 

@@ -9,10 +9,10 @@
 #define APP_SHORT    "OFS"
 
 // Default screen coordination size
-// #define SCR_WIDTH       1920
-// #define SCR_HEIGHT      1080
-#define SCR_WIDTH       1200
-#define SCR_HEIGHT      768
+#define SCR_WIDTH       1920
+#define SCR_HEIGHT      1080
+// #define SCR_WIDTH       1200
+// #define SCR_HEIGHT      768
 #define SCR_FOV         45.0
 
 #include <iostream>
