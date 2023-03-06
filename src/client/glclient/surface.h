@@ -158,6 +158,10 @@ private:
     mat4Uniform uView;
     mat4Uniform uModel;
 
+    floatUniform uRadius;
+    vec4Uniform uColor;
+    vec3Uniform uCentralDir;
+
     SurfaceTile *tiles[2];
 
     ObjectType objType = objUnknown;

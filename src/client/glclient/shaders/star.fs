@@ -2,6 +2,10 @@
 
 // layout (binding = 0) uniform sampler2D sTile;
 
+uniform vec4 uColor;
+uniform vec3 uCentralDir;
+uniform float uRadius;
+
 in vec3 fPosition;
 in vec4 texCoord;
 in vec3 normal;
@@ -12,14 +16,13 @@ out vec4 fragColor;
 
 void main()
 {
-    // Granules
-    float n = (noise(normalize(fPosition), 4, 40.0, 0.7) + 1.0) * 0.5;
-    // float total = n;
+    vec3  nPosition = normalize(fPosition);
 
-    float uRadius = 1.0;
-    
+    // Granules
+    float n = (noise(nPosition, 4, 40.0, 0.7) + 1.0) * 0.5;
+
     // Sunspots
-    float s = 0.3;
+    float s = 0.36;
     float freq = 0.00001;
     float t1 = snoise(fPosition * freq) - s;
     float t2 = snoise((fPosition + uRadius) * freq) - s;
@@ -27,7 +30,7 @@ void main()
     // Total noise
     float total = n - ss;
 
-    fragColor = vec4(total, total, total, 1.0);
-    // fragColor = vec4(0.7, 0.7, 0.7, 1.0);
-    // fragColor = texture(sTile, texCoord);
+    // float theta = 1.0 - dot(uCentralDir, nPosition);
+
+    fragColor = vec4((uColor.xyz * 0.5) + (total - 0.5), 1.0);
 }

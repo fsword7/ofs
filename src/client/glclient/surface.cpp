@@ -270,6 +270,10 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         uView = mat4Uniform(pgm->getID(), "uView");
         uModel = mat4Uniform(pgm->getID(), "uModel");
 
+        uRadius = floatUniform(pgm->getID(), "uRadius");
+        uColor = vec4Uniform(pgm->getID(), "uColor");
+        uCentralDir = vec3Uniform(pgm->getID(), "uCentralDir");
+
         pgm->release();
 
         for (int idx = 0; idx < 2; idx++)
@@ -550,6 +554,10 @@ void SurfaceManager::renderStar(const glm::dmat4 &dmWorld, const ObjectPropertie
 
     uViewProj = glm::mat4(prm.dmViewProj);
     uModel = glm::mat4(prm.dmWorld);
+    uRadius = objSize;
+    uColor = glm::vec4(op.color.getRed(), op.color.getGreen(),
+                       op.color.getBlue(), op.color.getAlpha());
+    uCentralDir = glm::vec3(glm::normalize(prm.cpos));
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
