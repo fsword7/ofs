@@ -396,7 +396,7 @@ void GUIManager::processMouseButton(GLFWwindow *window, int button, int action, 
 }
 
 void GUIManager::processKey(GLFWwindow *window, int gkey, int scancode, int action, int mods)
-{    
+{
     ImGuiIO &io = ImGui::GetIO();
     if (pcbProcessKey != nullptr)
         pcbProcessKey(window, gkey, scancode, action, mods);
@@ -405,13 +405,16 @@ void GUIManager::processKey(GLFWwindow *window, int gkey, int scancode, int acti
     if (gkey == GLFW_KEY_UNKNOWN)
         return;
 
+    char32_t ch = keys[gkey];
+
+    // Logger::logger->debug("Code: {} -> {} action: {} mods: {}\n", gkey,  int(keys[gkey]), action, mods);
+
+    // Process keyboard movement control
+    ofsAppCore->keyPress(ch, 0, action == GLFW_PRESS);
+
     // Just ignore repeating action
     if (action == GLFW_REPEAT)
         return;
-    char32_t ch = keys[gkey];
-
-    // Process keyboard movement control
-    // ofsAppCore->keyPress(key, 0, action == GLFW_KEY_DOWN);
 
     // char32_t ch = keys[gkey];
     // ofsAppCore->keyEntered(key, 0);

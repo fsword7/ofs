@@ -43,5 +43,5 @@ private:
     void (*pcbProcessKey)(GLFWwindow *window, int gkey, int scancode, int action, int mods);
 
     // GLFW/OFS Key mapping table
-    char keys[GLFW_KEY_LAST];
+    char32_t keys[GLFW_KEY_LAST];
 };

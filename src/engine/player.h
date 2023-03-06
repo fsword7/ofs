@@ -60,6 +60,8 @@ private:
 
     glm::dvec3 rpos  = glm::dvec3(0, 0, 0);
     glm::dmat3 rrot  = glm::dmat3(1);
+    glm::dquat rqrot = glm::dquat(1, 0, 0, 0);
+
     double     rdist = glm::length(rpos);
 
     // Projection/view matrix
@@ -78,9 +80,15 @@ public:
     inline travelMode getTravelMode() const     { return modeTravel; }
     inline Camera *getCamera()                  { return &cam; }
 
+    inline glm::dvec3 getAngularControl()       { return av; }
+    inline glm::dvec3 getTravelControl()        { return tv; }
+
     inline glm::dvec3 getGlobalPosition()       { return gpos; }
     inline glm::dmat3 getGlobalRotation()       { return grot; }
     
+    inline void setAngularControl(glm::dvec3 _av)   { av = _av; }
+    inline void setTravelControl(glm::dvec3 _tv)    { tv = _tv; }
+
     void attach(Object *object);
 
     void update();
@@ -102,11 +110,15 @@ private:
     // Global (universal) parmeters
     glm::dvec3 gpos;
     glm::dmat3 grot;
+    glm::dquat gqrot;
 
     double ephi = 0.0;      // current phi rotation (external)
     double etheta = 0.0;    // current theta rotation (external)
     double cphi = 0.0;      // current phi rotation (free)
     double ctheta = 0.0;    // current theta rotation (free)
+
+    glm::dvec3 av = { 0, 0, 0 };    // angular velocity control
+    glm::dvec3 tv = { 0, 0, 0 };    // travel velocity control
 
     bool modeExternal = true;
     travelMode modeTravel = travelFreeFlight;

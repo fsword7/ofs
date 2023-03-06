@@ -90,6 +90,37 @@ void Player::attach(Object *object)
 
 void Player::update()
 {
+        // // free travel mode
+        // // Update current position and attitude in local reference frame
+        // // applying angular velocity to rotation quaternion in local space.
+        // //
+        // //      dq/dt = q * w * t/2
+        // //      where w = (0, x, y, z)
+        // //
+
+        // vec3d_t wv = av * 0.5;
+        // quatd_t dr = quatd_t(1.0, wv.x(), wv.y(), wv.z()) * lrot;
+        // lrot = quatd_t(dr.coeffs() + dt * dr.coeffs());
+        // lrot.normalize();
+    
+        // lpos -= (lrot.conjugate() * tv) * dt;
+
+    glm::dvec3 wv = av * 0.5;
+    glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
+    cam.rqrot = glm::normalize(cam.rqrot + dr);
+    cam.rrot = glm::mat3_cast(cam.rqrot);
+
+    cam.rpos -= glm::conjugate(cam.rqrot) * tv;
+
+    // Logger::logger->debug("Angular Velocity\n");
+    // Logger::logger->debug("WV: {} {} {}\n", wv.x, wv.y, wv.z);
+    // Logger::logger->debug("DR: {} {} {} {}\n", dr.w, dr.x, dr.y, dr.z);
+    // Logger::logger->debug("Q:  {} {} {} {}\n", cam.rqrot.w, cam.rqrot.x, cam.rqrot.y, cam.rqrot.z);
+
+    // Logger::logger->debug("Rotation matrix:\n");
+    // Logger::logger->debug("{} {} {}\n", cam.rrot[0][0], cam.rrot[0][1], cam.rrot[0][2]);
+    // Logger::logger->debug("{} {} {}\n", cam.rrot[1][0], cam.rrot[1][1], cam.rrot[1][2]);
+    // Logger::logger->debug("{} {} {}\n", cam.rrot[2][0], cam.rrot[2][1], cam.rrot[2][2]);
 
     if (modeExternal)
     {
@@ -106,6 +137,8 @@ void Player::update()
     {
         // Internal camera updates
     }
+
+    cam.update();
 }
 
 // rotate camera 

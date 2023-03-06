@@ -483,6 +483,9 @@ void CoreApp::keyPress(char32_t code, int modifiers, bool down)
 {
     if (code >= 512)
         return;
+
+    // Logger::logger->debug("Key pressed {}: {}\n", int(code), down ? "Down" : "Up");
+
     if (down == true)
     {
         if (modifiers & ofs::keyButton::keyShift)
@@ -538,15 +541,62 @@ void CoreApp::keyBufferedOnRunning(char32_t key, int mods)
 
 void CoreApp::keyImmediateSystem()
 {
+    double dt = td.getSysDeltaTime();
 
     if (player->isExternal())
     {
         // External camera view
 
-        if (stateKey[ofs::keyCode::keyPad4] || stateKey[ofs::keyCode::keyPad6])
-        {
+        glm::dvec3 av = player->getAngularControl();
+        glm::dvec3 tv = player->getTravelControl();
 
+        // Keyboard angular conrtrol
+        // X-axis angular control
+        if (stateKey[ofs::keyCode::keyPad8])
+            av += glm::dvec3( dt * -keyAttitudeAccel, 0, 0);
+        if (stateKey[ofs::keyCode::keyPad2])
+            av += glm::dvec3(dt * keyAttitudeAccel, 0, 0);
+
+        // Y-axis angular control
+        if (stateKey[ofs::keyCode::keyPad4])
+            av += glm::dvec3(0, dt * -keyAttitudeAccel, 0);
+        if (stateKey[ofs::keyCode::keyPad6])
+            av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
+
+        // Z-axis angular control
+        if (stateKey[ofs::keyCode::keyPad7])
+            av += glm::dvec3(0, dt * -keyAttitudeAccel, 0);
+        if (stateKey[ofs::keyCode::keyPad9])
+            av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
+
+        // Keyboard movement control
+        // // X-axis move control
+        // if (shiftStateKey[keyPad4])
+        //     tv.x() += dt * keyMovementControl;
+        // if (shiftStateKey[keyPad6])
+        //     tv.x() -= dt * keyMovementControl;
+
+        // // Y-axis move control
+        // if (shiftStateKey[keyPad8])
+        //     tv.y() += dt * keyMovementControl;
+        // if (shiftStateKey[keyPad2])
+        //     tv.y() -= dt * keyMovementControl;
+
+        // Z-axis move control
+        if (stateKey[ofs::keyCode::keyPad3])
+            tv.z += dt * keyMovementControl;
+        if (stateKey[ofs::keyCode::keyPad1])
+            tv.z -= dt * keyMovementControl;
+
+        // Braking control
+        if (stateKey[ofs::keyCode::keyPad5] || stateKey[ofs::keyCode::keyb])
+        {
+            av *= exp(-dt * keyAttitudeBrake);
+            tv *= exp(-dt * keyMovementBrake);
         }
+
+        player->setAngularControl(av);
+        player->setTravelControl(tv);
     }
     else
     {
