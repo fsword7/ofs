@@ -152,6 +152,10 @@ private:
     Scene &scene;
 
     ShaderProgram *pgm = nullptr;
+    ShaderProgram *pgmStar = nullptr;
+    ShaderProgram *pgmCorona = nullptr;
+    ShaderProgram *pgmGlow = nullptr;
+
     Mesh *meshStar = nullptr;
 
     mat4Uniform uViewProj;

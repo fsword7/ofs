@@ -41,8 +41,11 @@ set(OGL_H_SRCS
 
 set (OGL_SHADERS
     shaders/noise/snoise3.glsl
+    shaders/noise/snoise4.glsl
     shaders/body.fs
     shaders/body.vs
+    shaders/corona.fs
+    shaders/corona.vs
     shaders/line.fs
     shaders/line.vs
     shaders/point.fs

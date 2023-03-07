@@ -264,6 +264,10 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         if (pgm == nullptr)
             return;
 
+        pgmCorona = shmgr.createShader("corona");
+        if (pgmCorona == nullptr)
+            return;
+
         pgm->use();
 
         uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
