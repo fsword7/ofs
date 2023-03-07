@@ -410,7 +410,7 @@ void GUIManager::processKey(GLFWwindow *window, int gkey, int scancode, int acti
     // Logger::logger->debug("Code: {} -> {} action: {} mods: {}\n", gkey,  int(keys[gkey]), action, mods);
 
     // Process keyboard movement control
-    ofsAppCore->keyPress(ch, 0, action == GLFW_PRESS);
+    ofsAppCore->keyPress(ch, 0, action != GLFW_RELEASE);
 
     // Just ignore repeating action
     if (action == GLFW_REPEAT)
