@@ -158,6 +158,34 @@ void Player::orbit(double phi, double theta, double dist)
 
 }
 
+void Player::orbit(const glm::dquat &drot)
+{
+    if (tgtObject == nullptr)
+        return;
+
+}
+
+void Player::dolly(double dz)
+{
+    // double fact = std::max(1.0/opos.z, 1.0/(1.0 - dz));
+    // orbit(opos.x, opos.y, opos.z*fact);
+
+    double sdist = tgtObject->getRadius();  // surface radius
+    double cdist = glm::length(cam.rpos);
+
+    if (cdist > sdist)
+    {
+        double agl = (cdist - sdist) / sdist;
+        double ndist = sdist + sdist * exp(log(agl) + dz);
+
+        cam.rpos *= ndist / cdist;
+
+        // Logger::logger->debug("Distance: {} <- {} / {}\n", glm::length(cam.rpos), ndist, cdist);
+    }
+
+    cam.update();
+}
+
 // X (phi) rotation
 void Player::addPhi(double dphi)
 {

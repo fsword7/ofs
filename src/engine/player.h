@@ -99,6 +99,8 @@ public:
     void addPhi(double dphi);     // X rotation
     void addTheta(double dtheta); // Y rotation
 
+    void dolly(double dz);
+    void orbit(const glm::dquat &drot);
     void orbit(double phi, double theta, double dist);
     void rotateView(double phi, double theta);
 
@@ -116,6 +118,9 @@ private:
     double etheta = 0.0;    // current theta rotation (external)
     double cphi = 0.0;      // current phi rotation (free)
     double ctheta = 0.0;    // current theta rotation (free)
+
+    // Rotation: X = Phi, Y = Theta, Z = distance
+    glm::dvec3 orot;        // external camera from object frame
 
     glm::dvec3 av = { 0, 0, 0 };    // angular velocity control
     glm::dvec3 tv = { 0, 0, 0 };    // travel velocity control

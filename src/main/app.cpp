@@ -597,6 +597,12 @@ void CoreApp::keyImmediateSystem()
 
         player->setAngularControl(av);
         player->setTravelControl(tv);
+
+        // Keyboard dolly control
+        if (stateKey[ofs::keyCode::keyHome])
+            player->dolly(-dt * 2.0);
+        if (stateKey[ofs::keyCode::keyEnd])
+            player->dolly(dt * 2.0);
     }
     else
     {
