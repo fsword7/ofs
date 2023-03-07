@@ -83,6 +83,18 @@ Player::~Player()
 {
 }
 
+double Player::computeCoarseness(double maxCoarseness)
+{
+    double radius   = 1;
+    double distance = glm::length(cam.rpos);
+    double altitude = distance - radius;
+    double coarse   = maxCoarseness;
+
+    if (altitude > 0 && altitude < radius)
+        coarse *= std::max(0.01, altitude/radius);
+    return coarse;
+}
+
 void Player::attach(Object *object)
 {
     tgtObject = object;
@@ -163,6 +175,18 @@ void Player::orbit(const glm::dquat &drot)
     if (tgtObject == nullptr)
         return;
 
+    // Determine central position of object (planet, vessel, etc)
+    glm::dvec3 cpos = tgtObject->getuPosition(0);
+    glm::dvec3 vpos = cam.rpos - cpos;
+
+    double vdist = glm::length(vpos);
+    glm::dquat qrot = glm::conjugate(cam.rqrot) * drot * cam.rqrot;
+    vpos = glm::conjugate(qrot) * vpos;
+    vpos = glm::normalize(vpos) * vdist;
+
+    cam.rqrot = cam.rqrot * qrot;
+    cam.rrot  = glm::mat3_cast(cam.rqrot);
+    cam.rpos  = cpos + vpos;
 }
 
 void Player::dolly(double dz)

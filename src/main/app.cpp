@@ -598,6 +598,24 @@ void CoreApp::keyImmediateSystem()
         player->setAngularControl(av);
         player->setTravelControl(tv);
 
+        // Keyboard orbit movement controls
+        {
+            double coarseness = player->computeCoarseness(1.5);
+            glm::dquat q = { 1, 0, 0, 0 };
+
+            if (stateKey[ofs::keyCode::keyLeft])
+                q *= yqRotate(dt * -keyRotationAccel * coarseness);
+            if (stateKey[ofs::keyCode::keyRight])
+                q *= yqRotate(dt * keyRotationAccel * coarseness);
+            if (stateKey[ofs::keyCode::keyUp])
+                q *= xqRotate(dt * -keyRotationAccel * coarseness);
+            if (stateKey[ofs::keyCode::keyDown])
+                q *= xqRotate(dt * keyRotationAccel * coarseness);
+
+            if (q != glm::dquat(1, 0, 0, 0))
+                player->orbit(q);
+        }
+
         // Keyboard dolly control
         if (stateKey[ofs::keyCode::keyHome])
             player->dolly(-dt * 2.0);

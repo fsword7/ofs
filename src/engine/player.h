@@ -89,6 +89,8 @@ public:
     inline void setAngularControl(glm::dvec3 _av)   { av = _av; }
     inline void setTravelControl(glm::dvec3 _tv)    { tv = _tv; }
 
+    double computeCoarseness(double maxCoarseness);
+
     void attach(Object *object);
 
     void update();
