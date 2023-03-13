@@ -9,6 +9,7 @@
 #include <numbers>
 
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 
@@ -173,32 +174,44 @@ namespace ofs
     //     return Eigen::Quaternion<T>(m).conjugate();
     // }
 
-    template <typename T> glm::dmat4 perspective(T fovy, T aspect, T zNear, T zFar)
-    {
-        if (aspect == static_cast<T>(0))
-            return glm::dmat4(1.0);
- 
-        T zDelta = zFar - zNear;
-        if (zDelta == static_cast<T>(0))
-            return glm::dmat4(1.0);
+    // template <typename T> glm::dmat4 perspective(T fov, T aspect, T zNear, T zFar)
+    // {
+    //     const T half = fov / static_cast<T>(2.0);
+    //     const T ctg = cos(half) / sin(half); // cot(half)
+    //     const T zDelta = zFar - zNear;
 
-        T angle = fovy / static_cast<T>(2);
-        T sine = sin(angle);
-        if (sine == static_cast<T>(0))
-            return glm::dmat4(1.0);
-        T ctg = cos(angle) / sine;
+    //     glm::dmat4 m(1.0);
+    //     m[0][0] = ctg / aspect;
+    //     m[1][1] = ctg;
+    //     // m[2][2] = zFar / (zNear - zFar);
+    //     // m[2][3] = static_cast<T>(-1.0);
+    //     // m[3][2] = zNear * zFar / (zNear - zFar);
+    //     m[2][2] = -(zFar + zNear) / zDelta;
+    //     m[2][3] = static_cast<T>(-2.0) * zNear * zFar / zDelta;
+    //     m[3][2] = static_cast<T>(-1.0);
+    //     m[3][3] = static_cast<T>(0);
 
-        glm::dmat4 m(1.0);
+    //     return m;
+    // }
 
-        m[0][0] = ctg / aspect;
-        m[1][1] = ctg;
-        m[2][2] = -(zFar + zNear) / zDelta;
-        m[2][3] = static_cast<T>(-2) * zNear * zFar / zDelta;
-        m[3][2] = static_cast<T>(-1);
-        m[3][3] = static_cast<T>(0);
+    // // Indefinite perspective for rendering stars
+    // template <typename T> glm::dmat4 infinitePerspective(T fov, T aspect, T zNear)
+    // {
+    //     const T half = fov / static_cast<T>(2.0);
+    //     const T ctg = cos(half) / sin(half); // cot(half)
+    
+    //     glm::dmat4 m(1.0);
+    //     m[0][0] = ctg / aspect;
+    //     m[1][1] = ctg;
+    //     m[2][2] = static_cast<T>(0.0);
+    //     m[2][3] = static_cast<T>(-1.0);
+    //     m[3][2] = zNear;
+    //     // m[2][2] = static_cast<T>(-1.0);
+    //     // m[2][3] = static_cast<T>(-2.0) * zNear;
+    //     // m[3][2] = static_cast<T>(-1.0);
 
-        return m;
-    }
+    //     return m;
+    // }
 
     // template <typename T> bool setProjectPerspective(const Eigen::Matrix<T, 4, 4> &mvp, const int viewport[4],
     //     const Eigen::Matrix<T, 3, 1> &from, Eigen::Matrix<T, 3, 1> &to)

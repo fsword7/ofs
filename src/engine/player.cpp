@@ -15,7 +15,7 @@
 Camera::Camera(int width, int height)
 {
     fov = glm::radians(SCR_FOV);
-    zNear = 1.0;
+    zNear = 100.0;
     zFar = 1e10;
 
     resize(width, height);
@@ -58,7 +58,8 @@ void Camera::look(const glm::dvec3 &opos)
 
 void Camera::updateProjMatrix()
 {
-    proj = ofs::perspective(fov, aspect, zNear, zFar);
+    proj = glm::perspective(fov, aspect, zNear, zFar);
+    // proj = glm::infinitePerspective(fov, aspect, zNear);
 }
 
 void Camera::updateViewMatrix()
