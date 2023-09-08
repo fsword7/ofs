@@ -158,6 +158,7 @@ target_link_libraries(ofs
     Freetype::Freetype
     fmt::fmt
     ZLIB::ZLIB
+    nlohmann_json::nlohmann_json
     imgui
     glfw
     OpenGL::GL
