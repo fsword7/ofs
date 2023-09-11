@@ -41,8 +41,8 @@ set(OGL_H_SRCS
 
 set (OGL_SHADERS
     shaders/lib/logdepth.glsl
-    shaders/noise/snoise3.glsl
-    shaders/noise/snoise4.glsl
+    shaders/lib/snoise3.glsl
+    shaders/lib/snoise4.glsl
     shaders/body.fs
     shaders/body.vs
     shaders/corona.fs
@@ -87,3 +87,7 @@ install(TARGETS glclient
 install(FILES ${OGL_SHADERS}
     DESTINATION ${OFS_INSTALL_ROOT_DIR}/shaders/gl
 )
+
+# install(FILES ${OGL_SHADERS}
+#     DESTINATION ${OFS_INSTALL_ROOT_DIR}/shaders/gl/lib
+# )

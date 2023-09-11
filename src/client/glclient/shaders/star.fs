@@ -14,6 +14,7 @@ uniform vec2  uCamClip;
 in vec3 fPosition;
 in vec4 texCoord;
 in vec3 normal;
+// in float vTime;
 
 out vec4 fragColor;
 
