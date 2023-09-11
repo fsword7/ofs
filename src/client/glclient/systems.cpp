@@ -68,6 +68,7 @@ void Scene::renderSystemObjects()
         op.orot  = glm::dmat3(1);
 
         op.mvp = glm::dmat4(view * proj);
+        op.clip = camera->getClip();
 
         // logger->debug("Rendering {}...\n", ole.object->getName());
 

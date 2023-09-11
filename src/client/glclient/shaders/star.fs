@@ -1,10 +1,15 @@
 #version 430
 
+#include "logdepth.glsl"
+
 // layout (binding = 0) uniform sampler2D sTile;
 
 uniform vec4 uColor;
 uniform vec3 uCentralDir;
 uniform float uRadius;
+
+uniform vec2  uCamClip;
+// uniform float uCameraK;
 
 in vec3 fPosition;
 in vec4 texCoord;
@@ -16,6 +21,7 @@ out vec4 fragColor;
 
 void main()
 {
+    float uCameraK = 1.0;
     vec3  nPosition = normalize(fPosition);
 
     // Granules
@@ -33,4 +39,6 @@ void main()
     // float theta = 1.0 - dot(uCentralDir, nPosition);
 
     fragColor = vec4((uColor.xyz * 0.5) + (total - 0.5), 1.0);
+
+    gl_FragDepth = getDepth(uCamClip.y, uCameraK);
 }

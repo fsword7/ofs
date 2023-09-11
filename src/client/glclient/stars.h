@@ -52,6 +52,8 @@ protected:
     VertexBuffer *vbo = nullptr;
 
     mat4Uniform mvp;
+    vec2Uniform uCamClip;
+    // floatUniform uTime;
 };
 
 class StarRenderer : public ofsHandler

@@ -273,12 +273,28 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
         uView = mat4Uniform(pgm->getID(), "uView");
         uModel = mat4Uniform(pgm->getID(), "uModel");
+        uCamClip = vec2Uniform(pgm->getID(), "uCamClip");
 
         uRadius = floatUniform(pgm->getID(), "uRadius");
         uColor = vec4Uniform(pgm->getID(), "uColor");
         uCentralDir = vec3Uniform(pgm->getID(), "uCentralDir");
 
         pgm->release();
+
+        pgmCorona->use();
+
+        // glm::vec2 cvtx[4] = {
+        //     { -objSize,  objSize },
+        //     { -objSize, -objSize },
+        //     {  objSize, -objSize },
+        //     {  objSize,  objSize }
+        // };
+
+        // uint16_t cidx[6] = { 0, 1, 2, 2, 3, 0 };
+
+        // meshCorona = new Mesh(4, cvtx, 6, cidx);
+    
+        pgmCorona->release();
 
         for (int idx = 0; idx < 2; idx++)
         {
@@ -562,6 +578,7 @@ void SurfaceManager::renderStar(const glm::dmat4 &dmWorld, const ObjectPropertie
     uColor = glm::vec4(op.color.getRed(), op.color.getGreen(),
                        op.color.getBlue(), op.color.getAlpha());
     uCentralDir = glm::vec3(glm::normalize(prm.cpos));
+    uCamClip = op.clip;
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

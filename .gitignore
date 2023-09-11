@@ -1,4 +1,5 @@
 /.vscode/
 /build/
 /ofs/
+/data/
 *.json

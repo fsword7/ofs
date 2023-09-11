@@ -68,6 +68,7 @@ struct ObjectListEntry
     double  zCenter;    // Center Z depth sorting
 
     // Clipping parameters
+    glm::vec2 camClip;
     double  zFar;       // Far Z clipping
     double  zNear;      // Near Z clipping
 };
@@ -135,6 +136,7 @@ private:
     VertexBuffer *vboAsterism = nullptr;
     uint32_t asterismLines = 0;
     mat4Uniform mvp;
+    vec2Uniform uCamClip;
 
     ShaderProgram *pgmStar = nullptr;
 

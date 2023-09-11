@@ -14,9 +14,9 @@
 
 Camera::Camera(int width, int height)
 {
-    fov = glm::radians(SCR_FOV);
-    zNear = 100.0;
-    zFar = 1e10;
+    fov   = glm::radians(SCR_FOV);
+    zNear = 0.0001;
+    zFar  = 1e24; // Known universe size
 
     resize(width, height);
 }

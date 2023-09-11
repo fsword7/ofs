@@ -29,6 +29,7 @@ void Scene::initConstellations()
     logger->info("Total {} asterism lines\n", asterismLines);
     
     mvp = mat4Uniform(pgmAsterism->getID(), "mvp");
+    uCamClip = vec2Uniform(pgmAsterism->getID(), "uCamClip");
 
     pgmAsterism->release();
 }
@@ -102,6 +103,7 @@ void Scene::renderConstellations()
     glm::dmat4 proj = camera->getProjMatrix();
     glm::dmat4 view = camera->getViewMatrix();
     mvp = glm::mat4(proj * view);
+    uCamClip = camera->getClip();
 
     glDrawArrays(GL_LINES, 0, rLines);
 

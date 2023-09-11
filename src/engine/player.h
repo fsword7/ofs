@@ -34,6 +34,7 @@ public:
     inline double getAspect()           { return aspect; }
     inline double getFOV()              { return fov; }
     inline double getAperature()        { return tan(fov); }
+    inline glm::vec2 getClip()          { return glm::vec2(zNear, zFar); }
 
     inline glm::dvec3 getGlobalPosition() { return rpos; }
     inline glm::dmat3 getGlobalRotation() { return rrot; }

@@ -62,6 +62,7 @@ void StarVertex::start()
     // logger->debug("{} {} {} {}\n", proj[3][0], proj[3][1], proj[3][2], proj[3][3]);
 
     mvp = glm::mat4(proj * view);
+    uCamClip = scene.getCamera()->getClip();
 
     nStars = 0;
     type = useSprites;
@@ -164,8 +165,9 @@ void StarRenderer::process(CelestialStar &star, double dist, double appMag) cons
         ole.color   = color;
 
         ole.zCenter = 0.0;
-        ole.zFar    = 1e10;
-        ole.zNear   = 0.1;
+        ole.zFar    = 1e24;
+        ole.zNear   = 0.0001;
+        ole.camClip = glm::vec2(ole.zNear, ole.zFar);
 
         scene->addRenderList(ole);
     }
@@ -206,6 +208,7 @@ void Scene::initStarRenderer()
     StarVertex *starBuffer = new StarVertex(*this);
     starBuffer->pgm = pgmStar;
     starBuffer->mvp = mat4Uniform(pgmStar->getID(), "mvp");
+    starBuffer->uCamClip = vec2Uniform(pgmStar->getID(), "uCamClip");
 
     starRenderer = new StarRenderer();
     starRenderer->scene = this;

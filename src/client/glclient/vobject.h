@@ -22,6 +22,7 @@ struct ObjectProperties
     glm::dvec3  lpos;      // local planetocentric coordinates
 
     glm::dmat4  mvp;
+    glm::vec2   clip;
 
     glm::dvec3  cpos;
     glm::dvec3  cqrot;

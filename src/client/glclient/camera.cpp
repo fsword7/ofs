@@ -13,7 +13,7 @@ Camera::Camera(int width, int height)
     setSize(width, height);
     fov = glm::radians(SCR_FOV);
     zNear = 1;
-    zFar = 1e18;
+    zFar = 1e24; // known universe size (1e11 lightyears)
 }
 
 void Camera::setSize(int w, int h)

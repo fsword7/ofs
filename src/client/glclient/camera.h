@@ -11,13 +11,15 @@ public:
     Camera(int width, int height);
     ~Camera() = default;
 
-    inline glm::dvec3 getGlobalPosition() const    { return gpos; }
-    inline glm::dvec3 getGlobalDirection() const   { return gdir; }
-    inline glm::dmat3 getGlobalRotation() const    { return grot; }
+    inline glm::dvec3 getGlobalPosition() const     { return gpos; }
+    inline glm::dvec3 getGlobalDirection() const    { return gdir; }
+    inline glm::dmat3 getGlobalRotation() const     { return grot; }
 
-    inline glm::dmat4 getViewMatrix() const        { return dmView; }
-    inline glm::dmat4 getProjMatrix() const        { return dmProj; }
-    inline glm::dmat4 getViewProjMatrix() const    { return dmViewProj; }
+    inline glm::dmat4 getViewMatrix() const         { return dmView; }
+    inline glm::dmat4 getProjMatrix() const         { return dmProj; }
+    inline glm::dmat4 getViewProjMatrix() const     { return dmViewProj; }
+
+    inline glm::vec2 getCameraClip() const          { return glm::vec2(zNear, zFar); }
 
     void setSize(int w, int h);
 

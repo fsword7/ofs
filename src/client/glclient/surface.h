@@ -157,6 +157,8 @@ private:
     ShaderProgram *pgmGlow = nullptr;
 
     Mesh *meshStar = nullptr;
+    Mesh *meshCorona = nullptr;
+    Mesh *meshGlow = nullptr;
 
     mat4Uniform uViewProj;
     mat4Uniform uView;
@@ -165,6 +167,7 @@ private:
     floatUniform uRadius;
     vec4Uniform uColor;
     vec3Uniform uCentralDir;
+    vec2Uniform uCamClip;
 
     SurfaceTile *tiles[2];
 
