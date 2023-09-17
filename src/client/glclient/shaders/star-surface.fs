@@ -3,7 +3,7 @@
 uniform float uTime;
 
 #include "snoise3.glsl"
-#include "lib/logdepth.glsl"
+#include "logdepth.glsl"
 
 uniform vec2  uCamClip;
 uniform float uCameraK;
