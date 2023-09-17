@@ -20,6 +20,7 @@ set(OFS_CPP_SRCS
     ephem/earth-p03lp.cpp
     ephem/elements.cpp
     ephem/elp-mpp02.cpp
+    ephem/ephemeris.cpp
     ephem/iau-wgccre.cpp
     ephem/orbit.cpp
     ephem/rotation.cpp
@@ -54,6 +55,7 @@ set(OFS_CPP_SRCS
     universe/astro.cpp
     universe/atmo.cpp
     universe/body.cpp
+    universe/celbody.cpp
     universe/constellations.cpp
     universe/frame.cpp
     universe/star.cpp
@@ -88,6 +90,7 @@ set(OFS_H_SRCS
     ephem/moon/elp82.h
     ephem/elements.h
     ephem/elp-mpp02.h
+    ephem/ephemeris.h
     ephem/orbit.h
     ephem/rotation.h
     ephem/vsop87.h
@@ -115,6 +118,7 @@ set(OFS_H_SRCS
     universe/astro.h
     universe/atmo.h
     universe/body.h
+    universe/celbody.h
     universe/constellations.h
     universe/frame.h
     universe/handle.h

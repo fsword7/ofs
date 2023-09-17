@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "universe/body.h"
+#include "universe/celbody.h"
 
 enum SpectralClass
 {

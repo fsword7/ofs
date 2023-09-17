@@ -81,11 +81,11 @@ public:
     inline travelMode getTravelMode() const     { return modeTravel; }
     inline Camera *getCamera()                  { return &cam; }
 
-    inline glm::dvec3 getAngularControl()       { return av; }
-    inline glm::dvec3 getTravelControl()        { return tv; }
+    inline glm::dvec3 getAngularControl() const     { return av; }
+    inline glm::dvec3 getTravelControl() const      { return tv; }
 
-    inline glm::dvec3 getGlobalPosition()       { return gpos; }
-    inline glm::dmat3 getGlobalRotation()       { return grot; }
+    inline glm::dvec3 getGlobalPosition() const     { return gpos; }
+    inline glm::dmat3 getGlobalRotation() const     { return grot; }
     
     inline void setAngularControl(glm::dvec3 _av)   { av = _av; }
     inline void setTravelControl(glm::dvec3 _tv)    { tv = _tv; }
@@ -94,7 +94,7 @@ public:
 
     void attach(Object *object);
 
-    void update();
+    void update(const TimeDate &td);
 
     void rotatePhi(double phi);     // X rotation
     void rotateTheta(double theta); // Y rotation

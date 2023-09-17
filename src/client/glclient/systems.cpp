@@ -5,7 +5,7 @@
 
 #include "main/core.h"
 #include "universe/universe.h"
-#include "universe/body.h"
+#include "universe/celbody.h"
 
 #include "client.h"
 #include "scene.h"

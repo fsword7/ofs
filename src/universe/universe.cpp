@@ -6,12 +6,13 @@
 #define OFSAPI_SERVER_BUILD
 
 #include "main/core.h"
+#include "engine/player.h"
 #include "ephem/orbit.h"
 #include "ephem/vsop87.h"
 #include "ephem/rotation.h"
 #include "universe/universe.h"
 #include "universe/star.h"
-#include "universe/body.h"
+#include "universe/celbody.h"
 #include "universe/system.h"
 #include "universe/astro.h"
 #include "scripts/parser.h"
@@ -73,15 +74,34 @@ void Universe::init()
     cam->look(sun->getStarPosition());
     cam->update();
     player->attach(sun);
-    player->update();
-
     // cam->setPosition(glm::dvec3(0, 0, -earth->getRadius() * 4.0));
-    // cam->look(glm::dvec3(0, 0, 0));
+    // cam->look(earth->getoPosition(0));
     // cam->update();
+    // player->attach(earth);
+    // player->update();
+
 
     std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
     System::loadSolarSystemObjects(in, *this, "systems");
     in.close();
+}
+
+void Universe::update(Player *player, const TimeDate &td)
+{
+    Camera *cam = player->getCamera();
+
+    // Updating periodic close stars
+    nearStars.clear();
+    findCloseStars(cam->getGlobalPosition(), 1.0, nearStars);
+
+    // Updating local solar systems
+    for (auto sun : nearStars)
+    {
+        if (!sun->hasSolarSystem())
+            continue;
+        System *system = sun->getSolarSystem();
+        
+    }
 }
 
 System *Universe::createSolarSystem(CelestialStar *star)

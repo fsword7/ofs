@@ -7,7 +7,7 @@
 #include "engine/object.h"
 #include "engine/player.h"
 #include "universe/universe.h"
-#include "universe/body.h"
+#include "universe/celbody.h"
 #include "universe/star.h"
 
 #include "client.h"

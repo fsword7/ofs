@@ -7,6 +7,7 @@
 
 #include "main/core.h"
 #include "api/ofsapi.h"
+#include "main/timedate.h"
 #include "engine/object.h"
 #include "engine/player.h"
 
@@ -102,7 +103,7 @@ void Player::attach(Object *object)
 }
 
 
-void Player::update()
+void Player::update(const TimeDate &td)
 {
         // // free travel mode
         // // Update current position and attitude in local reference frame

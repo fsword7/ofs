@@ -5,7 +5,7 @@
 
 #include "main/core.h"
 #include "universe/star.h"
-#include "universe/body.h"
+#include "universe/celbody.h"
 #include "universe/frame.h"
 #include "universe/system.h"
 #include "universe/universe.h"

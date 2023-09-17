@@ -11,7 +11,7 @@ class Parser;
 class Value;
 class Group;
 
-#include "universe/body.h"
+#include "universe/celbody.h"
 
 class System
 {

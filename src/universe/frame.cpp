@@ -6,7 +6,7 @@
 #include "main/core.h"
 #include "engine/rigidbody.h"
 #include "universe/star.h"
-#include "universe/body.h"
+#include "universe/celbody.h"
 #include "universe/frame.h"
 
 // ******** Reference Frame Tree ********

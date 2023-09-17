@@ -10,6 +10,8 @@
 #include "universe/system.h"
 #include "universe/handle.h"
 
+class Player;
+
 class OFSAPI Universe
 {
 public:
@@ -18,8 +20,10 @@ public:
 
     inline StarDatabase &getStarDatabase()      { return stardb; }
     inline Constellations &getConstellations()  { return constellations; }
+    inline std::vector<const CelestialStar *> &getNearStars() { return nearStars; }
 
     void init();
+    void update(Player *player, const TimeDate &td);
 
     System *createSolarSystem(CelestialStar *star);
     System *getSolarSystem(CelestialStar *star) const;
@@ -47,4 +51,6 @@ private:
     Constellations constellations;
 
     SystemsList  systems;
+
+    std::vector<const CelestialStar *> nearStars;
 };

@@ -11,7 +11,7 @@
 #include "engine/object.h"
 // #include "engine/player.h"
 // #include "engine/headup.h"
-#include "universe/body.h"
+#include "universe/celbody.h"
 // #include "render/overlay.h"
 
 void Engine::renderOverlay()

@@ -8,7 +8,7 @@
 class OrbitVSOP87Earth : public OrbitVSOP87
 {
 public:
-    OrbitVSOP87Earth(ObjectHandle object);
+    OrbitVSOP87Earth(CelestialBody &cbody);
     virtual ~OrbitVSOP87Earth() = default;
 
     uint16_t getOrbitData(double mjd, uint16_t req, double *res) override;

@@ -6,9 +6,11 @@
 #include "main/core.h"
 #include "api/ofsapi.h"
 #include "api/celbody.h"
+#include "ephem/ephemeris.h"
 #include "ephem/vsop87a.h"
 
-OrbitVSOP87::OrbitVSOP87(ObjectHandle object)
+OrbitVSOP87::OrbitVSOP87(CelestialBody &cbody)
+: OrbitEphemeris(cbody)
 {
 
 }
@@ -104,7 +106,7 @@ void OrbitVSOP87::load(cstr_t &name)
 	vsopFile.close();
 }
 
-void OrbitVSOP87::getEphemeris(double mjd, double *ret)
+void OrbitVSOP87::getEphemeris(double mjd, double *res)
 {
 	static const double mjd2000 = 51544.5;
 	static const double a1000 = 365250.0;
@@ -118,7 +120,7 @@ void OrbitVSOP87::getEphemeris(double mjd, double *ret)
 
 	// Clear all ephemeris parameters
 	for (int idx = 0; idx < VSOP_PARAMS; idx++)
-		ret[idx] = 0.0;
+		res[idx] = 0.0;
 
 	double a, b, c;
 	double arg, tm, tmdot;
@@ -134,12 +136,12 @@ void OrbitVSOP87::getEphemeris(double mjd, double *ret)
 	// compute term series
 	for (int idx = 0; idx < 3; idx++)
 	{
-		for (int alpha = 0; ; alpha++)
+		for (int alpha = 0; alpha < nalpha; alpha++)
 		{
 			// pterm = nullptr;
 			tm = tmdot = 0.0;
 
-			for (int term = 0; ; term++)
+			for (int term = 0; term < nterm; term++)
 			{
 				// f(tm) = a * cos (b * c * T)
 				// f'(tm) = a * -sin (b * c * T) * c
@@ -151,8 +153,8 @@ void OrbitVSOP87::getEphemeris(double mjd, double *ret)
 				tmdot -= c * a * sin(arg);
 			}
 
-			ret[idx]  += t[alpha] * tm;
-			ret[idx+3] += t[alpha] * tmdot +
+			res[idx]  += t[alpha] * tm;
+			res[idx+3] += t[alpha] * tmdot +
 				(alpha > 0 ? alpha * t[alpha - 1] * tm : 0.0);
 		}		
 	}
@@ -160,18 +162,18 @@ void OrbitVSOP87::getEphemeris(double mjd, double *ret)
 	if (fmtFlags & EPHEM_POLAR)
 	{
 		for (int idx = 3; idx < 6; idx++)
-			ret[idx] *= rsec;
+			res[idx] *= rsec;
 	}
 	else
 	{
 		for (int idx = 0; idx < 3; idx++)
-			ret[idx] *= pscl;
+			res[idx] *= pscl;
 		for (int idx = 3; idx < 6; idx++)
-			ret[idx] *= vscl;
+			res[idx] *= vscl;
 
 		// swap Y and Z for mapping left-handed cordinates
 		double tmp;
-		tmp = ret[1]; ret[1] = ret[2]; ret[2] = tmp;
-		tmp = ret[4]; ret[4] = ret[5]; ret[5] = tmp;
+		tmp = res[1]; res[1] = res[2]; res[2] = tmp;
+		tmp = res[4]; res[4] = res[5]; res[5] = tmp;
 	}
 }

@@ -10,7 +10,7 @@
 #include "engine/object.h"
 #include "main/app.h"
 #include "universe/universe.h"
-#include "universe/body.h"
+#include "universe/celbody.h"
 #include "universe/star.h"
 
 // LIBEXPORT int ofsGetCameraHeight()

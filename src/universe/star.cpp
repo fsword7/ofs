@@ -4,7 +4,7 @@
 // Date:    Apr 16, 2022
 
 #include "main/core.h"
-#include "universe/body.h"
+#include "universe/celbody.h"
 #include "universe/star.h"
 #include "universe/astro.h"
 

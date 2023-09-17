@@ -7,8 +7,8 @@
 #include "api/celbody.h"
 #include "ephem/earth/earth.h"
 
-OrbitVSOP87Earth::OrbitVSOP87Earth(ObjectHandle object)
-: OrbitVSOP87(object)
+OrbitVSOP87Earth::OrbitVSOP87Earth(CelestialBody &cbody)
+: OrbitVSOP87(cbody)
 {
     a0 = 1.0; // semi-major axis [AU]
 }

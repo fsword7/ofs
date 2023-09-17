@@ -243,7 +243,8 @@ void CoreApp::closeSession()
 
 void CoreApp::updateWorld()
 {
-    player->update();
+    universe->update(player, td);
+    player->update(td);
 }
 
 bool CoreApp::attachGraphicsClient(GraphicsClient *gc)
