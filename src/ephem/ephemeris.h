@@ -12,7 +12,9 @@ class OrbitEphemeris
 public:
     OrbitEphemeris(CelestialBody &cbody);
     ~OrbitEphemeris() = default;
-    
+
+    // static OrbitEphemeris *create(CelestialBody &cbody, cstr_t &name);
+
     virtual uint16_t getOrbitData(double mjd, uint16_t req, double *ret) = 0;
 
 protected:

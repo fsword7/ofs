@@ -2643,3 +2643,5 @@ static vsop87s_t earth_R[] = {
 		VSOP_SERIES(earth_r4),
 		VSOP_SERIES(earth_r5)
 };
+
+static vsop87p_t earth_LBR = vsop87p_t('B', VSOP_PARAM(earth_L), VSOP_PARAM(earth_B), VSOP_PARAM(earth_R));

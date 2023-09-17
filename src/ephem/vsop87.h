@@ -1,12 +1,12 @@
-// vsop87.h - VSOP87 orbit epheremis package
+// vsop87.h - VSOP87 Ephemeris data package
 //
 // Author:  Tim Stark
-// Date:    Apr 29, 2022
+// Date:    Nov 3, 2022
 
-#pragma once
+#include "ephem/ephemeris.h"
 
-#include "ephem/orbit.h"
-
+#define VSOP_PARAMS     6   // XYZ position/velocity parameters
+#define VSOP_MAXALPHA   5
 struct vsop87_t
 {
     double a, b, c;
@@ -22,30 +22,39 @@ struct vsop87s_t
     vsop87_t *terms;
 };
 
-class VSOP87Orbit : public CachingOrbit
+struct vsop87p_t
+{
+    vsop87p_t(char type, vsop87s_t *sA, int nA, vsop87s_t *sB, int nB, vsop87s_t *sC, int nC)
+    : sum{sA, sB, sC}, alpha{nA, nB, nC}, type(type)
+    { }
+
+    char       type;
+    int        alpha[3];
+    vsop87s_t *sum[3];
+};
+
+class OrbitVSOP87 : public OrbitEphemeris
 {
 public:
-    VSOP87Orbit(vsop87s_t *sL, int nL,
-                vsop87s_t *sB, int nB,
-                vsop87s_t *sR, int nR,
-                double period);
-    virtual ~VSOP87Orbit() = default;
+    OrbitVSOP87(CelestialBody &cbody, vsop87p_t &series);
+    virtual ~OrbitVSOP87();
 
-    static Orbit *create(cstr_t &name);
-
-    glm::dvec3 calculatePosition(double jd) const override;
-    glm::dvec3 calculateVelocity(double jd) const override;
-
-    double getPeriod() const         { return period; }
-    double getBoundingRadius() const { return boundingRadius; }
+    OrbitEphemeris *create(CelestialBody &cbody, cstr_t &name);
 
 protected:
-    double sum(const vsop87s_t &series, double t) const;
+    void setSeries(char series);
+    void init();
+    // void load(cstr_t &name);
+    
+    void getEphemeris(double mjd, double *res);
 
-protected:
-    int        nL,  nB,  nR;
-    vsop87s_t *sL, *sB, *sR;
+    vsop87p_t &series;
 
-    double period;
-    double boundingRadius;
+    double a0;      // semi-major axis [AU]
+
+    int16_t fmtFlags = 0;
+
+private:
+    char sid;
+
 };

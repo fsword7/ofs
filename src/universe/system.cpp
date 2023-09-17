@@ -9,7 +9,7 @@
 #include "universe/frame.h"
 #include "universe/system.h"
 #include "universe/universe.h"
-#include "ephem/vsop87.h"
+// #include "ephem/vsop87.h"
 #include "ephem/rotation.h"
 #include "scripts/parser.h"
 
@@ -191,7 +191,7 @@ Orbit *System::createOrbit(Object *centerObject, Group *objData, const fs::path 
     std::string orbitName;
     if (objData->getString("Orbit", orbitName))
     {
-        orbit = VSOP87Orbit::create(orbitName);
+        orbit = nullptr; // VSOP87Orbit::create(orbitName);
         if (orbit != nullptr)
             return orbit;
         Logger::getLogger()->error("Can't find VSOP07 orbit name '{}'\n", orbitName);

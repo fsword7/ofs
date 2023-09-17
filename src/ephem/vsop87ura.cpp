@@ -5332,3 +5332,5 @@ static vsop87s_t uranus_R[] = {
 		VSOP_SERIES(uranus_r3),
 		VSOP_SERIES(uranus_r4)
 };
+
+static vsop87p_t uranus_LBR = vsop87p_t('B', VSOP_PARAM(uranus_L), VSOP_PARAM(uranus_B), VSOP_PARAM(uranus_R));

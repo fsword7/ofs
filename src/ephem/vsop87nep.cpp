@@ -2083,3 +2083,5 @@ static vsop87s_t neptune_R[] = {
 		VSOP_SERIES(neptune_r3),
 		VSOP_SERIES(neptune_r4)
 };
+
+static vsop87p_t neptune_LBR = vsop87p_t('B', VSOP_PARAM(neptune_L), VSOP_PARAM(neptune_B), VSOP_PARAM(neptune_R));

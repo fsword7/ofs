@@ -87,11 +87,13 @@ public:
     void convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel);
     uint32_t getEphemerisState(double *);
     bool updateEphemeris();
+    void updatePostEphemeris();
 
     virtual void update(bool force);
 
     inline celType getCelestialType() const { return cbType; }
 
+    inline void setEphemeris(OrbitEphemeris *ephem)  { ephemeris = ephem; }
     inline void setInSystem(PlanetarySystem *system) { inSystem = system; }
 
     inline PlanetarySystem *getOwnSystem() const    { return ownSystem; }

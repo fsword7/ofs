@@ -1789,3 +1789,5 @@ static vsop87s_t venus_R[] = {
 		VSOP_SERIES(venus_r4),
 		VSOP_SERIES(venus_r5)
 };
+
+static vsop87p_t venus_LBR = vsop87p_t('B', VSOP_PARAM(venus_L), VSOP_PARAM(venus_B), VSOP_PARAM(venus_R));

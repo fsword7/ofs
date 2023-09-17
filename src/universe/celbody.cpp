@@ -6,7 +6,7 @@
 #include "main/core.h"
 #include "api/celbody.h"
 #include "engine/rigidbody.h"
-#include "ephem/vsop87a.h"
+#include "ephem/vsop87.h"
 #include "ephem/rotation.h"
 #include "universe/celbody.h"
 #include "universe/astro.h"
@@ -185,6 +185,24 @@ bool CelestialBody::updateEphemeris()
     bparent = (flags & EPHEM_PARENT) != 0;
 
     return bparent;
+}
+
+void CelestialBody::updatePostEphemeris()
+{
+    s1.pos = cpos;
+    s1.vel = cvel;
+    if (cbody != nullptr)
+    {
+        // Relative to origin of barycentre (star)
+        s1.pos += cbody->s1.pos;
+        s1.vel += cbody->s1.vel;
+    }
+    objPosition = s1.pos;
+    objVelocity = s1.vel;
+
+    // Updating secondaries recursively
+    for (auto body : secondaries)
+        body->updatePostEphemeris();
 }
 
 void CelestialBody::update(bool force)

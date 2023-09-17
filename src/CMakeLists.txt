@@ -25,7 +25,6 @@ set(OFS_CPP_SRCS
     ephem/orbit.cpp
     ephem/rotation.cpp
     ephem/vsop87.cpp
-    ephem/vsop87a.cpp
     main/app.cpp
     main/guimgr.cpp
     main/graphics.cpp
@@ -94,7 +93,6 @@ set(OFS_H_SRCS
     ephem/orbit.h
     ephem/rotation.h
     ephem/vsop87.h
-    ephem/vsop87a.h
     main/app.h
     main/core.h
     main/guimgr.h

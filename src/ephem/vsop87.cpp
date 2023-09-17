@@ -1,12 +1,15 @@
-// vsop87.cpp - VSOP87 orbit epheremis package
+// vsop87.cpp - VSOP87 Ephemeris data package
 //
 // Author:  Tim Stark
-// Date:    Mar 7, 2022
+// Date:    Nov 3, 2022
 
 #include "main/core.h"
-#include "universe/astro.h"
+#include "api/ofsapi.h"
+#include "api/celbody.h"
+#include "ephem/ephemeris.h"
 #include "ephem/vsop87.h"
-#include "ephem/elp-mpp02.h"
+
+#include "ephem/earth/earth.h"
 
 #define VSOP_SERIES(series) vsop87s_t(series, ARRAY_SIZE(series))
 #define VSOP_PARAM(series)  (series), ARRAY_SIZE(series)
@@ -20,154 +23,194 @@
 #include "ephem/vsop87ura.cpp" // Uranus
 #include "ephem/vsop87nep.cpp" // Neptune
 
-VSOP87Orbit::VSOP87Orbit(vsop87s_t *sL, int nL,
-                         vsop87s_t *sB, int nB,
-                         vsop87s_t *sR, int nR,
-                         double period)
-: sL(sL), nL(nL),
-  sB(sB), nB(nB),
-  sR(sR), nR(nR),
-  period(period),
-  boundingRadius(0.0)
-{ }
-
-double VSOP87Orbit::sum(const vsop87s_t &series, double t) const
+OrbitVSOP87::OrbitVSOP87(CelestialBody &cbody, vsop87p_t &series)
+: OrbitEphemeris(cbody), series(series)
 {
-    if (series.nTerms < 1)
-        return 0.0;
-    
-    double x = 0.0;
-    vsop87_t *terms = &series.terms[0];
-
-    for (int idx = 0; idx < series.nTerms; idx++, terms++)
-        x += terms->a * cos(terms->b + terms->c * t);
-
-    return x;
+	setSeries(series.type);
 }
 
-glm::dvec3 VSOP87Orbit::calculatePosition(double jd) const
+OrbitVSOP87::~OrbitVSOP87()
 {
-    // Helicentric coordinate system
-    double l = 0.0; // longitude
-    double b = 0.0; // latiude
-    double r = 0.0; // radius
 
-    // Julian time since J2000.0
-    double t = (jd - 2451545.0) / 365250.0;
-    double T;
-    int idx;
-
-    // Evaluate series for L (longitude)
-    for (idx = 0, T = 1.0; idx < nL; idx++, T *= t)
-        l += sum(sL[idx], t) * T;
-
-    // Evaluate series for B (latitude)
-    for (idx = 0, T = 1.0; idx < nB; idx++, T *= t)
-        b += sum(sB[idx], t) * T;
-
-    // Evaluate series for R (radius)
-    for (idx = 0, T = 1.0; idx < nR; idx++, T *= t)
-        r += sum(sR[idx], t) * T;
-
-    // Convert AU to kilometer
-    r *= KM_PER_AU;
-    l += pi;
-    b -= pi / 2.0;
-
-    // Astrocentric coordinate system
-    return glm::dvec3( sin(b)*cos(l), cos(b), sin(b)*-sin(l) ) * r;
 }
 
-glm::dvec3 VSOP87Orbit::calculateVelocity(double jd) const
+void OrbitVSOP87::setSeries(char series)
 {
-    return { 0, 0, 0 };
+    sid = std::toupper(series);
+
+    fmtFlags = 0;
+
+	// Check type for A and C rectangular series.
+	if (sid == 'A' || sid == 'C')
+		fmtFlags |= EPHEM_RECT;
+    // Check type for B and D heliocentric series
+    else if (sid == 'B' || sid == 'D')
+        fmtFlags |= EPHEM_POLAR;
+    // Check type for E barycentric series
+    else if (sid == 'E')
+        fmtFlags |= EPHEM_PARENT;
+	else
+	{
+
+	}
 }
 
-Orbit *VSOP87Orbit::create(cstr_t &name)
+// void OrbitVSOP87::load(cstr_t &name)
+// {
+
+
+//     std::string fname;
+
+//     std::ifstream vsopFile(fname, std::ios::in);
+//     if (!vsopFile.is_open())
+//         return;
+
+//     std::string line;
+// 	int lnum = 0;
+// 	int terms = 0;
+// 	int lbr, deg;
+// 	double data[2000][3];
+
+//     while(std::getline(vsopFile, line))
+//     {
+//         lnum++;
+//         cchar_t *cline = line.c_str();
+// 		if (!strncmp(cline, " VSOP87", 7)) {
+// 			// if (terms > 0)
+// 			// 	print(data, planet, lbr, deg, terms);
+// 			terms = 0;
+
+// 			lbr = (int)cline[41] - (int)'1';
+// 			deg = (int)cline[59] - (int)'0';
+
+// 			if (deg < 0 || deg > 5) {
+// 				std::cout << "Bad degree (" << deg << ") in VSOP data file at line "
+// 					 << lnum << std::endl;
+//                 vsopFile.close();
+//                 return;
+// 			}
+
+// 			if (lbr < 0 || lbr > 3) {
+// 				std::cout << "Bad data type (" << lbr << ") in VSOP data file at line "
+// 					 << lnum << std::endl;
+//                 vsopFile.close();
+// 				return;
+// 			}
+
+// 		} else {
+
+// 			double a, b, c;
+
+// 			if (sscanf(cline+80, " %lf %lf %lf", &a, &b, &c) != 3) {
+// 				std::cout << "Bad data in VSOP data at line " << lnum << std::endl;
+//                 vsopFile.close();
+// 				return;
+// 			}
+
+// 			data[terms][0] = a;
+// 			data[terms][1] = b;
+// 			data[terms][2] = c;
+// 			terms++;
+// 		}
+// 	}
+
+// 	// if (terms > 0)
+// 	// 	print(data, planet, lbr, deg, terms);
+
+// 	vsopFile.close();
+// }
+
+void OrbitVSOP87::getEphemeris(double mjd, double *res)
 {
-    if (name == "vsop87-mercury")
-    {
-        Orbit *orbit = new VSOP87Orbit(VSOP_PARAM(mercury_L),
-                                       VSOP_PARAM(mercury_B),
-                                       VSOP_PARAM(mercury_R),
-                                       365.25 * 0.2408);
-        return orbit;
-    }
+	static const double mjd2000 = 51544.5;
+	static const double a1000 = 365250.0;
+	static const double rsec = 1.0 / (a1000 * 86400.0);
 
-    if (name == "vsop87-venus")
-    {
-        Orbit *orbit = new VSOP87Orbit(VSOP_PARAM(venus_L),
-                                       VSOP_PARAM(venus_B),
-                                       VSOP_PARAM(venus_R),
-                                       365.25 * 0.6152);
-        return orbit;
-    }
+	static const double c0 = 299792458;			// speed of light [m/s]
+	static const double tauA = 499.004783806;	// light time for 1 AU [s]
+	static const double AU = c0 * tauA;			// 1 AU in meters
+	static const double pscl = AU;				// convert AU to m
+	static const double vscl = AU * rsec;		// convert AU/millenium to m/s
 
+	// Clear all ephemeris parameters
+	for (int idx = 0; idx < VSOP_PARAMS; idx++)
+		res[idx] = 0.0;
+
+	double a, b, c;
+	double arg, tm, tmdot;
+
+	// Set up time series
+	double t[VSOP_MAXALPHA+1];
+	t[0] = 1.0;
+	t[1] = (mjd - mjd2000) / a1000;
+	for (int idx = 2; idx <= VSOP_MAXALPHA; idx++)
+		t[idx] = t[idx-1] * t[1];
+
+	// compute term series
+	for (int idx = 0; idx < 3; idx++)
+	{
+		for (int alpha = 0; alpha < series.alpha[idx]; alpha++)
+		{
+			vsop87_t *terms = series.sum[alpha]->terms;
+			int nTerms = series.sum[alpha]->nTerms;
+
+			tm = tmdot = 0.0;
+
+			for (int term = 0; term < nTerms; term++)
+			{
+				// f(tm) = a * cos (b * c * T)
+				// f'(tm) = a * -sin (b * c * T) * c
+				a = terms[term].a;
+				b = terms[term].b;
+				c = terms[term].c;
+				arg = b * c * t[1];
+				tm += a * cos(arg);
+				tmdot -= c * a * sin(arg);
+			}
+
+			res[idx]  += t[alpha] * tm;
+			res[idx+3] += t[alpha] * tmdot +
+				(alpha > 0 ? alpha * t[alpha - 1] * tm : 0.0);
+		}		
+	}
+
+	if (fmtFlags & EPHEM_POLAR)
+	{
+		for (int idx = 3; idx < 6; idx++)
+			res[idx] *= rsec;
+	}
+	else
+	{
+		for (int idx = 0; idx < 3; idx++)
+			res[idx] *= pscl;
+		for (int idx = 3; idx < 6; idx++)
+			res[idx] *= vscl;
+
+		// swap Y and Z for mapping left-handed cordinates
+		double tmp;
+		tmp = res[1]; res[1] = res[2]; res[2] = tmp;
+		tmp = res[4]; res[4] = res[5]; res[5] = tmp;
+	}
+}
+
+OrbitEphemeris *OrbitVSOP87::create(CelestialBody &cbody, cstr_t &name)
+{
+    // if (name == "vsop87-mercury")
+    //     return new OrbitVSOP87Mercury(cbody);
+    // if (name == "vsop87-venus")
+    //     return new OrbitVSOP87Venus(cbody);
     if (name == "vsop87-earth")
-    {
-        Orbit *orbit = new VSOP87Orbit(VSOP_PARAM(earth_L),
-                                       VSOP_PARAM(earth_B),
-                                       VSOP_PARAM(earth_R),
-                                       365.25);
-        return orbit;
-    }
-
-    if (name == "vsop87-mars")
-    {
-        Orbit *orbit = new VSOP87Orbit(VSOP_PARAM(mars_L),
-                                       VSOP_PARAM(mars_B),
-                                       VSOP_PARAM(mars_R),
-                                       365.25 * 1.8809);
-        return orbit;
-    }
-
-    if (name == "vsop87-jupiter")
-    {
-        Orbit *orbit = new VSOP87Orbit(VSOP_PARAM(jupiter_L),
-                                       VSOP_PARAM(jupiter_B),
-                                       VSOP_PARAM(jupiter_R),
-                                       365.25 * 11.86);
-        return orbit;
-    }
-
-    if (name == "vsop87-saturn")
-    {
-        Orbit *orbit = new VSOP87Orbit(VSOP_PARAM(saturn_L),
-                                       VSOP_PARAM(saturn_B),
-                                       VSOP_PARAM(saturn_R),
-                                       365.25 * 29.4577);
-        return orbit;
-    }
-
-    if (name == "vsop87-uranus")
-    {
-        Orbit *orbit = new VSOP87Orbit(VSOP_PARAM(uranus_L),
-                                       VSOP_PARAM(uranus_B),
-                                       VSOP_PARAM(uranus_R),
-                                       365.25 * 84.0139);
-        return orbit;
-    }
-
-    if (name == "vsop87-neptune")
-    {
-        Orbit *orbit = new VSOP87Orbit(VSOP_PARAM(neptune_L),
-                                       VSOP_PARAM(neptune_B),
-                                       VSOP_PARAM(neptune_R),
-                                       365.25 * 164.793);
-        return orbit;
-    }
-
-    if (name == "elp-mpp02-llr-lunar")
-    {
-        Orbit *orbit = new ELP2000Orbit(ELP2000Orbit::elpUseLLR);
-        return orbit;
-    }
-
-    if (name == "elp-mmp02-de406-lunar")
-    {
-        Orbit *orbit = new ELP2000Orbit(ELP2000Orbit::elpUseDE406);
-        return orbit;
-    }
+        return new OrbitVSOP87Earth(cbody, earth_LBR);
+    // if (name == "vsop87-mars")
+    //     return new OrbitVSOP87Mars(cbody);
+    // if (name == "vsop87-jupiter")
+    //     return new OrbitVSOP87Jupiter(cbody);
+    // if (name == "vsop87-saturn")
+    //     return new OrbitVSOP87Saturn(cbody);
+    // if (name == "vsop87-uranus")
+    //     return new OrbitVSOP87Uranus(cbody);
+    // if (name == "vsop87-neptune")
+    //     return new OrbitVSOP87Neptune(cbody);
 
     return nullptr;
 }

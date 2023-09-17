@@ -7201,3 +7201,5 @@ static vsop87s_t mercury_R[] = {
 		VSOP_SERIES(mercury_r4),
 		VSOP_SERIES(mercury_r5)
 };
+
+static vsop87p_t mercury_LBR = vsop87p_t('B', VSOP_PARAM(mercury_L), VSOP_PARAM(mercury_B), VSOP_PARAM(mercury_R));

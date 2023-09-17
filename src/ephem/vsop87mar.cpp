@@ -6479,3 +6479,5 @@ static vsop87s_t mars_R[] = {
 		VSOP_SERIES(mars_r4),
 		VSOP_SERIES(mars_r5)
 };
+
+static vsop87p_t mars_LBR = vsop87p_t('B', VSOP_PARAM(mars_L), VSOP_PARAM(mars_B), VSOP_PARAM(mars_R));

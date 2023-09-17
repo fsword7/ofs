@@ -56,7 +56,8 @@ void Universe::init()
     //     "EclipticJ2000", "EquatorJ2000");
 
     earth->setColor(color_t(0.856, 0.910, 1.0));
-    earth->setOrbit(VSOP87Orbit::create("vsop87-earth"));
+    // earth->setOrbit(VSOP87Orbit::create("vsop87-earth"));
+    // earth->setEphemeris(OrbitEphemeris::create("vsop87-earth"));
     earth->setRotation(Rotation::create("p03lp-earth"));
     // earth->setRotation(Rotation::create("iau-earth"));
     earth->setRadius(6378.140);

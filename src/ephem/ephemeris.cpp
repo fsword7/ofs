@@ -6,8 +6,16 @@
 #include "main/core.h"
 #include "ephem/ephemeris.h"
 
+// #include "ephem/earth/earth.h"
+
 OrbitEphemeris::OrbitEphemeris(CelestialBody &cbody)
 : cbody(cbody)
 {
     
 }
+
+// OrbitEphemeris *OrbitEphemeris::create(CelestialBody &cbody, cstr_t &name)
+// {
+
+//     return nullptr;
+// }
