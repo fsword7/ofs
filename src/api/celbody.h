@@ -9,6 +9,7 @@
 #define EPHEM_TRUEVEL   0x0002  // True velocity
 #define EPHEM_BARYPOS   0x0004  // Barycentric position
 #define EPHEM_BARYVEL   0x0008  // Barycentric velocity
+#define EPHEM_POSVEL    0x000F  //   Position/Velocity Mask
 
 #define EPHEM_RECT      0x0010  // Rectangular data format
 #define EPHEM_POLAR     0x0020  // Spherical data format

@@ -8,7 +8,7 @@
 #include "main/core.h"
 #include "engine/player.h"
 #include "ephem/orbit.h"
-#include "ephem/vsop87.h"
+#include "ephem/vsop87/vsop87.h"
 #include "ephem/rotation.h"
 #include "universe/universe.h"
 #include "universe/star.h"
@@ -55,9 +55,11 @@ void Universe::init()
     // lunar = System::createBody("Moon", system, celType::cbMoon,
     //     "EclipticJ2000", "EquatorJ2000");
 
+    sun->setEphemeris(OrbitVSOP87::create(*sun, "vsop87e-sol"));
+
     earth->setColor(color_t(0.856, 0.910, 1.0));
     // earth->setOrbit(VSOP87Orbit::create("vsop87-earth"));
-    earth->setEphemeris(OrbitVSOP87::create(*earth, "vsop87-earth"));
+    earth->setEphemeris(OrbitVSOP87::create(*earth, "vsop87b-earth"));
     earth->setRotation(Rotation::create("p03lp-earth"));
     // earth->setRotation(Rotation::create("iau-earth"));
     earth->setRadius(6378.140);

@@ -6,7 +6,7 @@
 #include "main/core.h"
 #include "api/celbody.h"
 #include "engine/rigidbody.h"
-#include "ephem/vsop87.h"
+#include "ephem/vsop87/vsop87.h"
 #include "ephem/rotation.h"
 #include "universe/celbody.h"
 #include "universe/astro.h"

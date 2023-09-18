@@ -5,8 +5,8 @@
 
 #include "main/core.h"
 #include "api/celbody.h"
-#include "ephem/vsop87.h"
-#include "ephem/earth/earth.h"
+#include "ephem/vsop87/vsop87.h"
+#include "ephem/vsop87/earth.h"
 
 OrbitVSOP87Earth::OrbitVSOP87Earth(CelestialBody &cbody, vsop87p_t &series)
 : OrbitVSOP87(cbody, series)

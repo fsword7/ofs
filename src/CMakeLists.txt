@@ -11,12 +11,14 @@ set(OFS_CPP_SRCS
     engine/vessel.cpp
     engine/view.cpp
     ephem/earth/atmo.cpp
-    ephem/earth/earth.cpp
     ephem/earth/nrlmsise00_data.cpp
     ephem/earth/nrlmsise00_math.cpp
     ephem/earth/nrlmsise00_p.cpp
     ephem/earth/nrlmsise00.cpp
     ephem/moon/elp82.cpp
+    ephem/vsop87/earth.cpp
+    ephem/vsop87/sol.cpp
+    ephem/vsop87/vsop87.cpp
     ephem/earth-p03lp.cpp
     ephem/elements.cpp
     ephem/elp-mpp02.cpp
@@ -24,7 +26,6 @@ set(OFS_CPP_SRCS
     ephem/iau-wgccre.cpp
     ephem/orbit.cpp
     ephem/rotation.cpp
-    ephem/vsop87.cpp
     main/app.cpp
     main/guimgr.cpp
     main/graphics.cpp
@@ -87,12 +88,14 @@ set(OFS_H_SRCS
     ephem/earth/nrlmsise00_p.hpp
     ephem/earth/nrlmsise00.hpp
     ephem/moon/elp82.h
+    ephem/vsop87/earth.h
+    ephem/vsop87/sol.h
+    ephem/vsop87/vsop87.h
     ephem/elements.h
     ephem/elp-mpp02.h
     ephem/ephemeris.h
     ephem/orbit.h
     ephem/rotation.h
-    ephem/vsop87.h
     main/app.h
     main/core.h
     main/guimgr.h

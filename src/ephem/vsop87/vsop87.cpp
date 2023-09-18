@@ -7,22 +7,30 @@
 #include "api/ofsapi.h"
 #include "api/celbody.h"
 #include "ephem/ephemeris.h"
-#include "ephem/vsop87.h"
+#include "ephem/vsop87/vsop87.h"
 
-#include "ephem/earth/earth.h"
+#include "ephem/vsop87/sol.h"
+// #include "ephem/vsop87/mercury.h"
+// #include "ephem/vsop87/venus.h"
+#include "ephem/vsop87/earth.h"
+// #include "ephem/vsop87/mars.h"
+// #include "ephem/vsop87/jupiter.h"
+// #include "ephem/vsop87/saturn.h"
+// #include "ephem/vsop87/uranus.h"
+// #include "ephem/vsop87/neptune.h"
 
 #define VSOP_SERIES(series) vsop87s_t(series, ARRAY_SIZE(series))
 #define VSOP_PARAM(series)  (series), ARRAY_SIZE(series)
 
-#include "ephem/vsop87sun.cpp" // Sun/Sol
-#include "ephem/vsop87mer.cpp" // Mercury
-#include "ephem/vsop87ven.cpp" // Venus
-#include "ephem/vsop87ear.cpp" // Earth
-#include "ephem/vsop87mar.cpp" // Mars
-#include "ephem/vsop87jup.cpp" // Jupiter
-#include "ephem/vsop87sat.cpp" // Saturn
-#include "ephem/vsop87ura.cpp" // Uranus
-#include "ephem/vsop87nep.cpp" // Neptune
+#include "ephem/vsop87/vsop87sun.cpp" // Sun/Sol
+#include "ephem/vsop87/vsop87mer.cpp" // Mercury
+#include "ephem/vsop87/vsop87ven.cpp" // Venus
+#include "ephem/vsop87/vsop87ear.cpp" // Earth
+#include "ephem/vsop87/vsop87mar.cpp" // Mars
+#include "ephem/vsop87/vsop87jup.cpp" // Jupiter
+#include "ephem/vsop87/vsop87sat.cpp" // Saturn
+#include "ephem/vsop87/vsop87ura.cpp" // Uranus
+#include "ephem/vsop87/vsop87nep.cpp" // Neptune
 
 OrbitVSOP87::OrbitVSOP87(CelestialBody &cbody, vsop87p_t &series)
 : OrbitEphemeris(cbody), series(series)
@@ -196,21 +204,23 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 
 OrbitEphemeris *OrbitVSOP87::create(CelestialBody &cbody, cstr_t &name)
 {
-    // if (name == "vsop87-mercury")
+	if (name == "vsop87e-sol")
+		return new OrbitVSOP87Sol(cbody, sun_XYZ);
+    // if (name == "vsop87b-mercury")
     //     return new OrbitVSOP87Mercury(cbody);
-    // if (name == "vsop87-venus")
+    // if (name == "vsop87b-venus")
     //     return new OrbitVSOP87Venus(cbody);
-    if (name == "vsop87-earth")
+    if (name == "vsop87b-earth")
         return new OrbitVSOP87Earth(cbody, earth_LBR);
-    // if (name == "vsop87-mars")
+    // if (name == "vsop87b-mars")
     //     return new OrbitVSOP87Mars(cbody);
-    // if (name == "vsop87-jupiter")
+    // if (name == "vsop87b-jupiter")
     //     return new OrbitVSOP87Jupiter(cbody);
-    // if (name == "vsop87-saturn")
+    // if (name == "vsop87b-saturn")
     //     return new OrbitVSOP87Saturn(cbody);
-    // if (name == "vsop87-uranus")
+    // if (name == "vsop87b-uranus")
     //     return new OrbitVSOP87Uranus(cbody);
-    // if (name == "vsop87-neptune")
+    // if (name == "vsop87b-neptune")
     //     return new OrbitVSOP87Neptune(cbody);
 
     return nullptr;
