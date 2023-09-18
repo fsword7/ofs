@@ -14,6 +14,7 @@
 #define VSOP_SERIES(series) vsop87s_t(series, ARRAY_SIZE(series))
 #define VSOP_PARAM(series)  (series), ARRAY_SIZE(series)
 
+#include "ephem/vsop87sun.cpp" // Sun/Sol
 #include "ephem/vsop87mer.cpp" // Mercury
 #include "ephem/vsop87ven.cpp" // Venus
 #include "ephem/vsop87ear.cpp" // Earth

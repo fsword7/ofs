@@ -75,7 +75,7 @@ void read(fs::path fname, const char *planet, fmtType type)
 		if (!strncmp(cline, " VSOP87", 7)) {
 			if (terms > 0)
 			{
-				cout << "Set " << dset << " Element: " << elm << " Degree: " << deg << " Terms: " << terms << " Type: " << dtype << endl;
+				cout << "// Set " << dset << " Element: " << elm << " Degree: " << deg << " Terms: " << terms << " Type: " << dtype << endl;
 				print(data, planet, type, dset, elm, deg, terms);
 			}
 			dset++;
@@ -87,13 +87,13 @@ void read(fs::path fname, const char *planet, fmtType type)
 			emax = dtype == "ALK" ? 6 : 3;
 
 			if (deg < 0 || deg > 5) {
-				cout << "Bad degree (" << deg << ") in VSOP data file at line "
+				cerr << "Bad degree (" << deg << ") in VSOP data file at line "
 					 << lnum << endl;
 				break;
 			}
 
 			if (elm < 0 || elm > emax) {
-				cout << "Bad data type (" << elm << ") in VSOP data file at line "
+				cerr << "Bad data type (" << elm << ") in VSOP data file at line "
 					 << lnum << endl;
 				break;
 			}
@@ -103,7 +103,7 @@ void read(fs::path fname, const char *planet, fmtType type)
 			double a, b, c;
 
 			if (sscanf(cline+80, " %lf %lf %lf", &a, &b, &c) != 3) {
-				cout << "Bad data in VSOP data at line " << lnum << endl;
+				cerr << "Bad data in VSOP data at line " << lnum << endl;
 				break;
 			}
 

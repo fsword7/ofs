@@ -39,7 +39,7 @@ public:
     OrbitVSOP87(CelestialBody &cbody, vsop87p_t &series);
     virtual ~OrbitVSOP87();
 
-    OrbitEphemeris *create(CelestialBody &cbody, cstr_t &name);
+    static OrbitEphemeris *create(CelestialBody &cbody, cstr_t &name);
 
 protected:
     void setSeries(char series);

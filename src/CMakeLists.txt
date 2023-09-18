@@ -184,6 +184,3 @@ install(TARGETS ofs
 install(FILES $<TARGET_LINKER_FILE:ofs>
     DESTINATION ${OFS_INSTALL_ROOT_DIR}/lib
 )
-
-add_subdirectory(client/glclient)
-# add_subdirectory(client/vkclient)

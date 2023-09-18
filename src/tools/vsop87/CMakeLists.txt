@@ -3,7 +3,8 @@ set(vsop_list
 	vsop87
 )
 
-set(planet_list
+set(psys_list
+	sun
 	mercury
 	venus
 	earth

@@ -6,7 +6,14 @@
 #include "main/core.h"
 #include "api/ofsapi.h"
 #include "api/celbody.h"
+#include "ephem/ephemeris.h"
 #include "ephem/moon/elp82.h"
+
+OrbitELP82::OrbitELP82(CelestialBody &cbody)
+: OrbitEphemeris(cbody)
+{
+
+}
 
 void OrbitELP82::load(cstr_t &name)
 {

@@ -72,6 +72,11 @@ include_directories(src)
 
 # Compiling for creating orbital data headers
 add_subdirectory(src/tools/vsop87)
+# add_subdirectory(src/tools/elp82b)
+
+# Compiling for client modules
+add_subdirectory(src/client/glclient)
+# add_subdirectory(src/client/vkclient)
 
 # Compiling OFS server
 add_subdirectory(src)

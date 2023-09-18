@@ -5,10 +5,10 @@
 
 #pragma once
 
-class OrbitELP82
+class OrbitELP82 : public OrbitEphemeris
 {
 public:
-    OrbitELP82() = default;
+    OrbitELP82(CelestialBody &cbody);
     ~OrbitELP82() = default;
 
     void getEphemeris(double mjd, double *res);
