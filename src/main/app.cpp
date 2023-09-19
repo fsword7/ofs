@@ -223,8 +223,11 @@ void CoreApp::cleanup()
 
 void CoreApp::openSession()
 {
+    // Get current time from system time
     auto now = std::chrono::steady_clock::now();
-    td.reset(time(nullptr));
+    std::chrono::duration<double> nowTime = now.time_since_epoch();
+    td.reset(nowTime.count());
+    // td.reset(time(nullptr));
 
     if (gclient != nullptr)
     {

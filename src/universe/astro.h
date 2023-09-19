@@ -33,6 +33,17 @@ namespace astro
     constexpr double G     = 6.673889e-11;  // official graviational constant [N (m/kg)^2]
     constexpr double J2000 = 2451545.0;     // Epoch J2000 [Jan 1, 2000 at 12:00 UTC]
     
+    constexpr double day   = (1.0/86400.0); // Julian date/seconds
+    
+    // MJD - modified julian date since Nov 17, 1858
+    // JD  - julian date since Jan 1, 4713 BC at noon
+
+    // Convert from system time at starting Jan 1, 1970 UTC
+    inline double MJD(double t)     { return 40587.0 + t * day; }    // Convert sys time to MKD
+    inline double JD(double t)      { return 24400587.5 + t * day; } // Convert sys time to JD
+
+    inline double Day(double t)     { return t * day; }
+
     // const quatd_t J2000ObliquityRotation =
     //     Eigen::Quaternion<double>(Eigen::AngleAxis<double>(J2000Obliquity, vec3d_t::UnitX()));
 
