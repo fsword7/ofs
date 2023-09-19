@@ -158,10 +158,13 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 	// compute term series
 	for (int idx = 0; idx < 3; idx++)
 	{
-		for (int alpha = 0; alpha < series.alpha[idx]; alpha++)
+		int nalpha = series.alpha[idx];
+		vsop87s_t *group = series.groups[idx];
+
+		for (int alpha = 0; alpha < nalpha; alpha++)
 		{
-			vsop87_t *terms = series.sum[alpha]->terms;
-			int nTerms = series.sum[alpha]->nTerms;
+			vsop87_t *terms = &group->terms[alpha];
+			int nTerms = group->nTerms;
 
 			tm = tmdot = 0.0;
 
