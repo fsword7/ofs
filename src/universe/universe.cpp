@@ -14,6 +14,7 @@
 #include "universe/star.h"
 #include "universe/celbody.h"
 #include "universe/system.h"
+#include "universe/psystem.h"
 #include "universe/astro.h"
 #include "scripts/parser.h"
 
@@ -27,6 +28,7 @@ void Universe::init()
     // constellations.load("constellations/western_rey/constellationship.fab");
 
     CelestialStar *sun = stardb.find("Sol");
+    pSystem *psys = new pSystem(sun);
     System *solSystem = createSolarSystem(sun);
     PlanetarySystem *system = solSystem->getPlanetarySystem();
 
@@ -83,6 +85,7 @@ void Universe::init()
     // player->attach(earth);
     // player->update();
 
+    psys->addBody(earth);
 
     std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
     System::loadSolarSystemObjects(in, *this, "systems");
@@ -102,8 +105,11 @@ void Universe::update(Player *player, const TimeDate &td)
     {
         if (!sun->hasSolarSystem())
             continue;
-        System *system = sun->getSolarSystem();
-        
+        // System *system = sun->getSolarSystem();
+        pSystem *psys = sun->getpSystem();
+        if (psys != nullptr)
+            psys->update(td);
+
     }
 }
 

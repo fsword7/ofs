@@ -12,12 +12,13 @@ void Object::update(bool force)
 {
 }
 
+
 glm::dvec3 Object::getuPosition(double tjd) const
 {
     return objPosition;
 }
 
-glm::dvec3 Object::getoPosition(double tjd) const
+glm::dvec3 Object::getuVelocity(double tjd) const
 {
     return objPosition;
 }
@@ -25,6 +26,17 @@ glm::dvec3 Object::getoPosition(double tjd) const
 glm::dmat3 Object::getuOrientation(double tjd) const
 {
     return objRotation;
+}
+
+
+glm::dvec3 Object::getoPosition(double tjd) const
+{
+    return objPosition;
+}
+
+glm::dvec3 Object::getoVelocity(double tjd) const
+{
+    return objVelocity;
 }
 
 void Object::updateCullingRadius()

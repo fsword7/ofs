@@ -38,12 +38,18 @@ enum SpectralClass
 };
 
 class System;
+class pSystem;
 
 class CelestialStar : public CelestialBody
 {
 public:
     CelestialStar(cstr_t &name);
     ~CelestialStar() = default;
+
+    // Solar/Planetary system
+    inline void setpSystem(pSystem *psys)       { systemx = psys; }
+    inline bool haspSystem() const              { return systemx != nullptr; }
+    inline pSystem *getpSystem() const          { return systemx; }
 
     inline glm::dvec3 getStarPosition() const   { return spos; }
     inline double  getAbsMag() const            { return absMag; }
@@ -79,5 +85,6 @@ private:
     double  ci, lum;        // Color index, luminosity
     int     temp;           // Surface temperature
 
+    pSystem *systemx = nullptr;
     System *system = nullptr;
 };

@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "universe/celbody.h"
 #include "universe/star.h"
+#include "universe/psystem.h"
 #include "universe/astro.h"
 
 CelestialStar::CelestialStar(cstr_t &name)
@@ -35,6 +36,7 @@ CelestialStar *CelestialStar::createTheSun()
     star->hip           = 0;
     star->spos          = { 0, 0, 0 };
     star->objPosition   = { 0, 0, 0 };
+    star->objVelocity   = { 0, 0, 0 };
     // star->orbitFrame    = nullptr;
 
     return star;

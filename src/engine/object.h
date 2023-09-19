@@ -74,8 +74,11 @@ public:
     virtual Rotation *getRotation() const = 0;
 
     virtual glm::dvec3 getuPosition(double tjd) const;
+    virtual glm::dvec3 getuVelocity(double tjd) const;
     virtual glm::dmat3 getuOrientation(double tjd) const;
+
     virtual glm::dvec3 getoPosition(double tjd) const;
+    virtual glm::dvec3 getoVelocity(double tjd) const;
 
 private:
     ObjectType objType = objUnknown;

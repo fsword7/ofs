@@ -58,6 +58,7 @@ set(OFS_CPP_SRCS
     universe/celbody.cpp
     universe/constellations.cpp
     universe/frame.cpp
+    universe/psystem.cpp
     universe/star.cpp
     universe/starlib.cpp
     universe/startree.cpp
@@ -123,6 +124,7 @@ set(OFS_H_SRCS
     universe/constellations.h
     universe/frame.h
     universe/handle.h
+    universe/psystem.h
     universe/star.h
     universe/starlib.h
     universe/startree.h

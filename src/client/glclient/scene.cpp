@@ -100,22 +100,22 @@ void Scene::render(Player *player)
 
     glm::dvec3 obs = camera->getGlobalPosition();
 
-    for (auto sun : nearStars)
-    {
-        // logger->info("Sun: {}\n", ofsGetObjectName(sun));
+    // for (auto sun : nearStars)
+    // {
+    //     // logger->info("Sun: {}\n", ofsGetObjectName(sun));
 
-        if (!sun->hasSolarSystem())
-            continue;
-        System *system = sun->getSolarSystem(); 
+    //     if (!sun->hasSolarSystem())
+    //         continue;
+    //     System *system = sun->getSolarSystem(); 
 
-        PlanetarySystem *objects = system->getPlanetarySystem();
-        FrameTree *tree = objects->getSystemTree();
+    //     PlanetarySystem *objects = system->getPlanetarySystem();
+    //     FrameTree *tree = objects->getSystemTree();
 
-        glm::dvec3 apos = getAstrocentricPosition(sun, obs, now);
-        glm::dvec3 vpn = camera->getGlobalRotation() * glm::dvec3(0, 0, -1);
+    //     glm::dvec3 apos = getAstrocentricPosition(sun, obs, now);
+    //     glm::dvec3 vpn = camera->getGlobalRotation() * glm::dvec3(0, 0, -1);
 
-        buildSystems(tree, apos, vpn, { 0, 0, 0 });
-    }
+    //     buildSystems(tree, apos, vpn, { 0, 0, 0 });
+    // }
 
     renderSystemObjects();
 }

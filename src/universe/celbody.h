@@ -85,9 +85,9 @@ public:
     virtual ~CelestialBody() = default;
 
     void convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel);
-    uint32_t getEphemerisState(double *);
-    bool updateEphemeris();
-    void updatePostEphemeris();
+    uint32_t getEphemerisState(const TimeDate &td, double *res);
+    bool updateEphemeris(const TimeDate &td);
+    void updatePostEphemeris(const TimeDate &td);
 
     virtual void update(bool force);
 

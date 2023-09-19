@@ -83,16 +83,16 @@ void CelestialBody::convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool 
     }
 }
 
-uint32_t CelestialBody::getEphemerisState(double *res)
+uint32_t CelestialBody::getEphemerisState(const TimeDate &td, double *res)
 {
     uint16_t req = EPHEM_TRUEPOS|EPHEM_TRUEVEL|EPHEM_BARYPOS|EPHEM_BARYVEL;
 
     if (ephemeris == nullptr)
         return 0;
-    return ephemeris->getOrbitData(0, req, res);
+    return ephemeris->getOrbitData(td.getMJD1(), req, res);
 }
 
-bool CelestialBody::updateEphemeris()
+bool CelestialBody::updateEphemeris(const TimeDate &td)
 {
     double state[12];
     int flags;
@@ -103,9 +103,9 @@ bool CelestialBody::updateEphemeris()
     // Updating secondaries (planets/moons) recursively
     // from origin of star or specific body
     for (auto body : secondaries)
-        body->updateEphemeris();
+        body->updateEphemeris(td);
 
-    if (flags = getEphemerisState(state))
+    if (flags = getEphemerisState(td, state))
     {
 
         // Orbital position/velocity
@@ -187,7 +187,7 @@ bool CelestialBody::updateEphemeris()
     return bparent;
 }
 
-void CelestialBody::updatePostEphemeris()
+void CelestialBody::updatePostEphemeris(const TimeDate &td)
 {
     s1.pos = cpos;
     s1.vel = cvel;
@@ -202,7 +202,7 @@ void CelestialBody::updatePostEphemeris()
 
     // Updating secondaries recursively
     for (auto body : secondaries)
-        body->updatePostEphemeris();
+        body->updatePostEphemeris(td);
 }
 
 void CelestialBody::update(bool force)
