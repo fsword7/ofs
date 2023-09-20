@@ -24,6 +24,7 @@ public:
 
     void init();
     void update(Player *player, const TimeDate &td);
+    void finalizeUpdate();
 
     System *createSolarSystem(CelestialStar *star);
     System *getSolarSystem(CelestialStar *star) const;

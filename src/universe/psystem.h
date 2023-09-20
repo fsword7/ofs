@@ -19,6 +19,7 @@ public:
     void addBody(CelestialBody *cbody);
 
     void update(const TimeDate &td);
+    void finalizeUpdate();
 
 private:
     std::vector<CelestialStar *> stars;

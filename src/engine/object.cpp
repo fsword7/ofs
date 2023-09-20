@@ -12,6 +12,15 @@ void Object::update(bool force)
 {
 }
 
+void Object::beginUpdate()
+{
+}
+
+void Object::endUpdate()
+{
+    s0 = s1; // Move all to S0
+    s1 = {}; // Clear all for next update
+}
 
 glm::dvec3 Object::getuPosition(double tjd) const
 {

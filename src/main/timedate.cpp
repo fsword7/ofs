@@ -38,6 +38,8 @@ void TimeDate::beginStep(double dt, bool running)
         simt1 = simt0 + simdt1;
         mjd1 = mjdref + astro::Day(simt1);
         // jd1 = jdref + astro::Day(simt1);
+        // Logger::getLogger()->info("MJD Time: {} => {}\n",
+        //     mjd1, astro::getMJDDateStr(mjd1));
     }
 
     // count frame/FPS update
@@ -65,3 +67,4 @@ void TimeDate::endStep(bool running)
         jd0 = jd1;
     }
 }
+

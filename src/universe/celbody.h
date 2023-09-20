@@ -84,10 +84,16 @@ public:
 
     virtual ~CelestialBody() = default;
 
+    inline void addSecondary(CelestialBody *body)   { secondaries.push_back(body); }
+
+    void attach(CelestialBody *parent);
+
     void convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel);
     uint32_t getEphemerisState(const TimeDate &td, double *res);
     bool updateEphemeris(const TimeDate &td);
     void updatePostEphemeris(const TimeDate &td);
+    void updatePrecission(const TimeDate &td);
+    void updateRotation(const TimeDate &td);
 
     virtual void update(bool force);
 

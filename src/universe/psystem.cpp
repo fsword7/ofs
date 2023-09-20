@@ -36,3 +36,9 @@ void pSystem::update(const TimeDate &td)
     for (auto star : stars)
         star->updatePostEphemeris(td);   
 }
+
+void pSystem::finalizeUpdate()
+{
+    for (auto body : bodies)
+        body->endUpdate();
+}

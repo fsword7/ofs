@@ -57,6 +57,40 @@ PlanetarySystem *CelestialBody::createPlanetarySystem()
     return ownSystem;
 }
 
+void CelestialBody::attach(CelestialBody *parent)
+{
+    assert(parent != nullptr);
+
+    if (parent != cbody)
+    {
+        cbody = parent;
+        parent->addSecondary(this);
+
+        uint16_t flags = 0;
+        if (flags)
+        {
+            // if (flags & EPHEM_TRUEPOS)
+            //     s0->pos = bpos;
+            // if (flags & EPHEM_TRUEVEL)
+            //     s0->vel = bvel;
+            // if (flags & EPHEM_BARYPOS)
+            //     bpos = s0->pos;
+            // if (flags & EPHEM_BARYVEL)
+            //     bvel = s0->vel;
+        }
+
+        // Relative to parent celestial body
+        s0.pos += cbody->s0.pos;
+        s0.vel += cbody->s0.vel;
+        bpos += cbody->s0.pos;
+        bvel += cbody->s0.vel;
+
+        // On the air
+        objPosition = s0.pos;
+        objVelocity = s0.vel;
+    }
+}
+
 void CelestialBody::convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel)
 {
     double cosp = cos(pol[0]), sinp = sin(pol[0]); // Phi
@@ -200,9 +234,23 @@ void CelestialBody::updatePostEphemeris(const TimeDate &td)
     objPosition = s1.pos;
     objVelocity = s1.vel;
 
+    // Logger::getLogger()->info("{}: P({:.6f},{:.6f},{:.6f}) V({:.6f},{:.6f},{:.6f})\n", getsName(),
+    //     objPosition.x, objPosition.y, objPosition.z,
+    //     objVelocity.x, objVelocity.y, objVelocity.z);
+
     // Updating secondaries recursively
     for (auto body : secondaries)
         body->updatePostEphemeris(td);
+}
+
+void CelestialBody::updatePrecission(const TimeDate &td)
+{
+
+}
+
+void CelestialBody::updateRotation(const TimeDate &td)
+{
+
 }
 
 void CelestialBody::update(bool force)

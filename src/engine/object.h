@@ -68,6 +68,9 @@ public:
     virtual void updateCullingRadius();
     virtual void update(bool force);
 
+    virtual void beginUpdate();
+    virtual void endUpdate();
+
     virtual Frame *getOrbitFrame() const = 0;
     virtual Frame *getBodyFrame() const = 0;
     virtual Orbit *getOrbit() const = 0;
@@ -85,6 +88,9 @@ private:
     std::vector<str_t> objNames{1};
 
 public:
+    // StateVectors sv[2];
+    // StateVectors &s0 = sv[0];   // current state vectors at time t0
+    // StateVectors &s1 = sv[1];   // new state vectors at time t0+dt during update function call
     StateVectors s0;    // current state vectors at time t0
     StateVectors s1;    // new state vectors at time t0+dt during update function call
 

@@ -30,9 +30,9 @@ public:
     Rotation *getRotation() const override  { return rotation; }
 
     // orbtial positions
-    glm::dvec3 getuPosition(double tjd) const override;
-    glm::dmat3 getuOrientation(double tjd) const override;
-    glm::dvec3 getoPosition(double tjd) const override;
+    // glm::dvec3 getuPosition(double tjd) const override;
+    // glm::dmat3 getuOrientation(double tjd) const override;
+    // glm::dvec3 getoPosition(double tjd) const override;
 
     virtual void update(bool force);
     

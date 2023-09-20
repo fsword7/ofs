@@ -86,6 +86,7 @@ void Universe::init()
     // player->update();
 
     psys->addBody(earth);
+    earth->attach(sun);
 
     std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
     System::loadSolarSystemObjects(in, *this, "systems");
@@ -103,13 +104,30 @@ void Universe::update(Player *player, const TimeDate &td)
     // Updating local solar systems
     for (auto sun : nearStars)
     {
-        if (!sun->hasSolarSystem())
-            continue;
+        // if (!sun->hasSolarSystem())
+        //     continue;
         // System *system = sun->getSolarSystem();
+
+        if (!sun->haspSystem())
+            continue;
+
+        // Logger::getLogger()->info("{}: Solar System List\n", sun->getsName());
         pSystem *psys = sun->getpSystem();
         if (psys != nullptr)
             psys->update(td);
 
+    }
+}
+
+void Universe::finalizeUpdate()
+{
+    for (auto sun : nearStars)
+    {
+        if (!sun->haspSystem())
+            continue;
+        pSystem *psys = sun->getpSystem();
+        if (psys != nullptr)
+            psys->finalizeUpdate();
     }
 }
 

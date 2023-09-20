@@ -135,11 +135,11 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 	static const double a1000 = 365250.0;
 	static const double rsec = 1.0 / (a1000 * 86400.0);
 
-	static const double c0 = 299792458;			// speed of light [m/s]
-	static const double tauA = 499.004783806;	// light time for 1 AU [s]
-	static const double AU = c0 * tauA;			// 1 AU in meters
-	static const double pscl = AU;				// convert AU to m
-	static const double vscl = AU * rsec;		// convert AU/millenium to m/s
+	static const double c0 = 299792458;				// speed of light [m/s]
+	static const double tauA = 499.004783806;		// light time for 1 AU [s]
+	static const double AU = (c0 * tauA) / 1000.0;	// 1 AU in kilometers
+	static const double pscl = AU;					// convert AU to km
+	static const double vscl = AU * rsec;			// convert AU/millenium to km/s
 
 	// Clear all ephemeris parameters
 	for (int idx = 0; idx < VSOP_PARAMS; idx++)

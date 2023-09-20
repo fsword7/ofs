@@ -118,7 +118,7 @@ protected:
     bool bSession = false;
     bool bRunningApp = true;            // Running application
     bool bRunning = true;               // Pause/running 
-    bool bRequestRunning = false;
+    bool bRequestedRunning = true;      // Pending requested running toggle
     bool bFreezing = false;
     bool isPaused = false;
 

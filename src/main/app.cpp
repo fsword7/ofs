@@ -224,10 +224,11 @@ void CoreApp::cleanup()
 void CoreApp::openSession()
 {
     // Get current time from system time
-    auto now = std::chrono::steady_clock::now();
-    std::chrono::duration<double> nowTime = now.time_since_epoch();
-    td.reset(nowTime.count());
-    // td.reset(time(nullptr));
+    // auto now = std::chrono::steady_clock::now();
+    // std::chrono::duration<double> nowTime = now.time_since_epoch();
+    // Logger::getLogger()->info("Today MJD Time: {} <= {}\n", astro::MJD(nowTime.count()), time(nullptr));
+    // td.reset(nowTime.count());
+    td.reset(time(nullptr));
 
     if (gclient != nullptr)
     {
@@ -335,9 +336,11 @@ void CoreApp::run()
 bool CoreApp::beginTimeStep(bool running)
 {
     // Check for a pause/resume request
-    if (bRequestRunning != running)
-        running = bRunning = bRequestRunning;
-    isPaused = !running;
+    if (bRequestedRunning != running)
+    {
+        running = bRunning = bRequestedRunning;
+        isPaused = !running;
+    }
 
     double dt = 0.0;
     auto now = std::chrono::steady_clock::now();
@@ -353,16 +356,17 @@ bool CoreApp::beginTimeStep(bool running)
 
 void CoreApp::endTimeStep(bool running)
 {
+    if (running)
+        universe->finalizeUpdate();
 
     td.endStep(running);
-
 }
 
 void CoreApp::pause(bool bPause)
 {
     if (bRunning != bPause)
         return;
-    bRequestRunning = !bPause;
+    bRequestedRunning = !bPause;
 }
 
 void CoreApp::freeze(bool bFreeze)
