@@ -223,12 +223,13 @@ void CoreApp::cleanup()
 
 void CoreApp::openSession()
 {
-    // Get current time from system time
-    // auto now = std::chrono::steady_clock::now();
-    // std::chrono::duration<double> nowTime = now.time_since_epoch();
-    // Logger::getLogger()->info("Today MJD Time: {} <= {}\n", astro::MJD(nowTime.count()), time(nullptr));
-    // td.reset(nowTime.count());
-    td.reset(time(nullptr));
+    // Starting current time from system time
+    auto now = std::chrono::system_clock::now();
+    std::chrono::duration<double> nowTime = now.time_since_epoch();
+    // Logger::getLogger()->info("Today MJD Time: {} => {}\n",
+    //     astro::MJD(nowTime.count()), astro::getMJDDateStr(astro::MJD(nowTime.count())));
+    td.reset(nowTime.count());
+    prevTime = now;
 
     if (gclient != nullptr)
     {
@@ -343,7 +344,7 @@ bool CoreApp::beginTimeStep(bool running)
     }
 
     double dt = 0.0;
-    auto now = std::chrono::steady_clock::now();
+    auto now = std::chrono::system_clock::now();
 
     std::chrono::duration<double> timeDelta = now - prevTime;
     dt = timeDelta.count();
@@ -383,12 +384,12 @@ void CoreApp::freeze(bool bFreeze)
 
 void CoreApp::suspend()
 {
-    suspendTime = std::chrono::steady_clock::now();
+    suspendTime = std::chrono::system_clock::now();
 }
 
 void CoreApp::resume()
 {
-    auto deltaTime = std::chrono::steady_clock::now() - suspendTime;
+    auto deltaTime = std::chrono::system_clock::now() - suspendTime;
     prevTime += deltaTime;
 }
 

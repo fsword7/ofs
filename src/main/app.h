@@ -113,7 +113,7 @@ protected:
     int width, height;
 
     double currentTime = 0.0;
-    std::chrono::time_point<std::chrono::steady_clock> prevTime, suspendTime;
+    std::chrono::time_point<std::chrono::system_clock> prevTime, suspendTime;
 
     bool bSession = false;
     bool bRunningApp = true;            // Running application
