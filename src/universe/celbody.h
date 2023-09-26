@@ -54,6 +54,8 @@ enum celType
     cbComet
 };
 
+using secondaries_t = const std::vector<CelestialBody *>;
+
 class CelestialBody : public RigidBody
 {
 public:
@@ -84,7 +86,8 @@ public:
 
     virtual ~CelestialBody() = default;
 
-    inline void addSecondary(CelestialBody *body)   { secondaries.push_back(body); }
+    inline void addSecondary(CelestialBody *body)       { secondaries.push_back(body); }
+    inline secondaries_t &getSecondaries() const        { return secondaries; }
 
     void attach(CelestialBody *parent);
 

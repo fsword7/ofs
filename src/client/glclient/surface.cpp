@@ -390,7 +390,8 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
     // logMatrix(prm.dmWorld, "Model");
 
     prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
-    opos = object->getuPosition(0);
+    // opos = object->getuPosition(0);
+    opos = object->getoPosition();
     cpos = camera->getGlobalPosition();
 
     prm.cpos = opos - cpos;
@@ -506,22 +507,22 @@ void SurfaceManager::process(SurfaceTile *tile)
         }
 
         {
-            logger->debug("Tile: LOD {} ({},{}) - processing\n",
-                tile->lod+4, tile->ilat, tile->ilng);
+            // logger->debug("Tile: LOD {} ({},{}) - processing\n",
+            //     tile->lod+4, tile->ilat, tile->ilng);
 
-            logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-                tile->center.x, tile->center.y, tile->center.z,
-                abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
-                abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
-            logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
-                prm.cdir.x, prm.cdir.y, prm.cdir.z);
-            logger->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
-                ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
-            if (tile->parentTile != nullptr)
-                logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
-                    tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
-            logger->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
-                ofs::degrees(adist), ofs::degrees(prm.viewap));
+            // logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            //     tile->center.x, tile->center.y, tile->center.z,
+            //     abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+            //     abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+            // logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
+            //     prm.cdir.x, prm.cdir.y, prm.cdir.z);
+            // logger->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
+            //     ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
+            // if (tile->parentTile != nullptr)
+            //     logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
+            //         tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
+            // logger->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
+            //     ofs::degrees(adist), ofs::degrees(prm.viewap));
         }
     }
 

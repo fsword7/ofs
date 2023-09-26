@@ -32,7 +32,8 @@ vObject *vObject::create(const Object *object, Scene &scene)
 void vObject::update(int now)
 {
 
-    gpos  = object->getuPosition(now);
+    // gpos  = object->getuPosition(now);
+    gpos  = object->getoPosition();
     vpos  = gpos - scene.getCamera()->getGlobalPosition();
     vdist = glm::length(vpos);
 

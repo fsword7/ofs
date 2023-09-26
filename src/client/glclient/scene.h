@@ -60,9 +60,11 @@ struct ObjectListEntry
     glm::dvec3 spos;    // Sun position
 
     color_t    color;   // default surface color
+    double  objSize;    // Object size
 
     double  vdist;      // View distance
-    double  objSize;    // Object size in pixel width
+    double  vSize;      // View object size
+    double  pxSize;     // Object size in pixel width
     double  appMag;     // Apparent magnitude
 
     double  zCenter;    // Center Z depth sorting
@@ -107,8 +109,10 @@ protected:
     void renderObjectAsPoint(ObjectListEntry &ole);
     void renderCelestialBody(ObjectListEntry &ole);
 
-    void buildSystems(FrameTree *tree, const glm::dvec3 &obs,
-        const glm::dvec3 &vpnorm, const glm::dvec3 &origin);
+    // void buildSystems(FrameTree *tree, const glm::dvec3 &obs,
+    //     const glm::dvec3 &vpnorm, const glm::dvec3 &origin);
+    void buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
+        const glm::dvec3 &vpnorm);
 
     void renderSystemObjects();
 

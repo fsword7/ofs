@@ -83,6 +83,11 @@ public:
     virtual glm::dvec3 getoPosition(double tjd) const;
     virtual glm::dvec3 getoVelocity(double tjd) const;
 
+    virtual glm::dvec3 getoPosition() const     { return objPosition; }
+    virtual glm::dvec3 getoVelocity() const     { return objVelocity; }
+    virtual glm::dvec3 getbPosition() const     { return baryPosition; }
+    virtual glm::dvec3 getbVelocity() const     { return baryVelocity; }
+
 private:
     ObjectType objType = objUnknown;
     std::vector<str_t> objNames{1};
@@ -98,6 +103,9 @@ protected:
     glm::dvec3 objPosition = { 0, 0, 0 };
     glm::dvec3 objVelocity = { 0, 0, 0 };
     glm::dmat3 objRotation = glm::dmat3(1.0);
+
+    glm::dvec3 baryPosition = { 0, 0, 0 };
+    glm::dvec3 baryVelocity = { 0, 0, 0 };
 
     glm::dvec3 cg = { 0, 0, 0 };    // center gravity for position/rotation
 

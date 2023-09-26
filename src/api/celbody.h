@@ -14,3 +14,4 @@
 #define EPHEM_RECT      0x0010  // Rectangular data format
 #define EPHEM_POLAR     0x0020  // Spherical data format
 #define EPHEM_PARENT    0x0040  // Computed in the barycentric of body's system
+#define EPHEM_TRUEBARY  0x0080  // Celestial body don't have planetary system

@@ -76,11 +76,12 @@ void Scene::update(Player *player)
 
     pixelSize = (2.0 * tan(camera->getFOV() / 2.0)) / camera->getHeight();
 
-    nearStars.clear();
+    // nearStars.clear();
     visibleStars.clear();
     renderList.clear();
 
-    universe->findCloseStars(camera->getGlobalPosition(), 1.0, nearStars);
+    // universe->findCloseStars(camera->getGlobalPosition(), 1.0, nearStars);
+    nearStars = universe->getNearStars();
     for (auto star : nearStars)
     {
         vObject *vstar = getVisualObject(star, true);
@@ -120,6 +121,20 @@ void Scene::render(Player *player)
 
     //     // buildSystems(tree, apos, vpn, { 0, 0, 0 });
     // }
+
+    for (auto sun : nearStars)
+    {
+        logger->info("Sun: {}\n", sun->getsName());
+
+        if (!sun->haspSystem())
+            continue;
+        pSystem *psys = sun->getpSystem();
+
+        glm::dvec3 apos = obs - sun->getbPosition();
+        glm::dvec3 vpn = camera->getGlobalPosition() * glm::dvec3(0, 0, -1);
+
+        buildSystems(sun->getSecondaries(), apos, vpn);
+    }
 
     renderSystemObjects();
 }
