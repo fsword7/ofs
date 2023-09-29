@@ -101,8 +101,8 @@ void CelestialBody::convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool 
     if (hpos)
     {
         xyz[0] = xz * cosp;
-        xyz[1] = xz * sinp;
-        xyz[2] = rad * sint;
+        xyz[2] = xz * sinp;
+        xyz[1] = rad * sint;
     }
 
     if (hvel)
@@ -113,7 +113,7 @@ void CelestialBody::convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool 
 
         xyz[3] = cosp*cost*vr - cosp*sint*vb - sinp*vl;
         xyz[4] = sint*vr      + cost*vb;
-        xyz[5] = sinp*cost*vr - sinp*sint*vb * cosp*vl;
+        xyz[5] = sinp*cost*vr - sinp*sint*vb + cosp*vl;
     }
 }
 

@@ -175,7 +175,7 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 				a = terms[term].a;
 				b = terms[term].b;
 				c = terms[term].c;
-				arg = b * c * t[1];
+				arg = b + c * t[1];
 				tm += a * cos(arg);
 				tmdot -= c * a * sin(arg);
 			}
