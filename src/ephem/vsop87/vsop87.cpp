@@ -8,6 +8,7 @@
 #include "api/celbody.h"
 #include "ephem/ephemeris.h"
 #include "ephem/vsop87/vsop87.h"
+#include "universe/astro.h"
 
 #include "ephem/vsop87/sol.h"
 // #include "ephem/vsop87/mercury.h"
@@ -155,6 +156,8 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 	for (int idx = 2; idx <= VSOP_MAXALPHA; idx++)
 		t[idx] = t[idx-1] * t[1];
 
+	// Logger::getLogger()->debug("MJD {} - {}\n", mjd, astro::getMJDDateStr(mjd));
+
 	// compute term series
 	for (int idx = 0; idx < 3; idx++)
 	{
@@ -163,8 +166,10 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 
 		for (int alpha = 0; alpha < nalpha; alpha++)
 		{
-			vsop87_t *terms = &group->terms[alpha];
-			int nTerms = group->nTerms;
+			vsop87_t *terms = group[alpha].terms;
+			int nTerms = group[alpha].nTerms;
+
+			// Logger::getLogger()->debug("{}: {} terms\n", alpha, nTerms);
 
 			tm = tmdot = 0.0;
 
@@ -172,9 +177,14 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 			{
 				// f(tm) = a * cos (b * c * T)
 				// f'(tm) = a * -sin (b * c * T) * c
+
 				a = terms[term].a;
 				b = terms[term].b;
 				c = terms[term].c;
+
+				// if (((term >= 0) && (term < 3)) || (term >= nTerms-3 && term < nTerms))
+				// 	Logger::getLogger()->debug("{}: {:.12f} {:.12f} {:.12f}\n", term, a, b, c);
+
 				arg = b + c * t[1];
 				tm += a * cos(arg);
 				tmdot -= c * a * sin(arg);
