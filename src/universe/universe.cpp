@@ -27,14 +27,16 @@ void Universe::init()
     constellations.load("data/constellations/western/constellationship.fab");
     // constellations.load("constellations/western_rey/constellationship.fab");
 
-    CelestialStar *sun = stardb.find("Sol");
+    // CelestialStar *sun = stardb.find("Sol");
+    sun = stardb.find("Sol");
+
     pSystem *psys = new pSystem(sun);
     System *solSystem = createSolarSystem(sun);
     PlanetarySystem *system = solSystem->getPlanetarySystem();
 
-    CelestialBody *mercury, *venus, *earth;
-    CelestialBody *mars, *jupiter, *saturn;
-    CelestialBody *uranus, *neptune, *lunar;
+    // CelestialBody *mercury, *venus, *earth;
+    // CelestialBody *mars, *jupiter, *saturn;
+    // CelestialBody *uranus, *neptune, *lunar;
 
     // mercury = System::createBody("Mercury", system, celType::cbPlanet,
     //     "EclipticJ2000", "EquatorJ2000");
@@ -73,17 +75,17 @@ void Universe::init()
     // lunar->setRadius(1738.14);
     // lunar->setAlbedo(0.136);
 
-    Camera *cam = ofsAppCore->getCamera();
-    Player *player = ofsAppCore->getPlayer();
-    cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
-    cam->look(sun->getStarPosition());
-    cam->update();
-    player->attach(sun);
-    // cam->setPosition(glm::dvec3(0, 0, -earth->getRadius() * 4.0));
-    // cam->look(earth->getoPosition(0));
+    // Camera *cam = ofsAppCore->getCamera();
+    // Player *player = ofsAppCore->getPlayer();
+    // cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
+    // cam->look(sun->getStarPosition());
     // cam->update();
-    // player->attach(earth);
-    // player->update();
+    // player->attach(sun);
+    // // cam->setPosition(glm::dvec3(0, 0, -earth->getRadius() * 4.0));
+    // // cam->look(earth->getoPosition(0));
+    // // cam->update();
+    // // player->attach(earth);
+    // // player->update();
 
     psys->addBody(earth);
     earth->attach(sun);
@@ -91,6 +93,25 @@ void Universe::init()
     std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
     System::loadSolarSystemObjects(in, *this, "systems");
     in.close();
+}
+
+void Universe::start(const TimeDate &td)
+{
+    Camera *cam = ofsAppCore->getCamera();
+    Player *player = ofsAppCore->getPlayer();
+
+    // cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
+    // cam->look(sun->getStarPosition());
+    // cam->update();
+    // player->attach(sun);
+
+    glm::dvec3 epos = earth->getoPosition();
+    epos.z -= earth->getRadius() * 4.0;
+    cam->setPosition(epos);
+    cam->look(earth->getoPosition());
+    cam->update();
+    player->attach(earth);
+    player->update(td);
 }
 
 void Universe::update(Player *player, const TimeDate &td)

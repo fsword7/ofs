@@ -236,7 +236,9 @@ void CoreApp::openSession()
         gclient->cbStart(universe);
         gclient->showWindow();
     }
+
     bSession = true;
+    bStarted = true;
 }
 
 void CoreApp::closeSession()
@@ -249,6 +251,11 @@ void CoreApp::closeSession()
 void CoreApp::updateWorld()
 {
     universe->update(player, td);
+    if (bStarted)
+    {
+        universe->start(td);
+        bStarted = false;
+    }
     player->update(td);
 }
 

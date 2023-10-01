@@ -23,6 +23,7 @@ public:
     inline std::vector<const CelestialStar *> &getNearStars() { return nearStars; }
 
     void init();
+    void start(const TimeDate &td);
     void update(Player *player, const TimeDate &td);
     void finalizeUpdate();
 
@@ -54,4 +55,11 @@ private:
     SystemsList  systems;
 
     std::vector<const CelestialStar *> nearStars;
+
+    // Hacks (to be removed later)
+
+    CelestialStar *sun;
+    CelestialBody *mercury, *venus, *earth;
+    CelestialBody *mars, *jupiter, *saturn;
+    CelestialBody *uranus, *neptune, *lunar;
 };
