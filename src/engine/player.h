@@ -88,7 +88,6 @@ public:
     inline glm::dvec3 getGlobalPosition() const     { return gpos; }
     inline glm::dmat3 getGlobalRotation() const     { return grot; }
     
-    inline void setTimeDate(TimeDate *ntd)          { td = ntd; }
     inline void setAngularControl(glm::dvec3 _av)   { av = _av; }
     inline void setTravelControl(glm::dvec3 _tv)    { tv = _tv; }
 
