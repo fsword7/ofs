@@ -37,7 +37,7 @@ CoreApp::CoreApp()
 void CoreApp::initEngine()
 {
     engine = new Engine();
-    player = new Player();
+    // player = new Player();
     // engine->init(ctx, width, height);
 
     // scene = engine->getScene();
@@ -205,9 +205,6 @@ void CoreApp::init()
     if (gclient != nullptr)
         createSceneWindow();
 
-    // Initialize player/camera first
-    player = new Player();
-
     // Initialize universe
     universe = new Universe();
     universe->init();
@@ -231,6 +228,8 @@ void CoreApp::openSession()
     td.reset(nowTime.count());
     prevTime = now;
 
+    player = new Player(&td);
+
     if (gclient != nullptr)
     {
         gclient->cbStart(universe);
@@ -245,6 +244,11 @@ void CoreApp::closeSession()
 {
     if (gclient != nullptr)
         gclient->hideWindow();
+
+    if (player != nullptr)
+        delete player;
+    player = nullptr;
+
     bSession = false;
 }
 

@@ -73,13 +73,14 @@ private:
 class OFSAPI Player
 {
 public:
-    Player();
+    Player(TimeDate *td);
     ~Player();
 
     inline bool isExternal() const              { return modeExternal; }
     inline bool isInternal() const              { return !modeExternal; }
     inline travelMode getTravelMode() const     { return modeTravel; }
     inline Camera *getCamera()                  { return &cam; }
+    inline TimeDate *getTimeDate()              { return td; }
 
     inline glm::dvec3 getAngularControl() const     { return av; }
     inline glm::dvec3 getTravelControl() const      { return tv; }
@@ -87,6 +88,7 @@ public:
     inline glm::dvec3 getGlobalPosition() const     { return gpos; }
     inline glm::dmat3 getGlobalRotation() const     { return grot; }
     
+    inline void setTimeDate(TimeDate *ntd)          { td = ntd; }
     inline void setAngularControl(glm::dvec3 _av)   { av = _av; }
     inline void setTravelControl(glm::dvec3 _tv)    { tv = _tv; }
 
@@ -132,6 +134,7 @@ private:
     travelMode modeTravel = travelFreeFlight;
     cameraMode modeCamera = camGlobalFrame;
 
+    TimeDate *td = nullptr;
 };
 
 // class Camera

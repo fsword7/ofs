@@ -76,8 +76,8 @@ void Camera::update()
 
 // ******** Player ********
 
-Player::Player()
-: cam(SCR_WIDTH, SCR_HEIGHT)
+Player::Player(TimeDate *td)
+: cam(SCR_WIDTH, SCR_HEIGHT), td(td)
 {
 }
 
