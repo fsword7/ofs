@@ -54,6 +54,7 @@ struct tcRange
 };
 
 class Scene;
+class SurfaceHandler;
 class SurfaceManager;
 class ShaderProgram;
 
@@ -62,6 +63,7 @@ class ShaderProgram;
 class SurfaceTile : public Tree<SurfaceTile, QTREE_NODES>
 {
     friend class SurfaceManager;
+    friend class SurfaceHandler;
 
 public:
     enum tileType
@@ -105,6 +107,32 @@ private:
     Mesh *mesh = nullptr;
 };
 
+class SurfaceHandler
+{
+public:
+    SurfaceHandler();
+    ~SurfaceHandler();
+
+    void start();
+    void shutdown();
+
+    void queue(SurfaceTile *tile);
+    bool unqueue(SurfaceTile *tile);
+    void unqueue(SurfaceManager *mgr);
+
+protected:
+    void handle();
+
+private:
+    std::queue<SurfaceTile *> tiles;
+
+    volatile bool runHandler;
+    int           msFreq;
+    std::thread   loader;
+    std::mutex    muQueue;
+    std::mutex    muLoading;
+};
+
 class SurfaceManager
 {
     friend class SurfaceTile;
@@ -112,6 +140,9 @@ class SurfaceManager
 public:
     SurfaceManager(const Object *object, Scene &scene);
     ~SurfaceManager();
+    
+    static void ginit();
+    static void gexit();
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 
@@ -150,6 +181,8 @@ public:
 private:
     const Object *object;
     Scene &scene;
+
+    bool bPolygonLines = false;
 
     ShaderProgram *pgm = nullptr;
     ShaderProgram *pgmStar = nullptr;

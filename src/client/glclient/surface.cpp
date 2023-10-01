@@ -89,11 +89,11 @@ void SurfaceTile::render()
     // Load per-tile model matrix into GLSL space
     mgr.uModel = glm::mat4(mgr.prm.dmWorld);
 
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+    if (mgr.bPolygonLines)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLES, mesh->ibo->getCount(), GL_UNSIGNED_SHORT, 0);
-
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    if (mgr.bPolygonLines)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     mesh->vao->unbind();
     mgr.pgm->release();
@@ -317,6 +317,8 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 
         pgm->release();
 
+        bPolygonLines = true;
+
         for (int idx = 0; idx < 2; idx++)
         {
             tiles[idx] = new SurfaceTile(*this, 0, 0, idx);
@@ -329,6 +331,16 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 SurfaceManager::~SurfaceManager()
 {
     delete tiles[0],tiles[1];
+}
+
+void SurfaceManager::ginit()
+{
+
+}
+
+void SurfaceManager::gexit()
+{
+
 }
 
 glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
@@ -402,10 +414,10 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
     prm.viewap = acos(1.0 / (std::max(prm.cdist, 1.0)));
     prm.scale = 1.0;
 
-    // logger->debug("Object name:     {}\n", object->getName());
-    // logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
-    // logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
-    // logger->debug("Camera distance: {}\n", prm.cdist);
+    logger->debug("Object name:     {}\n", object->getName());
+    logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
+    logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
+    logger->debug("Camera distance: {}\n", prm.cdist);
 }
 
 void SurfaceManager::process(SurfaceTile *tile)
@@ -424,6 +436,8 @@ void SurfaceManager::process(SurfaceTile *tile)
     double alpha = acos(glm::dot(prm.cdir, tile->center));
     double adist = alpha - trad;
     double bias = 4;
+
+    logger->debug("View {:.6f} >= {:.6f}\n", adist, prm.viewap);
 
     if (adist >= prm.viewap)
     {
@@ -507,22 +521,22 @@ void SurfaceManager::process(SurfaceTile *tile)
         }
 
         {
-            // logger->debug("Tile: LOD {} ({},{}) - processing\n",
-            //     tile->lod+4, tile->ilat, tile->ilng);
+            logger->debug("Tile: LOD {} ({},{}) - processing\n",
+                tile->lod+4, tile->ilat, tile->ilng);
 
-            // logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-            //     tile->center.x, tile->center.y, tile->center.z,
-            //     abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
-            //     abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
-            // logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
-            //     prm.cdir.x, prm.cdir.y, prm.cdir.z);
-            // logger->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
-            //     ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
-            // if (tile->parentTile != nullptr)
-            //     logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
-            //         tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
-            // logger->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
-            //     ofs::degrees(adist), ofs::degrees(prm.viewap));
+            logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+                tile->center.x, tile->center.y, tile->center.z,
+                abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+                abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+            logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
+                prm.cdir.x, prm.cdir.y, prm.cdir.z);
+            logger->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
+                ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
+            if (tile->parentTile != nullptr)
+                logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
+                    tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
+            logger->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
+                ofs::degrees(adist), ofs::degrees(prm.viewap));
         }
     }
 
@@ -556,7 +570,6 @@ void SurfaceManager::render(const glm::dmat4 &dmWorld, const ObjectProperties &o
 
     for (int idx = 0; idx < 2; idx++)
         process(tiles[idx]);
-
     for (int idx = 0; idx < 2; idx++)
         render(tiles[idx]);
 }

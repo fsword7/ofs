@@ -113,8 +113,8 @@ void Scene::buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
                 ole.camClip = glm::vec2(ole.zNear, ole.zFar);
 
                 // logger->debug("{}: Adding to rendering list\n", body->getsName());
-                // logger->debug("{}: P({:.6f},{:.6f},{:.6f}))\n",
-                //     body->getsName(), ole.opos.x, ole.opos.y, ole.opos.z);
+                logger->debug("{}: P({:.6f},{:.6f},{:.6f}))\n",
+                    body->getsName(), ole.opos.x, ole.opos.y, ole.opos.z);
 
                 addRenderList(ole);
                 // renderCelestialBody(ole);

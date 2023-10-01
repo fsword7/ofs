@@ -10,12 +10,14 @@ set(OGL_CPP_SRCS
     client.cpp
     constellations.cpp
     glad.cpp
+    loader.cpp
     scene.cpp
     shader.cpp
     starcolors.cpp
     stars.cpp
     surface.cpp
     systems.cpp
+    texmgr.cpp
     vbody.cpp
     vobject.cpp
     vstar.cpp
@@ -33,6 +35,7 @@ set(OGL_H_SRCS
     starcolors.h
     stars.h
     surface.h
+    texmgr.h
     vbody.h
     vobject.h
     vstar.h
