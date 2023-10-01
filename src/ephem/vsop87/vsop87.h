@@ -44,7 +44,6 @@ public:
 protected:
     void setSeries(char series);
     void init();
-    // void load(cstr_t &name);
     
     void getEphemeris(double mjd, double *res);
 

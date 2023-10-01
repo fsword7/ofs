@@ -65,71 +65,6 @@ void OrbitVSOP87::setSeries(char series)
 	}
 }
 
-// void OrbitVSOP87::load(cstr_t &name)
-// {
-
-
-//     std::string fname;
-
-//     std::ifstream vsopFile(fname, std::ios::in);
-//     if (!vsopFile.is_open())
-//         return;
-
-//     std::string line;
-// 	int lnum = 0;
-// 	int terms = 0;
-// 	int lbr, deg;
-// 	double data[2000][3];
-
-//     while(std::getline(vsopFile, line))
-//     {
-//         lnum++;
-//         cchar_t *cline = line.c_str();
-// 		if (!strncmp(cline, " VSOP87", 7)) {
-// 			// if (terms > 0)
-// 			// 	print(data, planet, lbr, deg, terms);
-// 			terms = 0;
-
-// 			lbr = (int)cline[41] - (int)'1';
-// 			deg = (int)cline[59] - (int)'0';
-
-// 			if (deg < 0 || deg > 5) {
-// 				std::cout << "Bad degree (" << deg << ") in VSOP data file at line "
-// 					 << lnum << std::endl;
-//                 vsopFile.close();
-//                 return;
-// 			}
-
-// 			if (lbr < 0 || lbr > 3) {
-// 				std::cout << "Bad data type (" << lbr << ") in VSOP data file at line "
-// 					 << lnum << std::endl;
-//                 vsopFile.close();
-// 				return;
-// 			}
-
-// 		} else {
-
-// 			double a, b, c;
-
-// 			if (sscanf(cline+80, " %lf %lf %lf", &a, &b, &c) != 3) {
-// 				std::cout << "Bad data in VSOP data at line " << lnum << std::endl;
-//                 vsopFile.close();
-// 				return;
-// 			}
-
-// 			data[terms][0] = a;
-// 			data[terms][1] = b;
-// 			data[terms][2] = c;
-// 			terms++;
-// 		}
-// 	}
-
-// 	// if (terms > 0)
-// 	// 	print(data, planet, lbr, deg, terms);
-
-// 	vsopFile.close();
-// }
-
 void OrbitVSOP87::getEphemeris(double mjd, double *res)
 {
 	static const double mjd2000 = 51544.5;
@@ -175,8 +110,8 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 
 			for (int term = 0; term < nTerms; term++)
 			{
-				// f(tm) = a * cos (b * c * T)
-				// f'(tm) = a * -sin (b * c * T) * c
+				// f(tm) = a * cos (b + c * T)
+				// f'(tm) = a * -sin (b + c * T) * c
 
 				a = terms[term].a;
 				b = terms[term].b;
