@@ -58,7 +58,14 @@ set (OGL_SHADERS
     shaders/star.vs
 )
 
-add_library(glclient SHARED ${OGL_CPP_SRCS} ${OGL_H_SRCS})
+set (SOIL2_SRCS
+    SOIL2/src/SOIL2/image_DXT.c
+    SOIL2/src/SOIL2/image_helper.c
+    SOIL2/src/SOIL2/SOIL2.c 
+    SOIL2/src/SOIL2/wfETC.c
+)
+
+add_library(glclient SHARED ${OGL_CPP_SRCS} ${SOIL2_SRCS} ${OGL_H_SRCS})
 
 target_link_libraries(glclient
     Freetype::Freetype
@@ -76,6 +83,7 @@ endif()
 
 target_include_directories(glclient PUBLIC
     ${IMGUI_INCLUDE_DIR}
+    SOIL2/src
 )
 
 set_target_properties(glclient
