@@ -5,9 +5,11 @@
 
 #include "main/core.h"
 #include "api/celbody.h"
+#include "ephem/elements.h"
 #include "engine/rigidbody.h"
 #include "ephem/vsop87/vsop87.h"
 #include "ephem/rotation.h"
+// #include "ephem/elements.h"
 #include "universe/celbody.h"
 #include "universe/astro.h"
 
@@ -66,6 +68,8 @@ void CelestialBody::attach(CelestialBody *parent)
         cbody = parent;
         parent->addSecondary(this);
 
+        // elements->setup(mass, cbody->getMass(), 0); // td.mjdRef);
+
         uint16_t flags = 0;
         if (flags)
         {
@@ -77,6 +81,16 @@ void CelestialBody::attach(CelestialBody *parent)
             //     bpos = s0->pos;
             // if (flags & EPHEM_BARYVEL)
             //     bvel = s0->vel;
+        }
+        else
+        {
+            oel.getPositionVelocity(0, s0.pos, s0.vel);
+            // s0.pos = cbody->Recl * s0.pos;
+            // s0.vel = cbody->Recl * s0.vel;
+            // oel.calculate(0, s0.pos, s0.vel);
+
+            bpos = s0.pos;
+            bvel = s0.vel;
         }
 
         // Relative to parent celestial body
@@ -199,7 +213,8 @@ bool CelestialBody::updateEphemeris(const TimeDate &td)
     else
     {
         // Updating orbital elements
-
+        oel.update(0, bpos, bvel);
+        hbary = true;
     }
 
     // Updating barycentre positions and velocity through reference frame.

@@ -140,6 +140,14 @@ protected:
     CelestialBody *cbody = nullptr;             // Reference frame for orbits
     std::vector<CelestialBody *> secondaries;   // children of celstial body
 
+    // Rotation/prcession parameters
+    // double rotation;    // Current rotation rate
+    // double rotofs;      // Rotation offset (precession)
+
+    glm::dmat3 Recl;    // Precession matrix
+    glm::dquat Qecl;    // Precession quaternion
+
+
     // Ephemeris data parameters (orbital frame)
     glm::dvec3 cpos;    // orbital position
     glm::dvec3 cvel;    // orbital velocity

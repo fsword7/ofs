@@ -6,9 +6,9 @@
 #pragma once
 
 #include "engine/object.h"
+#include "ephem/elements.h"
 
 class Frame;
-class OrbitalElements;
 
 class RigidBody : public Object
 {
@@ -44,7 +44,7 @@ protected:
     Orbit *orbit = nullptr;
     Rotation *rotation = nullptr;
 
-    OrbitalElements *elements = nullptr;
+    OrbitalElements oel;
     bool orbitValid = false;
 
     glm::dvec3 cpos, cvel; // state vectors in reference frame

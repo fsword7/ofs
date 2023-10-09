@@ -5,13 +5,13 @@
 
 #pragma once
 
-class OrbitElements
+class OrbitalElements
 {
 public:
-    OrbitElements() = default;
-    ~OrbitElements() = default;
+    OrbitalElements() = default;
+    ~OrbitalElements() = default;
 
-    OrbitElements(double a, double e, double i, double theta, double omegab, double L, double mjd);
+    OrbitalElements(double a, double e, double i, double theta, double omegab, double L, double mjd);
 
     inline double getLinearEccentricity() const         { return le; }
     inline double getApoapsis() const                   { return ad; }
@@ -41,11 +41,12 @@ public:
 
     void setup(double m, double M, double mjd);
     void calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t);
-    void update(double mjd);
+    void update(double mjd, glm::dvec3 &pos, glm::dvec3 &vel);
 
-    void getPolarPosition(double t, double &r, double &ta);
-    glm::dvec3 convertXYZ(double r, double ta);
-    void getPositionVelocity(double t, glm::dvec3 &pos, glm::dvec3 &vel);
+    void getPolarPosition(double t, double &r, double &ta) const;
+    glm::dvec3 convertPolarToXYZ(double r, double ta) const;
+    glm::dvec3 getPosition(double t) const;
+    void getPositionVelocity(double t, glm::dvec3 &pos, glm::dvec3 &vel) const;
 
 public:
     // Primary orbital element parameters
@@ -81,9 +82,9 @@ private:
     // Time parameters
     double T;           // orbital period [s]
     double Tpe;         // time to next periaspsis passage [s]
-    double Tap;         // time to bext apoaspsis passage [s]
+    double Tap;         // time to next apoaspsis passage [s]
     double tau;         // periapsis passage [s]
-    
+
     double mjdEpoch;    // reference time (MJD format)
     double tEpoch;      // reference time
 
@@ -97,6 +98,10 @@ private:
     double     tra;     // true anomaly
     double     ml;      // mean longitude
     double     trl;     // true longitude
+    
+    glm::dvec3 H;       // normal to orbital plane
+    glm::dvec3 E;       // points toward periapsis
+    glm::dvec3 N;       // points toward ascending node
 
     mutable double ma0 = 1e10;
     mutable double ea0 = 0.0;

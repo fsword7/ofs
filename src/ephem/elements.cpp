@@ -13,20 +13,20 @@ const double MJD2000 = 51544.5;     // MJD date for epoch J2000
 static constexpr const double E_CIRCLE_LIMIT = 1e-8;
 static constexpr const double I_NOINC_LIMIT  = 1e-8;
 
-OrbitElements::OrbitElements(double a, double e, double i,
+OrbitalElements::OrbitalElements(double a, double e, double i,
     double theta, double omegab, double L, double mjd)
 : a(a), e(e), i(i), theta(theta), omegab(omegab), L(L),
   mjdEpoch(mjd)
 { }
 
-void OrbitElements::setMasses(double _m, double _M)
+void OrbitalElements::setMasses(double _m, double _M)
 {
     m  = _m;
     M  = _M;
     mu = G * (m + M);
 }
 
-double OrbitElements::getEccentricAnomaly(double ma) const
+double OrbitalElements::getEccentricAnomaly(double ma) const
 {
 
     constexpr const double tol = 1e-16;
@@ -63,7 +63,7 @@ double OrbitElements::getEccentricAnomaly(double ma) const
     return E;
 }
 
-double OrbitElements::getEccentricAnomalyTA(double ta) const
+double OrbitalElements::getEccentricAnomalyTA(double ta) const
 {
     if (e < 1.0)
         return 2.0 * atan(tan(0.5 * ta) / tmp);
@@ -75,7 +75,7 @@ double OrbitElements::getEccentricAnomalyTA(double ta) const
     }
 }
 
-double OrbitElements::getTrueAnomalyE(double ea) const
+double OrbitalElements::getTrueAnomalyE(double ea) const
 {
     if (e < 1.0)
         return 2.0 * atan(tmp * tan(0.5 * ea));
@@ -87,7 +87,7 @@ double OrbitElements::getTrueAnomalyE(double ea) const
     }
 }
 
-double OrbitElements::getMeanAnomalyE(double ea) const
+double OrbitalElements::getMeanAnomalyE(double ea) const
 {
     if (e < 1.0)
         return ea - e*sin(ea);
@@ -98,7 +98,7 @@ double OrbitElements::getMeanAnomalyE(double ea) const
 
 
 // determine orbital data (free fall) by using masses
-void OrbitElements::setup(double m, double M, double mjd)
+void OrbitalElements::setup(double m, double M, double mjd)
 {
     setMasses(m, M);
 
@@ -139,7 +139,7 @@ void OrbitElements::setup(double m, double M, double mjd)
 }
 
 // determine new orbital path
-void OrbitElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t)
+void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t)
 {
     // Set radius/velocity vectors
     R = pos;
@@ -147,12 +147,164 @@ void OrbitElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, doub
     r = glm::length(R);
     v = glm::length(V);
 
-    // a = r * mu / (2.0 * mu - r * V.squaredNorm());
+    a = r * mu / (2.0 * mu - r * glm::length2(V));
 
+    H = glm::cross(V, R);
+    double h = glm::length(H);
+    double rv = glm::dot(R, V);
+
+    E = (R * 1.0/r - 1.0/a) - V * (rv / mu);
+    e = glm::length(E);
+
+    // inclination
+    i = acos(H.y/h);
+
+    sini = sin(i), cosi = cos(i);
+
+    le = a * e;
+    pd = a - le;
+    p = std::max(0.0, a * (1.0 - e*e));
+    muh = sqrt(mu/p);
+
+    if (e < 1.0)
+    {
+        ad = a + le;
+        b = a * sqrt(1.0 - e*e);
+        tmp = sqrt(1.0 + e) / (1.0 - e);
+        n = sqrt(mu / (a*a*a));
+        T = (pi*2)/n;
+    }
+    else
+    {
+        b = a * sqrt(e*e - 1.0);
+        n = sqrt(mu * (-a*a*a));
+    }
+
+    // Longitude of ascending node
+    if (i > I_NOINC_LIMIT)
+    {
+        double tmp = 1.0 / std::hypot(H.z, H.x);
+        N = { -H.z*tmp, 0.0, H.x*tmp };
+        theta = acos(N.x);
+        if (N.z < 0.0)
+            theta = (pi*2) - theta;
+    }
+    else
+    {
+        N = { 0, 0, 0 };
+        theta = 0.0;
+    }
+    sint = sin(theta), cost = cos(theta);
+
+    // Argument of periapsis
+    if (e > E_CIRCLE_LIMIT)
+    {
+        if (i > I_NOINC_LIMIT)
+        {
+            double arg = glm::dot(N, E) / e;
+            omega = (arg < -1.0) ? omega = pi :
+                    (arg >  1.0) ? omega = 0.0 :
+                                   omega = acos(arg);
+            if (E.y < 0.0)
+                omega = (pi*2) - omega;
+        }
+        else
+        {
+            if ((omega = atan2(E.z, E.x)) < 0.0)
+                omega += pi*2;
+        }
+    } else
+        omega = 0.0;
+    sino = sin(omega), coso = cos(omega);
+
+    // Longitude of periapsis
+    if ((omegab = theta + omega) >= pi*2)
+        omegab -= pi*2;
+
+    // True anomaly
+    if (e > E_CIRCLE_LIMIT)
+    {
+        tra = acos(std::clamp(glm::dot(E, R) / (e * r), -1.0, 1.0));
+        if (rv < 0.0)
+            tra = (pi*2) - tra;
+    }
+    else
+    {
+        if (i > I_NOINC_LIMIT)
+        {
+            tra = acos(glm::dot(N, R)/r);
+            if (glm::dot(N, V) > 0.0)
+                tra = (pi*2) - tra;
+        }
+        else
+        {
+            tra = acos(R.x/r);
+            if (V.x > 0.0)
+                tra = (pi*2) - tra;
+        }
+    }
+
+    // True longitude
+    if ((trl = omegab + tra) >= pi*2)
+        trl -= pi*2;
+    if (e < 1.0)
+    {
+        // Closed orbit
+
+        // eccentric anomaly
+        if (e > E_CIRCLE_LIMIT)
+            ea = atan2(rv*sqrt(a/mu), a-r);
+        else
+            ea = tra;
+
+        // mean anomaly
+        ma = ea - e*sin(ea);
+
+        // time of next periapsis amd apoapsis passage
+        if ((Tpe = -ma/n) < 0.0)
+            Tpe += T;
+        if ((Tap = Tpe-0.5*T) < 0.0)
+            Tap += T;
+    }
+    else
+    {
+        // Open orbit
+
+        // Eccentric anomaly
+        double costra = cos(tra);
+        ea = acosh((e + costra)/(1.0 + e * costra));
+        if (tra >= pi)
+            ea = -ea;
+
+        // mean anomaly
+        ma = e * sinh(ea) - ea;
+
+        // time of periapsis passage
+        Tpe = -ma/n;
+    }
+
+    // time of periapsis passage
+    tau = t + Tpe;
+    if (e < 1.0)
+        tau -= T;
+    
+    // mean longitude at epoch
+    if (e < 1.0)
+    {
+        L = ofs::posangle(omegab + n * (tEpoch - tau));
+        ml = ofs::posangle(ma + omegab);
+    }
+    else
+    {
+        L = omegab + n * (tEpoch-tau);
+        ml = ma + omegab;
+    }
+
+    // mean longtiude
 }
 
 // updating position and velocity periodically
-void OrbitElements::update(double mjd)
+void OrbitalElements::update(double mjd, glm::dvec3 &pos, glm::dvec3 &vel)
 {
     double sinto, costo;
     double vx, vz;
@@ -181,33 +333,30 @@ void OrbitElements::update(double mjd)
     R.x = (cost*costo - sint*sinto*cosi) * r;
     R.z = (sint*costo + cost*sinto*cosi) * r;
     R.y = (sinto * sini) * r;
-
+    
     sinto = sin(thetav + omega);
     costo = cos(thetav + omega);
     V.x = (cost*costo - sint*sinto*cosi) * v;
     V.z = (sint*costo + cost*sinto*cosi) * v;
     V.y = (sinto * sini) * v;
 
-    // pos = R;
-    // vel = V;
+    ml = ofs::posangle(ma + omegab);
+    trl = ofs::posangle(tra + omegab);
+
+    // Update time countdown for next
+    // periaspsis/apoaspsis passage
+    if ((Tpe = -ma/n) < 0.0)
+        Tpe += T;
+    if ((Tap = Tpe-0.5 * T) < 0.0)
+        Tap += T;
+
+    // Return new position/velocity
+    pos = R;
+    vel = V;
 }
 
 
-void OrbitElements::getPolarPosition(double t, double &r, double &ta)
-{
-    if (e < E_CIRCLE_LIMIT)
-        ta = n * fmod(t-tau, T);
-    else
-    {
-        double ma = getMeanAnomaly(t);
-        if (e < 1.0)
-            ma = ofs::posangle(ma);
-        ta = getTrueAnomaly(ma);
-    }
-    r = p / (1.0 + e*cos(ta));
-}
-
-glm::dvec3 OrbitElements::convertXYZ(double r, double ta)
+glm::dvec3 OrbitalElements::convertPolarToXYZ(double r, double ta) const
 {
     double sinto = sin(ta * omega);
     double costo = cos(ta * omega);
@@ -221,12 +370,37 @@ glm::dvec3 OrbitElements::convertXYZ(double r, double ta)
     return pos;
 }
 
-void OrbitElements::getPositionVelocity(double t, glm::dvec3 &pos, glm::dvec3 &vel)
+void OrbitalElements::getPolarPosition(double t, double &r, double &ta) const
+{
+    if (e < E_CIRCLE_LIMIT)
+        ta = n * fmod(t-tau, T);
+    else
+    {
+        double ma = getMeanAnomaly(t);
+        if (e < 1.0)
+            ma = ofs::posangle(ma);
+        ta = getTrueAnomaly(ma);
+    }
+    r = p / (1.0 + e*cos(ta));
+}
+
+glm::dvec3 OrbitalElements::getPosition(double t) const
+{
+    glm::dvec3 pos;
+    double r, ta;
+
+    getPolarPosition(t, r, ta);
+    pos = convertPolarToXYZ(r, ta);
+
+    return pos;
+}
+
+void OrbitalElements::getPositionVelocity(double t, glm::dvec3 &pos, glm::dvec3 &vel) const
 {
     double r, ta;
 
     getPolarPosition(t, r, ta);
-    pos = convertXYZ(r, ta);
+    pos = convertPolarToXYZ(r, ta);
 
     double vx = -muh * sin(ta);
     double vz = muh * (e * cos(ta));
