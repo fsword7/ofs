@@ -16,8 +16,8 @@ void main()
 {
     float uCameraK = 1.0;
 
-    fragColor = vec4(0.7, 0.7, 0.7, 1.0);
-    // fragColor = texture(sTile, texCoord);
+    // fragColor = vec4(0.7, 0.7, 0.7, 1.0);
+    fragColor = texture(sTile, texCoord);
 
     gl_FragDepth = getDepth(uCamClip.y, uCameraK);
 }

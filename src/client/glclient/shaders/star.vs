@@ -13,12 +13,13 @@ uniform mat4 uModel;
 // out vec3 normal;
 out vec2 texCoord;
 out vec3 fPosition;
-// out float vTime;
+out float vTime;
 
 void main()
 {
     // vTime = uTime;
-
+    vTime = 0.0;
+    
     gl_Position = uViewProj * uModel * vec4(vPosition, 1.0);
     texCoord = vTexCoord;
     // normal = mat3(transpose(inverse(uModel))) * vNormal;

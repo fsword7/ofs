@@ -14,16 +14,17 @@ uniform vec2  uCamClip;
 in vec3 fPosition;
 in vec4 texCoord;
 in vec3 normal;
-// in float vTime;
+in float vTime;
 
 out vec4 fragColor;
 
-#include "snoise3.glsl"
+#include "snoise4.glsl"
 
 void main()
 {
     float uCameraK = 1.0;
-    vec3  nPosition = normalize(fPosition);
+    vec4  nPosition = vec4(normalize(fPosition), vTime);
+    vec4  sPosition = vec4(fPosition, vTime);
 
     // Granules
     float n = (noise(nPosition, 4, 40.0, 0.7) + 1.0) * 0.5;
@@ -31,8 +32,8 @@ void main()
     // Sunspots
     float s = 0.36;
     float freq = 0.00001;
-    float t1 = snoise(fPosition * freq) - s;
-    float t2 = snoise((fPosition + uRadius) * freq) - s;
+    float t1 = snoise(sPosition * freq) - s;
+    float t2 = snoise((sPosition + uRadius) * freq) - s;
     float ss = (max(t1, 0.0) * max(t2, 0.0)) * 2.0;
     // Total noise
     float total = n - ss;
