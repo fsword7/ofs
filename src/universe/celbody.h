@@ -89,6 +89,10 @@ public:
     inline void addSecondary(CelestialBody *body)       { secondaries.push_back(body); }
     inline secondaries_t &getSecondaries() const        { return secondaries; }
 
+    inline void setStar(CelestialStar *star)            { cstar = star; }
+    inline CelestialStar *getStar() const               { return cstar; }
+    inline CelestialBody *getParent() const             { return cbody; }
+
     void attach(CelestialBody *parent);
 
     void convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel);
@@ -137,6 +141,7 @@ protected:
 
     OrbitEphemeris *ephemeris = nullptr;
 
+    CelestialStar *cstar = nullptr;
     CelestialBody *cbody = nullptr;             // Reference frame for orbits
     std::vector<CelestialBody *> secondaries;   // children of celstial body
 

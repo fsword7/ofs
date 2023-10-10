@@ -88,6 +88,7 @@ void Universe::init()
     // // player->update();
 
     psys->addBody(earth);
+    earth->setStar(sun);
     earth->attach(sun);
 
     std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
