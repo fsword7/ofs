@@ -76,6 +76,8 @@ void Scene::update(Player *player)
 
     pixelSize = (2.0 * tan(camera->getFOV() / 2.0)) / camera->getHeight();
 
+    mjd = player->getTimeDate()->getMJD0();
+
     // nearStars.clear();
     visibleStars.clear();
     renderList.clear();
@@ -97,7 +99,7 @@ void Scene::render(Player *player)
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
     renderConstellations();
-    renderStars(faintestMag);
+    renderStars(faintestMag, mjd);
 
     glm::dvec3 obs = camera->getGlobalPosition();
 

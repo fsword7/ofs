@@ -169,6 +169,8 @@ void StarRenderer::process(CelestialStar &star, double dist, double appMag) cons
         ole.zNear   = 0.0001;
         ole.camClip = glm::vec2(ole.zNear, ole.zFar);
 
+        ole.mjd = mjd;
+
         scene->addRenderList(ole);
     }
     else
@@ -216,13 +218,14 @@ void Scene::initStarRenderer()
     starRenderer->starColors = starColors;
 }
 
-void Scene::renderStars(double faintest)
+void Scene::renderStars(double faintest, double mjd)
 {
     glm::dvec3 obs = camera->getGlobalPosition();
     glm::dmat3 rot = camera->getGlobalRotation();
     double fov = camera->getFOV();
     double aspect = camera->getAspect();
 
+    starRenderer->mjd = mjd;
     starRenderer->cpos = obs;
     starRenderer->pxSize = pixelSize;
     starRenderer->baseSize = 5.0;

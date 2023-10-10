@@ -73,6 +73,8 @@ struct ObjectListEntry
     glm::vec2 camClip;
     double  zFar;       // Far Z clipping
     double  zNear;      // Near Z clipping
+
+    double mjd;         // MJD time/date
 };
 
 class Scene
@@ -103,7 +105,7 @@ public:
 protected:
     void initStarRenderer();
     void initConstellations();
-    void renderStars(double faintest);
+    void renderStars(double faintest, double mjd);
     void renderConstellations();
 
     void renderObjectAsPoint(ObjectListEntry &ole);
@@ -125,6 +127,7 @@ private:
     double saturationMag = 0.0;
 
     int now = 0;
+    double mjd = 0;
 
     ShaderManager shmgr;
 

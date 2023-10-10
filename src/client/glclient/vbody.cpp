@@ -29,5 +29,5 @@ void vBody::update(int now)
 
 void vBody::render(const ObjectProperties &op)
 {
-    smgr->render(dmWorld, op);
+    smgr->renderBody(op);
 }

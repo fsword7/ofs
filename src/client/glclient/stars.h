@@ -44,6 +44,7 @@ protected:
     PointType type;
     int nStars;
     int flagStarted;
+    double mjd;
 
     starVertex *vertices = nullptr;
 
@@ -82,4 +83,6 @@ public:
     float faintestMag = 0.0f;
     float faintestNightMag = 0.0f;
     float saturationMag = 0.0f;
+
+    double mjd;
 };

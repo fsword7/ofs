@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "engine/object.h"
 #include "engine/player.h"
+#include "universe/star.h"
 #include "client.h"
 // #include "camera.h"
 #include "scene.h"
@@ -29,6 +30,8 @@ SurfaceTile::~SurfaceTile()
 {
     if (mesh != nullptr)
         delete mesh;
+    if (txOwn == true && txImage != nullptr)
+        delete txImage;
 }
 
 SurfaceTile *SurfaceTile::createChild(int idx)
@@ -65,6 +68,27 @@ void SurfaceTile::setCenter(glm::dvec3 &cnml, glm::dvec3 &wpos)
 void SurfaceTile::load()
 {
     type = tileLoading;
+    uint32_t szImage;
+
+    uint8_t *ddsImage = nullptr;
+
+    if (mgr.zTrees[0] != nullptr)
+    {
+        szImage = mgr.zTrees[0]->read(lod+4, ilat, ilng, &ddsImage);
+        logger->info("Yes here - {} bytes read\n", szImage);
+        if (szImage > 0 && ddsImage != nullptr)
+            mgr.tmgr.loadDDSTextureFromMemory(&txImage, ddsImage, szImage, 0);
+        if (txImage != nullptr)
+            logger->info("Loaded texture (ID = {})\n", txImage->id);
+        delete ddsImage;
+    }
+
+    if (txImage != nullptr)
+        txOwn = true;
+    else
+    {
+        // Get subregion fron ancestor
+    }
 
     if (lod == 0)
         mesh = createHemisphere(32, nullptr, 0);
@@ -84,16 +108,29 @@ void SurfaceTile::render()
 
     mesh->vao->bind();
 
+    if (txImage != nullptr)
+    {
+        glActiveTexture(GL_TEXTURE0);
+        txImage->bind();
+
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
+
     mgr.uViewProj = glm::mat4(mgr.prm.dmViewProj);
 
     // Load per-tile model matrix into GLSL space
     mgr.uModel = glm::mat4(mgr.prm.dmWorld);
+    mgr.uCamClip = mgr.prm.clip;
 
-    if (mgr.bPolygonLines)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // if (mgr.bPolygonLines)
+    //     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLES, mesh->ibo->getCount(), GL_UNSIGNED_SHORT, 0);
-    if (mgr.bPolygonLines)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // if (mgr.bPolygonLines)
+    //     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    if (txImage != nullptr)
+        glDisable(GL_CULL_FACE);
 
     mesh->vao->unbind();
     mgr.pgm->release();
@@ -319,6 +356,15 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 
         bPolygonLines = true;
 
+        const CelestialBody *body = dynamic_cast<const CelestialBody *>(object);
+
+        str_t starName = body->getStar()->getsName();
+        str_t bodyName = body->getsName();
+
+        fs::path folder = fmt::format("data/systems/{}/{}/Orbiter", starName, bodyName);
+
+        zTrees[0] = zTreeManager::create(folder, "surf");
+
         for (int idx = 0; idx < 2; idx++)
         {
             tiles[idx] = new SurfaceTile(*this, 0, 0, idx);
@@ -386,17 +432,17 @@ void logMatrix(const glm::dmat4 &m, cstr_t &desc)
     logger->debug("{} {} {} {}\n", m[3][0], m[3][1], m[3][2], m[3][3]);
 }
 
-void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
+void SurfaceManager::setRenderParams(const ObjectProperties &op)
 {
     glm::dvec3 opos, cpos;
     double cdist;
     Camera *camera = scene.getCamera();
 
-    prm.maxlod = 1; // 19;
+    prm.maxlod = 19;
     resScale = 1400.0 / double(camera->getHeight());
 
     prm.dmViewProj = camera->getProjMatrix() * camera->getViewMatrix();
-    prm.dmWorld = dmWorld;
+    // prm.dmWorld = dmWorld;
 
     // logMatrix(prm.dmViewProj, "View/Projection");
     // logMatrix(prm.dmWorld, "Model");
@@ -413,6 +459,10 @@ void SurfaceManager::setRenderParams(const glm::dmat4 &dmWorld)
     prm.cdir = glm::normalize(prm.cdir);
     prm.viewap = acos(1.0 / (std::max(prm.cdist, 1.0)));
     prm.scale = 1.0;
+    prm.clip = camera->getClip();
+
+    prm.dmWorld = glm::dmat4(prm.urot);
+    prm.dmWorld = glm::translate(prm.dmWorld, prm.cpos);
 
     logger->debug("Object name:     {}\n", object->getName());
     logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
@@ -564,9 +614,9 @@ void SurfaceManager::render(SurfaceTile *tile)
     }
 }
 
-void SurfaceManager::render(const glm::dmat4 &dmWorld, const ObjectProperties &op)
+void SurfaceManager::renderBody(const ObjectProperties &op)
 {
-    setRenderParams(dmWorld);
+    setRenderParams(op);
 
     for (int idx = 0; idx < 2; idx++)
         process(tiles[idx]);
@@ -574,11 +624,11 @@ void SurfaceManager::render(const glm::dmat4 &dmWorld, const ObjectProperties &o
         render(tiles[idx]);
 }
 
-void SurfaceManager::renderStar(const glm::dmat4 &dmWorld, const ObjectProperties &op)
+void SurfaceManager::renderStar(const ObjectProperties &op)
 {
     // if (meshStar == nullptr)
     //     return;
-    setRenderParams(dmWorld);
+    setRenderParams(op);
     // if (meshStar->vao == nullptr)
     //     meshStar->upload();
 

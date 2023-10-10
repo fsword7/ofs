@@ -6,6 +6,8 @@
 #pragma once
 
 #include "utils/tree.h"
+#include "ztreemgr.h"
+#include "texmgr.h"
 #include "shader.h"
 
 #define ELEV_STRIDE 0
@@ -105,6 +107,9 @@ private:
 
     SurfaceTile *parentTile = nullptr;
     Mesh *mesh = nullptr;
+
+    bool txOwn = false;
+    Texture *txImage = nullptr;
 };
 
 class SurfaceHandler
@@ -154,12 +159,13 @@ public:
     // Creating star surface - icosphere
     Mesh *createIcosphere(int maxlod);
 
-    void setRenderParams(const glm::dmat4 &dmWorld);
+    void setRenderParams(const ObjectProperties &op);
 
     void process(SurfaceTile *tile);
     void render(SurfaceTile *tile); 
-    void render(const glm::dmat4 &dmWorld, const ObjectProperties &op);
-    void renderStar(const glm::dmat4 &dmWorld, const ObjectProperties &op);
+
+    void renderBody(const ObjectProperties &op);
+    void renderStar(const ObjectProperties &op);
 
     struct renderParams
     {
@@ -175,7 +181,8 @@ public:
     
         glm::dmat4  dmWorld;        // model matrix
         glm::dmat4  dmViewProj;     // view/projection matrix
-        
+        glm::dvec2  clip;           // camera clip for logarthmic depth
+   
     } prm;
 
 private:
@@ -202,6 +209,9 @@ private:
     vec3Uniform uCentralDir;
     vec2Uniform uCamClip;
 
+    TextureManager tmgr;
+
+    zTreeManager *zTrees[5] = {};
     SurfaceTile *tiles[2];
 
     ObjectType objType = objUnknown;

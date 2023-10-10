@@ -22,6 +22,7 @@ set(OGL_CPP_SRCS
     vobject.cpp
     vstar.cpp
     vvessel.cpp
+    ztreemgr.cpp
     ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_glfw.cpp
     ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_opengl3.cpp
 )
@@ -40,6 +41,7 @@ set(OGL_H_SRCS
     vobject.h
     vstar.h
     vvessel.h
+    ztreemgr.h
 )
 
 set (OGL_SHADERS
@@ -73,6 +75,7 @@ target_link_libraries(glclient
     imgui
     OpenGL::GL
     fmt::fmt
+    ZLIB::ZLIB
 )
 if (MINGW)
 target_link_libraries(glclient

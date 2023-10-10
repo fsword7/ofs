@@ -38,13 +38,9 @@ void vObject::update(int now)
     vdist = glm::length(vpos);
 
     grot = glm::dmat3(1.0); // ofsGetObjectGlobalRotation(object);
-    dmWorld = {
-        { grot[0][0], grot[0][1], grot[0][2], 0 },
-        { grot[1][0], grot[1][1], grot[1][2], 0 },
-        { grot[2][0], grot[2][1], grot[2][2], 0 },
-        { vpos.x, vpos.y, vpos.z, 1.0}
-    };
 
+    dmWorld = glm::dmat4(grot);
+    dmWorld = glm::translate(dmWorld, vpos);
 }
 
 // ******** Scene ********

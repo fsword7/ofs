@@ -62,6 +62,7 @@ void Scene::renderSystemObjects()
     {
         ObjectProperties op;
 
+        op.mjd   = ole.mjd;
         op.color = ole.color;
         op.orad  = ole.objSize;
         op.opos  = ole.opos;
@@ -72,7 +73,6 @@ void Scene::renderSystemObjects()
 
         logger->debug("Rendering {}...\n", ole.object->getName());
 
-        ole.visual->update(now);
         ole.visual->render(op);
     }
 }

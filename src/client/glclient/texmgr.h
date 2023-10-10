@@ -27,6 +27,8 @@ public:
     TextureManager() = default;
     ~TextureManager() = default;
 
+    void loadDDSTextureFromMemory(Texture **txImage, const uint8_t *buf, uint32_t nbuf, uint32_t flags);
+
 private:
 
 };

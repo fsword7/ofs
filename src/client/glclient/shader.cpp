@@ -200,8 +200,8 @@ ShaderStatus ShaderSource::compile(const std::vector<str_t> &source)
 
             dsrc[idx] += ch;
         }
-        logger->verbose("After include parser: \n");
-        dump(dsrc[idx]);
+        // logger->verbose("After include parser: \n");
+        // dump(dsrc[idx]);
         src[idx] = dsrc[idx].c_str();
     }
  
@@ -225,8 +225,8 @@ ShaderStatus ShaderSource::create(ShaderManager *shmgr, ShaderType type, const s
     ShaderStatus status;
     str_t log;
 
-    for (unsigned int idx = 0; idx < source.size(); idx++)
-        newShader->dump(source[idx]);
+    // for (unsigned int idx = 0; idx < source.size(); idx++)
+    //     newShader->dump(source[idx]);
 
     status = newShader->compile(source);
     if (status != shrSuccessful)

@@ -29,5 +29,5 @@ void vStar::update(int now)
 
 void vStar::render(const ObjectProperties &op)
 {
-    smgr->renderStar(dmWorld, op);
+    smgr->renderStar(op);
 }
