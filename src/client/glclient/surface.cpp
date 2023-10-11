@@ -125,7 +125,7 @@ void SurfaceTile::render()
         txImage->bind();
 
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glCullFace(GL_FRONT);
     }
 
     mgr.uViewProj = glm::mat4(mgr.prm.dmViewProj);
@@ -452,7 +452,7 @@ void SurfaceManager::setRenderParams(const ObjectProperties &op)
     double cdist;
     Camera *camera = scene.getCamera();
 
-    prm.maxlod = 1;
+    prm.maxlod = 16;
     resScale = 1400.0 / double(camera->getHeight());
 
     prm.dmViewProj = camera->getProjMatrix() * camera->getViewMatrix();
@@ -478,10 +478,10 @@ void SurfaceManager::setRenderParams(const ObjectProperties &op)
     prm.dmWorld = glm::dmat4(prm.urot);
     prm.dmWorld = glm::translate(prm.dmWorld, prm.cpos);
 
-    logger->debug("Object name:     {}\n", object->getName());
-    logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
-    logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
-    logger->debug("Camera distance: {}\n", prm.cdist);
+    // logger->debug("Object name:     {}\n", object->getName());
+    // logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
+    // logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
+    // logger->debug("Camera distance: {}\n", prm.cdist);
 }
 
 void SurfaceManager::process(SurfaceTile *tile)
@@ -495,7 +495,7 @@ void SurfaceManager::process(SurfaceTile *tile)
 
     tile->type = SurfaceTile::tileRendering;
     
-    static const double trad0 = sqrt(2.0)*(pi/2.0);
+    static const double trad0 = sqrt(3.0)*(pi/2.0);
     double trad  = trad0 / double(nlat);
     double alpha = acos(glm::dot(prm.cdir, tile->center));
     double adist = alpha - trad;
@@ -716,18 +716,18 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
     {
         lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
         slat = sin(lat), clat = cos(lat);
-        tu = range.tumin + tur * float(y)/float(grid);
+        tv = range.tvmax - tvr * float(y)/float(grid);
 
         for (int x = 0; x <= grid; x++)
         {
             lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
             slng = sin(lng), clng = cos(lng);
-            tv = range.tvmin + tvr + float(x)/float(grid);
+            tu = range.tumin + tur * float(x)/float(grid);
             erad = radius + gelev;
 
             if (elev != nullptr)
                 erad += double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * selev;
-            nml = glm::dvec3(clat*clng, slat, clat*slng);
+            nml = glm::dvec3(clat*clng, slat, clat*-slng);
             pos = nml * erad;
 
             vtx[cvtx].vx = float(pos.x);
