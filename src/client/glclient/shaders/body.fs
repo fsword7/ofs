@@ -7,8 +7,8 @@ uniform vec2  uCamClip;
 
 layout (binding = 0) uniform sampler2D sTile;
 
-in vec4 texCoord;
-in vec3 normal;
+// in vec3 normal;
+in vec2 texCoord;
 
 out vec4 fragColor;
 

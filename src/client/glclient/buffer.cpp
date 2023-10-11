@@ -9,12 +9,12 @@
 
 // ******** vertex buffer objects ********
 
-VertexBuffer::VertexBuffer(void *data, size_t size)
-: szData(size)
+VertexBuffer::VertexBuffer(void *data, size_t size, int mode)
+: szData(size), mode(mode)
 {
     glGenBuffers(1, &id);
     glBindBuffer(GL_ARRAY_BUFFER, id);
-    glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size, data, mode);
 }
 
 VertexBuffer::VertexBuffer(int nBuffers)
@@ -28,11 +28,12 @@ VertexBuffer::~VertexBuffer()
     glDeleteBuffers(1, &id);
 }
 
-void VertexBuffer::allocate(size_t size, void *data, int mode)
+void VertexBuffer::allocate(size_t size, void *data, int nmode)
 {
     glBindBuffer(GL_ARRAY_BUFFER, id);
-    glBufferData(GL_ARRAY_BUFFER, size, data, mode);
+    glBufferData(GL_ARRAY_BUFFER, size, data, nmode);
     szData = size;
+    mode = nmode;
 }
 
 void VertexBuffer::update(void *data, size_t size) const
@@ -65,11 +66,12 @@ void VertexBuffer::unbind() const
 
 // ******** index buffer objects ********
 
-IndexBuffer::IndexBuffer(indexType *data, size_t size)
+IndexBuffer::IndexBuffer(indexType *data, size_t size, int mode)
+: mode(mode)
 {
     glGenBuffers(1, &id);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(indexType), data, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(indexType), data, mode);
     count = size;
 }
 

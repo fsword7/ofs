@@ -37,7 +37,7 @@ struct Mesh
 
     void upload();
 
-    VertexArray    *vao = nullptr;;
+    VertexArray    *vao = nullptr;
     VertexBuffer   *vbo = nullptr;
     IndexBuffer    *ibo = nullptr;
 
@@ -84,6 +84,8 @@ public:
 
     inline glm::dvec3 getCenter() const     { return center; }
     inline glm::dvec3 getWorld() const      { return wpos; }
+
+    bool isInView(const glm::dmat4 &transform);
 
     SurfaceTile *createChild(int idx);
     void setCenter(glm::dvec3 &center, glm::dvec3 &wpos);

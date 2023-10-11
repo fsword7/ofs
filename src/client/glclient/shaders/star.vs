@@ -11,8 +11,8 @@ uniform mat4 uModel;
 
 // out vec4 eyePosition;
 // out vec3 normal;
-out vec2 texCoord;
 out vec3 fPosition;
+out vec2 texCoord;
 out float vTime;
 
 void main()

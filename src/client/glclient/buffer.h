@@ -6,7 +6,7 @@
 class VertexBuffer
 {
 public:
-    VertexBuffer(void *data, size_t size);
+    VertexBuffer(void *data, size_t size, int mode = GL_DYNAMIC_DRAW);
     VertexBuffer(int nBuffers);
     ~VertexBuffer();
 
@@ -29,7 +29,7 @@ class IndexBuffer
     using indexType = uint16_t;
 
 public:
-    IndexBuffer(indexType *data, size_t size);
+    IndexBuffer(indexType *data, size_t size, int mode = GL_STATIC_DRAW);
     ~IndexBuffer();
 
     inline uint32_t getCount() const { return count; }
@@ -42,6 +42,7 @@ public:
 
 private:
     GLuint id;
+    int mode;
     uint32_t count;
 };
 

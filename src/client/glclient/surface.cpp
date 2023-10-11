@@ -65,6 +65,11 @@ void SurfaceTile::setCenter(glm::dvec3 &cnml, glm::dvec3 &wpos)
     wpos = glm::dvec3(acos(cnml.y) - (pi / 2.0), atan2(cnml.z, -cnml.x), 0);
 }
 
+bool SurfaceTile::isInView(const glm::dmat4 &transform)
+{
+    return false;
+}
+
 void SurfaceTile::load()
 {
     type = tileLoading;
@@ -75,11 +80,11 @@ void SurfaceTile::load()
     if (mgr.zTrees[0] != nullptr)
     {
         szImage = mgr.zTrees[0]->read(lod+4, ilat, ilng, &ddsImage);
-        logger->info("Yes here - {} bytes read\n", szImage);
         if (szImage > 0 && ddsImage != nullptr)
             mgr.tmgr.loadDDSTextureFromMemory(&txImage, ddsImage, szImage, 0);
-        if (txImage != nullptr)
-            logger->info("Loaded texture (ID = {})\n", txImage->id);
+        // if (txImage != nullptr)
+        //     logger->info("Loaded texture (ID {}: ({}, {}))\n",
+        //         txImage->id, txImage->txWidth, txImage->txHeight);
         delete ddsImage;
     }
 
@@ -99,17 +104,23 @@ void SurfaceTile::load()
 
 void SurfaceTile::render()
 {
+    // logger->info("Yes, here 1\n");
     if (mesh == nullptr)
         return;
     if (mesh->vao == nullptr)
-        mesh->upload();
-
-    mgr.pgm->use();
+    {
+        if (type & TILE_VALID)
+            mesh->upload();
+        else
+            return;
+    }
+    // logger->info("Yes, here 2\n");
 
     mesh->vao->bind();
 
     if (txImage != nullptr)
     {
+        // logger->info("Yes, here 3\n");
         glActiveTexture(GL_TEXTURE0);
         txImage->bind();
 
@@ -130,10 +141,12 @@ void SurfaceTile::render()
     //     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     if (txImage != nullptr)
+    {
         glDisable(GL_CULL_FACE);
+        txImage->unbind();
+    }
 
     mesh->vao->unbind();
-    mgr.pgm->release();
 }
 
 Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
@@ -620,8 +633,10 @@ void SurfaceManager::renderBody(const ObjectProperties &op)
 
     for (int idx = 0; idx < 2; idx++)
         process(tiles[idx]);
+    pgm->use();
     for (int idx = 0; idx < 2; idx++)
         render(tiles[idx]);
+    pgm->release();
 }
 
 void SurfaceManager::renderStar(const ObjectProperties &op)
@@ -1209,7 +1224,7 @@ void Mesh::upload()
     vao = new VertexArray();
     vao->bind();
 
-    vbo = new VertexBuffer(vtx, nvtx * sizeof(Vertex));
+    vbo = new VertexBuffer(vtx, nvtx * sizeof(Vertex), GL_STATIC_DRAW);
     vbo->bind();
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
@@ -1224,9 +1239,10 @@ void Mesh::upload()
     glEnableVertexAttribArray(2);
     checkErrors();
 
-    vbo->unbind();
+    // vbo->unbind();
 
     ibo = new IndexBuffer(idx, nidx);
+    ibo->bind();
 
     vao->unbind();
 }

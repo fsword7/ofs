@@ -8,15 +8,15 @@ uniform mat4 uViewProj;
 uniform mat4 uView;
 uniform mat4 uModel;
 
-out vec4 eyePosition;
-out vec3 normal;
+// out vec4 eyePosition;
+// out vec3 normal;
 out vec2 texCoord;
 
 void main()
 {
     gl_Position = uViewProj * uModel * vec4(vPosition, 1.0);
     texCoord = vTexCoord;
-    normal = mat3(transpose(inverse(uModel))) * vNormal;
+    // normal = mat3(transpose(inverse(uModel))) * vNormal;
 
-    eyePosition = uView * uModel * vec4(vPosition, 1.0);
+    // eyePosition = uView * uModel * vec4(vPosition, 1.0);
 }
