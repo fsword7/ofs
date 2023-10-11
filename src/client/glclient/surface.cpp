@@ -70,6 +70,31 @@ bool SurfaceTile::isInView(const glm::dmat4 &transform)
     return false;
 }
 
+void SurfaceTile::setSubregionRange(const tcRange &range)
+{
+    if (ilng & 1)
+    {   // Right column of tile
+        txRange.tumin = (range.tumin + range.tumax) / 2.0;
+        txRange.tumax = range.tumax;
+    }
+    else
+    {   // Left column of tile
+        txRange.tumin = range.tumin;
+        txRange.tumax = (range.tumin + range.tumax) / 2.0;
+    }
+
+    if (ilat & 1)
+    {   // Top row of tile
+        txRange.tvmin = (range.tvmin + range.tvmax) / 2.0;
+        txRange.tvmax = range.tvmax;
+    }
+    else
+    {   // Bottom row of tile
+        txRange.tvmin = range.tvmin;
+        txRange.tvmax = (range.tvmin + range.tvmax) / 2.0;
+    }
+}
+
 void SurfaceTile::load()
 {
     type = tileLoading;
@@ -92,7 +117,18 @@ void SurfaceTile::load()
         txOwn = true;
     else
     {
-        // Get subregion fron ancestor
+        // Non-existent tile. Get lower LOD tile from
+        // ancestor and set subregion range of that.
+        SurfaceTile *pTile = dynamic_cast<SurfaceTile *>(getParent());
+        if (pTile != nullptr)
+        {
+            txImage = pTile->getTexture();
+            txOwn = false;
+            setSubregionRange(pTile->txRange);
+
+            // Get parent tile with last own texture image.
+            parentTile = pTile->txOwn ? pTile : pTile->parentTile;
+        }
     }
 
     if (lod == 0)
@@ -125,7 +161,7 @@ void SurfaceTile::render()
         txImage->bind();
 
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
+        glCullFace(GL_BACK);
     }
 
     mgr.uViewProj = glm::mat4(mgr.prm.dmViewProj);
@@ -478,10 +514,10 @@ void SurfaceManager::setRenderParams(const ObjectProperties &op)
     prm.dmWorld = glm::dmat4(prm.urot);
     prm.dmWorld = glm::translate(prm.dmWorld, prm.cpos);
 
-    // logger->debug("Object name:     {}\n", object->getName());
-    // logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
-    // logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
-    // logger->debug("Camera distance: {}\n", prm.cdist);
+    logger->debug("Object name:     {}\n", object->getName());
+    logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
+    logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
+    logger->debug("Camera distance: {}\n", prm.cdist);
 }
 
 void SurfaceManager::process(SurfaceTile *tile)
@@ -727,7 +763,7 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
 
             if (elev != nullptr)
                 erad += double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * selev;
-            nml = glm::dvec3(clat*clng, slat, clat*-slng);
+            nml = glm::dvec3(clat*clng, slat, clat*slng);
             pos = nml * erad;
 
             vtx[cvtx].vx = float(pos.x);

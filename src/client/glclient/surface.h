@@ -84,11 +84,13 @@ public:
 
     inline glm::dvec3 getCenter() const     { return center; }
     inline glm::dvec3 getWorld() const      { return wpos; }
+    inline Texture *getTexture() const      { return txImage; }
 
     bool isInView(const glm::dmat4 &transform);
 
     SurfaceTile *createChild(int idx);
     void setCenter(glm::dvec3 &center, glm::dvec3 &wpos);
+    void setSubregionRange(const tcRange &range);
 
     void load();
     void render();
@@ -112,6 +114,7 @@ private:
 
     bool txOwn = false;
     Texture *txImage = nullptr;
+    tcRange txRange;
 };
 
 class SurfaceHandler
