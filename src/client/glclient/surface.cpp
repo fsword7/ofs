@@ -364,6 +364,7 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
         uView = mat4Uniform(pgm->getID(), "uView");
         uModel = mat4Uniform(pgm->getID(), "uModel");
+        uCamClip = vec2Uniform(pgm->getID(), "uCamClip");
 
         pgm->release();
 
@@ -451,7 +452,7 @@ void SurfaceManager::setRenderParams(const ObjectProperties &op)
     double cdist;
     Camera *camera = scene.getCamera();
 
-    prm.maxlod = 19;
+    prm.maxlod = 1;
     resScale = 1400.0 / double(camera->getHeight());
 
     prm.dmViewProj = camera->getProjMatrix() * camera->getViewMatrix();
