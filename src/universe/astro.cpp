@@ -31,9 +31,9 @@ namespace astro
         theta = ofs::radians(ra) + pi;
         phi   = ofs::radians(de) - pi/2.0;
 
-        opos  = glm::dvec3(sin(phi)*cos(theta), cos(phi), sin(phi)*-sin(theta)) * pc;
+        opos  = glm::dvec3(cos(theta)*sin(phi), cos(phi), sin(theta)*sin(phi)) * pc;
 
-        return J2000ObliquityRotation2 * opos;
+        return J2000ObliquityRotation * opos;
     }
 
     str_t getMJDDateStr(double mjd)

@@ -758,6 +758,7 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
         {
             lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
             slng = sin(lng), clng = cos(lng);
+            // tu = range.tumin + tur * float(x)/float(grid);
             tu = range.tumin + tur * float(x)/float(grid);
             erad = radius + gelev;
 
