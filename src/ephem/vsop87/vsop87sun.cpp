@@ -6732,4 +6732,4 @@ static vsop87s_t sun_Z[] = {
 		VSOP_SERIES(sun_z5)
 };
 
-static vsop87p_t sun_XYZ = vsop87p_t('E', VSOP_PARAM(sun_X), VSOP_PARAM(sun_Y), VSOP_PARAM(sun_Z));
+static vsop87p_t sun_XYZ = vsop87p_t('E', "Sun", VSOP_PARAM(sun_X), VSOP_PARAM(sun_Y), VSOP_PARAM(sun_Z));

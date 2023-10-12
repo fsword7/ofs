@@ -24,10 +24,11 @@ struct vsop87s_t
 
 struct vsop87p_t
 {
-    vsop87p_t(char type, vsop87s_t *sA, int nA, vsop87s_t *sB, int nB, vsop87s_t *sC, int nC)
-    : groups{sA, sB, sC}, alpha{nA, nB, nC}, type(type)
+    vsop87p_t(char type, cstr_t &name, vsop87s_t *sA, int nA, vsop87s_t *sB, int nB, vsop87s_t *sC, int nC)
+    : groups{sA, sB, sC}, alpha{nA, nB, nC}, name(name), type(type)
     { }
 
+    cstr_t     name;
     char       type;
     int        alpha[3];
     vsop87s_t *groups[3];

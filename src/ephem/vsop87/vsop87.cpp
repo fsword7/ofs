@@ -68,6 +68,7 @@ void OrbitVSOP87::setSeries(char series)
 void OrbitVSOP87::getEphemeris(double mjd, double *res)
 {
 	static const double mjd2000 = 51544.5;
+	static const double jd2000 = 2451545.0;
 	static const double a1000 = 365250.0;
 	static const double rsec = 1.0 / (a1000 * 86400.0);
 
@@ -130,6 +131,13 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 				(alpha > 0 ? alpha * t[alpha - 1] * tm : 0.0);
 		}		
 	}
+
+	// Logger::getLogger()->debug("VSOP87: Name: {} Type: {} MJD: {} JD: {}\n",
+	// 	series.name, series.type, mjd, (t[1] * a1000) + jd2000);
+	// Logger::getLogger()->debug("VSOP87: P({:14.10f}, {:14.10f}, {:14.10f})\n",
+	// 	std::fmod(res[0], pi*2), res[1], res[2]);
+	// Logger::getLogger()->debug("VSOP87: V({:14.10f}, {:14.10f}, {:14.10f})\n",
+	// 	res[3], res[4], res[5]);
 
 	if (fmtFlags & EPHEM_POLAR)
 	{

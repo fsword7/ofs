@@ -3705,4 +3705,4 @@ static vsop87s_t jupiter_R[] = {
 		VSOP_SERIES(jupiter_r5)
 };
 
-static vsop87p_t jupiter_LBR = vsop87p_t('B', VSOP_PARAM(jupiter_L), VSOP_PARAM(jupiter_B), VSOP_PARAM(jupiter_R));
+static vsop87p_t jupiter_LBR = vsop87p_t('B', "Jupiter", VSOP_PARAM(jupiter_L), VSOP_PARAM(jupiter_B), VSOP_PARAM(jupiter_R));
