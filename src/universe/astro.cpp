@@ -31,7 +31,8 @@ namespace astro
         theta = ofs::radians(ra) + pi;
         phi   = ofs::radians(de) - pi/2.0;
 
-        opos  = glm::dvec3(cos(theta)*sin(phi), cos(phi), sin(theta)*sin(phi)) * pc;
+        // opos  = glm::dvec3(cos(theta)*sin(phi), cos(phi), sin(theta)*sin(phi)) * pc;
+        opos  = glm::dvec3(cos(theta)*sin(phi), cos(phi), -sin(theta)*sin(phi)) * pc;
 
         return J2000ObliquityRotation * opos;
     }

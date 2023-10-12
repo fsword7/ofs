@@ -107,7 +107,7 @@ void Universe::start(const TimeDate &td)
     // player->attach(sun);
 
     glm::dvec3 epos = earth->getoPosition();
-    epos.z -= earth->getRadius() * 4.0;
+    epos.z += earth->getRadius() * 4.0;
     cam->setPosition(epos);
     cam->look(earth->getoPosition());
     cam->update();

@@ -21,7 +21,7 @@
 static tcRange range = { 0, 1, 0, 1 };
 
 SurfaceTile::SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, SurfaceTile *parent)
-: Tree(parent), mgr(mgr), lod(lod), ilat(ilat), ilng(ilng)
+: Tree(parent), mgr(mgr), lod(lod), ilat(ilat), nlat(1 << lod), ilng(ilng), nlng(2 << lod)
 {
     setCenter(center, wpos);
 }
@@ -104,7 +104,7 @@ void SurfaceTile::load()
 
     if (mgr.zTrees[0] != nullptr)
     {
-        szImage = mgr.zTrees[0]->read(lod+4, ilat, ilng, &ddsImage);
+        szImage = mgr.zTrees[0]->read(lod+4, ilat, nlng - ilng - 1, &ddsImage);
         if (szImage > 0 && ddsImage != nullptr)
             mgr.tmgr.loadDDSTextureFromMemory(&txImage, ddsImage, szImage, 0);
         // if (txImage != nullptr)
@@ -759,7 +759,7 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
             lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
             slng = sin(lng), clng = cos(lng);
             // tu = range.tumin + tur * float(x)/float(grid);
-            tu = range.tumin + tur * float(x)/float(grid);
+            tu = range.tumax - tur * float(x)/float(grid);
             erad = radius + gelev;
 
             if (elev != nullptr)

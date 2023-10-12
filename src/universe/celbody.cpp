@@ -107,7 +107,8 @@ void CelestialBody::attach(CelestialBody *parent)
 
 void CelestialBody::convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel)
 {
-    double cosp = cos(pol[0]), sinp = sin(pol[0]); // Phi
+    // double cosp = cos(pol[0]), sinp = sin(pol[0]); // Phi
+    double cosp = cos(pol[0]), sinp = -sin(pol[0]); // Phi
     double cost = cos(pol[1]), sint = sin(pol[1]); // Theta
     double rad  = pol[2] * KM_PER_AU;
     double xz   = rad * cost;

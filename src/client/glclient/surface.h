@@ -106,6 +106,7 @@ private:
 
     int lod;
     int ilat, ilng;
+    int nlat, nlng;
     glm::dvec3 center;
     glm::dvec3 wpos;
 

@@ -44,7 +44,8 @@ namespace astro
 
     inline double Day(double t)     { return t * day; }
 
-    const glm::dquat J2000ObliquityRotation = glm::dquat({J2000Obliquity, 0, 0});
+    // const glm::dquat J2000ObliquityRotation = glm::dquat({J2000Obliquity, 0, 0});
+    const glm::dquat J2000ObliquityRotation = glm::dquat({-J2000Obliquity, 0, 0});
 
     // vec3d_t convertEquatorialToEcliptic(double ra, double de, double pc);
     glm::dvec3 convertEquatorialToEcliptic(double ra, double de, double pc);
