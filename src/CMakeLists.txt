@@ -17,7 +17,14 @@ set(OFS_CPP_SRCS
     ephem/earth/nrlmsise00.cpp
     ephem/moon/elp82.cpp
     ephem/vsop87/earth.cpp
+    ephem/vsop87/jupiter.cpp
+    ephem/vsop87/mars.cpp
+    ephem/vsop87/mercury.cpp
+    ephem/vsop87/neptune.cpp
+    ephem/vsop87/saturn.cpp
     ephem/vsop87/sol.cpp
+    ephem/vsop87/uranus.cpp
+    ephem/vsop87/venus.cpp
     ephem/vsop87/vsop87.cpp
     ephem/earth-p03lp.cpp
     ephem/elements.cpp
@@ -26,6 +33,7 @@ set(OFS_CPP_SRCS
     ephem/iau-wgccre.cpp
     ephem/orbit.cpp
     ephem/rotation.cpp
+    ephem/spice.cpp
     main/app.cpp
     main/guimgr.cpp
     main/graphics.cpp
@@ -90,13 +98,21 @@ set(OFS_H_SRCS
     ephem/earth/nrlmsise00.hpp
     ephem/moon/elp82.h
     ephem/vsop87/earth.h
+    ephem/vsop87/jupiter.h
+    ephem/vsop87/mars.h
+    ephem/vsop87/mercury.h
+    ephem/vsop87/neptune.h
+    ephem/vsop87/saturn.h
     ephem/vsop87/sol.h
+    ephem/vsop87/uranus.h
+    ephem/vsop87/venus.h
     ephem/vsop87/vsop87.h
     ephem/elements.h
     ephem/elp-mpp02.h
     ephem/ephemeris.h
     ephem/orbit.h
     ephem/rotation.h
+    ephem/spice.h
     main/app.h
     main/core.h
     main/guimgr.h

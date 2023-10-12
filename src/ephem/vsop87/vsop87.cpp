@@ -11,14 +11,14 @@
 #include "universe/astro.h"
 
 #include "ephem/vsop87/sol.h"
-// #include "ephem/vsop87/mercury.h"
-// #include "ephem/vsop87/venus.h"
+#include "ephem/vsop87/mercury.h"
+#include "ephem/vsop87/venus.h"
 #include "ephem/vsop87/earth.h"
-// #include "ephem/vsop87/mars.h"
-// #include "ephem/vsop87/jupiter.h"
-// #include "ephem/vsop87/saturn.h"
-// #include "ephem/vsop87/uranus.h"
-// #include "ephem/vsop87/neptune.h"
+#include "ephem/vsop87/mars.h"
+#include "ephem/vsop87/jupiter.h"
+#include "ephem/vsop87/saturn.h"
+#include "ephem/vsop87/uranus.h"
+#include "ephem/vsop87/neptune.h"
 
 #define VSOP_SERIES(series) vsop87s_t(series, ARRAY_SIZE(series))
 #define VSOP_PARAM(series)  (series), ARRAY_SIZE(series)
@@ -162,22 +162,22 @@ OrbitEphemeris *OrbitVSOP87::create(CelestialBody &cbody, cstr_t &name)
 {
 	if (name == "vsop87e-sol")
 		return new OrbitVSOP87Sol(cbody, sun_XYZ);
-    // if (name == "vsop87b-mercury")
-    //     return new OrbitVSOP87Mercury(cbody);
-    // if (name == "vsop87b-venus")
-    //     return new OrbitVSOP87Venus(cbody);
+    if (name == "vsop87b-mercury")
+        return new OrbitVSOP87Mercury(cbody, mercury_LBR);
+    if (name == "vsop87b-venus")
+        return new OrbitVSOP87Venus(cbody, venus_LBR);
     if (name == "vsop87b-earth")
         return new OrbitVSOP87Earth(cbody, earth_LBR);
-    // if (name == "vsop87b-mars")
-    //     return new OrbitVSOP87Mars(cbody);
-    // if (name == "vsop87b-jupiter")
-    //     return new OrbitVSOP87Jupiter(cbody);
-    // if (name == "vsop87b-saturn")
-    //     return new OrbitVSOP87Saturn(cbody);
-    // if (name == "vsop87b-uranus")
-    //     return new OrbitVSOP87Uranus(cbody);
-    // if (name == "vsop87b-neptune")
-    //     return new OrbitVSOP87Neptune(cbody);
+    if (name == "vsop87b-mars")
+        return new OrbitVSOP87Mars(cbody, mars_LBR);
+    if (name == "vsop87b-jupiter")
+        return new OrbitVSOP87Jupiter(cbody, jupiter_LBR);
+    if (name == "vsop87b-saturn")
+        return new OrbitVSOP87Saturn(cbody, saturn_LBR);
+    if (name == "vsop87b-uranus")
+        return new OrbitVSOP87Uranus(cbody, uranus_LBR);
+    if (name == "vsop87b-neptune")
+        return new OrbitVSOP87Neptune(cbody, neptune_LBR);
 
     return nullptr;
 }
