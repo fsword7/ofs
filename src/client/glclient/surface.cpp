@@ -21,7 +21,8 @@
 static tcRange range = { 0, 1, 0, 1 };
 
 SurfaceTile::SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, SurfaceTile *parent)
-: Tree(parent), mgr(mgr), lod(lod), ilat(ilat), nlat(1 << lod), ilng(ilng), nlng(2 << lod)
+: Tree(parent), mgr(mgr), lod(lod), ilat(ilat), nlat(1 << lod), ilng(ilng), nlng(2 << lod),
+  txRange(range)
 {
     setCenter(center, wpos);
 }
@@ -72,7 +73,7 @@ bool SurfaceTile::isInView(const glm::dmat4 &transform)
 
 void SurfaceTile::setSubregionRange(const tcRange &range)
 {
-    if (ilng & 1)
+    if ((ilng & 1) == 0)
     {   // Right column of tile
         txRange.tumin = (range.tumin + range.tumax) / 2.0;
         txRange.tumax = range.tumax;
@@ -134,7 +135,7 @@ void SurfaceTile::load()
     if (lod == 0)
         mesh = createHemisphere(32, nullptr, 0);
     else
-        mesh = mgr.createSpherePatch(32, lod, ilat, ilng, range);
+        mesh = mgr.createSpherePatch(32, lod, ilat, ilng, txRange);
     type = tileInactive;
 }
 
