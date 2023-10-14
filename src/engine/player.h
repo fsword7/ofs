@@ -10,8 +10,8 @@ class Player;
 
 enum cameraMode {
     camGlobalFrame,
-    camTargetRelative
-
+    camTargetRelative,
+    camGroundObserver
 };
 
 enum travelMode
@@ -19,6 +19,17 @@ enum travelMode
     travelFreeFlight,
     travelExternal,
     travelCocpkit
+};
+
+struct GroundObserver
+{
+    double lng, lat;    // Longtiude/Latiude location
+    double alt;         // Altitude
+    double alt0;        // Altitude at sea level
+    double phi, theta;  // Camera direction at local horizon frame
+    double panSpeed;    // speed at ground for movement controls (m/s)
+
+    glm::dmat3 R;       // local horizon frame
 };
 
 class OFSAPI Camera
@@ -112,6 +123,8 @@ public:
     void orbit(double phi, double theta, double dist);
     void rotateView(double phi, double theta);
 
+    void setGroundMode(Object *object, double lng, double lat, double alt);
+
 private:
     Camera cam;
     // PlayerFrame *frame = nullptr;
@@ -128,6 +141,8 @@ private:
     double etheta = 0.0;    // current theta rotation (external)
     double cphi = 0.0;      // current phi rotation (free)
     double ctheta = 0.0;    // current theta rotation (free)
+
+    GroundObserver go;
 
     // Rotation: X = Phi, Y = Theta, Z = distance
     glm::dvec3 orot;        // external camera from object frame

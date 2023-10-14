@@ -180,6 +180,9 @@ void Player::update(const TimeDate &td)
             grot  = tgtObject->getuOrientation(0) * cam.rrot;
             gqrot = grot;
             break;
+
+        case camGroundObserver:
+            break;
         };
     }
     else
@@ -272,5 +275,20 @@ void Player::rotatePhi(double phi)
 // Y (theta) rotation
 void Player::rotateTheta(double theta)
 {
+
+}
+
+void Player::setGroundMode(Object *object, double lng, double lat, double alt)
+{
+    go.lng = lng;
+    go.lat = lat;
+    go.alt = alt;
+
+    double clng = cos(lng), slng = sin(lng);
+    double clat = cos(lat), slat = sin(lat);
+
+    go.R = { clng*slat, clng*clat, -slng,
+            -clat,      slat,       0,
+             slng*slat, slng*clat,  clng };
 
 }
