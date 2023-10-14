@@ -1,9 +1,11 @@
 
 set(OFS_CPP_SRCS
     engine/engine.cpp
+    # engine/frame.cpp
     engine/headup.cpp
     engine/mfdpanel.cpp
     engine/object.cpp
+    # engine/observer.cpp
     engine/panel.cpp
     engine/player.cpp
     engine/rigidbody.cpp
@@ -65,13 +67,13 @@ set(OFS_CPP_SRCS
     universe/body.cpp
     universe/celbody.cpp
     universe/constellations.cpp
-    universe/frame.cpp
+    # universe/frame.cpp
     universe/psystem.cpp
     universe/star.cpp
     universe/starlib.cpp
     universe/startree.cpp
     universe/surface.cpp
-    universe/system.cpp
+    # universe/system.cpp
     universe/universe.cpp
     utils/logger.cpp
     utils/string.cpp
@@ -84,8 +86,10 @@ set(OFS_H_SRCS
     api/module.h
     api/ofsapi.h
     engine/engine.h
+    # engine/frame.h
     engine/mfdpanel.h
     engine/object.h
+    # engine/observer.h
     engine/panel.h
     engine/player.h
     engine/rigidbody.h
@@ -138,14 +142,14 @@ set(OFS_H_SRCS
     universe/body.h
     universe/celbody.h
     universe/constellations.h
-    universe/frame.h
+    # universe/frame.h
     universe/handle.h
     universe/psystem.h
     universe/star.h
     universe/starlib.h
     universe/startree.h
     universe/surface.h
-    universe/system.h
+    # universe/system.h
     universe/universe.h
     utils/color.h
     utils/logger.h

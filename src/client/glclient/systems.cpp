@@ -84,6 +84,9 @@ void Scene::buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
 
     for (auto body : bodies)
     {
+        if (body->getCelestialType() == cbObserver)
+            continue;
+
         {
             glm::dvec3 opos = body->getoPosition();
             glm::dvec3 vpos = opos - obs;

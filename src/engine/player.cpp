@@ -8,6 +8,7 @@
 #include "main/core.h"
 #include "api/ofsapi.h"
 #include "main/timedate.h"
+// #include "engine/frame.h"
 #include "engine/object.h"
 #include "engine/player.h"
 
@@ -97,11 +98,37 @@ double Player::computeCoarseness(double maxCoarseness)
     return coarse;
 }
 
-void Player::attach(Object *object)
+void Player::attach(Object *object, cameraMode mode)
 {
     tgtObject = object;
+
+    modeCamera = mode;
+
+    if (modeExternal)
+    {
+        // Move observer to target object
+        gspos = tgtObject->getuOrientation(0) * cam.rpos;
+        gpos  = tgtObject->getoPosition() + gspos;
+        grot  = tgtObject->getuOrientation(0) * cam.rrot;
+        gqrot = grot;
+    }
+
+    cam.update();
 }
 
+void Player::look(Object *object)
+{
+    if (object == nullptr)
+        return;
+    
+    glm::dvec3 up = { 0, 1, 0 };
+    
+    glm::dvec3 opos = { 0, 0, 0 }; //object->getoPosition();
+    cam.rrot  = glm::lookAt(cam.rpos, opos, up);
+    cam.rqrot = cam.rrot;
+
+    cam.update();
+}
 
 void Player::update(const TimeDate &td)
 {
@@ -145,6 +172,13 @@ void Player::update(const TimeDate &td)
         case camGlobalFrame:
             gpos = cam.rpos;
             grot = cam.rrot;
+            break;
+
+        case camTargetRelative:
+            gspos = tgtObject->getuOrientation(0) * cam.rpos;
+            gpos  = tgtObject->getoPosition() + gspos;
+            grot  = tgtObject->getuOrientation(0) * cam.rrot;
+            gqrot = grot;
             break;
         };
     }
@@ -193,6 +227,9 @@ void Player::orbit(const glm::dquat &drot)
 
 void Player::dolly(double dz)
 {
+    if (tgtObject == nullptr)
+        return;
+
     // double fact = std::max(1.0/opos.z, 1.0/(1.0 - dz));
     // orbit(opos.x, opos.y, opos.z*fact);
 

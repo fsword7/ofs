@@ -34,7 +34,7 @@ void vObject::update(int now)
 
     // gpos  = object->getuPosition(now);
     gpos  = object->getoPosition();
-    vpos  = gpos - scene.getCamera()->getGlobalPosition();
+    vpos  = gpos - scene.getObserver()->getPosition();
     vdist = glm::length(vpos);
 
     grot = glm::dmat3(1.0); // ofsGetObjectGlobalRotation(object);

@@ -15,51 +15,51 @@
 
 // ******** Planetary System ********
 
-PlanetarySystem::PlanetarySystem(CelestialBody *body)
-: body(body), tree(body)
-{
-    bodies.clear();
-}
+// PlanetarySystem::PlanetarySystem(CelestialBody *body)
+// : body(body), tree(body)
+// {
+//     bodies.clear();
+// }
 
-PlanetarySystem::PlanetarySystem(CelestialStar *star)
-: star(star), tree(star)
-{
-    bodies.clear();
-}
+// PlanetarySystem::PlanetarySystem(CelestialStar *star)
+// : star(star), tree(star)
+// {
+//     bodies.clear();
+// }
 
-void PlanetarySystem::addBody(CelestialBody *body)
-{
-    bodies.push_back(body);
-    body->setInSystem(this);
-}
+// void PlanetarySystem::addBody(CelestialBody *body)
+// {
+//     bodies.push_back(body);
+//     body->setInSystem(this);
+// }
 
-void PlanetarySystem::removeBody(CelestialBody *body)
-{
-}
+// void PlanetarySystem::removeBody(CelestialBody *body)
+// {
+// }
 
-CelestialBody *PlanetarySystem::find(cstr_t &name) const
-{
-    for (auto body : bodies)
-    {
-        if (name == body->getsName())
-            return body;
-    }
-    return nullptr;
-}
+// CelestialBody *PlanetarySystem::find(cstr_t &name) const
+// {
+//     for (auto body : bodies)
+//     {
+//         if (name == body->getsName())
+//             return body;
+//     }
+//     return nullptr;
+// }
 
 // ******** Celestial Body ********
 
-PlanetarySystem *CelestialBody::createPlanetarySystem()
-{
-    if (ownSystem != nullptr)
-        return ownSystem;
+// PlanetarySystem *CelestialBody::createPlanetarySystem()
+// {
+//     if (ownSystem != nullptr)
+//         return ownSystem;
 
-    ownSystem = new PlanetarySystem(this);
-    ownSystem->setStar(inSystem->getStar());
-    return ownSystem;
-}
+//     ownSystem = new PlanetarySystem(this);
+//     ownSystem->setStar(inSystem->getStar());
+//     return ownSystem;
+// }
 
-void CelestialBody::attach(CelestialBody *parent)
+void CelestialBody::attach(CelestialBody *parent, frameType type)
 {
     assert(parent != nullptr);
 
@@ -298,15 +298,29 @@ void CelestialBody::updatePostEphemeris(const TimeDate &td)
 
 void CelestialBody::updatePrecission(const TimeDate &td)
 {
+    // Lrel = Lrel0 + precOmega * (td.getMJD1()-relMJD);
+    // double sinl = sin(Lrel), cosl = cos(Lrel);
+
+    // glm::dmat3 Rrel = { cosl,   -sinl*sin_eps,      -sinl*cos_eps, 
+    //                     0,      cos_eps,            -sin_eps,
+    //                     sinl,   cosl*sin_eps,       cosl*cos_eps };
+
 
 }
 
 void CelestialBody::updateRotation(const TimeDate &td)
 {
+    crot = ofs::posangle(Dphi + td.getSimTime1()*rotOmega - Lrel*cos_eps + rotofs);
 
+    double cosr = cos(crot), sinr = sin(crot);
+    s1.R = { cosr, 0.0, -sinr,
+             0.0,  1.0,  0.0,
+             sinr, 0.0,  cosr };
+
+    s1.Q = s1.R;
 }
 
-void CelestialBody::update(bool force)
+void CelestialBody::update(const TimeDate &td, bool force)
 {
 
     RigidBody::update(force);
@@ -339,7 +353,8 @@ double CelestialBody::getApparentMagnitude(glm::dvec3 sun, double irradiance, gl
 
 glm::dmat3 CelestialBody::getBodyFixedFromEcliptic(double tjd) const
 {
-    return (rotation != nullptr ? rotation->getRotation(tjd) : glm::dmat3(1.0)) * bodyFrame->getOrientation(tjd);
+    // return (rotation != nullptr ? rotation->getRotation(tjd) : glm::dmat3(1.0)) * bodyFrame->getOrientation(tjd);
+    return glm::dmat3(1.0);
 }
 
 glm::dvec3 CelestialBody::getPlanetocentric(glm::dvec3 pos) const

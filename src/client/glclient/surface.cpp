@@ -488,6 +488,7 @@ void SurfaceManager::setRenderParams(const ObjectProperties &op)
     glm::dvec3 opos, cpos;
     double cdist;
     Camera *camera = scene.getCamera();
+    Player *player = scene.getObserver();
 
     prm.maxlod = 16;
     resScale = 1400.0 / double(camera->getHeight());
@@ -501,7 +502,7 @@ void SurfaceManager::setRenderParams(const ObjectProperties &op)
     prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
     // opos = object->getuPosition(0);
     opos = object->getoPosition();
-    cpos = camera->getGlobalPosition();
+    cpos = player->getPosition(); //  camera->getGlobalPosition();
 
     prm.cpos = opos - cpos;
     prm.cdir = tmul(prm.urot, -prm.cpos);

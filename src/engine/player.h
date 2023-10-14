@@ -10,6 +10,7 @@ class Player;
 
 enum cameraMode {
     camGlobalFrame,
+    camTargetRelative
 
 };
 
@@ -85,15 +86,16 @@ public:
     inline glm::dvec3 getAngularControl() const     { return av; }
     inline glm::dvec3 getTravelControl() const      { return tv; }
 
-    inline glm::dvec3 getGlobalPosition() const     { return gpos; }
-    inline glm::dmat3 getGlobalRotation() const     { return grot; }
-    
+    inline glm::dvec3 getPosition() const           { return gpos; }
+    inline glm::dmat3 getRotation() const           { return grot; }
+    inline glm::dquat getqRotation() const          { return gqrot; }
+
     inline void setAngularControl(glm::dvec3 _av)   { av = _av; }
     inline void setTravelControl(glm::dvec3 _tv)    { tv = _tv; }
 
     double computeCoarseness(double maxCoarseness);
 
-    void attach(Object *object);
+    void attach(Object *object, cameraMode mode = camGlobalFrame);
 
     void update(const TimeDate &td);
 
@@ -103,6 +105,8 @@ public:
     void addPhi(double dphi);     // X rotation
     void addTheta(double dtheta); // Y rotation
 
+    void look(Object *object);
+
     void dolly(double dz);
     void orbit(const glm::dquat &drot);
     void orbit(double phi, double theta, double dist);
@@ -110,10 +114,12 @@ public:
 
 private:
     Camera cam;
+    // PlayerFrame *frame = nullptr;
 
     Object *tgtObject = nullptr;
 
     // Global (universal) parmeters
+    glm::dvec3 gspos;   // Relative to target in global coordinates
     glm::dvec3 gpos;
     glm::dmat3 grot;
     glm::dquat gqrot;

@@ -40,7 +40,7 @@ void Scene::renderConstellations()
     const StarDatabase &starlib = universe->getStarDatabase();
     const std::vector<Asterism *> &asterisms = constellations.getAsterisms();
 
-    glm::dvec3 vpos = camera->getGlobalPosition();
+    glm::dvec3 vpos = observer->getPosition(); //  camera->getGlobalPosition();
     int cLines = 0;
 
     AsterismVertex *vertices = nullptr;

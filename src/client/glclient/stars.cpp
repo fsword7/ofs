@@ -220,8 +220,8 @@ void Scene::initStarRenderer()
 
 void Scene::renderStars(double faintest, double mjd)
 {
-    glm::dvec3 obs = camera->getGlobalPosition();
-    glm::dmat3 rot = camera->getGlobalRotation();
+    glm::dvec3 obs = observer->getPosition(); //  camera->getGlobalPosition();
+    glm::dmat3 rot = observer->getRotation(); //  camera->getGlobalRotation();
     double fov = camera->getFOV();
     double aspect = camera->getAspect();
 

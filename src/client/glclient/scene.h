@@ -85,6 +85,7 @@ public:
 
     inline ShaderManager &getShaderManager()        { return shmgr; }
     inline Camera *getCamera() const                { return camera; }
+    inline Player *getObserver() const              { return observer; }
 
     inline void addRenderList(ObjectListEntry &ole) { renderList.push_back(ole); }
 
@@ -132,7 +133,7 @@ private:
     ShaderManager shmgr;
 
     Universe *universe = nullptr;
-    Player *player = nullptr;
+    Player *observer = nullptr;
     Camera *camera = nullptr;
 
     StarRenderer *starRenderer = nullptr;

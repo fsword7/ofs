@@ -72,6 +72,7 @@ glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3
 
 void Scene::update(Player *player)
 {
+    observer = player;
     camera = player->getCamera();
 
     pixelSize = (2.0 * tan(camera->getFOV() / 2.0)) / camera->getHeight();
@@ -101,7 +102,7 @@ void Scene::render(Player *player)
     renderConstellations();
     renderStars(faintestMag, mjd);
 
-    glm::dvec3 obs = camera->getGlobalPosition();
+    glm::dvec3 obs = observer->getPosition(); //  camera->getGlobalPosition();
 
     // for (auto sun : nearStars)
     // {
@@ -133,7 +134,7 @@ void Scene::render(Player *player)
         pSystem *psys = sun->getpSystem();
 
         glm::dvec3 apos = obs - sun->getbPosition();
-        glm::dvec3 vpn = camera->getGlobalPosition() * glm::dvec3(0, 0, -1);
+        glm::dvec3 vpn = obs * glm::dvec3(0, 0, -1);
 
         buildSystems(sun->getSecondaries(), apos, vpn);
     }

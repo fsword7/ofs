@@ -6,45 +6,46 @@
 #pragma once
 
 #include "engine/rigidbody.h"
-#include "universe/frame.h"
+// #include "universe/frame.h"
 #include "universe/surface.h"
 
 class CelestialStar;
 class CelestialBody;
 class OrbitEphemeris;
 
-class PlanetarySystem
-{
-public:
-    PlanetarySystem(CelestialBody *body = nullptr);
-    PlanetarySystem(CelestialStar *star);
-    ~PlanetarySystem() = default;
+// class PlanetarySystem
+// {
+// public:
+//     PlanetarySystem(CelestialBody *body = nullptr);
+//     PlanetarySystem(CelestialStar *star);
+//     ~PlanetarySystem() = default;
 
-    inline CelestialBody *getPrimaryBody() const    { return body; }
-    inline CelestialStar *getStar() const           { return star; }
-    inline FrameTree *getSystemTree()               { return &tree; }
+//     inline CelestialBody *getPrimaryBody() const    { return body; }
+//     inline CelestialStar *getStar() const           { return star; }
+//     inline FrameTree *getSystemTree()               { return &tree; }
 
-    inline void setStar(CelestialStar *nStar)       { star = nStar; }
+//     inline void setStar(CelestialStar *nStar)       { star = nStar; }
 
-    void addBody(CelestialBody *body);
-    void removeBody(CelestialBody *body);
+//     void addBody(CelestialBody *body);
+//     void removeBody(CelestialBody *body);
 
-    CelestialBody *find(cstr_t &name) const;
+//     CelestialBody *find(cstr_t &name) const;
     
-private:
-    FrameTree tree;
+// private:
+//     FrameTree tree;
 
-    // Planetary system parameters
-    // System *solarSystem = nullptr;
-    CelestialBody *body = nullptr;
-    CelestialStar *star = nullptr;
+//     // Planetary system parameters
+//     // System *solarSystem = nullptr;
+//     CelestialBody *body = nullptr;
+//     CelestialStar *star = nullptr;
 
-    std::vector<CelestialBody *> bodies;
-};
+//     std::vector<CelestialBody *> bodies;
+// };
 
 enum celType
 {
     cbUnknown = 0,
+    cbObserver,
     cbStar,
     cbPlanet,
     cbDwarfPlanet,
@@ -52,6 +53,12 @@ enum celType
     cbSubmoon,
     cbAsteroid,
     cbComet
+};
+
+enum frameType
+{
+    rfUniversal = 0,
+    rfBodyFixed
 };
 
 using secondaries_t = const std::vector<CelestialBody *>;
@@ -66,22 +73,22 @@ public:
         cbKnownObject   = (cbKnownRadius|cbKnownRotation|cbKnownSurface)
     };
 
-    CelestialBody(PlanetarySystem *system, cstr_t &name, celType type)
-    : RigidBody(name, (type == cbStar) ? objCelestialStar : objCelestialBody),
-      cbType(type), inSystem(system)
-    {
-        inSystem->addBody(this);
-    }
+    // CelestialBody(PlanetarySystem *system, cstr_t &name, celType type)
+    // : RigidBody(name, (type == cbStar) ? objCelestialStar : objCelestialBody),
+    //   cbType(type), inSystem(system)
+    // {
+    //     inSystem->addBody(this);
+    // }
 
     CelestialBody(cstr_t &name, celType type, CelestialBody *body = nullptr)
     : RigidBody(name, (type == cbStar) ? objCelestialStar : objCelestialBody),
       cbType(type)
     {
-        if (body != nullptr)
-        {
-            inSystem = body->createPlanetarySystem();
-            inSystem->addBody(this);
-        }
+        // if (body != nullptr)
+        // {
+        //     inSystem = body->createPlanetarySystem();
+        //     inSystem->addBody(this);
+        // }
     }
 
     virtual ~CelestialBody() = default;
@@ -93,7 +100,7 @@ public:
     inline CelestialStar *getStar() const               { return cstar; }
     inline CelestialBody *getParent() const             { return cbody; }
 
-    void attach(CelestialBody *parent);
+    void attach(CelestialBody *parent, frameType type = rfUniversal);
 
     void convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel);
     uint32_t getEphemerisState(const TimeDate &td, double *res);
@@ -102,15 +109,15 @@ public:
     void updatePrecission(const TimeDate &td);
     void updateRotation(const TimeDate &td);
 
-    virtual void update(bool force);
+    virtual void update(const TimeDate &td, bool force);
 
     inline celType getCelestialType() const { return cbType; }
 
     inline void setEphemeris(OrbitEphemeris *ephem)  { ephemeris = ephem; }
-    inline void setInSystem(PlanetarySystem *system) { inSystem = system; }
+    // inline void setInSystem(PlanetarySystem *system) { inSystem = system; }
 
-    inline PlanetarySystem *getOwnSystem() const    { return ownSystem; }
-    inline PlanetarySystem *getInSystem() const     { return inSystem; }
+    // inline PlanetarySystem *getOwnSystem() const    { return ownSystem; }
+    // inline PlanetarySystem *getInSystem() const     { return inSystem; }
 
     inline glm::dvec3 getcPosition() const          { return cpos; }
     inline glm::dvec3 getcVelocity() const          { return cvel; }
@@ -118,7 +125,7 @@ public:
     inline void setColor(color_t nColor)            { color = nColor; }
     inline color_t getColor() const                 { return color; }
 
-    PlanetarySystem *createPlanetarySystem();
+    // PlanetarySystem *createPlanetarySystem();
     
     glm::dmat3 getEquatorial(double tjd) const;
 
@@ -146,12 +153,14 @@ protected:
     std::vector<CelestialBody *> secondaries;   // children of celstial body
 
     // Rotation/prcession parameters
-    // double rotation;    // Current rotation rate
-    // double rotofs;      // Rotation offset (precession)
+    double crot = 0.0;      // Current rotation
+    double rotofs = 0.0;    // Rotation offset (precession)
 
     glm::dmat3 Recl;    // Precession matrix
     glm::dquat Qecl;    // Precession quaternion
 
+    double Lrel;
+    double cos_eps;
 
     // Ephemeris data parameters (orbital frame)
     glm::dvec3 cpos;    // orbital position
@@ -166,6 +175,12 @@ protected:
 
     celSurface surface;
 
-    PlanetarySystem *ownSystem = nullptr;
-    PlanetarySystem *inSystem = nullptr;
+    // PlanetarySystem *ownSystem = nullptr;
+    // PlanetarySystem *inSystem = nullptr;
+
+private:
+    double Dphi = 0.0;      // Rotation offset at t=0.
+    double rotOmega = 0.0;  // Angular velocity
+    double rotOffset = 0.0; // 
+
 };

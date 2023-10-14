@@ -7,10 +7,12 @@
 
 #include "universe/constellations.h"
 #include "universe/starlib.h"
-#include "universe/system.h"
+// #include "universe/system.h"
 #include "universe/handle.h"
+#include "universe/celbody.h"
 
 class Player;
+class CelestialBody;
 
 class OFSAPI Universe
 {
@@ -27,8 +29,8 @@ public:
     void update(Player *player, const TimeDate &td);
     void finalizeUpdate();
 
-    System *createSolarSystem(CelestialStar *star);
-    System *getSolarSystem(CelestialStar *star) const;
+    // System *createSolarSystem(CelestialStar *star);
+    // System *getSolarSystem(CelestialStar *star) const;
 
     CelestialStar *findStar(cstr_t &name) const;
 
@@ -52,7 +54,7 @@ private:
     StarDatabase stardb;
     Constellations constellations;
 
-    SystemsList  systems;
+    // SystemsList  systems;
 
     std::vector<const CelestialStar *> nearStars;
 

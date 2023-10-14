@@ -13,7 +13,7 @@
 #include "universe/universe.h"
 #include "universe/star.h"
 #include "universe/celbody.h"
-#include "universe/system.h"
+// #include "universe/system.h"
 #include "universe/psystem.h"
 #include "universe/astro.h"
 #include "scripts/parser.h"
@@ -31,8 +31,8 @@ void Universe::init()
     sun = stardb.find("Sol");
 
     pSystem *psys = new pSystem(sun);
-    System *solSystem = createSolarSystem(sun);
-    PlanetarySystem *system = solSystem->getPlanetarySystem();
+    // System *solSystem = createSolarSystem(sun);
+    // PlanetarySystem *system = solSystem->getPlanetarySystem();
 
     // CelestialBody *mercury, *venus, *earth;
     // CelestialBody *mars, *jupiter, *saturn;
@@ -42,8 +42,8 @@ void Universe::init()
     //     "EclipticJ2000", "EquatorJ2000");
     // venus = System::createBody("Venus", system, celType::cbPlanet,
     //     "EclipticJ2000", "EquatorJ2000");
-    earth = System::createBody("Earth", system, celType::cbPlanet,
-        "EclipticJ2000", "EclipticJ2000");
+    // earth = System::createBody("Earth", system, celType::cbPlanet,
+    //     "EclipticJ2000", "EclipticJ2000");
     // mars = System::createBody("Mars", system, celType::cbPlanet,
     //     "EclipticJ2000", "EquatorJ2000");
     // jupiter = System::createBody("Jupiter", system, celType::cbPlanet,
@@ -58,6 +58,8 @@ void Universe::init()
     // system = earth->createPlanetarySystem();
     // lunar = System::createBody("Moon", system, celType::cbMoon,
     //     "EclipticJ2000", "EquatorJ2000");
+
+    earth = new CelestialBody("Earth", cbPlanet);
 
     sun->setEphemeris(OrbitVSOP87::create(*sun, "vsop87e-sol"));
 
@@ -91,9 +93,9 @@ void Universe::init()
     earth->setStar(sun);
     earth->attach(sun);
 
-    std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
-    System::loadSolarSystemObjects(in, *this, "systems");
-    in.close();
+    // std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
+    // System::loadSolarSystemObjects(in, *this, "systems");
+    // in.close();
 }
 
 void Universe::start(const TimeDate &td)
@@ -106,22 +108,19 @@ void Universe::start(const TimeDate &td)
     // cam->update();
     // player->attach(sun);
 
-    glm::dvec3 epos = earth->getoPosition();
-    epos.z += earth->getRadius() * 4.0;
+    glm::dvec3 epos = { 0, 0, earth->getRadius() * 4.0 };
     cam->setPosition(epos);
-    cam->look(earth->getoPosition());
     cam->update();
-    player->attach(earth);
+    player->attach(earth, camTargetRelative);
+    player->look(earth);
     player->update(td);
 }
 
 void Universe::update(Player *player, const TimeDate &td)
 {
-    Camera *cam = player->getCamera();
-
     // Updating periodic close stars
     nearStars.clear();
-    findCloseStars(cam->getGlobalPosition(), 1.0, nearStars);
+    findCloseStars(player->getPosition(), 1.0, nearStars);
 
     // Updating local solar systems
     for (auto sun : nearStars)
@@ -153,29 +152,29 @@ void Universe::finalizeUpdate()
     }
 }
 
-System *Universe::createSolarSystem(CelestialStar *star)
-{
-    System *system = getSolarSystem(star);
-    if (system != nullptr)
-        return system;
+// System *Universe::createSolarSystem(CelestialStar *star)
+// {
+//     System *system = getSolarSystem(star);
+//     if (system != nullptr)
+//         return system;
 
-    auto idStar = star->getHIPnumber();
-    system = new System(star);
-    systems.insert({idStar, system});
+//     auto idStar = star->getHIPnumber();
+//     system = new System(star);
+//     systems.insert({idStar, system});
 
-    return system;
-}
+//     return system;
+// }
 
-System *Universe::getSolarSystem(CelestialStar *star) const
-{
-    if (star == nullptr)
-        return nullptr;
-    auto idStar = star->getHIPnumber();
-    auto iter = systems.find(idStar);
-    if (iter != systems.end())
-        return iter->second;
-    return nullptr;
-}
+// System *Universe::getSolarSystem(CelestialStar *star) const
+// {
+//     if (star == nullptr)
+//         return nullptr;
+//     auto idStar = star->getHIPnumber();
+//     auto iter = systems.find(idStar);
+//     if (iter != systems.end())
+//         return iter->second;
+//     return nullptr;
+// }
 
 CelestialStar *Universe::findStar(cstr_t &name) const
 {
@@ -187,22 +186,23 @@ Object *Universe::findObject(const Object *obj, cstr_t &name) const
     System *system;
     const CelestialStar *sun;
     const CelestialBody *body;
-    const PlanetarySystem *objects;
+    // const PlanetarySystem *objects;
 
     switch (obj->getType())
     {
     case ObjectType::objCelestialStar:
         sun = dynamic_cast<const CelestialStar *>(obj);
-        if ((system = sun->getSolarSystem()) == nullptr)
-            break;
-        objects = system->getPlanetarySystem();
-        return objects->find(name);
+        // if ((system = sun->getSolarSystem()) == nullptr)
+        //     break;
+        // objects = system->getPlanetarySystem();
+        // return objects->find(name);
+        break;
 
     case ObjectType::objCelestialBody:
         body = dynamic_cast<const CelestialBody *>(obj);
-        objects = body->getOwnSystem();
-        if (objects != nullptr)
-            return objects->find(name);
+        // objects = body->getOwnSystem();
+        // if (objects != nullptr)
+        //     return objects->find(name);
         break;
     }
 

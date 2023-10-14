@@ -37,6 +37,11 @@ glm::dmat3 Object::getuOrientation(double tjd) const
     return objRotation;
 }
 
+glm::dquat Object::getqOrientation(double tjd) const
+{
+    return objqRotation;
+}
+
 
 glm::dvec3 Object::getoPosition(double tjd) const
 {

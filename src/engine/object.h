@@ -18,7 +18,7 @@ public:
     glm::dvec3 pos;        // position
     glm::dvec3 vel;        // linear velocity
     
-    glm::dmat4 R;          // rotation matrix
+    glm::dmat3 R;          // rotation matrix
     glm::dquat Q;          // orientation
     glm::dvec3 omega;      // angular velocity
 };
@@ -79,6 +79,7 @@ public:
     virtual glm::dvec3 getuPosition(double tjd) const;
     virtual glm::dvec3 getuVelocity(double tjd) const;
     virtual glm::dmat3 getuOrientation(double tjd) const;
+    virtual glm::dquat getqOrientation(double tjd) const;
 
     virtual glm::dvec3 getoPosition(double tjd) const;
     virtual glm::dvec3 getoVelocity(double tjd) const;
@@ -103,6 +104,7 @@ protected:
     glm::dvec3 objPosition = { 0, 0, 0 };
     glm::dvec3 objVelocity = { 0, 0, 0 };
     glm::dmat3 objRotation = glm::dmat3(1.0);
+    glm::dquat objqRotation = glm::dquat();
 
     glm::dvec3 baryPosition = { 0, 0, 0 };
     glm::dvec3 baryVelocity = { 0, 0, 0 };
