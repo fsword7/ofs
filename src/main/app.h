@@ -134,8 +134,9 @@ protected:
     double keyAttitudeAccel = ofs::radians(5.0);
     double keyAttitudeBrake = ofs::radians(60.0);
     double keyRotationAccel = ofs::radians(60.0);
-    double keyMovementControl = 1000.0;
-    double keyMovementBrake = 5.0;
+    // double keyMovementControl = 1000.0;
+    double keyMovementControl = 25.0;     
+    double keyMovementBrake = 10.0;
 
     // Mouse controls
     float xLast, yLast;
