@@ -33,6 +33,8 @@ SurfaceTile::~SurfaceTile()
         delete mesh;
     if (txOwn == true && txImage != nullptr)
         delete txImage;
+    if (elevOwn == true && elev != nullptr)
+        delete elev;
 }
 
 SurfaceTile *SurfaceTile::createChild(int idx)
@@ -132,10 +134,16 @@ void SurfaceTile::load()
         }
     }
 
+    // Load (nightlight/water) mask texture if applicance
+
+    // Load elevation data
+    int16_t *elev = getElevationData();
+
     if (lod == 0)
-        mesh = createHemisphere(32, nullptr, 0);
+        mesh = createHemisphere(mgr.gridRes, nullptr, 0);
     else
-        mesh = mgr.createSpherePatch(32, lod, ilat, ilng, txRange);
+        mesh = mgr.createSpherePatch(mgr.gridRes, lod, ilat, ilng,
+            txRange, elev, mgr.elevRes, 0.0);
     type = tileInactive;
 }
 
@@ -336,6 +344,9 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
 
 // ******** Surface Manager ********
 
+// Global parameters
+SurfaceHandler *SurfaceManager::loader = nullptr;
+
 SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 : object(object), scene(scene)
 {
@@ -415,6 +426,8 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         fs::path folder = fmt::format("data/systems/{}/{}/Orbiter", starName, bodyName);
 
         zTrees[0] = zTreeManager::create(folder, "surf");
+        zTrees[2] = zTreeManager::create(folder, "elev");
+        zTrees[3] = zTreeManager::create(folder, "elev_mod");
 
         for (int idx = 0; idx < 2; idx++)
         {
@@ -432,12 +445,16 @@ SurfaceManager::~SurfaceManager()
 
 void SurfaceManager::ginit()
 {
-
+    loader = new SurfaceHandler();
 }
 
 void SurfaceManager::gexit()
 {
-
+    if (loader != nullptr)
+    {
+        delete loader;
+        loader = nullptr;
+    }
 }
 
 glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
@@ -516,10 +533,10 @@ void SurfaceManager::setRenderParams(const ObjectProperties &op)
     prm.dmWorld = glm::dmat4(prm.urot);
     prm.dmWorld = glm::translate(prm.dmWorld, prm.cpos);
 
-    logger->debug("Object name:     {}\n", object->getName());
-    logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
-    logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
-    logger->debug("Camera distance: {}\n", prm.cdist);
+    // logger->debug("Object name:     {}\n", object->getName());
+    // logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);
+    // logger->debug("Camera position: {},{},{}\n", prm.cpos.x, prm.cpos.y, prm.cpos.z);
+    // logger->debug("Camera distance: {}\n", prm.cdist);
 }
 
 void SurfaceManager::process(SurfaceTile *tile)
@@ -539,22 +556,22 @@ void SurfaceManager::process(SurfaceTile *tile)
     double adist = alpha - trad;
     double bias = 4;
 
-    logger->debug("View {:.6f} >= {:.6f}\n", adist, prm.viewap);
+    // logger->debug("View {:.6f} >= {:.6f}\n", adist, prm.viewap);
 
     if (adist >= prm.viewap)
     {
         {
-            logger->debug("Tile: LOD {} ({},{}) - processing\n",
-                tile->lod+4, tile->ilat, tile->ilng);
+            // logger->debug("Tile: LOD {} ({},{}) - processing\n",
+            //     tile->lod+4, tile->ilat, tile->ilng);
 
-            logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-                tile->center.x, tile->center.y, tile->center.z,
-                abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
-                abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
-            logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
-                prm.cdir.x, prm.cdir.y, prm.cdir.z);        
-            logger->debug(" -- Out of view {:.6f} >= {:.6f} - rendering at LOD 1 level\n",
-                ofs::degrees(adist), ofs::degrees(prm.viewap));
+            // logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            //     tile->center.x, tile->center.y, tile->center.z,
+            //     abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+            //     abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+            // logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
+            //     prm.cdir.x, prm.cdir.y, prm.cdir.z);        
+            // logger->debug(" -- Out of view {:.6f} >= {:.6f} - rendering at LOD 1 level\n",
+            //     ofs::degrees(adist), ofs::degrees(prm.viewap));
         }
 
         if (tile->lod > 0)
@@ -623,22 +640,22 @@ void SurfaceManager::process(SurfaceTile *tile)
         }
 
         {
-            logger->debug("Tile: LOD {} ({},{}) - processing\n",
-                tile->lod+4, tile->ilat, tile->ilng);
+            // logger->debug("Tile: LOD {} ({},{}) - processing\n",
+            //     tile->lod+4, tile->ilat, tile->ilng);
 
-            logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
-                tile->center.x, tile->center.y, tile->center.z,
-                abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
-                abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
-            logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
-                prm.cdir.x, prm.cdir.y, prm.cdir.z);
-            logger->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
-                ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
-            if (tile->parentTile != nullptr)
-                logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
-                    tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
-            logger->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
-                ofs::degrees(adist), ofs::degrees(prm.viewap));
+            // logger->debug(" -- Center: {:.6f} {:.6f} {:.6f} - {:.6f}{} {:.6f}{}\n",
+            //     tile->center.x, tile->center.y, tile->center.z,
+            //     abs(ofs::degrees(tile->wpos.x)), (tile->wpos.x < 0) ? 'S' : 'N',
+            //     abs(ofs::degrees(tile->wpos.y)), (tile->wpos.y < 0) ? 'W' : 'E');
+            // logger->debug(" -- Direction: {:.6f} {:.6f} {:.6f}\n",
+            //     prm.cdir.x, prm.cdir.y, prm.cdir.z);
+            // logger->debug(" -- Alpha: {:.6f} => Radius {:.6f}, Distance {:.6f}\n",
+            //     ofs::degrees(alpha), ofs::degrees(trad), ofs::degrees(adist));
+            // if (tile->parentTile != nullptr)
+            //     logger->debug(" -- Using tile LOD {} ({},{}) with last available image\n",
+            //         tile->parentTile->lod+4, tile->parentTile->ilat, tile->parentTile->ilng);
+            // logger->debug(" -- In view {:.6f} < {:.6f} - rendering\n",
+            //     ofs::degrees(adist), ofs::degrees(prm.viewap));
         }
     }
 
@@ -765,7 +782,7 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
             erad = radius + gelev;
 
             if (elev != nullptr)
-                erad += double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * selev;
+                erad += (double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * selev) / 1000.0;
             nml = glm::dvec3(clat*clng, slat, clat*slng);
             pos = nml * erad;
 

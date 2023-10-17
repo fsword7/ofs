@@ -42,7 +42,7 @@ public:
     static zTreeManager *create(const fs::path &pname, cstr_t &tname);
 
     bool open(const fs::path &fname);
-    int read(int lod, int lat, int lng, uint8_t **data);
+    int read(int lod, int lat, int lng, uint8_t **data, bool debug = false);
 
 protected:
     int32_t getIndex(int lod, int lat, int lng);

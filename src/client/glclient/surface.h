@@ -9,12 +9,14 @@
 #include "ztreemgr.h"
 #include "texmgr.h"
 #include "shader.h"
+#include "elevmgr.h"
 
-#define ELEV_STRIDE 0
+// #define ELEV_STRIDE 0
 
 class VertexArray;
 class VertexBuffer;
 class IndexBuffer;
+struct ObjectProperties;
 
 struct Vertex
 {
@@ -99,6 +101,13 @@ public:
     // Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
     //     int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
 
+    double getMeanElevation(const int16_t *elev) const;
+    void interpolateElevationGrid(int ilat, int ilng, int lod,
+        int pilat, int pilng, int plod, int16_t *pelev, int16_t *elev);
+    int16_t *readElevationFile(int lod, int ilat, int ilng, double eres);
+    bool loadElevationData();
+    int16_t *getElevationData();
+
 private:
     SurfaceManager &mgr;
 
@@ -113,9 +122,16 @@ private:
     SurfaceTile *parentTile = nullptr;
     Mesh *mesh = nullptr;
 
+    // Surface data parameters
     bool txOwn = false;
     Texture *txImage = nullptr;
     tcRange txRange;
+
+    // Elevation data parameters
+    bool     elevOwn = false;
+    int16_t *elev = nullptr;
+    int16_t *ggelev = nullptr;  // Great-grandfather elevation data
+    double   elevMean;
 };
 
 class SurfaceHandler
@@ -154,6 +170,9 @@ public:
     
     static void ginit();
     static void gexit();
+
+    inline int getGridRes() const { return gridRes; }
+    inline int getElevRes() const { return elevRes; }
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 
@@ -220,8 +239,13 @@ private:
     zTreeManager *zTrees[5] = {};
     SurfaceTile *tiles[2];
 
+    int gridRes = 32; // 1 << 5
+    double elevRes = 1.0;
+
     ObjectType objType = objUnknown;
     double     objSize = 0.0;
     double     resScale;
     double     resBias;
+
+    static SurfaceHandler *loader;
 };

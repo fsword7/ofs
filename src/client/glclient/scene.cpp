@@ -32,8 +32,6 @@ void Scene::checkErrors()
 
 void Scene::init(Universe *uv)
 {
-    // camera = new Camera(width, height);
-
     universe = uv;
 
     vobjList.clear();

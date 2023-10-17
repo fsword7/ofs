@@ -130,15 +130,19 @@ int zTreeManager::inflateData(uint8_t *zdata, uint32_t zsize, uint8_t *udata, ui
     return nret;
 }
 
-int zTreeManager::read(int lod, int lat, int lng, uint8_t **data)
+int zTreeManager::read(int lod, int lat, int lng, uint8_t **data, bool debug)
 {
     uint32_t  idx = getIndex(lod, lat, lng);
     uint8_t   *zdata, *udata;
     uint32_t   zsize, usize;
     int        res;
 
+    if (debug) logger->debug("Reading LOD {} Latitude {} Longitude {}\n",
+        lod, lat, lng);
+
     if (idx == ZTREE_NIL)
     {
+        if (debug) logger->debug("Data not found - NIL data\n");
         *data = nullptr;
         return 0;
     }
@@ -146,11 +150,14 @@ int zTreeManager::read(int lod, int lat, int lng, uint8_t **data)
     zsize = getDeflatedSize(idx);
     if (zsize == 0)
     {
+        if (debug) logger->debug("Uncompressed failed - aborted.\n");
         *data = nullptr;
         return 0;
     }
     usize = getInflatedSize(idx);
 
+    if (debug) logger->debug("Uncompressing {} -> {} bytes\n", zsize, usize);
+    
     zdata = new uint8_t[zsize];
     udata = new uint8_t[usize];
 
