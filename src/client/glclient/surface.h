@@ -91,6 +91,7 @@ public:
     bool isInView(const glm::dmat4 &transform);
 
     SurfaceTile *createChild(int idx);
+
     void setCenter(glm::dvec3 &center, glm::dvec3 &wpos);
     void setSubregionRange(const tcRange &range);
 
@@ -100,6 +101,8 @@ public:
     Mesh *createHemisphere(int grid, int16_t *elev, double gelev);
     // Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
     //     int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
+
+    void matchEdges();
 
     double getMeanElevation(const int16_t *elev) const;
     void interpolateElevationGrid(int ilat, int ilng, int lod,
@@ -173,6 +176,8 @@ public:
 
     inline int getGridRes() const { return gridRes; }
     inline int getElevRes() const { return elevRes; }
+
+    SurfaceTile *findTile(int lod, int lat, int lng);
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 

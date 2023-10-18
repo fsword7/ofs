@@ -457,6 +457,11 @@ void SurfaceManager::gexit()
     }
 }
 
+SurfaceTile *SurfaceManager::findTile(int lod, int lat, int lng)
+{
+    return nullptr;
+}
+
 glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
 {
     // glm::dmat4 lrot(1.0);
@@ -670,6 +675,7 @@ void SurfaceManager::render(SurfaceTile *tile)
 {
     if (tile->type == SurfaceTile::tileRendering)
     {
+        // tile->matchEdges();
         tile->render();
     }
     else if (tile->type == SurfaceTile::tileActive)

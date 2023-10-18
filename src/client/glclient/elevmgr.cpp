@@ -9,6 +9,23 @@
 #include "surface.h"
 #include "elevmgr.h"
 
+
+void SurfaceTile::matchEdges()
+{
+
+    SurfaceTile *lng = mgr.findTile(lod, ilng + (ilng & 1) ? 1 : -1, ilat);
+    SurfaceTile *lat = mgr.findTile(lod, ilng, ilat + (ilat & 1) ? 1 : -1);
+    SurfaceTile *dia = mgr.findTile(lod, ilng + (ilng & 1) ? 1 : -1, (ilat & 1) ? 1 : -1);
+
+    if (lng != nullptr && (lng->type & TILE_VALID) == 0)
+        lng = nullptr;
+    if (lat != nullptr && (lat->type & TILE_VALID) == 0)
+        lat = nullptr;
+    if (dia != nullptr && (dia->type & TILE_VALID) == 0)
+        dia = nullptr;
+
+}
+
 double SurfaceTile::getMeanElevation(const int16_t *elev) const
 {
     int res = mgr.getGridRes();
