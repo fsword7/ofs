@@ -7,17 +7,16 @@
 #include "api/ofsapi.h"
 #include "api/celbody.h"
 #include "ephem/ephemeris.h"
-#include "ephem/moon/elp82.h"
+#include "ephem/lunar/elp82.h"
+#include "ephem/lunar/lunar.h"
+
+#include "ephem/lunar/elp82dat.cpp"
 
 OrbitELP82::OrbitELP82(CelestialBody &cbody)
 : OrbitEphemeris(cbody)
 {
-
-}
-
-void OrbitELP82::load(cstr_t &name)
-{
-
+	init();
+	initData(def_prec);
 }
 
 void OrbitELP82::init()
@@ -118,6 +117,122 @@ void OrbitELP82::init()
 	q5 = -0.320334e-14;
 }
 
+void OrbitELP82::initData(double prec)
+{
+	int ific, itab, m, mm, i, im, ir, k, ntot = 0, mtot = 0;
+	double tgv, xx, y, pre[3], zone[6];
+
+	// Precision paremeters
+	pre[0] = prec*rad;
+	pre[1] = prec*rad;
+	pre[2] = prec*ath;
+
+	// const char *datf = "Config/Moon/Data/ELP82.dat";
+	// ifstream ifs (datf);  // term data stream
+	// if (!ifs) {
+	// 	fprintf(stderr, "ELP82: cannot find %s\n", datf);
+	// 	oapiWriteLogError("ELP82: Data file not found: %s", datf);
+	// 	exit(-1);
+	// 	return -1;
+	// }
+
+	// Read terms for main problem
+	for (ific = 0; ific < 3; ific++) {
+
+	// 	// ifs >> m;                          // number of terms available in sequence
+	// 	// MainBin *block = new MainBin[m];   // temporary storage for terms
+	// 	// for (ir = mm = 0; ir < m; ir++) {  // read terms from file
+	// 	// 	for (i = 0; i < 4; i++)
+	// 	// 		ifs >> block[ir].ilu[i];
+	// 	// 	for (i = 0; i < 7; i++)
+	// 	// 		ifs >> block[ir].coef[i];
+	// 	// 	if (fabs(block[ir].coef[0]) >= pre[ific])
+	// 	// 		mm++;                     // number of terms used
+	// 	// }
+	// 	ntot += mm;
+	// 	mtot += m;
+	// 	if (mm) pc[ific] = new SEQ6[mm];
+	// 	itab = 0;
+
+		int mm = 0;
+		int m = elp82data[ific].nterms;
+		elp82main_t *block = new elp82main_t[m];
+
+		for (ir = 0; ir < m; ir++)
+		{
+			// for (i = 0; i < 4; i++)
+			// 	block[ir].ilu[i] = elp82data[ific].main[ir].ilu[i];
+			// for (i = 0; i < 7; i++)
+			// 	block[ir].coef[i] = elp82data[ific].main[ir].coef[i];
+			block[ir] = elp82data[ific].main[ir];
+			if (fabs(block[ir].coef[0]) >= pre[ific])
+				mm++;
+		}
+
+		ntot += mm;
+		mtot += m;
+		if (mm > 0)
+			pc[ific] = new SEQ6[mm];
+		itab = 0;
+
+	// 	for (im = ir = 0; im < m; im++) {
+	// 		MainBin &lin = block[im];
+	// 		xx = lin.coef[0];
+	// 		if (fabs(xx) < pre[ific]) continue;
+	// 		tgv = lin.coef[1] + dtasm*lin.coef[5];
+	// 		if (ific == 2) lin.coef[0] -= 2.0*lin.coef[0]*delnu/3.0;
+	// 		xx = lin.coef[0] + tgv*(delnp-am*delnu) + lin.coef[2]*delg +
+	// 			 lin.coef[3]*dele + lin.coef[4]*delep;
+	// 		zone[0] = xx;
+	// 		for (k = 0; k <= 4; k++) {
+	// 			y = 0.0;
+	// 			for (i = 0; i < 4; i++) {
+	// 				y += lin.ilu[i]*del[i][k];
+	// 			}
+	// 			zone[k+1] = y;
+	// 		}
+	// 		if (ific == 2) zone[1] += pis2;
+	// 		for (i = 0; i < 6; i++) pc[ific][ir][i] = zone[i];
+	// 		ir++;
+	// 	}
+	// 	nterm[ific][0] = ir;
+	// 	nrang[ific][0] = 0;
+	// 	// delete []block;
+
+		ir = 0;
+		for (im = 0; im < m; im++)
+		{
+			elp82main_t &lin = block[im];
+			xx = lin.coef[0];
+			if (fabs(xx) < pre[ific])
+				continue;
+			tgv = lin.coef[1] + dtasm*lin.coef[5];
+			if (ific == 2)
+				lin.coef[0] -= 2.0 * lin.coef[0]*delnu/3.0;
+			xx = lin.coef[0] + tgv*(delnp - am * delnu) + lin.coef[2]*delg +
+				lin.coef[3]*dele + lin.coef[4]*delep;
+			zone[0] = xx;
+			for (k = 0; k <= 4; k++)
+			{
+				y = 0.0;
+				for (i = 0; i < 4; i++)
+					y += lin.ilu[i]*del[i][k];
+				zone[k+1] = y;
+			}
+			if (ific == 2)
+				zone[1] += pis2;
+			for (i = 0; i < 6; i++)
+				pc[ific][ir][i] = zone[i];
+			ir++;
+		}
+
+		nterm[ific][0] = ir;
+		nrang[ific][0] = 0;
+
+		delete [] block;
+	}
+}
+
 void OrbitELP82::getEphemeris(double mjd, double *res)
 {
 	int k, iv, nt;
@@ -139,23 +254,23 @@ void OrbitELP82::getEphemeris(double mjd, double *res)
     t[3] = t[2]*t[1];
     t[4] = t[3]*t[1];
 
-	// for (iv = 0; iv < 3; iv++) {
-	// 	res[iv] = res[iv+3] = 0.0;
-	// 	// SEQ6 *pciv = pc[iv];
+	for (iv = 0; iv < 3; iv++) {
+		res[iv] = res[iv+3] = 0.0;
+		SEQ6 *pciv = pc[iv];
 
-	// 	// main sequence (itab=0)
-	// 	for (nt = 0; nt < nterm[iv][0]; nt++) {
-	// 		x = pciv[nt][0];     x_dot = 0.0;
-	// 		y = pciv[nt][1];     y_dot = 0.0;
-	// 		for (k = 1; k <= 4; k++) {
-	// 			y     += pciv[nt][k+1] * t[k];
-	// 			y_dot += pciv[nt][k+1] * t[k-1] * k;
-	// 		}
-	// 		res[iv]   += x*sin(y);
-	// 		res[iv+3] += x_dot*sin(y) + x*cos(y)*y_dot;
-	// 	}
+		// main sequence (itab=0)
+		for (nt = 0; nt < nterm[iv][0]; nt++) {
+			x = pciv[nt][0];     x_dot = 0.0;
+			y = pciv[nt][1];     y_dot = 0.0;
+			for (k = 1; k <= 4; k++) {
+				y     += pciv[nt][k+1] * t[k];
+				y_dot += pciv[nt][k+1] * t[k-1] * k;
+			}
+			res[iv]   += x*sin(y);
+			res[iv+3] += x_dot*sin(y) + x*cos(y)*y_dot;
+		}
 
-	// }
+	}
 
 	// Change of coordinates
 	res[0] = res[0]/rad + w[0][0] + w[0][1]*t[1] + w[0][2]*t[2] + w[0][3]*t[3] + 
@@ -200,20 +315,34 @@ void OrbitELP82::getEphemeris(double mjd, double *res)
 
     // Position vector
 	res[0] = pw2*x1+pwqw*x2+pw*x3;
-    res[1] = -pw*x1+qw*x2+(pw2+qw2-1)*x3;
 	res[2] = pwqw*x1+qw2*x2-qw*x3;
+    res[1] = -pw*x1+qw*x2+(pw2+qw2-1)*x3;
 
     // Velocity vector
 	res[3] = pw2_dot*x1 + pw2*x1_dot + pwqw_dot*x2 + pwqw*x2_dot + pw_dot*x3 + pw*x3_dot;
-	res[4] = -pw_dot*x1 - pw*x1_dot + qw_dot*x2 + qw*x2_dot + (pw2_dot+qw2_dot)*x3 + (pw2+qw2-1)*x3_dot;
 	res[5] = pwqw_dot*x1 + pwqw*x1_dot + qw2_dot*x2 + qw2*x2_dot - qw_dot*x3 - qw*x3_dot;
+	res[4] = -pw_dot*x1 - pw*x1_dot + qw_dot*x2 + qw*x2_dot + (pw2_dot+qw2_dot)*x3 + (pw2+qw2-1)*x3_dot;
+
+	Logger::getLogger()->debug("ELP82B: Name: {} MJD: {} JD: {}\n",
+		"Lunar", mjd, 0 /* (t[1] * a1000) + jd2000 */);
+	Logger::getLogger()->debug("ELP82B: P({:14.10f}, {:14.10f}, {:14.10f})\n",
+		std::fmod(res[0], pi*2), res[1], res[2]);
+	Logger::getLogger()->debug("ELP82B: V({:14.10f}, {:14.10f}, {:14.10f})\n",
+		res[3], res[4], res[5]);
 
 	// convert to m and m/s
-	res[0] *= pscale;
-	res[1] *= pscale;
-	res[2] *= pscale;
+	// res[0] *= pscale;
+	// res[1] *= pscale;
+	// res[2] *= pscale;
 
-	res[3] *= vscale;
-	res[4] *= vscale;
-	res[5] *= vscale;
+	// res[3] *= vscale;
+	// res[4] *= vscale;
+	// res[5] *= vscale;
+}
+
+OrbitEphemeris *OrbitELP82::create(CelestialBody &cbody, cstr_t &name)
+{
+	if (name == "elp82b-lunar")
+		return new OrbitELP82Lunar(cbody);
+	return nullptr;
 }

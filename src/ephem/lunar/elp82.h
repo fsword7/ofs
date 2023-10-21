@@ -5,6 +5,22 @@
 
 #pragma once
 
+class CelestialBody;
+
+struct elp82main_t
+{
+    int ilu[4];
+    double coef[7];
+};
+
+struct elp82group_t
+{
+    elp82main_t *main;
+    int nterms;
+};
+
+typedef double SEQ3[3];
+typedef double SEQ6[6];
 class OrbitELP82 : public OrbitEphemeris
 {
 public:
@@ -13,9 +29,13 @@ public:
 
     void getEphemeris(double mjd, double *res);
 
+    virtual uint16_t getOrbitData(double mjd, uint16_t req, double *res) = 0;
+
+    static OrbitEphemeris *create(CelestialBody &cbody, cstr_t &name);
+
 protected:
     void init();
-    void load(cstr_t &name);
+    void initData(double prec);
 
 private:
     double delnu, dele, delg, delnp, delep;
@@ -25,6 +45,11 @@ private:
     double w[3][5], p[8][2], eart[5], peri[5], del[4][5], zeta[2];
     int    nterm[3][12], nrang[3][12];
 
+    SEQ6 *pc[3]  = {};
+    SEQ3 *per[3] = {};
+
+    const double def_prec = 1e-5;
+    double cur_prec = -1.0;
 };
 
 

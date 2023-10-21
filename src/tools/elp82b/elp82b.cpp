@@ -16,15 +16,20 @@ struct main_t
 
 void print(main_t *block, int nterms)
 {
+    std::cout << fmt::format("static elp82main_t elp_data[{}] = {{\n", nterms);
+
     for (int term = 0; term < nterms; term++)
     {
         main_t &b = block[term];
 
-        std::cout << fmt::format("\t{{{{{:3d},{:3d},{:3d},{:3d}}},{{{:12.5f},{:10.2f},{:10.2f},{:10.2f},{:10.2f},{:10.2f},{:10.2f}}}}}\n",
+        std::cout << fmt::format("\t{{{{{:3d},{:3d},{:3d},{:3d} }}, {{{:14.5f},{:12.2f},{:12.2f},{:12.2f},{:12.2f},{:12.2f},{:12.2f} }}}}{}\n",
             b.ilu[0], b.ilu[1], b.ilu[2], b.ilu[3],
             b.coef[0], b.coef[1], b.coef[2], b.coef[3],
-            b.coef[4], b.coef[5], b.coef[6]);
+            b.coef[4], b.coef[5], b.coef[6],
+            (term < nterms-1) ? ',' : ' ');
     }
+
+    std::cout << fmt::format("}};\n");
 }
 
 int main(int argc, char **argv)
@@ -49,7 +54,7 @@ int main(int argc, char **argv)
         inFile.seekg(0, inFile.beg);
         std::getline(inFile, line); // ignore headline line
 
-        std::cout << "Total terms = " << nterms << std::endl;
+        // std::cout << "Total terms = " << nterms << std::endl;
 
         main_t *block = new main_t[nterms];
 
