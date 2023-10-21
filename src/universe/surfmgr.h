@@ -1,15 +1,15 @@
-// surface.h - Celestial body surface package
+// surfmg.h - Surface Manager package
 //
 // Author:  Tim Stark
-// Date:    May 16, 2022
+// Date:    Oct 18, 2023
 
 #pragma once
 
-class celSurface
+class SurfaceManager
 {
 public:
-    celSurface() = default;
-    ~celSurface() = default;
+    SurfaceManager() = default;
+    ~SurfaceManager() = default;
 
     inline void setColor(color_t nColor)    { color = nColor; }
 

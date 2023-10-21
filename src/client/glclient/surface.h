@@ -102,6 +102,9 @@ public:
     // Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
     //     int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
 
+    void fixLongtitudeBoundary(SurfaceTile *nbr);
+    void fixLatitudeBoundary(SurfaceTile *nbr);
+    void fixCorner(SurfaceTile *nbr);
     void matchEdges();
 
     double getMeanElevation(const int16_t *elev) const;
