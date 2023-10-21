@@ -182,6 +182,27 @@ void Player::update(const TimeDate &td)
             break;
 
         case camGroundObserver:
+            // double rad = tgtObject->getRadius() + (go.alt / 1000.0);
+            // // gpos = tgtObject->convertEquatorialToGlobal(go.lng, go.lat, rad);
+            // gspos = gpos - tgtObject->getoPosition();
+            // gdir = glm::normalize(tgtObject->getoPosition()-gpos);
+            // glm::dvec3 hdir = tmul(go.R, tmul(tgtObject->getuOrientation(0), gdir));
+            // if (fabs(hdir.y) < 0.999999)
+            // {
+            //     go.theta = asin(hdir.y);
+            //     go.phi = atan2(-hdir.x, hdir.z);
+            // }
+            // else
+            // {
+            //     go.theta = (hdir.y > 0) ? pi/2.0 : -pi/2.0;
+            //     go.phi = 0.0;
+            // }
+            // double sinph = sin(go.phi), cosph = cos(go.phi);
+            // double sinth = sin(go.theta), costh = cos(go.theta);
+            // cam.rrot = { cosph,     sinph*sinth,    -sinph*costh,
+            //              0.0,       costh,          sinth,
+            //              sinph,     -cosph*sinth,   cosph*costh };
+            // grot = tgtObject->getuOrientation(0) * go.R * cam.rrot;
             break;
         };
     }
@@ -278,14 +299,32 @@ void Player::rotateTheta(double theta)
 
 }
 
-void Player::setGroundMode(Object *object, double lng, double lat, double alt)
+void Player::setGroundMode(Object *object, double lng, double lat, double heading, double alt)
 {
     go.lng = lng;
     go.lat = lat;
     go.alt = alt;
+    go.dir = heading;
 
     double clng = cos(lng), slng = sin(lng);
     double clat = cos(lat), slat = sin(lat);
+
+    go.R = { clng*slat, clng*clat, -slng,
+            -clat,      slat,       0,
+             slng*slat, slng*clat,  clng };
+
+    
+}
+
+void Player::setGroundMode(Object *object, glm::dvec3 loc)
+{
+    go.lat = loc.x;
+    go.lng = loc.y;
+    go.dir = loc.z;
+
+    double clat = cos(go.lat), slat = sin(go.lat);
+    double clng = cos(go.lng), slng = sin(go.lng);
+    double cdir = cos(go.dir), sdir = sin(go.dir);
 
     go.R = { clng*slat, clng*clat, -slng,
             -clat,      slat,       0,

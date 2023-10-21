@@ -10,6 +10,8 @@
 #include "ephem/vsop87/vsop87.h"
 #include "ephem/rotation.h"
 // #include "ephem/elements.h"
+#include "universe/elevmgr.h"
+#include "universe/surfmgr.h"
 #include "universe/celbody.h"
 #include "universe/astro.h"
 
@@ -70,7 +72,7 @@ void CelestialBody::attach(CelestialBody *parent, frameType type)
 
         // elements->setup(mass, cbody->getMass(), 0); // td.mjdRef);
 
-        uint16_t flags = 0;
+        uint16_t flags = 1;
         if (flags)
         {
             // if (flags & EPHEM_TRUEPOS)

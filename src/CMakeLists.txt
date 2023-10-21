@@ -17,7 +17,8 @@ set(OFS_CPP_SRCS
     ephem/earth/nrlmsise00_math.cpp
     ephem/earth/nrlmsise00_p.cpp
     ephem/earth/nrlmsise00.cpp
-    ephem/moon/elp82.cpp
+    ephem/lunar/elp82.cpp
+    ephem/lunar/lunar.cpp
     ephem/vsop87/earth.cpp
     ephem/vsop87/jupiter.cpp
     ephem/vsop87/mars.cpp
@@ -67,12 +68,13 @@ set(OFS_CPP_SRCS
     universe/body.cpp
     universe/celbody.cpp
     universe/constellations.cpp
+    universe/elevmgr.cpp
     # universe/frame.cpp
     universe/psystem.cpp
     universe/star.cpp
     universe/starlib.cpp
     universe/startree.cpp
-    universe/surface.cpp
+    universe/surfmgr.cpp
     # universe/system.cpp
     universe/universe.cpp
     utils/logger.cpp
@@ -100,7 +102,8 @@ set(OFS_H_SRCS
     ephem/earth/nrlmsise00_math.hpp
     ephem/earth/nrlmsise00_p.hpp
     ephem/earth/nrlmsise00.hpp
-    ephem/moon/elp82.h
+    ephem/lunar/elp82.h
+    ephem/lunar/lunar.h
     ephem/vsop87/earth.h
     ephem/vsop87/jupiter.h
     ephem/vsop87/mars.h
@@ -142,13 +145,14 @@ set(OFS_H_SRCS
     universe/body.h
     universe/celbody.h
     universe/constellations.h
+    universe/elevmgr.h
     # universe/frame.h
     universe/handle.h
     universe/psystem.h
     universe/star.h
     universe/starlib.h
     universe/startree.h
-    universe/surface.h
+    universe/surfmgr.h
     # universe/system.h
     universe/universe.h
     utils/color.h

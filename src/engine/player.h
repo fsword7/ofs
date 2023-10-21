@@ -23,7 +23,8 @@ enum travelMode
 
 struct GroundObserver
 {
-    double lng, lat;    // Longtiude/Latiude location
+    double lat, lng;    // Latitude/Longtiude location
+    double dir;         // ground direction (compass)
     double alt;         // Altitude
     double alt0;        // Altitude at sea level
     double phi, theta;  // Camera direction at local horizon frame
@@ -123,7 +124,8 @@ public:
     void orbit(double phi, double theta, double dist);
     void rotateView(double phi, double theta);
 
-    void setGroundMode(Object *object, double lng, double lat, double alt);
+    void setGroundMode(Object *object, double lng, double lat, double heading, double alt);
+    void setGroundMode(Object *object, glm::dvec3 loc);
 
 private:
     Camera cam;
@@ -134,6 +136,7 @@ private:
     // Global (universal) parmeters
     glm::dvec3 gspos;   // Relative to target in global coordinates
     glm::dvec3 gpos;
+    glm::dvec3 gdir;    // Direction
     glm::dmat3 grot;
     glm::dquat gqrot;
 

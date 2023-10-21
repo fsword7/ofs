@@ -10,6 +10,36 @@
 #include "elevmgr.h"
 
 
+void SurfaceTile::fixLongtitudeBoundary(SurfaceTile *nbr)
+{
+    if (mesh == nullptr)
+        return;
+}
+
+void SurfaceTile::fixLatitudeBoundary(SurfaceTile *nbr)
+{
+    if (mesh == nullptr)
+        return;
+}
+
+void SurfaceTile::fixCorner(SurfaceTile *nbr)
+{
+    if (mesh == nullptr)
+        return;
+    
+    int16_t *elev = getElevationData();
+    if (elev == nullptr)
+        return;
+    
+    if (nbr == nullptr)
+        return;
+    int16_t *nelev = nbr->getElevationData();
+    if (nelev == nullptr)
+        return;
+    
+    
+}
+
 void SurfaceTile::matchEdges()
 {
 
