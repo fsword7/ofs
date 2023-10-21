@@ -17,11 +17,17 @@ public:
 
     void addStar(CelestialStar *cbody);
     void addBody(CelestialBody *cbody);
+    void addPlanet(CelestialBody *planet, CelestialBody *cbody);
+    void addGravity(CelestialBody *grav);
 
     void update(const TimeDate &td);
     void finalizeUpdate();
 
 private:
+    CelestialStar *primaryStar = nullptr;
+
     std::vector<CelestialStar *> stars;
     std::vector<CelestialBody *> bodies;
+    std::vector<CelestialBody *> planets;
+    std::vector<CelestialBody *> gravities;
 };

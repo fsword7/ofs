@@ -9,6 +9,7 @@
 #include "engine/player.h"
 #include "ephem/orbit.h"
 #include "ephem/vsop87/vsop87.h"
+#include "ephem/lunar/elp82.h"
 #include "ephem/rotation.h"
 #include "universe/universe.h"
 #include "universe/star.h"
@@ -59,39 +60,86 @@ void Universe::init()
     // lunar = System::createBody("Moon", system, celType::cbMoon,
     //     "EclipticJ2000", "EquatorJ2000");
 
+    // mercury = new CelestialBody("Mercury", cbPlanet);
+    // venus = new CelestialBody("Venus", cbPlanet);
     earth = new CelestialBody("Earth", cbPlanet);
+    lunar = new CelestialBody("Lunar", cbMoon);
+    // mars = new CelestialBody("Mars", cbPlanet);
+    // jupiter = new CelestialBody("Jupiter", cbPlanet);
+    // saturn = new CelestialBody("Saturn", cbPlanet);
+    // uranus = new CelestialBody("Uranus", cbPlanet);
+    // neptune = new CelestialBody("Neptune", cbPlanet);
 
     sun->setEphemeris(OrbitVSOP87::create(*sun, "vsop87e-sol"));
 
-    earth->setColor(color_t(0.856, 0.910, 1.0));
-    // earth->setOrbit(VSOP87Orbit::create("vsop87-earth"));
+    // mercury->setEphemeris(OrbitVSOP87::create(*mercury, "vsop87b-mercury"));
+    // mercury->setMass(6.418542e+23);
+    // mercury->setRadius(3389.5);
+    // mercury->setAlbedo(0.250);
+    // mercury->setColor(color_t(0.52, 0.36, 0.16));
+
+    // venus->setEphemeris(OrbitVSOP87::create(*venus, "vsop87b-venus"));
+    // venus->setMass(6.418542e+23);
+    // venus->setRadius(3389.5);
+    // venus->setAlbedo(0.250);
+    // venus->setColor(color_t(0.52, 0.36, 0.16));
+
     earth->setEphemeris(OrbitVSOP87::create(*earth, "vsop87b-earth"));
-    earth->setRotation(Rotation::create("p03lp-earth"));
+    // earth->setRotation(Rotation::create("p03lp-earth"));
     // earth->setRotation(Rotation::create("iau-earth"));
+    earth->setMass(5.9722e+24);
     earth->setRadius(6378.140);
     earth->setAlbedo(0.449576);
+    earth->setColor(color_t(0.856, 0.910, 1.0));
 
-    // lunar->setColor(color_t(1.0, 0.945582, 0.865));
+    // mars->setEphemeris(OrbitVSOP87::create(*mars, "vsop87b-mars"));
+    // mars->setMass(6.418542e+23);
+    // mars->setRadius(3389.5);
+    // mars->setAlbedo(0.250);
+    // mars->setColor(color_t(0.52, 0.36, 0.16));
+
+    // jupiter->setEphemeris(OrbitVSOP87::create(*jupiter, "vsop87b-jupiter"));
+    // jupiter->setMass(6.418542e+23);
+    // jupiter->setRadius(3389.5);
+    // jupiter->setAlbedo(0.250);
+    // jupiter->setColor(color_t(0.52, 0.36, 0.16));
+
+    // saturn->setEphemeris(OrbitVSOP87::create(*saturn, "vsop87b-saturn"));
+    // saturn->setMass(6.418542e+23);
+    // saturn->setRadius(3389.5);
+    // saturn->setAlbedo(0.250);
+    // saturn->setColor(color_t(0.52, 0.36, 0.16));
+
+    // uranus->setEphemeris(OrbitVSOP87::create(*uranus, "vsop87b-uranus"));
+    // uranus->setMass(6.418542e+23);
+    // uranus->setRadius(3389.5);
+    // uranus->setAlbedo(0.250);
+    // uranus->setColor(color_t(0.52, 0.36, 0.16));
+
+    // neptune->setEphemeris(OrbitVSOP87::create(*neptune, "vsop87b-neptune"));
+    // neptune->setMass(6.418542e+23);
+    // neptune->setRadius(3389.5);
+    // neptune->setAlbedo(0.250);
+    // neptune->setColor(color_t(0.52, 0.36, 0.16));
+
     // lunar->setOrbit(VSOP87Orbit::create("elp-mpp02-llr-lunar"));
     // lunar->setRotation(Rotation::create("iau-lunar"));
-    // lunar->setRadius(1738.14);
-    // lunar->setAlbedo(0.136);
+    lunar->setEphemeris(OrbitELP82::create(*lunar, "elp82b-lunar"));
+    lunar->setMass(7.342e+22);
+    lunar->setRadius(1738.14);
+    lunar->setAlbedo(0.136);
+    lunar->setColor(color_t(1.0, 0.945582, 0.865));
 
-    // Camera *cam = ofsAppCore->getCamera();
-    // Player *player = ofsAppCore->getPlayer();
-    // cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
-    // cam->look(sun->getStarPosition());
-    // cam->update();
-    // player->attach(sun);
-    // // cam->setPosition(glm::dvec3(0, 0, -earth->getRadius() * 4.0));
-    // // cam->look(earth->getoPosition(0));
-    // // cam->update();
-    // // player->attach(earth);
-    // // player->update();
+    // psys->addPlanet(mercury, sun);
+    // psys->addPlanet(venus, sun);
+    psys->addPlanet(earth, sun);
+    psys->addPlanet(lunar, earth);
 
-    psys->addBody(earth);
-    earth->setStar(sun);
-    earth->attach(sun);
+    // psys->addPlanet(mars, sun);
+    // psys->addPlanet(jupiter, sun);
+    // psys->addPlanet(saturn, sun);
+    // psys->addPlanet(uranus, sun);
+    // psys->addPlanet(neptune, sun);
 
     // std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
     // System::loadSolarSystemObjects(in, *this, "systems");
@@ -113,6 +161,8 @@ void Universe::start(const TimeDate &td)
     cam->update();
     player->attach(earth, camTargetRelative);
     player->look(earth);
+    // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
+    // player->setGroundMode(earth, -80.705774, 28.632307, 150, 2);
     player->update(td);
 }
 
