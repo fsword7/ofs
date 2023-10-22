@@ -156,6 +156,12 @@ void Universe::start(const TimeDate &td)
     // cam->update();
     // player->attach(sun);
 
+    // glm::dvec3 lpos = { 0, 0, lunar->getRadius() * 4.0 };
+    // cam->setPosition(lpos);
+    // cam->update();
+    // player->attach(lunar, camTargetRelative);
+    // player->look(lunar);
+
     glm::dvec3 epos = { 0, 0, earth->getRadius() * 4.0 };
     cam->setPosition(epos);
     cam->update();
