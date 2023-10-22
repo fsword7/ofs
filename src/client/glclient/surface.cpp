@@ -376,7 +376,8 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         uRadius = floatUniform(pgm->getID(), "uRadius");
         uColor = vec4Uniform(pgm->getID(), "uColor");
         uCentralDir = vec3Uniform(pgm->getID(), "uCentralDir");
-
+        uTime = floatUniform(pgm->getID(), "uTime");
+    
         pgm->release();
 
         pgmCorona->use();
@@ -718,8 +719,9 @@ void SurfaceManager::renderStar(const ObjectProperties &op)
     uRadius = objSize;
     uColor = glm::vec4(op.color.getRed(), op.color.getGreen(),
                        op.color.getBlue(), op.color.getAlpha());
-    uCentralDir = glm::vec3(glm::normalize(prm.cpos));
+    uCentralDir = prm.cdir;
     uCamClip = op.clip;
+    uTime = op.dTime;
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

@@ -38,9 +38,9 @@ void main()
     // Total noise
     float total = n - ss;
 
-    // float theta = 1.0 - dot(uCentralDir, nPosition);
+    float theta = 1.0 - dot(uCentralDir, normalize(fPosition));
 
-    fragColor = vec4((uColor.xyz * 0.5) + (total - 0.5), 1.0);
+    fragColor = vec4(uColor.xyz + (total - 0.5) - theta, 1.0);
 
     gl_FragDepth = getDepth(uCamClip.y, uCameraK);
 }

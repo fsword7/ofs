@@ -33,6 +33,7 @@ struct ObjectProperties
     double   viewap;
     double   tanap;
     double   mjd;
+    double   dTime;
 };
 
 class vObject

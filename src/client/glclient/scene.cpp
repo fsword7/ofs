@@ -76,6 +76,7 @@ void Scene::update(Player *player)
     pixelSize = (2.0 * tan(camera->getFOV() / 2.0)) / camera->getHeight();
 
     mjd = player->getTimeDate()->getMJD0();
+    now = player->getTimeDate()->getSimTime0();
 
     // nearStars.clear();
     visibleStars.clear();

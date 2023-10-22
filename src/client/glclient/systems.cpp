@@ -63,6 +63,7 @@ void Scene::renderSystemObjects()
         ObjectProperties op;
 
         op.mjd   = ole.mjd;
+        op.dTime = 0.0; // now;
         op.color = ole.color;
         op.orad  = ole.objSize;
         op.opos  = ole.opos;
