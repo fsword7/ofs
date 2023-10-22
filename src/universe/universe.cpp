@@ -60,11 +60,11 @@ void Universe::init()
     // lunar = System::createBody("Moon", system, celType::cbMoon,
     //     "EclipticJ2000", "EquatorJ2000");
 
-    // mercury = new CelestialBody("Mercury", cbPlanet);
+    mercury = new CelestialBody("Mercury", cbPlanet);
     // venus = new CelestialBody("Venus", cbPlanet);
     earth = new CelestialBody("Earth", cbPlanet);
     lunar = new CelestialBody("Lunar", cbMoon);
-    // mars = new CelestialBody("Mars", cbPlanet);
+    mars = new CelestialBody("Mars", cbPlanet);
     // jupiter = new CelestialBody("Jupiter", cbPlanet);
     // saturn = new CelestialBody("Saturn", cbPlanet);
     // uranus = new CelestialBody("Uranus", cbPlanet);
@@ -72,11 +72,11 @@ void Universe::init()
 
     sun->setEphemeris(OrbitVSOP87::create(*sun, "vsop87e-sol"));
 
-    // mercury->setEphemeris(OrbitVSOP87::create(*mercury, "vsop87b-mercury"));
-    // mercury->setMass(6.418542e+23);
-    // mercury->setRadius(3389.5);
-    // mercury->setAlbedo(0.250);
-    // mercury->setColor(color_t(0.52, 0.36, 0.16));
+    mercury->setEphemeris(OrbitVSOP87::create(*mercury, "vsop87b-mercury"));
+    mercury->setMass(6.418542e+23);
+    mercury->setRadius(3389.5);
+    mercury->setAlbedo(0.250);
+    mercury->setColor(color_t(0.52, 0.36, 0.16));
 
     // venus->setEphemeris(OrbitVSOP87::create(*venus, "vsop87b-venus"));
     // venus->setMass(6.418542e+23);
@@ -92,11 +92,11 @@ void Universe::init()
     earth->setAlbedo(0.449576);
     earth->setColor(color_t(0.856, 0.910, 1.0));
 
-    // mars->setEphemeris(OrbitVSOP87::create(*mars, "vsop87b-mars"));
-    // mars->setMass(6.418542e+23);
-    // mars->setRadius(3389.5);
-    // mars->setAlbedo(0.250);
-    // mars->setColor(color_t(0.52, 0.36, 0.16));
+    mars->setEphemeris(OrbitVSOP87::create(*mars, "vsop87b-mars"));
+    mars->setMass(6.418542e+23);
+    mars->setRadius(3389.5);
+    mars->setAlbedo(0.250);
+    mars->setColor(color_t(0.52, 0.36, 0.16));
 
     // jupiter->setEphemeris(OrbitVSOP87::create(*jupiter, "vsop87b-jupiter"));
     // jupiter->setMass(6.418542e+23);
@@ -130,12 +130,11 @@ void Universe::init()
     lunar->setAlbedo(0.136);
     lunar->setColor(color_t(1.0, 0.945582, 0.865));
 
-    // psys->addPlanet(mercury, sun);
+    psys->addPlanet(mercury, sun);
     // psys->addPlanet(venus, sun);
     psys->addPlanet(earth, sun);
     psys->addPlanet(lunar, earth);
-
-    // psys->addPlanet(mars, sun);
+    psys->addPlanet(mars, sun);
     // psys->addPlanet(jupiter, sun);
     // psys->addPlanet(saturn, sun);
     // psys->addPlanet(uranus, sun);
@@ -151,22 +150,30 @@ void Universe::start(const TimeDate &td)
     Camera *cam = ofsAppCore->getCamera();
     Player *player = ofsAppCore->getPlayer();
 
-    // cam->setPosition(glm::dvec3(0, 0, -sun->getRadius() * 4.0));
-    // cam->look(sun->getStarPosition());
-    // cam->update();
-    // player->attach(sun);
+    cam->setPosition({ 0, 0, -sun->getRadius() * 4.0 });
+    cam->update();
+    player->attach(sun, camTargetRelative);
+    player->look(sun);
 
-    // glm::dvec3 lpos = { 0, 0, lunar->getRadius() * 4.0 };
-    // cam->setPosition(lpos);
+    // cam->setPosition({ 0, 0, mercury->getRadius() * 4.0 });
+    // cam->update();
+    // player->attach(mercury, camTargetRelative);
+    // player->look(mercury);
+
+    // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0 });
     // cam->update();
     // player->attach(lunar, camTargetRelative);
     // player->look(lunar);
 
-    glm::dvec3 epos = { 0, 0, earth->getRadius() * 4.0 };
-    cam->setPosition(epos);
-    cam->update();
-    player->attach(earth, camTargetRelative);
-    player->look(earth);
+    // cam->setPosition({ 0, 0, mars->getRadius() * 4.0 });
+    // cam->update();
+    // player->attach(mars, camTargetRelative);
+    // player->look(mars);
+
+    // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
+    // cam->update();
+    // player->attach(earth, camTargetRelative);
+    // player->look(earth);
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
     // player->setGroundMode(earth, -80.705774, 28.632307, 150, 2);
     player->update(td);
