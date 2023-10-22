@@ -13,6 +13,7 @@ set(OGL_CPP_SRCS
     fonts.cpp
     glad.cpp
     loader.cpp
+    overlay.cpp
     scene.cpp
     shader.cpp
     starcolors.cpp
@@ -35,6 +36,7 @@ set(OGL_H_SRCS
     client.h
     elevmgr.h
     fonts.h
+    overlay.h
     scene.h
     shader.h
     starcolors.h
