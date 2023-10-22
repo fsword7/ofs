@@ -10,6 +10,7 @@ set(OGL_CPP_SRCS
     client.cpp
     constellations.cpp
     elevmgr.cpp
+    fonts.cpp
     glad.cpp
     loader.cpp
     scene.cpp
@@ -33,6 +34,7 @@ set(OGL_H_SRCS
     # camera.h
     client.h
     elevmgr.h
+    fonts.h
     scene.h
     shader.h
     starcolors.h

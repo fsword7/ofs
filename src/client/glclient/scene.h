@@ -87,6 +87,9 @@ public:
     inline Camera *getCamera() const                { return camera; }
     inline Player *getObserver() const              { return observer; }
 
+    inline int getWidth() const                     { return width; }
+    inline int getHeight() const                    { return height; }
+
     inline void addRenderList(ObjectListEntry &ole) { renderList.push_back(ole); }
 
     void init(Universe *universe);
