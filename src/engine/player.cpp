@@ -234,10 +234,10 @@ void Player::orbit(const glm::dquat &drot)
 {
     if (tgtObject == nullptr)
         return;
+    if (modeExternal != camTargetRelative)
+        return;
 
-    // Determine central position of object (planet, vessel, etc)
-    glm::dvec3 opos = tgtObject->getoPosition();
-    glm::dvec3 vpos = cam.rpos - opos;
+    glm::dvec3 vpos = cam.rpos;
 
     double vdist = glm::length(vpos);
     glm::dquat qrot = glm::conjugate(cam.rqrot) * drot * cam.rqrot;
@@ -246,19 +246,20 @@ void Player::orbit(const glm::dquat &drot)
 
     cam.rqrot = cam.rqrot * qrot;
     cam.rrot  = glm::mat3_cast(cam.rqrot);
-    cam.rpos  = opos + vpos;
+    cam.rpos  = vpos;
 }
 
 void Player::dolly(double dz)
 {
     if (tgtObject == nullptr)
         return;
+    if (modeExternal != camTargetRelative)
+        return;
 
     // double fact = std::max(1.0/opos.z, 1.0/(1.0 - dz));
     // orbit(opos.x, opos.y, opos.z*fact);
 
-    glm::dvec3 opos = tgtObject->getoPosition();
-    glm::dvec3 vpos = cam.rpos - opos;
+    glm::dvec3 vpos = cam.rpos;
     double sdist = tgtObject->getRadius();  // surface radius
     double vdist = glm::length(vpos);
 
@@ -268,7 +269,7 @@ void Player::dolly(double dz)
         double ndist = sdist + sdist * exp(log(agl) + dz);
 
         vpos *= ndist / vdist;
-        cam.rpos = opos + vpos;
+        cam.rpos = vpos;
         // Logger::logger->debug("Distance: {} <- {} / {}\n", glm::length(cam.rpos), ndist, cdist);
     }
 
