@@ -19,6 +19,20 @@ OrbitELP82::OrbitELP82(CelestialBody &cbody)
 	initData(def_prec);
 }
 
+OrbitELP82::~OrbitELP82()
+{
+	if (cur_prec >= 0.0)
+	{
+		for (int idx = 0; idx < 3; idx++)
+		{
+			if (pc[idx])
+				delete [] pc[idx];
+			if (per[idx])
+				delete [] per[idx];
+		}
+	}
+}
+
 void OrbitELP82::init()
 {
     // Constant initializations
@@ -37,6 +51,8 @@ void OrbitELP82::init()
     precess = 5029.0966/rad;
 
     mjd2000 = 51544.5; // mjd->dj2000 offset
+	jd2000  = 2451545.0;
+
     sc      = 36525.0;
 	pscale  = 1e3;
 	vscale  = 1e3/(86400.0*sc);
@@ -231,6 +247,8 @@ void OrbitELP82::initData(double prec)
 
 		delete [] block;
 	}
+
+	cur_prec = prec;
 }
 
 void OrbitELP82::getEphemeris(double mjd, double *res)
@@ -324,9 +342,9 @@ void OrbitELP82::getEphemeris(double mjd, double *res)
 	res[4] = -pw_dot*x1 - pw*x1_dot + qw_dot*x2 + qw*x2_dot + (pw2_dot+qw2_dot)*x3 + (pw2+qw2-1)*x3_dot;
 
 	Logger::getLogger()->debug("ELP82B: Name: {} MJD: {} JD: {}\n",
-		"Lunar", mjd, 0 /* (t[1] * a1000) + jd2000 */);
+		"Lunar", mjd, (t[1] * sc) + jd2000);
 	Logger::getLogger()->debug("ELP82B: P({:14.10f}, {:14.10f}, {:14.10f})\n",
-		std::fmod(res[0], pi*2), res[1], res[2]);
+		res[0], res[1], res[2]);
 	Logger::getLogger()->debug("ELP82B: V({:14.10f}, {:14.10f}, {:14.10f})\n",
 		res[3], res[4], res[5]);
 
