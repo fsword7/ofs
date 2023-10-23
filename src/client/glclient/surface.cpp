@@ -714,7 +714,8 @@ void SurfaceManager::renderStar(const ObjectProperties &op)
 
     // meshStar->vao->bind();
 
-    dTime += 0.0005;
+    // Updating time for solar granules aninmation
+    dTime += 0.0002;
 
     uViewProj = glm::mat4(prm.dmViewProj);
     uModel = glm::mat4(prm.dmWorld);
