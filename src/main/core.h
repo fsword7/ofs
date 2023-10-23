@@ -40,6 +40,7 @@ namespace fs = std::filesystem;
 
 #include "main/date.h"
 #include "main/math.h"
+#include "main/json.h"
 #include "main/timedate.h"
 #include "utils/logger.h"
 #include "utils/color.h"

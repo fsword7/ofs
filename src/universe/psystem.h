@@ -20,6 +20,8 @@ public:
     void addPlanet(CelestialBody *planet, CelestialBody *cbody);
     void addGravity(CelestialBody *grav);
 
+    void loadSystems();
+
     void update(const TimeDate &td);
     void finalizeUpdate();
 

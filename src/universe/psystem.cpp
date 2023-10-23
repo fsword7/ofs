@@ -58,3 +58,10 @@ void pSystem::finalizeUpdate()
     for (auto body : bodies)
         body->endUpdate();
 }
+
+void pSystem::loadSystems()
+{
+    std::ifstream jFile("Systems.json");
+    json data = json::parse(jFile);
+
+}
