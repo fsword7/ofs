@@ -714,6 +714,8 @@ void SurfaceManager::renderStar(const ObjectProperties &op)
 
     // meshStar->vao->bind();
 
+    dTime += 0.0005;
+
     uViewProj = glm::mat4(prm.dmViewProj);
     uModel = glm::mat4(prm.dmWorld);
     uRadius = objSize;
@@ -721,7 +723,7 @@ void SurfaceManager::renderStar(const ObjectProperties &op)
                        op.color.getBlue(), op.color.getAlpha());
     uCentralDir = prm.cdir;
     uCamClip = op.clip;
-    uTime = op.dTime;
+    uTime = dTime;
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

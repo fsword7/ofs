@@ -251,6 +251,8 @@ private:
     int gridRes = 32; // 1 << 5
     double elevRes = 1.0;
 
+    float dTime = 0.0;
+    
     ObjectType objType = objUnknown;
     double     objSize = 0.0;
     double     resScale;
