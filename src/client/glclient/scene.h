@@ -21,7 +21,7 @@ class vObject;
 class FrameTree;
 class Object;
 class CelestialStar;
-
+struct LightState;
 
 struct LineVertex
 {
@@ -47,6 +47,24 @@ struct AsterismVertex
 {
     glm::vec3 spos;
     color_t   color;
+};
+
+// Sun light sources list
+struct LightSource
+{
+    glm::dvec3  spos;           // Sun position;
+    double      luminosity;     // Sun Luminosity
+    double      radius;         // Sun radius
+    color_t     color;          // Color temperature
+};
+
+// Reflected object list
+struct SecondaryLight
+{
+    Object      *object;        // Reflected object
+    glm::dvec3  vpos;           // View position
+    double      radius;         // Object radius
+    double      reflected;      // Reflected brightness
 };
 
 struct ObjectListEntry
@@ -115,6 +133,12 @@ protected:
     void renderObjectAsPoint(ObjectListEntry &ole);
     void renderCelestialBody(ObjectListEntry &ole);
 
+    void setupPrimaryLightSources(const std::vector<const CelestialStar *> nearStars,
+        const glm::dvec3 &obs, std::vector<LightSource> &ls);
+    void setupSecondaryLightSources();
+    void setObjectLighting(std::vector<LightSource> &suns, const glm::dvec3 &opos,
+        const glm::dquat &orot, LightState &ls);
+
     // void buildSystems(FrameTree *tree, const glm::dvec3 &obs,
     //     const glm::dvec3 &vpnorm, const glm::dvec3 &origin);
     void buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
@@ -154,6 +178,7 @@ private:
     std::vector<vObject *> vobjList;
     std::vector<const CelestialStar *> nearStars;
     std::vector<const CelestialStar *> visibleStars;
+    std::vector<LightSource> lightSources;
 
     std::vector<ObjectListEntry> renderList;
 };

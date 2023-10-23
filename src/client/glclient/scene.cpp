@@ -81,9 +81,12 @@ void Scene::update(Player *player)
     // nearStars.clear();
     visibleStars.clear();
     renderList.clear();
+    lightSources.clear();
 
     // universe->findCloseStars(camera->getGlobalPosition(), 1.0, nearStars);
     nearStars = universe->getNearStars();
+    setupPrimaryLightSources(nearStars, observer->getPosition(), lightSources);
+
     for (auto star : nearStars)
     {
         vObject *vstar = getVisualObject(star, true);

@@ -13,6 +13,7 @@ set(OGL_CPP_SRCS
     fonts.cpp
     glad.cpp
     loader.cpp
+    lights.cpp
     overlay.cpp
     scene.cpp
     shader.cpp
@@ -36,6 +37,7 @@ set(OGL_H_SRCS
     client.h
     elevmgr.h
     fonts.h
+    lights.h
     overlay.h
     scene.h
     shader.h
