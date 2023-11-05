@@ -61,6 +61,23 @@
 //     return ownSystem;
 // }
 
+CelestialBody::CelestialBody(json &cfg, celType type)
+: RigidBody(cfg, (type == cbStar) ? objCelestialStar : objCelestialBody),
+  cbType(type)
+{
+
+    // getValueReal(cfg, "LAN", Lrel0);
+    // getValueReal(cfg, "LAN_MJD", mjd_rel);
+    // getValueReal(cfg, "SidRotPeriod", rotT);
+    // getValueReal(cfg, "SidRotOffset", Dphi);
+    // getValueReal(cfg, "Obliquity", eps_rel);
+
+    // getValueReal(cfg, "PrecessionPeriod", precT);
+    // getValueReal(cfg, "PrecessionObliquity", eps_ref);
+    // getValueReal(cfg, "PreccesionLAN", lan_ref);
+
+}
+
 void CelestialBody::attach(CelestialBody *parent, frameType type)
 {
     assert(parent != nullptr);
@@ -300,14 +317,30 @@ void CelestialBody::updatePostEphemeris(const TimeDate &td)
 
 void CelestialBody::updatePrecission(const TimeDate &td)
 {
-    // Lrel = Lrel0 + precOmega * (td.getMJD1()-relMJD);
-    // double sinl = sin(Lrel), cosl = cos(Lrel);
+    Lrel = Lrel0 + precOmega * (td.getMJD1() - mjd_rel);
+    double sinl = sin(Lrel), cosl = cos(Lrel);
 
-    // glm::dmat3 Rrel = { cosl,   -sinl*sin_eps,      -sinl*cos_eps, 
-    //                     0,      cos_eps,            -sin_eps,
-    //                     sinl,   cosl*sin_eps,       cosl*cos_eps };
+    glm::dmat3 Rrel = { cosl,   -sinl*sin_eps,      -sinl*cos_eps, 
+                        0,      cos_eps,            -sin_eps,
+                        sinl,   cosl*sin_eps,       cosl*cos_eps };
 
+    if (eps_ref)
+        R_ref_rel = R_ref * R_ref_rel;
+    
+    Raxis = R_ref_rel * glm::dvec3( 0, 1, 0 );
+    eps_ecl = acos(Raxis.y);
+    lan_ecl = atan2(-Raxis.y, Raxis.z);
 
+    double sinL = sin(lan_ecl), cosL = cos(lan_ecl);
+    double sine = sin(eps_ecl), cose = cos(eps_ecl);
+
+    Recl = { cosL,  -sinL*sine, -sinL*cose,
+            0,      cose,       -sine,
+            sinL,   cosL*sine,  cosL*cose };
+    
+    double cos_poff = cosL*R_ref_rel[0][0] * sinL*R_ref_rel[2][0];
+    double sin_poff = -(cosL*R_ref_rel[0][2] * sinL*R_ref_rel[2][2]);
+    rotOffset = atan2(sin_poff, cos_poff);
 }
 
 void CelestialBody::updateRotation(const TimeDate &td)
@@ -338,7 +371,7 @@ double CelestialBody::getLuminosity(double lum, double dist) const
     double power = lum * SOLAR_POWER;
     double irradiance = power / ofs::sphereArea(dist * 1000.0);
     double incidentEnergy = irradiance * ofs::circleArea(radius * 1000.0);
-    double reflectedEnergy = incidentEnergy * albedo;
+    double reflectedEnergy = incidentEnergy * geomAlbedo;
 
     return reflectedEnergy / SOLAR_POWER;
 }
@@ -390,4 +423,23 @@ glm::dvec3 CelestialBody::getHeliocentric(double tjd) const
     double lng = atan2(hpos.z, -hpos.x);
 
     return glm::dvec3( lng, lat, glm::length(opos));
+}
+
+bool CelestialBody::load(json &cfg)
+{
+
+    // getValueReal(cfg, "Mass", mass);
+    // getValueReal(cfg, "Radius", radius);
+
+    // getValueReal(cfg, "LAN", Lrel0);
+    // getValueReal(cfg, "LAN_MJD", mjd_rel);
+    // getValueReal(cfg, "SidRotPeriod", rotT);
+    // getValueReal(cfg, "SidRotOffset", Dphi);
+    // getValueReal(cfg, "Obliquity", eps_rel);
+
+    // getValueReal(cfg, "PrecessionPeriod", precT);
+    // getValueReal(cfg, "PrecessionObliquity", eps_ref);
+    // getValueReal(cfg, "PreccesionLAN", lan_ref);
+    
+    return true;
 }

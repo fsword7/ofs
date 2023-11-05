@@ -506,7 +506,7 @@ void logMatrix(const glm::dmat4 &m, cstr_t &desc)
     logger->debug("{} {} {} {}\n", m[3][0], m[3][1], m[3][2], m[3][3]);
 }
 
-void SurfaceManager::setRenderParams(const ObjectProperties &op)
+void SurfaceManager::setRenderParams(const ObjectListEntry &ole)
 {
     glm::dvec3 opos, cpos;
     double cdist;
@@ -522,19 +522,20 @@ void SurfaceManager::setRenderParams(const ObjectProperties &op)
     // logMatrix(prm.dmViewProj, "View/Projection");
     // logMatrix(prm.dmWorld, "Model");
 
-    prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
+    // prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
+    prm.urot = ole.orot;
     // opos = object->getuPosition(0);
-    opos = object->getoPosition();
-    cpos = player->getPosition(); //  camera->getGlobalPosition();
+    // opos = object->getoPosition();
+    // cpos = player->getPosition(); //  camera->getGlobalPosition();
 
-    prm.cpos = opos - cpos;
+    prm.cpos = ole.vpos; // opos - cpos;
     prm.cdir = tmul(prm.urot, -prm.cpos);
     cdist = glm::length(prm.cdir);
     prm.cdist = cdist / objSize;
     prm.cdir = glm::normalize(prm.cdir);
     prm.viewap = acos(1.0 / (std::max(prm.cdist, 1.0)));
     prm.scale = 1.0;
-    prm.clip = camera->getClip();
+    prm.clip = ole.camClip; //camera->getClip();
 
     prm.dmWorld = glm::dmat4(prm.urot);
     prm.dmWorld = glm::translate(prm.dmWorld, prm.cpos);
@@ -690,9 +691,9 @@ void SurfaceManager::render(SurfaceTile *tile)
     }
 }
 
-void SurfaceManager::renderBody(const ObjectProperties &op)
+void SurfaceManager::renderBody(const ObjectListEntry &ole)
 {
-    setRenderParams(op);
+    setRenderParams(ole);
 
     for (int idx = 0; idx < 2; idx++)
         process(tiles[idx]);
@@ -702,11 +703,11 @@ void SurfaceManager::renderBody(const ObjectProperties &op)
     pgm->release();
 }
 
-void SurfaceManager::renderStar(const ObjectProperties &op)
+void SurfaceManager::renderStar(const ObjectListEntry &ole)
 {
     // if (meshStar == nullptr)
     //     return;
-    setRenderParams(op);
+    setRenderParams(ole);
     // if (meshStar->vao == nullptr)
     //     meshStar->upload();
 
@@ -720,10 +721,10 @@ void SurfaceManager::renderStar(const ObjectProperties &op)
     uViewProj = glm::mat4(prm.dmViewProj);
     uModel = glm::mat4(prm.dmWorld);
     uRadius = objSize;
-    uColor = glm::vec4(op.color.getRed(), op.color.getGreen(),
-                       op.color.getBlue(), op.color.getAlpha());
+    uColor = glm::vec4(ole.color.getRed(), ole.color.getGreen(),
+                       ole.color.getBlue(), ole.color.getAlpha());
     uCentralDir = prm.cdir;
-    uCamClip = op.clip;
+    uCamClip = ole.camClip;
     uTime = dTime;
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

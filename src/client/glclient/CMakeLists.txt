@@ -15,6 +15,7 @@ set(OGL_CPP_SRCS
     loader.cpp
     lights.cpp
     overlay.cpp
+    ringmgr.cpp
     scene.cpp
     shader.cpp
     starcolors.cpp
@@ -23,6 +24,7 @@ set(OGL_CPP_SRCS
     systems.cpp
     texmgr.cpp
     vbody.cpp
+    vmesh.cpp
     vobject.cpp
     vstar.cpp
     vvessel.cpp
@@ -39,6 +41,7 @@ set(OGL_H_SRCS
     fonts.h
     lights.h
     overlay.h
+    ringmgr.h
     scene.h
     shader.h
     starcolors.h
@@ -46,6 +49,7 @@ set(OGL_H_SRCS
     surface.h
     texmgr.h
     vbody.h
+    vmesh.h
     vobject.h
     vstar.h
     vvessel.h

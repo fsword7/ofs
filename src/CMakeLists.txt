@@ -77,6 +77,7 @@ set(OFS_CPP_SRCS
     universe/surfmgr.cpp
     # universe/system.cpp
     universe/universe.cpp
+    utils/color.cpp
     utils/logger.cpp
     utils/string.cpp
     ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_glfw.cpp

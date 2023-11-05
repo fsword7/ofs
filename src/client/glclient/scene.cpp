@@ -12,8 +12,8 @@
 
 #include "client.h"
 // #include "camera.h"
-#include "vobject.h"
 #include "scene.h"
+#include "vobject.h"
 
 Scene::Scene(int width, int height)
 : shmgr("shaders/gl")
@@ -68,12 +68,42 @@ glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3
     return vpos - object->getuPosition(time);
 }
 
+void Scene::calculatePointSize(double appMag, double size, double &pointSize, double &alpha)
+{
+
+    alpha = std::max(0.0, (faintestMag - appMag)); // * brightnessScale + brightnessBias);
+    // glareAlpha = 0;
+    // glareSize = 0;
+
+    pointSize = size;
+    if (alpha > 1.0)
+    {
+        // if (starStyle == useScaledStars)
+        // {
+        //     double starScale = std::min(maxScaledStarSize, pow(2.0, 0.3 * (satPoint - appMag)));
+        //     pointSize *= std::max(1.0, starScale);
+
+        //     // glareAlpha = std::min(0.5, starScale / 4.0);
+        //     // glareSize = pointSize * 3.0;
+        // }
+        // else
+        {
+            // double starScale = std::min(100.0, satPoint - appMag + 2.0);
+
+            // glareAlpha = std::min(glareOpacity, (starScale - 2.0) / 4.0);
+            // glareSize = 2.0 * pointScale * size;
+        }
+        alpha = 1.0;
+    }
+}
+
 void Scene::update(Player *player)
 {
     observer = player;
     camera = player->getCamera();
 
-    pixelSize = (2.0 * tan(camera->getFOV() / 2.0)) / camera->getHeight();
+    // pixelSize = (2.0 * tan(camera->getFOV() / 2.0)) / camera->getHeight();
+    pixelSize = camera->getPixelSize();
 
     mjd = player->getTimeDate()->getMJD0();
     now = player->getTimeDate()->getSimTime0();

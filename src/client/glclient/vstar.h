@@ -14,7 +14,7 @@ public:
     ~vStar();
     
     void update(int now) override;
-    void render(const ObjectProperties &op) override;
+    void render(const ObjectListEntry &ole) override;
 
 private:
     SurfaceManager *smgr = nullptr;

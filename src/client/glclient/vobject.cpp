@@ -43,6 +43,30 @@ void vObject::update(int now)
     dmWorld = glm::translate(dmWorld, vpos);
 }
 
+void vObject::renderObjectAsPoint(const ObjectListEntry &ole)
+{
+    double maxStarSize = 1.0;
+    double maxBlendStarSize = maxStarSize + 3.0;
+
+    if (ole.pxSize < maxBlendStarSize)
+    {
+        double alpha, pointSize;
+        double fade = 1.0;
+
+        if (ole.pxSize > maxStarSize)
+        {
+            fade = std::min(1.0, (maxBlendStarSize - ole.pxSize) /
+                                 (maxBlendStarSize - maxStarSize));
+            
+        }
+
+        scene.calculatePointSize(ole.appMag, 5.0, pointSize, alpha);
+
+        alpha *= fade;
+    }
+
+}
+
 // ******** Scene ********
 
 vObject *Scene::addVisualObject(const Object *object)

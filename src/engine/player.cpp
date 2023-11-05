@@ -58,6 +58,17 @@ void Camera::look(const glm::dvec3 &opos)
     // Logger::logger->debug("{} {} {}\n", urot[2][0], urot[2][1], urot[2][2]);
 }
 
+double Camera::getPixelSize() const
+{
+    return 2.0 * tan(fov / 2.0) / height;
+}
+
+glm::dvec3 Camera::getPickRay(double x, double y)
+{
+    double s = 2.0 * tan(fov / 2.0);
+    return glm::normalize(glm::dvec3(x*s, y*s, -1.0));
+}
+
 void Camera::updateProjMatrix()
 {
     proj = glm::perspective(fov, aspect, zNear, zFar);

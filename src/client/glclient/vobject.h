@@ -49,7 +49,9 @@ public:
     static vObject *create(const Object *object, Scene &scene);
 
     virtual void update(int now);
-    virtual void render(const ObjectProperties &op) {}
+    virtual void render(const ObjectListEntry &ole) {}
+    
+    void renderObjectAsPoint(const ObjectListEntry &ole);
 
 protected:
     const Object *object;

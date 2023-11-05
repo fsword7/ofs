@@ -192,13 +192,13 @@ public:
     // Creating star surface - icosphere
     Mesh *createIcosphere(int maxlod);
 
-    void setRenderParams(const ObjectProperties &op);
+    void setRenderParams(const ObjectListEntry &ole);
 
     void process(SurfaceTile *tile);
     void render(SurfaceTile *tile); 
 
-    void renderBody(const ObjectProperties &op);
-    void renderStar(const ObjectProperties &op);
+    void renderBody(const ObjectListEntry &ole);
+    void renderStar(const ObjectListEntry &ole);
 
     struct renderParams
     {

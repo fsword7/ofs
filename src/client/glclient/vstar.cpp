@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "engine/object.h"
 #include "client.h"
+#include "scene.h"
 #include "vobject.h"
 #include "vstar.h"
 #include "surface.h"
@@ -27,7 +28,7 @@ void vStar::update(int now)
 
 }
 
-void vStar::render(const ObjectProperties &op)
+void vStar::render(const ObjectListEntry &ole)
 {
-    smgr->renderStar(op);
+    smgr->renderStar(ole);
 }

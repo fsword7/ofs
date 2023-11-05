@@ -40,6 +40,8 @@ public:
     {
         objNames[0] = name;
     }
+
+    Object(json &cfg, ObjectType type);
     
     virtual ~Object() = default;
 
@@ -52,11 +54,14 @@ public:
     inline double getCullingRadius() const      { return cullingRadius; }   
     inline glm::dvec3 getSemiAxes() const       { return semiAxes; }
     inline double getMass() const               { return mass; }
+    inline double getAlbedo() const             { return geomAlbedo; }
+    inline color_t getColor() const             { return geomColor; }
 
     inline bool isSphere() const                { return semiAxes.x == semiAxes.y && semiAxes.x == semiAxes.z; }
 
     inline void setMass(double val)             { mass = val; }
-    inline void setAlbedo(double val)           { albedo = val; }
+    inline void setAlbedo(double val)           { geomAlbedo = val; }
+    inline void setColor(color_t color)         { geomColor = color; }
     inline void setRadius(double val)           { radius = val; semiAxes = { val, val, val }; }
     inline void setSemiAxes(glm::dvec3 axes)    { semiAxes = axes; }
 
@@ -89,6 +94,12 @@ public:
     virtual glm::dvec3 getbPosition() const     { return baryPosition; }
     virtual glm::dvec3 getbVelocity() const     { return baryVelocity; }
 
+    virtual double getLuminosity(double lum, double dist) const { return 0; }
+    virtual double getApparentMagnitude(glm::dvec3 sun, double irradiance, glm::dvec3 view) const { return 0; }
+
+    void getValueReal(json &data, cstr_t &name, double &value);
+    void getValueString(json &data, cstr_t &name, str_t &value);
+
 private:
     ObjectType objType = objUnknown;
     std::vector<str_t> objNames{1};
@@ -111,9 +122,11 @@ protected:
 
     glm::dvec3 cg = { 0, 0, 0 };    // center gravity for position/rotation
 
-    double  mass     = 0.0;
-    double  radius   = 0.0;
-    double  albedo   = 0.0;
+    double  mass        = 0.0;
+    double  radius      = 0.0;
+    double  geomAlbedo  = 0.0;
+    color_t geomColor   = { 1.0, 1.0, 1.0, 1.0 };
+
     glm::dvec3 semiAxes = { 0, 0, 0 };
     double  cullingRadius = 0.0;
 

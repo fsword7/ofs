@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "engine/object.h"
 #include "client.h"
+#include "scene.h"
 #include "vobject.h"
 #include "vbody.h"
 #include "surface.h"
@@ -27,7 +28,7 @@ void vBody::update(int now)
 
 }
 
-void vBody::render(const ObjectProperties &op)
+void vBody::render(const ObjectListEntry &ole)
 {
-    smgr->renderBody(op);
+    smgr->renderBody(ole);
 }

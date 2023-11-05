@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Sep 15, 2022
 
+#pragma once
+
 class VertexBuffer
 {
 public:

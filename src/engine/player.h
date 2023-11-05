@@ -55,6 +55,9 @@ public:
     inline glm::dmat4 getProjMatrix() { return proj; }
     inline glm::dmat4 getViewMatrix() { return view; }
 
+    double getPixelSize() const;
+    glm::dvec3 getPickRay(double x, double y);
+
     void resize(int width, int height);
 
     void setPosition(const glm::dvec3 &vpos);

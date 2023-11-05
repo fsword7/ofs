@@ -62,7 +62,7 @@ enum frameType
 
 using secondaries_t = const std::vector<CelestialBody *>;
 
-class CelestialBody : public RigidBody
+class OFSAPI CelestialBody : public RigidBody
 {
 public:
     enum {
@@ -85,7 +85,11 @@ public:
     {
     }
 
+    CelestialBody(json &cfg, celType type);
+
     virtual ~CelestialBody() = default;
+
+    bool load(json &cfg);
 
     inline void addSecondary(CelestialBody *body)       { secondaries.push_back(body); }
     inline secondaries_t &getSecondaries() const        { return secondaries; }
@@ -153,11 +157,9 @@ protected:
     double crot = 0.0;      // Current rotation
     double rotofs = 0.0;    // Rotation offset (precession)
 
+    glm::dmat3 R_ref_rel;   // rotation matrix
     glm::dmat3 Recl;    // Precession matrix
     glm::dquat Qecl;    // Precession quaternion
-
-    double Lrel;
-    double cos_eps;
 
     // Ephemeris data parameters (orbital frame)
     glm::dvec3 cpos;    // orbital position
@@ -176,8 +178,27 @@ protected:
     // PlanetarySystem *inSystem = nullptr;
 
 private:
-    double Dphi = 0.0;      // Rotation offset at t=0.
-    double rotOmega = 0.0;  // Angular velocity
-    double rotOffset = 0.0; // 
+
+    // Precission/rotation perameters
+    double      eps_ref;            // precession reference axis - obliquity against ecluptic normal
+    double      lan_ref;            // precession reference axis - longitude of ascending node in ecliptic
+    glm::dmat3  R_ref;              // rotation matrix - ecliptic normal
+
+    double      eps_ecl;            // obliquity of axis
+    double      lan_ecl;            // longitude of ascending node
+
+    double      eps_rel;            // obliquioty relavtive to reference axis
+    double      cos_eps, sin_eps;   // sine/cosine of eps_rel
+
+    double      mjd_rel;            // MJD epoch
+    double      Lrel;               // longitude of ascending node relative to reference axis at current time
+    double      Lrel0;              // longitude of ascending node relative to reference axis at MJD epoch
+    double      precT;              // precission period (days) or 0 if infinite
+    double      precOmega;          // precission angular velocity [rad/day]
+
+    double      Dphi = 0.0;         // Rotation offset at t=0.
+    double      rotOmega = 0.0;     // Angular velocity
+    double      rotOffset = 0.0;    // 
+    glm::dvec3  Raxis;              // rotation axis (north pole) in global frame
 
 };

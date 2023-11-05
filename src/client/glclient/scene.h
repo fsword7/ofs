@@ -9,6 +9,7 @@
 #include "universe/universe.h"
 #include "engine/player.h"
 #include "shader.h"
+#include "lights.h"
 
 class Camera;
 class StarRenderer;
@@ -73,7 +74,7 @@ struct ObjectListEntry
     vObject *visual = nullptr;
 
     // Sun and position [km]
-    glm::dvec3 opos;    // Object position
+    glm::dvec3 vpos;    // Object position (view)
     glm::dmat3 orot;    // Object orientation
     glm::dvec3 spos;    // Sun position
 
@@ -86,6 +87,8 @@ struct ObjectListEntry
     double  appMag;     // Apparent magnitude
 
     double  zCenter;    // Center Z depth sorting
+
+    LightState lights;
 
     // Clipping parameters
     glm::vec2 camClip;
@@ -123,6 +126,7 @@ public:
     vObject *getVisualObject(const Object *object, bool bCreate = false);
 
     glm::dvec3 getAstrocentricPosition(const Object *object, const glm::dvec3 &vpos, int time);
+    void calculatePointSize(double appMag, double size, double &pointSize, double &alpha);
 
 protected:
     void initStarRenderer();
@@ -152,7 +156,10 @@ private:
     double pixelSize = 0.0;
 
     double faintestMag = 6.0;
+    double faintestPlanetMag = 6.0;
     double saturationMag = 0.0;
+    double brightnessScale = 1.0;
+    double brightnessBias;
 
     int now = 0;
     double mjd = 0;

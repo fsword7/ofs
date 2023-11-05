@@ -10,13 +10,15 @@
 
 class Frame;
 
-class RigidBody : public Object
+class OFSAPI RigidBody : public Object
 {
 public:
     RigidBody(cstr_t &name, ObjectType type)
     : Object(name, type)
     { }
     
+    RigidBody(json &cfg, ObjectType type);
+
     virtual ~RigidBody() = default;
 
     void setOrbitFrame(Frame *frame) override       { orbitFrame = frame; }

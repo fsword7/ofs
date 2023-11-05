@@ -65,7 +65,7 @@ void Universe::init()
     earth = new CelestialBody("Earth", cbPlanet);
     lunar = new CelestialBody("Lunar", cbMoon);
     mars = new CelestialBody("Mars", cbPlanet);
-    // jupiter = new CelestialBody("Jupiter", cbPlanet);
+    jupiter = new CelestialBody("Jupiter", cbPlanet);
     // saturn = new CelestialBody("Saturn", cbPlanet);
     // uranus = new CelestialBody("Uranus", cbPlanet);
     // neptune = new CelestialBody("Neptune", cbPlanet);
@@ -98,11 +98,11 @@ void Universe::init()
     mars->setAlbedo(0.250);
     mars->setColor(color_t(0.52, 0.36, 0.16));
 
-    // jupiter->setEphemeris(OrbitVSOP87::create(*jupiter, "vsop87b-jupiter"));
-    // jupiter->setMass(6.418542e+23);
-    // jupiter->setRadius(3389.5);
-    // jupiter->setAlbedo(0.250);
-    // jupiter->setColor(color_t(0.52, 0.36, 0.16));
+    jupiter->setEphemeris(OrbitVSOP87::create(*jupiter, "vsop87b-jupiter"));
+    jupiter->setMass(6.418542e+23);
+    jupiter->setRadius(3389.5);
+    jupiter->setAlbedo(0.250);
+    jupiter->setColor(color_t(0.52, 0.36, 0.16));
 
     // saturn->setEphemeris(OrbitVSOP87::create(*saturn, "vsop87b-saturn"));
     // saturn->setMass(6.418542e+23);
@@ -135,7 +135,7 @@ void Universe::init()
     psys->addPlanet(earth, sun);
     psys->addPlanet(lunar, earth);
     psys->addPlanet(mars, sun);
-    // psys->addPlanet(jupiter, sun);
+    psys->addPlanet(jupiter, sun);
     // psys->addPlanet(saturn, sun);
     // psys->addPlanet(uranus, sun);
     // psys->addPlanet(neptune, sun);
@@ -150,10 +150,10 @@ void Universe::start(const TimeDate &td)
     Camera *cam = ofsAppCore->getCamera();
     Player *player = ofsAppCore->getPlayer();
 
-    cam->setPosition({ 0, 0, -sun->getRadius() * 4.0 });
-    cam->update();
-    player->attach(sun, camTargetRelative);
-    player->look(sun);
+    // cam->setPosition({ 0, 0, -sun->getRadius() * 4.0 });
+    // cam->update();
+    // player->attach(sun, camTargetRelative);
+    // player->look(sun);
 
     // cam->setPosition({ 0, 0, mercury->getRadius() * 4.0 });
     // cam->update();
@@ -170,12 +170,18 @@ void Universe::start(const TimeDate &td)
     // player->attach(mars, camTargetRelative);
     // player->look(mars);
 
-    // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
+    // cam->setPosition({ 0, 0, jupiter->getRadius() * 4.0 });
     // cam->update();
-    // player->attach(earth, camTargetRelative);
-    // player->look(earth);
-    // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
+    // player->attach(jupiter, camTargetRelative);
+    // player->look(jupiter);
+
+    cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
+    cam->update();
+    player->attach(earth, camTargetRelative);
+    player->look(earth);
+    // // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
     // player->setGroundMode(earth, -80.705774, 28.632307, 150, 2);
+
     player->update(td);
 }
 

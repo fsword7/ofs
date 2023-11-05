@@ -32,4 +32,7 @@ private:
     float green = 0.0f;
     float blue  = 0.0f;
     float alpha = 1.0f;
+
+public:
+    static const color_t white;
 };

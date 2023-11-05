@@ -9,6 +9,7 @@
 
 #include "client.h"
 #include "scene.h"
+#include "lights.h"
 #include "vobject.h"
 
 void Scene::renderObjectAsPoint(ObjectListEntry &ole)
@@ -60,21 +61,10 @@ void Scene::renderSystemObjects()
 
     for (auto ole : renderList)
     {
-        ObjectProperties op;
-
-        op.mjd   = ole.mjd;
-        op.dTime = 0.0; // now;
-        op.color = ole.color;
-        op.orad  = ole.objSize;
-        op.opos  = ole.opos;
-        op.orot  = glm::dmat3(1);
-
-        op.mvp = glm::dmat4(view * proj);
-        op.clip = camera->getClip();
-
         logger->debug("Rendering {}...\n", ole.object->getName());
 
-        ole.visual->render(op);
+        ole.camClip = camera->getClip();
+        ole.visual->render(ole);
     }
 }
 
@@ -90,26 +80,35 @@ void Scene::buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
 
         {
             glm::dvec3 opos = body->getoPosition();
+            glm::dmat3 orot = body->getuOrientation(0);
             glm::dvec3 vpos = opos - obs;
 
             double vdist = glm::length(vpos);
             double vbnorm = glm::dot(vpnorm, vpos);
             double vSize  = body->getRadius() / vdist;
+            
+            double appMag = std::numeric_limits<double>::infinity();
+            for (auto light : lightSources)
+                appMag = std::min(appMag, body->getApparentMagnitude(light.spos, light.luminosity, vpos));
 
             // if (pxSize > 1)
             // {
                 ObjectListEntry ole;
 
+                setObjectLighting(lightSources, vpos, orot, ole.lights);
+
                 ole.object  = body;
-                ole.visual = getVisualObject(ole.object, true);
+                ole.visual  = getVisualObject(ole.object, true);
                 ole.objSize = body->getRadius();
+                ole.color   = body->getColor();
 
                 // ole.spos    = spos;
-                ole.opos    = vpos;
+                ole.vpos    = vpos;
                 ole.vdist   = vdist;
                 ole.vSize   = vSize;
                 ole.pxSize  = vSize * pixelSize;
-                ole.appMag  = 0.0; //appMag;
+                ole.appMag  = appMag;
+                ole.orot    = orot;
 
                 ole.zCenter = 0.0;
                 ole.zFar    = 1e24;
@@ -118,7 +117,7 @@ void Scene::buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
 
                 // logger->debug("{}: Adding to rendering list\n", body->getsName());
                 logger->debug("{}: P({:.6f},{:.6f},{:.6f}))\n",
-                    body->getsName(), ole.opos.x, ole.opos.y, ole.opos.z);
+                    body->getsName(), ole.vpos.x, ole.vpos.y, ole.vpos.z);
 
                 addRenderList(ole);
                 // renderCelestialBody(ole);

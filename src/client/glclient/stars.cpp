@@ -126,9 +126,9 @@ void StarVertex::addStar(const glm::dvec3 &pos, const color_t &color, double rad
 
 void StarRenderer::process(CelestialStar &star, double dist, double appMag) const
 {
-    glm::dvec3 spos, rpos;
+    glm::dvec3 spos, vpos;
     double  srad;
-    double  rdist;
+    double  vdist;
     double  objSize;
     double  discSize;
     double  discScale;
@@ -137,13 +137,14 @@ void StarRenderer::process(CelestialStar &star, double dist, double appMag) cons
 
     // Calculate relative position between star and
     // camera position in universal reference frame
-    spos  = star.getStarPosition() * KM_PER_PC;
-    rpos  = spos - cpos;
-    rdist = glm::length(rpos);
+    // spos  = star.getStarPosition() * KM_PER_PC;
+    spos  = star.getoPosition();
+    vpos  = spos - cpos;
+    vdist = glm::length(vpos);
 
     // Calculate apparent size of star in view field
     srad    = star.getRadius();
-    objSize = ((srad / rdist) * 2.0) / pxSize;
+    objSize = ((srad / vdist) * 2.0) / pxSize;
 
     // Determine color temperature
     color   = starColors->lookup(star.getTemperature());
@@ -158,11 +159,12 @@ void StarRenderer::process(CelestialStar &star, double dist, double appMag) cons
         ole.visual  = scene->getVisualObject(ole.object);
     
         ole.spos    = spos;
-        ole.opos    = spos;
-        ole.vdist   = rdist;
+        ole.vpos    = vpos;
+        ole.vdist   = vdist;
         ole.objSize = objSize;
         ole.appMag  = appMag;
         ole.color   = color;
+        ole.orot    = glm::dmat3(1);
 
         ole.zCenter = 0.0;
         ole.zFar    = 1e24;
@@ -194,7 +196,7 @@ void StarRenderer::process(CelestialStar &star, double dist, double appMag) cons
         //     ofsGetObjectStarHIPNumber(star), color.getRed(), color.getGreen(), color.getBlue(),
         //     color.getAlpha(), discSize);
 
-        starBuffer->addStar(rpos, color, discSize);
+        starBuffer->addStar(vpos, color, discSize);
     }
 }
 
