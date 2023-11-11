@@ -1,4 +1,4 @@
-// skpad.cpp - Sketchpad package for MFD/HUD panels
+// skpad.cpp - Sketchpad 2D Vector drawing tool package for MFD/HUD panels
 //
 // Author:  Tim Stark
 // Date:    Nov 8, 2023
