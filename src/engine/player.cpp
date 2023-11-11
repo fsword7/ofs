@@ -69,6 +69,11 @@ glm::dvec3 Camera::getPickRay(double x, double y)
     return glm::normalize(glm::dvec3(x*s, y*s, -1.0));
 }
 
+double Camera::getFieldCorrection() const
+{
+    return 2.0 * sfov / (ofs::degrees(fov) + sfov); 
+}
+
 void Camera::updateProjMatrix()
 {
     proj = glm::perspective(fov, aspect, zNear, zFar);

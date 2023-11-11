@@ -79,6 +79,10 @@ bool glClient::cbInitialize()
 
     glfwSetErrorCallback(cbPrintError);
 
+    // overlay = new Overlay(*ctx);
+    // titleFont = TextureFont::load(*ctx, "fonts/OpenSans-Bold.ttf", 20);
+    // textFont = TextureFont::load(*ctx, "fonts/OpenSans-Regular.ttf", 12);
+
     return true;
 }
 
@@ -188,6 +192,11 @@ void glClient::cbStart(Universe *universe)
         scene->init(universe);
         scene->start();
     }
+}
+
+void glClient::loadTextureFont()
+{
+
 }
 
 void glClient::cbRenderScene(Player *player)

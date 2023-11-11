@@ -1,7 +1,7 @@
 // mfdpanel.h - Panel MFD (Multi-function display) package
 //
 // Author:  Tim Stark
-// Date:    Aug 28, 2022
+// Date:    Nov 11, 2023
 
 #pragma once
 

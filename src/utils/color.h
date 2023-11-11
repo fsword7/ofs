@@ -12,6 +12,9 @@ public:
     color_t(float red, float green, float blue, float alpha = 1.0f)
     : red(red), green(green), blue(blue), alpha(alpha)
     { }
+    color_t(color_t rgb, float a)
+    : red(rgb.red), green(rgb.green), blue(rgb.blue), alpha(a)
+    { }
     ~color_t() = default;
 
     // Getter function calls

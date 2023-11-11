@@ -5,9 +5,11 @@
 
 #pragma once
 
+#include "buffer.h"
+
 class Scene;
 class celBody;
-
+class ShaderProgram;
 struct ObjectProperties
 {
     celBody *body;
@@ -36,13 +38,20 @@ struct ObjectProperties
     double   dTime;
 };
 
+struct objVertex
+{
+    glm::vec3   posObject;
+    color_t     color;
+    float       size;
+};
+
 class vObject
 {
 public:
-    vObject(const Object *obj, Scene &scene)
-    : object(obj), scene(scene)
-    { }
-    virtual ~vObject() = default;
+    vObject(const Object *obj, Scene &scene);
+    virtual ~vObject();
+
+    void init();
 
     inline const Object *getObject() const   { return object; }
 
@@ -65,4 +74,14 @@ protected:
     double     vdist;
 
     glm::dmat4 dmWorld;
+
+    ShaderProgram *pgmObjectAsPoint = nullptr;
+
+    VertexArray *vao = nullptr;
+    VertexBuffer *vbo = nullptr;
+
+    objVertex vtx;
+
+    mat4Uniform mvp;
+    vec2Uniform uCamClip;
 };

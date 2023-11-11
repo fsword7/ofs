@@ -1,12 +1,14 @@
 
 set(OFS_CPP_SRCS
+    control/hudpanel.cpp
+    control/mfdpanel.cpp
+    control/panel.cpp
     engine/engine.cpp
     # engine/frame.cpp
     engine/headup.cpp
-    engine/mfdpanel.cpp
+    engine/mesh.cpp
     engine/object.cpp
     # engine/observer.cpp
-    engine/panel.cpp
     engine/player.cpp
     engine/rigidbody.cpp
     engine/supervessel.cpp
@@ -46,7 +48,6 @@ set(OFS_CPP_SRCS
     main/timedate.cpp
     # render/annotation.cpp
     # render/elevmgr.cpp
-    # render/hudpanel.cpp
     # render/lights.cpp
     # render/mesh.cpp
     # render/loader.cpp
@@ -88,12 +89,14 @@ set(OFS_H_SRCS
     api/graphics.h
     api/module.h
     api/ofsapi.h
+    control/hudpanel.h
+    control/mfdpanel.h
+    control/panel.h
     engine/engine.h
     # engine/frame.h
-    engine/mfdpanel.h
+    engine/mesh.h
     engine/object.h
     # engine/observer.h
-    engine/panel.h
     engine/player.h
     engine/rigidbody.h
     engine/supervessel.h
@@ -127,7 +130,6 @@ set(OFS_H_SRCS
     main/math.h
     main/timedate.h
     # render/elevmgr.h
-    # render/hudpanel.h
     # render/mesh.h
     # render/planetgrid.h
     # render/overlay.h

@@ -26,6 +26,7 @@
 // };
 
 class SuperVessel;
+class Mesh;
 
 // planetary surface parameters for flight simulation (air flight)
 struct surface_t
@@ -124,6 +125,13 @@ struct port_t
     glm::dvec3 rot;     // longitudional rotation alignment direction
 };
 
+struct MeshEntry
+{
+    str_t meshName;
+    glm::dvec3 meshOffset;
+    bool isVisible;
+    Mesh *mesh;
+};
 class VesselBase : public RigidBody
 {
 public:
@@ -192,4 +200,6 @@ private:
     double  cogElev;
 
     std::vector<port_t *> ports;        // docking port list
+
+    std::vector<MeshEntry *> meshList;
 };

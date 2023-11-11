@@ -512,7 +512,7 @@ void Parser::analyze(std::istream &in)
             Logger::getLogger()->info("[ ... ]\n");
             break;
         default:
-            Logger::getLogger()->info("Unknown token = {}\n", token);
+            // Logger::getLogger()->info("Unknown token = {}\n", token);
             break;
         }
     }

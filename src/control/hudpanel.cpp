@@ -1,12 +1,12 @@
 // hudpanel.cpp - HUD overlay screen package
 //
 // Author:  Tim Stark
-// Date:    Aug 28, 2022
+// Date:    Nov 11, 2023
 
 #include "main/core.h"
-#include "engine/panel.h"
 #include "api/draw.h"
-#include "render/hudpanel.h"
+#include "control/panel.h"
+#include "control/hudpanel.h"
 
 HUDPanel::HUDPanel(const Panel *panel)
 : panel(panel)

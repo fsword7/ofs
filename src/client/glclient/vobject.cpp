@@ -7,26 +7,55 @@
 #include "api/ofsapi.h"
 #include "engine/object.h"
 #include "client.h"
+#include "shader.h"
 #include "scene.h"
 #include "vobject.h"
 #include "vbody.h"
 #include "vstar.h"
 #include "vvessel.h"
 
+vObject::vObject(const Object *obj, Scene &scene)
+: object(obj), scene(scene)
+{ 
+    init();
+}
 
-vObject *vObject::create(const Object *object, Scene &scene)
+vObject::~vObject()
 {
-    switch (object->getType())
-    {
-    case ObjectType::objCelestialStar:
-        return new vStar(object, scene);
-    case ObjectType::objCelestialBody:
-        return new vBody(object, scene);
-    case ObjectType::objVessel:
-        return new vVessel(object, scene);
-    }
+    // if (pgmObjectAsPoint != nullptr)
+    //     delete pgmObjectAsPoint;
+}
 
-    return nullptr;
+void vObject::init()
+{
+    ShaderManager &shmgr = scene.getShaderManager();
+    pgmObjectAsPoint = shmgr.createShader("point");
+
+    pgmObjectAsPoint->use();
+
+    mvp = mat4Uniform(pgmObjectAsPoint->getID(), "mvp");
+    uCamClip = vec2Uniform(pgmObjectAsPoint->getID(), "uCamClip");
+
+    vao = new VertexArray();
+    vao->bind();
+
+    vbo = new VertexBuffer(&vtx, 1 * sizeof(objVertex), GL_STATIC_DRAW);
+    vbo->bind();
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(objVertex), (void *)0);
+    glEnableVertexAttribArray(0);
+    checkErrors();
+
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(objVertex), (void *)12);
+    glEnableVertexAttribArray(1);
+    checkErrors();
+
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(objVertex), (void *)28);
+    glEnableVertexAttribArray(2);
+    checkErrors();
+
+    vao->unbind();
+    pgmObjectAsPoint->release();
 }
 
 void vObject::update(int now)
@@ -63,8 +92,51 @@ void vObject::renderObjectAsPoint(const ObjectListEntry &ole)
         scene.calculatePointSize(ole.appMag, 5.0, pointSize, alpha);
 
         alpha *= fade;
+
+
+        pgmObjectAsPoint->use();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glEnable(GL_PROGRAM_POINT_SIZE);
+
+        vtx.posObject = ole.vpos;
+        vtx.color = { ole.color, float(alpha) };
+        vtx.size = pointSize;
+
+        vao->bind();
+        vbo->update(&vtx, sizeof(objVertex));
+
+        glm::dmat4 proj = scene.getCamera()->getProjMatrix();
+        glm::dmat4 view = scene.getCamera()->getViewMatrix();
+        mvp = glm::mat4(proj * view);
+        uCamClip = scene.getCamera()->getClip();
+
+        glDrawArrays(GL_POINTS, 0, 1 /* vbo.getCount() */);
+        scene.checkErrors();
+
+        vao->unbind();
+
+        glDisable(GL_PROGRAM_POINT_SIZE);
+        glDisable(GL_BLEND);
+
+        pgmObjectAsPoint->release();
+    }
+}
+
+vObject *vObject::create(const Object *object, Scene &scene)
+{
+    switch (object->getType())
+    {
+    case ObjectType::objCelestialStar:
+        return new vStar(object, scene);
+    case ObjectType::objCelestialBody:
+        return new vBody(object, scene);
+    case ObjectType::objVessel:
+        return new vVessel(object, scene);
     }
 
+    return nullptr;
 }
 
 // ******** Scene ********

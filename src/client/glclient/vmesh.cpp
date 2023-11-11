@@ -13,7 +13,7 @@ vMesh::~vMesh()
     deleteGroups();
 }
 
-int vMesh::addGroup(GroupMesh *group, bool deepCopy)
+int vMesh::addGroup(vGroupMesh *group, bool deepCopy)
 {
     // if (deepCopy)
     //     copyGroup(group);
@@ -28,7 +28,7 @@ int vMesh::addGroup(GroupMesh *group, bool deepCopy)
     
 // }|
 
-void vMesh::deleteGroup(GroupMesh *group)
+void vMesh::deleteGroup(vGroupMesh *group)
 {
     if (group->vtx != nullptr)
         delete [] group->vtx;
@@ -44,7 +44,7 @@ void vMesh::deleteGroups()
     groups.clear();
 }
 
-void vMesh::renderGroup(const GroupMesh &group)
+void vMesh::renderGroup(const vGroupMesh &group)
 {
     if (group.nvtx == 0 || group.nidx == 0)
         return;

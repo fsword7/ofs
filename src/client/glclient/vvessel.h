@@ -8,7 +8,7 @@
 class vMesh;
 class Vessel;
 
-struct MeshEntry
+struct vMeshEntry
 {
     vMesh *mesh = nullptr;
     glm::mat4 trans;
@@ -26,6 +26,6 @@ public:
 
 private:
     const Vessel *vessel = nullptr;
-    std::vector<MeshEntry> meshList;
+    std::vector<vMeshEntry> meshList;
 
 };

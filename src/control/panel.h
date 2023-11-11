@@ -1,11 +1,11 @@
 // panel.h - Instrumental panel package
 //
 // Author:  Tim Stark
-// Date:    Aug 28, 2022
+// Date:    Nov 11, 2023
 
 #pragma once
 
-#include "render/hudpanel.h"
+#include "control/hudpanel.h"
 
 class Camera;
 

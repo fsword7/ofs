@@ -41,7 +41,7 @@ bool zTreeManager::open(const fs::path &fname)
     zfile.seekg(0, zfile.end);
     auto fileSize = zfile.tellg();
     zfile.seekg(0, zfile.beg);
-    logger->info("File length = {} bytes\n", fileSize);
+    // logger->info("File length = {} bytes\n", fileSize);
 
     zfile.read((char *)&hdr, sizeof(hdr));
     if (zfile.fail())

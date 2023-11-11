@@ -47,7 +47,7 @@ public:
         const double fov, const double aspect,
         const double faintest);
 
-    Object *pickPlanet(System *system, const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
+    Object *pickPlanet(pSystem *system, const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
     Object *pick(const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
 
 private:

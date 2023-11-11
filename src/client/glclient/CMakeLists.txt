@@ -1,6 +1,7 @@
 
 find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(Fontconfig)
 find_package(Freetype REQUIRED)
 find_package(fmt REQUIRED)
 
@@ -18,6 +19,7 @@ set(OGL_CPP_SRCS
     ringmgr.cpp
     scene.cpp
     shader.cpp
+    skpad.cpp
     starcolors.cpp
     stars.cpp
     surface.cpp
@@ -44,6 +46,7 @@ set(OGL_H_SRCS
     ringmgr.h
     scene.h
     shader.h
+    skpad.h
     starcolors.h
     stars.h
     surface.h
@@ -79,10 +82,16 @@ set (SOIL2_SRCS
     SOIL2/src/SOIL2/wfETC.c
 )
 
-add_library(glclient SHARED ${OGL_CPP_SRCS} ${SOIL2_SRCS} ${OGL_H_SRCS})
+set (NANOVG_SRCS
+    nanovg/src/nanovg.c
+    nanovg/src/nanovg_gl.c
+)
+
+add_library(glclient SHARED ${OGL_CPP_SRCS} ${SOIL2_SRCS} ${NANOVG_SRCS} ${OGL_H_SRCS})
 
 target_link_libraries(glclient
     Freetype::Freetype
+    Fontconfig::Fontconfig
     glfw
     imgui
     OpenGL::GL
@@ -96,9 +105,14 @@ target_link_libraries(glclient
 )
 endif()
 
+target_compile_definitions(glclient PRIVATE
+    NVG_NO_STB=1 NANOVG_GL3=1 NANOVG_USE_GLAD=1 FONS_USE_FREETYPE=1
+)
+
 target_include_directories(glclient PUBLIC
     ${IMGUI_INCLUDE_DIR}
     SOIL2/src
+    .
 )
 
 set_target_properties(glclient

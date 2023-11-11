@@ -57,6 +57,7 @@ public:
 
     double getPixelSize() const;
     glm::dvec3 getPickRay(double x, double y);
+    double getFieldCorrection() const;
 
     void resize(int width, int height);
 
@@ -74,6 +75,8 @@ private:
     double aspect;
     double fov;
     double zNear, zFar;
+
+    const double sfov = 45.0; // standard FOV - 45 degrees
 
     glm::dvec3 rpos  = glm::dvec3(0, 0, 0);
     glm::dmat3 rrot  = glm::dmat3(1);

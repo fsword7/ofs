@@ -1,11 +1,11 @@
 // mfdpanel.cpp - Panel MFD (Multi-function display) package
 //
 // Author:  Tim Stark
-// Date:    Aug 28, 2022
+// Date:    Nov 11, 2023
 
 #include "main/core.h"
-#include "engine/panel.h"
-#include "engine/mfdpanel.h"
+#include "control/panel.h"
+#include "control/mfdpanel.h"
 
 MFDInstrument::MFDInstrument(const Panel *panel)
 : panel(panel)

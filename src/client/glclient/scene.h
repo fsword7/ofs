@@ -143,6 +143,8 @@ protected:
     void setObjectLighting(std::vector<LightSource> &suns, const glm::dvec3 &opos,
         const glm::dquat &orot, LightState &ls);
 
+    void updateAutoMag();
+
     // void buildSystems(FrameTree *tree, const glm::dvec3 &obs,
     //     const glm::dvec3 &vpnorm, const glm::dvec3 &origin);
     void buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
@@ -155,11 +157,17 @@ private:
 
     double pixelSize = 0.0;
 
+    double faintestAutoMag45Deg = 8.0;
+
+    double faintestMagNight = 6.0;
+    double saturationMagNight = 1.0;
+
     double faintestMag = 6.0;
     double faintestPlanetMag = 6.0;
-    double saturationMag = 0.0;
+    double saturationMag = 1.0;
     double brightnessScale = 1.0;
-    double brightnessBias;
+    double brightnessBias = 0.0;
+    double satPoint;
 
     int now = 0;
     double mjd = 0;
@@ -181,6 +189,7 @@ private:
     vec2Uniform uCamClip;
 
     ShaderProgram *pgmStar = nullptr;
+    ShaderProgram *pgmObjectAsPoint = nullptr;
 
     std::vector<vObject *> vobjList;
     std::vector<const CelestialStar *> nearStars;

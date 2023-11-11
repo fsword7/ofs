@@ -17,12 +17,15 @@ public:
     void *map() const;
     void unmap() const;
 
+    inline uint32_t getCount() const { return count; }
+
     void bind() const;
     void unbind() const;
 
 private:
     GLuint id;
     int mode;
+    uint32_t count = 0;
     size_t szData = 0;
 };
 
@@ -45,7 +48,7 @@ public:
 private:
     GLuint id;
     int mode;
-    uint32_t count;
+    uint32_t count = 0;
 };
 
 class VertexArray

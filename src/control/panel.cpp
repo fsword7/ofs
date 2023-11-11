@@ -1,11 +1,11 @@
 // panel.cpp - Instrumental panel package
 //
 // Author:  Tim Stark
-// Date:    Aug 28, 2022
+// Date:    Nov 11, 2023
 
 #include "main/core.h"
 // #include "engine/player.h"
-#include "engine/panel.h"
+#include "control/panel.h"
 
 Panel::Panel(int w, int h, int d)
 : width(w), height(h), depth(d)

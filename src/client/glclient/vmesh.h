@@ -7,7 +7,7 @@
 
 #include "buffer.h"
 
-struct VertexMesh
+struct vVertexMesh
 {
     float x, y, z;      // XYZ position
     float nx, ny, nz;   // XYZ normal
@@ -15,12 +15,12 @@ struct VertexMesh
     float tu, tv;       // UV texture coordinate
 };
 
-struct GroupMesh
+struct vGroupMesh
 {
     int nvtx;
     int nidx;
 
-    VertexMesh *vtx = nullptr;
+    vVertexMesh *vtx = nullptr;
     uint16_t  *idx = nullptr;
 
     uint32_t userFlag;
@@ -36,17 +36,17 @@ public:
     vMesh() = default;
     ~vMesh();
 
-    int addGroup(GroupMesh *group, bool deepCopy = true);
+    int addGroup(vGroupMesh *group, bool deepCopy = true);
     // void copyGroup(GroupMesh *group);
-    void deleteGroup(GroupMesh *group);
+    void deleteGroup(vGroupMesh *group);
     void deleteGroups();
 
-    GroupMesh *getGroup(int idx)        { return idx < groups.size() ? groups[idx] : nullptr; }
+    vGroupMesh *getGroup(int idx)        { return idx < groups.size() ? groups[idx] : nullptr; }
 
-    void renderGroup(const GroupMesh &group);
+    void renderGroup(const vGroupMesh &group);
     void render();
 
 private:
-    std::vector<GroupMesh *> groups;
+    std::vector<vGroupMesh *> groups;
 
 };

@@ -31,4 +31,6 @@ void vBody::update(int now)
 void vBody::render(const ObjectListEntry &ole)
 {
     smgr->renderBody(ole);
+
+    // renderObjectAsPoint(ole);
 }

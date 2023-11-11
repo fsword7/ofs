@@ -32,6 +32,8 @@ public:
     bool cbDisplayFrame() override;
     void cbSetWindowTitle(cstr_t &title) override;
 
+    void loadTextureFont();
+
     void cbStart(Universe *universe) override;
     void cbRenderScene(Player *player) override;
 

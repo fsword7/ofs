@@ -68,6 +68,13 @@ glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3
     return vpos - object->getuPosition(time);
 }
 
+void Scene::updateAutoMag()
+{
+    double fieldCorr = camera->getFieldCorrection();
+    faintestMag = faintestAutoMag45Deg * sqrt(fieldCorr);
+    saturationMag = saturationMagNight * (1.0 + fieldCorr * fieldCorr);
+}
+
 void Scene::calculatePointSize(double appMag, double size, double &pointSize, double &alpha)
 {
 
