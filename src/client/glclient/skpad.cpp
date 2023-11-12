@@ -64,6 +64,7 @@ glPad::glPad(Texture *tex, bool antialiased)
 : Sketchpad(), txPad(tex)
 {
     textAlign = (NVGalign)(NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+    textBkgMode = TRANSPARENT;
 }
 
 glPad::~glPad()
