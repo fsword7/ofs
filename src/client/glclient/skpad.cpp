@@ -4,10 +4,10 @@
 // Date:    Nov 8, 2023
 
 #include <fontconfig/fontconfig.h>
-#include "nanovg/src/nanovg.h"
 
 #include "main/core.h"
 #include "client.h"
+#include "texmgr.h"
 #include "skpad.h"
 
 static std::map<std::string, std::string> fontCache;
@@ -60,30 +60,70 @@ glFont::glFont(int height, bool fixed, cchar_t *face, Style style, float orienta
     FcConfigDestroy(config);
 }
 
-glPad::glPad(int w, int h, bool antialiased)
-: Sketchpad(), width(w), height(h)
+glPad::glPad(Texture *tex, bool antialiased)
+: Sketchpad(), txPad(tex)
 {
-
+    textAlign = (NVGalign)(NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
 }
 
 glPad::~glPad()
 {
 }
 
-void glPad::begin()
+void glPad::ginit()
 {
 
+}
+
+void glPad::gexit()
+{
+
+}
+
+NVGcolor glPad::getNVGColor(color_t color)
+{
+    return nvgRGBAf(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+}
+
+void glPad::begin()
+{   
+    if (txPad != nullptr)
+    {
+        width = txPad->txWidth;
+        height = txPad->txHeight;
+    }
+    else
+    {
+        glDisable(GL_CULL_FACE);
+    }
+
+    glClear(GL_STENCIL_BUFFER_BIT);
+    nvgBeginFrame(ctx, width, height, 1.0);
 }
 
 void glPad::end()
 {
     nvgEndFrame(ctx);
+    if (txPad != nullptr)
+    {
+        txPad->bind();
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+
+    }
 }
 
 Font *glPad::setFont(Font *font)
 {
-    Font *ret = cFont;
+    glFont *ret = cFont;
     cFont = dynamic_cast<glFont *>(font);
+    if (cFont == nullptr)
+    {
+        cFont = ret;
+        return nullptr;
+    }
 
     if (nvgFindFont(ctx, cFont->faceName.c_str()) == -1)
         nvgCreateFont(ctx, cFont->faceName.c_str(), cFont->fontFile.c_str());
@@ -96,15 +136,35 @@ Font *glPad::setFont(Font *font)
 
 Pen *glPad::setPen(Pen *pen)
 {
-    Pen *ret = cPen;
+    glPen *ret = cPen;
     cPen = dynamic_cast<glPen *>(pen);
+    if (cPen == nullptr)
+    {
+        cPen = ret;
+        return nullptr;
+    }
+
+    nvgStrokeColor(ctx, getNVGColor(cPen->color));    
+    nvgStrokeWidth(ctx, std::max(1, cPen->width));
+    // nvgStrokeDash(ctx, cPen->style == 2 ? 1 : 0);
+    nvgStroke(ctx);
+
     return ret;
 }
 
 Brush *glPad::setBrush(Brush *brush)
 {
-    Brush *ret = cBrush;
+    glBrush *ret = cBrush;
     cBrush = dynamic_cast<glBrush *>(brush);
+    if (cBrush == nullptr)
+    {
+        cBrush = ret;
+        return nullptr;
+    }
+
+    nvgFillColor(ctx, getNVGColor(cPen->color));
+    nvgFill(ctx);
+
     return ret;
 }
 
@@ -112,7 +172,7 @@ color_t glPad::setTextColor(color_t color)
 {
     color_t ret = textColor;
     textColor = color;
-    // nvgTextColor = nvgRGBAf(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+    textNVGColor = getNVGColor(color);
     return ret;
 }
 
@@ -120,7 +180,7 @@ color_t glPad::setBackgroundColor(color_t color)
 {
     color_t ret = bgColor;
     bgColor = color;
-    // nvgTextColor = nvgRGBAf(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+    bgNVGColor = getNVGColor(color);
     return ret;
 }
 
@@ -135,6 +195,7 @@ void glPad::getOrigin(int &x, int &y)
     x = xOrigin;
     y = yOrigin;
 }
+
 
 void glPad::beginPath()
 {
@@ -166,13 +227,84 @@ void glPad::line(int x0, int y0, int x1, int y1)
     lineTo(x1, y1);
 }
 
+
+NVGalign glPad::toNVGTextAlign(TAHorizontal tah)
+{
+    switch (tah)
+    {
+    default:
+    case LEFT:
+        return NVG_ALIGN_LEFT;
+    case CENTER:
+        return NVG_ALIGN_CENTER;
+    case RIGHT:
+        return NVG_ALIGN_RIGHT;
+    }
+}
+
+NVGalign glPad::toNVGTextAlign(TAVertical tav)
+{
+    switch (tav)
+    {
+    default:
+    case TOP:
+        return NVG_ALIGN_TOP;
+    case MIDDLE:
+        return NVG_ALIGN_MIDDLE;
+    case BOTTOM:
+        return NVG_ALIGN_BOTTOM;
+    case BASELINE:
+        return NVG_ALIGN_BASELINE;
+    }
+}
+
+void glPad::setTextAlign(TAHorizontal tah, TAVertical tav)
+{
+    textAlign = (NVGalign)(toNVGTextAlign(tah) | toNVGTextAlign(tav));
+}
+
+void glPad::setTextBackgroundMode(BkgMode mode)
+{
+    textBkgMode = mode;
+}
+
+int glPad::getCharSize()
+{
+    if (cFont == nullptr)
+        return -1;
+    
+    float ascender, descender, lineh;
+    nvgTextMetrics(ctx, &ascender, &descender, &lineh);
+    uint32_t height = lineh - (lineh - ascender + descender) / 2.0;
+
+    return height;
+}
+
+int glPad::getTextWidth(cchar_t *str, int len)
+{
+    if (cFont == nullptr)
+        return -1;
+    if (len == 0)
+        len = strlen(str);
+
+    float bounds[4];
+    nvgTextBounds(ctx, 0, 0, str, str+len, bounds);
+
+    return bounds[2]-bounds[0];
+}
+
 bool glPad::text(int x, int y, cchar_t *str, int len)
 {
+    if (cFont == nullptr)
+        return false;
+    if (len == 0)
+        len = strlen(str);
+
     nvgResetTransform(ctx);
     nvgTranslate(ctx, xOrigin + x, yOrigin + y);
     nvgRotate(ctx, cFont->rotRadians);
 
-    // nvgFillColor(ctx, nvgTextColor);
+    nvgFillColor(ctx, textNVGColor);
     nvgText(ctx, 0, 0, str, str+len);
 
     nvgResetTransform(ctx);

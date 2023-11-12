@@ -5,10 +5,8 @@
 
 #pragma once
 
+#include "nanovg/src/nanovg.h"
 #include "api/draw.h"
-
-class NVGcontext;
-class NVGcolor;
 class glFont : public Font
 {
     friend class glPad;
@@ -57,9 +55,14 @@ private:
 class glPad : public Sketchpad
 {
 public:
-    glPad(int width, int height, bool antialiased);
+    glPad(Texture *tex, bool antialiased);
     virtual ~glPad();
 
+    static void ginit();
+    static void gexit();
+
+    NVGcolor getNVGColor(color_t color);
+    
     Font *setFont(Font *font) override;
     Pen *setPen(Pen *pen) override;
     Brush *setBrush(Brush *brush) override;
@@ -79,10 +82,19 @@ public:
     void lineTo(int x, int y) override;
     void line(int x0, int y0, int x1, int y1) override;
 
-    bool text(int x, int y, cchar_t *str, int len) override;
+    int getCharSize() override;
+    int getTextWidth(cchar_t *str, int len = 0) override;
+    void setTextAlign(TAHorizontal tah=LEFT, TAVertical tav=TOP) override;
+    void setTextBackgroundMode(BkgMode mode) override;
+    bool text(int x, int y, cchar_t *str, int len = 0) override;
+
+protected:
+    NVGalign toNVGTextAlign(TAHorizontal tah);
+    NVGalign toNVGTextAlign(TAVertical tav);
 
 private:
     NVGcontext *ctx = nullptr;
+    Texture *txPad = nullptr;
     int width;
     int height;
 
@@ -90,10 +102,12 @@ private:
     mutable glPen *cPen = nullptr;
     mutable glBrush *cBrush = nullptr;
 
+    BkgMode  textBkgMode;
     color_t  textColor;
+    NVGcolor textNVGColor;
     color_t  bgColor;
-    int      textAlign;
-    // NVGcolor nvgTextColor;
+    NVGcolor bgNVGColor;
+    NVGalign textAlign;
 
     int xOrigin = 0;
     int yOrigin = 0;

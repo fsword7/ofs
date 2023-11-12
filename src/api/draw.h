@@ -58,6 +58,10 @@ public:
 class OFSAPI Sketchpad
 {
 public:
+    enum TAHorizontal { LEFT, CENTER, RIGHT };
+    enum TAVertical { TOP, MIDDLE, BOTTOM, BASELINE };
+    enum BkgMode { TRANSPARENT, OPAQUE };
+    
     Sketchpad(SurfaceHandle *handle = nullptr) : surf(handle) { }
     virtual ~Sketchpad() = default;
 
@@ -73,10 +77,14 @@ public:
     virtual void endDraw() { }
 
     // text function calls
-    virtual bool text(int x, int y, const char *str, int len) { return false; }
-    virtual bool textw(int x, int y, const wchar_t *str, int len) { return false; }
-    virtual bool textu16(int x, int y, const char16_t *str, int len) { return false; }
-    virtual bool textu32(int x, int y, const char32_t *str, int len) { return false; }
+    virtual int getCharSize() { return -1; };
+    virtual int getTextWidth(cchar_t *str, int len = 0) { return -1; };
+    virtual void setTextAlign(TAHorizontal tah=LEFT, TAVertical=TOP) {}
+    virtual void setTextBackgroundMode(BkgMode mode) {}
+    virtual bool text(int x, int y, const char *str, int len = 0) { return false; }
+    virtual bool textw(int x, int y, const wchar_t *str, int len = 0) { return false; }
+    virtual bool textu16(int x, int y, const char16_t *str, int len = 0) { return false; }
+    virtual bool textu32(int x, int y, const char32_t *str, int len = 0) { return false; }
     virtual bool text(int x, int y, const std::string &str) { return false; }
 
     // draw function calls
