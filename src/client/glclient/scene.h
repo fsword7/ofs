@@ -136,6 +136,7 @@ protected:
 
     void renderObjectAsPoint(ObjectListEntry &ole);
     void renderCelestialBody(ObjectListEntry &ole);
+    void renderOrbitPath(ObjectListEntry &ole);
 
     void setupPrimaryLightSources(const std::vector<const CelestialStar *> nearStars,
         const glm::dvec3 &obs, std::vector<LightSource> &ls);

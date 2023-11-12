@@ -51,6 +51,11 @@ void Scene::renderCelestialBody(ObjectListEntry &ole)
         renderObjectAsPoint(ole);
 }
 
+void Scene::renderOrbitPath(ObjectListEntry &ole)\
+{
+
+}
+
 void Scene::renderSystemObjects()
 {
     if (renderList.empty())
