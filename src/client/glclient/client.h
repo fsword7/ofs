@@ -10,6 +10,7 @@
 #include "api/logger.h"
 #include "api/module.h"
 #include "api/graphics.h"
+#include "api/draw.h"
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
@@ -18,6 +19,8 @@
 class Universe;
 class Player;
 class Scene;
+class TextureManager;
+struct Texture;
 
 class glClient : public GraphicsClient
 {
@@ -28,11 +31,16 @@ public:
     bool cbInitialize() override;
     void cbCleanup() override;
 
+    inline Sketchpad *getSketchpad() const override { return skpad; }
+
     GLFWwindow *cbCreateRenderingWindow() override;
     bool cbDisplayFrame() override;
     void cbSetWindowTitle(cstr_t &title) override;
 
     void loadTextureFont();
+
+    Texture *createSurface(int width, int height, uint32_t flags = 0);
+    void releaseSurface(Texture *surf);
 
     void cbStart(Universe *universe) override;
     void cbRenderScene(Player *player) override;
@@ -48,6 +56,8 @@ private:
     int width, height;
 
     GLFWwindow *window = nullptr;
+    Sketchpad *skpad = nullptr;
+    TextureManager *texmgr = nullptr;
 
     Scene *scene = nullptr;
 };

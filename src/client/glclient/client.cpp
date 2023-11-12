@@ -7,6 +7,8 @@
 #include "engine/player.h"
 #include "universe/universe.h"
 #include "client.h"
+#include "texmgr.h"
+#include "skpad.h"
 #include "scene.h"
 
 #include <dlfcn.h>
@@ -206,4 +208,16 @@ void glClient::cbRenderScene(Player *player)
         scene->update(player);
         scene->render(player);
     }
+}
+
+Texture *glClient::createSurface(int width, int height, uint32_t flags)
+{
+    TextureManager mgr;
+
+    return mgr.getTextureForRendering(width, height, flags);
+}
+
+void glClient::releaseSurface(Texture *surf)
+{
+    delete surf;
 }

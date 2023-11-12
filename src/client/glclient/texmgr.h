@@ -17,8 +17,9 @@ struct Texture
 
     int32_t txWidth;
     int32_t txHeight;
-    GLuint id = 0;
-
+    GLuint  id = 0;
+    GLuint  fbo = 0;
+    GLuint  rbo = 0;
 };
 
 class TextureManager
@@ -28,6 +29,7 @@ public:
     ~TextureManager() = default;
 
     void loadDDSTextureFromMemory(Texture **txImage, const uint8_t *buf, uint32_t nbuf, uint32_t flags);
+    Texture *getTextureForRendering(int width, int height, uint32_t flags = 0);
 
 private:
 

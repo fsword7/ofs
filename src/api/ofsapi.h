@@ -43,6 +43,11 @@ enum ObjectType
     objCelestialBody,
 };
 
+#define SURF_MIPMAPS        0x0001
+#define SURF_NOMIPMAPS      0x0002
+#define SURF_ALPHA          0x0004
+#define SURF_NOALPHA        0x0008
+
 // OFSAPI int ofsGetCameraHeight();
 // OFSAPI int ofsGetCameraWidth();
 

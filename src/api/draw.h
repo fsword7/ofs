@@ -38,7 +38,7 @@ public:
 class OFSAPI Pen : public DrawingTool
 {
 protected:
-    Pen(color_t color, int style, int width)
+    Pen(color_t color, int width, int style)
     { }
 
 public:
@@ -61,12 +61,16 @@ public:
     Sketchpad(SurfaceHandle *handle = nullptr) : surf(handle) { }
     virtual ~Sketchpad() = default;
 
-    inline SurfaceHandle getSurface() const     { return surf; }
+    inline SurfaceHandle getSurface() const             { return surf; }
 
-    virtual Font *setFont(Font *font)           { return nullptr; }
-    virtual Pen *setPen(Pen *pen)               { return nullptr; }
-    virtual Brush *setBrush(Brush *brush)       { return nullptr; }
-    virtual color_t setTextColor(color_t col)   { return color_t(); }
+    virtual Font *setFont(Font *font)                   { return nullptr; }
+    virtual Pen *setPen(Pen *pen)                       { return nullptr; }
+    virtual Brush *setBrush(Brush *brush)               { return nullptr; }
+    virtual color_t setTextColor(color_t col)           { return color_t(); }
+    virtual color_t setBackgroundColor(color_t col)     { return color_t(); }
+
+    virtual void beginDraw() { }
+    virtual void endDraw() { }
 
     // text function calls
     virtual bool text(int x, int y, const char *str, int len) { return false; }

@@ -7,6 +7,8 @@
 
 #include "api/draw.h"
 
+class NVGcontext;
+class NVGcolor;
 class glFont : public Font
 {
     friend class glPad;
@@ -25,12 +27,31 @@ private:
 
 class glPen : public Pen
 {
+    friend class glPad;
 
+public:
+    glPen(color_t color, int width, int style)
+    : Pen(color, width, style),
+      color(color), width(width), style(style)
+    { }
+
+private:
+    color_t color;
+    int width;
+    int style;
 };
 
 class glBrush : public Brush
 {
+    friend class glPad;
 
+public:
+    glBrush(color_t color)
+    : Brush(color), color(color)
+    { }
+
+private:
+    color_t color;
 };
 
 class glPad : public Sketchpad
@@ -43,6 +64,7 @@ public:
     Pen *setPen(Pen *pen) override;
     Brush *setBrush(Brush *brush) override;
     color_t setTextColor(color_t color) override;
+    color_t setBackgroundColor(color_t color) override;
 
     void begin();
     void end();
@@ -69,8 +91,9 @@ private:
     mutable glBrush *cBrush = nullptr;
 
     color_t  textColor;
+    color_t  bgColor;
     int      textAlign;
-    NVGcolor nvgTextColor;
+    // NVGcolor nvgTextColor;
 
     int xOrigin = 0;
     int yOrigin = 0;

@@ -112,7 +112,15 @@ color_t glPad::setTextColor(color_t color)
 {
     color_t ret = textColor;
     textColor = color;
-    nvgTextColor = nvgRGBAf(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+    // nvgTextColor = nvgRGBAf(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+    return ret;
+}
+
+color_t glPad::setBackgroundColor(color_t color)
+{
+    color_t ret = bgColor;
+    bgColor = color;
+    // nvgTextColor = nvgRGBAf(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     return ret;
 }
 
@@ -164,7 +172,7 @@ bool glPad::text(int x, int y, cchar_t *str, int len)
     nvgTranslate(ctx, xOrigin + x, yOrigin + y);
     nvgRotate(ctx, cFont->rotRadians);
 
-    nvgFillColor(ctx, nvgTextColor);
+    // nvgFillColor(ctx, nvgTextColor);
     nvgText(ctx, 0, 0, str, str+len);
 
     nvgResetTransform(ctx);
