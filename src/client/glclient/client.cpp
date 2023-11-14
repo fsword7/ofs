@@ -221,3 +221,48 @@ void glClient::releaseSurface(Texture *surf)
 {
     delete surf;
 }
+
+void glClient::clearSurface(Texture *surf, const color_t &color)
+{
+    // Make ensure that frame buffer is not binded
+    GLint fbo;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
+    assert(fbo == 0);
+
+    // Clear entire surface with specific color
+    glBindFramebuffer(GL_FRAMEBUFFER, surf->fbo);
+    glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+Font *glClient::createFont(int height, bool fixed, cchar_t *face, Font::Style style, int orientation, bool antialiased)
+{
+    return new glFont(height, fixed, face, style, orientation, antialiased);
+}
+
+
+Pen *glClient::createPen(color_t color, int width, int style)
+{
+    return new glPen(color, width, style);
+}
+
+Brush *glClient::createBrush(color_t color)
+{
+    return new glBrush(color);
+}
+
+void glClient::releaseFont(Font *font)
+{
+    delete (glFont *)font;
+}
+
+void  glClient::releasePen(Pen *pen)
+{
+    delete (glPen *)pen;
+}
+
+void glClient::releaseBrush(Brush *brush)
+{
+    delete (glBrush *)brush;
+}

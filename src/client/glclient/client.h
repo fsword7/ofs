@@ -41,6 +41,7 @@ public:
 
     Texture *createSurface(int width, int height, uint32_t flags = 0);
     void releaseSurface(Texture *surf);
+    void clearSurface(Texture *surf, const color_t &color) override;
 
     void cbStart(Universe *universe) override;
     void cbRenderScene(Player *player) override;
@@ -51,6 +52,14 @@ public:
 
     void startImGuiNewFrame() override;
     void renderImGuiDrawData() override;
+
+    Font *createFont(int height, bool fixed, cchar_t *face, Font::Style style, int orientation, bool antialiased) override;
+    Pen *createPen(color_t color, int width, int style) override;
+    Brush *createBrush(color_t color) override;
+
+    void releaseFont(Font *font);
+    void releasePen(Pen *pen);
+    void releaseBrush(Brush *brush);
 
 private:
     int width, height;

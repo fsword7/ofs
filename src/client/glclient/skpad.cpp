@@ -10,6 +10,9 @@
 #include "texmgr.h"
 #include "skpad.h"
 
+#define NANOVG_GL3_IMPLEMENTATION
+#include "nanovg/src/nanovg_gl.h"
+
 static std::map<std::string, std::string> fontCache;
 
 glFont::glFont(int height, bool fixed, cchar_t *face, Style style, float orientation, bool aa)
@@ -60,8 +63,8 @@ glFont::glFont(int height, bool fixed, cchar_t *face, Style style, float orienta
     FcConfigDestroy(config);
 }
 
-glPad::glPad(Texture *tex, bool antialiased)
-: Sketchpad(), txPad(tex)
+glPad::glPad(Texture *tex, bool aa)
+: Sketchpad(), txPad(tex), antiAliased(aa)
 {
     textAlign = (NVGalign)(NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
     textBkgMode = TRANSPARENT;
@@ -127,7 +130,7 @@ Font *glPad::setFont(Font *font)
     }
 
     if (nvgFindFont(ctx, cFont->faceName.c_str()) == -1)
-        nvgCreateFont(ctx, cFont->faceName.c_str(), cFont->fontFile.c_str());
+        nvgCreateFont(ctx, cFont->faceName.c_str(), cFont->fontFile.c_str(), antiAliased);
     nvgFontSize(ctx, cFont->fontHeight);
     nvgFontFace(ctx, cFont->faceName.c_str());
     nvgTextAlign(ctx, textAlign);
@@ -147,7 +150,7 @@ Pen *glPad::setPen(Pen *pen)
 
     nvgStrokeColor(ctx, getNVGColor(cPen->color));    
     nvgStrokeWidth(ctx, std::max(1, cPen->width));
-    // nvgStrokeDash(ctx, cPen->style == 2 ? 1 : 0);
+    nvgStrokeDash(ctx, cPen->style == 2 ? 1 : 0);
     nvgStroke(ctx);
 
     return ret;
@@ -274,11 +277,11 @@ int glPad::getCharSize()
     if (cFont == nullptr)
         return -1;
     
-    float ascender, descender, lineh;
-    nvgTextMetrics(ctx, &ascender, &descender, &lineh);
+    float ascender, descender, lineh, acw;
+    nvgTextMetrics(ctx, &ascender, &descender, &lineh, &acw);
     uint32_t height = lineh - (lineh - ascender + descender) / 2.0;
 
-    return height;
+    return height | (int(acw) << 16);
 }
 
 int glPad::getTextWidth(cchar_t *str, int len)

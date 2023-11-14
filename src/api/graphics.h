@@ -6,12 +6,16 @@
 #pragma once
 
 #include "api/ofsapi.h"
+#include "api/draw.h"
 #include <GLFW/glfw3.h>
 
 class Universe;
 class Player;
 class Sketchpad;
 class Texture;
+class Font;
+class Pen;
+class Brush;
 
 class OFSAPI GraphicsClient
 {
@@ -31,6 +35,7 @@ public:
     virtual Sketchpad *getSketchpad() const = 0;
     virtual Texture *createSurface(int width, int height, uint32_t flags = 0) = 0;
     virtual void releaseSurface(Texture *surf) = 0;
+    virtual void clearSurface(Texture *surf, const color_t &color) = 0;
 
     virtual void setViewportSize(int width, int height) = 0;
     virtual void hideWindow() = 0;
@@ -38,6 +43,15 @@ public:
 
     virtual void startImGuiNewFrame() = 0;
     virtual void renderImGuiDrawData() = 0;
+
+    virtual Font *createFont(int height, bool fixed, cchar_t *face,
+        Font::Style style, int orientation, bool antialiased) = 0;
+    virtual Pen *createPen(color_t color, int width, int style) = 0;
+    virtual Brush *createBrush(color_t color) = 0;
+
+    virtual void releaseFont(Font *font) = 0;
+    virtual void releasePen(Pen *pen) = 0;
+    virtual void releaseBrush(Brush *brush) = 0;
 };
 
 OFSAPI bool ofsRegisterGraphicsClient(GraphicsClient *gc);

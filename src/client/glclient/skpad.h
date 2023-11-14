@@ -7,6 +7,7 @@
 
 #include "nanovg/src/nanovg.h"
 #include "api/draw.h"
+
 class glFont : public Font
 {
     friend class glPad;
@@ -108,6 +109,7 @@ private:
     color_t  bgColor;
     NVGcolor bgNVGColor;
     NVGalign textAlign;
+    bool     antiAliased;
 
     int xOrigin = 0;
     int yOrigin = 0;

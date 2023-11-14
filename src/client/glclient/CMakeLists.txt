@@ -84,7 +84,6 @@ set (SOIL2_SRCS
 
 set (NANOVG_SRCS
     nanovg/src/nanovg.c
-    nanovg/src/nanovg_gl.c
 )
 
 add_library(glclient SHARED ${OGL_CPP_SRCS} ${SOIL2_SRCS} ${NANOVG_SRCS} ${OGL_H_SRCS})
@@ -106,7 +105,7 @@ target_link_libraries(glclient
 endif()
 
 target_compile_definitions(glclient PRIVATE
-    NVG_NO_STB=1 NANOVG_GL3=1 NANOVG_USE_GLAD=1 FONS_USE_FREETYPE=1
+    NVG_NO_STB=1 FONS_USE_FREETYPE=1
 )
 
 target_include_directories(glclient PUBLIC
