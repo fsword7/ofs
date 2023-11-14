@@ -4,6 +4,3 @@
 [submodule "src/client/glclient/SOIL2"]
 	path = src/client/glclient/SOIL2
 	url = https://github.com/SpartanJ/SOIL2.git
-[submodule "src/client/glclient/nanovg"]
-	path = src/client/glclient/nanovg
-	url = https://github.com/fsword7/nanovg.git
