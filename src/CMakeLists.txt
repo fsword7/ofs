@@ -1,7 +1,7 @@
 
 set(OFS_CPP_SRCS
+    control/mfd/panel.cpp
     control/hudpanel.cpp
-    control/mfdpanel.cpp
     control/panel.cpp
     engine/engine.cpp
     # engine/frame.cpp
@@ -89,8 +89,8 @@ set(OFS_H_SRCS
     api/graphics.h
     api/module.h
     api/ofsapi.h
+    control/mfd/panel.h
     control/hudpanel.h
-    control/mfdpanel.h
     control/panel.h
     engine/engine.h
     # engine/frame.h

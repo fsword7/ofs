@@ -8,7 +8,7 @@
 #include "api/graphics.h"
 #include "api/draw.h"
 #include "control/panel.h"
-#include "control/mfdpanel.h"
+#include "control/mfd/panel.h"
 
 MFDInstrument::MFDInstrument(Panel *panel, const Spec &spec)
 : panel(panel), flags(spec.flags)
