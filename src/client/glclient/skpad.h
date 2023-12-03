@@ -80,8 +80,12 @@ public:
     void getOrigin(int &x, int &y);
 
     void moveTo(int x, int y) override;
-    void lineTo(int x, int y) override;
-    void line(int x0, int y0, int x1, int y1) override;
+    void drawLineTo(int x, int y) override;
+    void drawLine(int x0, int y0, int x1, int y1) override;
+    void drawRectangle(int cx, int cy, int x1, int y1) override;
+    void drawEllipse(int cx, int cy, int x1, int y1) override;
+    void drawPolygon(const glm::dvec2 *vtx, int nvtx) override;
+    void drawPolygonLine(const glm::dvec2 *vtx, int nvtx) override;
 
     int getCharSize() override;
     int getTextWidth(cchar_t *str, int len = 0) override;

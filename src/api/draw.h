@@ -89,10 +89,12 @@ public:
 
     // draw function calls
     virtual void moveTo(int x, int y) { }
-    virtual void lineTo(int x, int y) { }
-    virtual void line(int x0, int y0, int x1, int y1) { }
-    virtual void rectangle(int x0, int y0, int x1, int y1) { }
-    virtual void ellipse(int x0, int y0, int x1, int y1) { }
+    virtual void drawLineTo(int x, int y) { }
+    virtual void drawLine(int x0, int y0, int x1, int y1) { }
+    virtual void drawRectangle(int x0, int y0, int x1, int y1) { }
+    virtual void drawEllipse(int x0, int y0, int x1, int y1) { }
+    virtual void drawPolygon(const glm::dvec2 *vtx, int nvtx) { }
+    virtual void drawPolygonLine(const glm::dvec2 *vtx, int nvtx) { }
 
 private:
     SurfaceHandle surf = nullptr;

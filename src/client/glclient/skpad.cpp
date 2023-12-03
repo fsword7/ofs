@@ -218,19 +218,47 @@ void glPad::moveTo(int x, int y)
     yCurrent = y;
 }
 
-void glPad::lineTo(int x, int y)
+void glPad::drawLineTo(int x, int y)
 {
     nvgLineTo(ctx, xOrigin + x, yOrigin + y);
     xCurrent = x;
     yCurrent = y;
 }
 
-void glPad::line(int x0, int y0, int x1, int y1)
+void glPad::drawLine(int x0, int y0, int x1, int y1)
 {
     moveTo(x0, y0);
-    lineTo(x1, y1);
+    drawLineTo(x1, y1);
 }
 
+void glPad::drawRectangle(int x0, int y0, int x1, int y1)
+{
+    nvgBeginPath(ctx);
+    nvgRect(ctx, xOrigin+x0, yOrigin+y0, x1, y1);
+}
+
+void glPad::drawEllipse(int cx, int cy, int x1, int y1)
+{
+    nvgBeginPath(ctx);
+    nvgEllipse(ctx, xOrigin+cx, yOrigin+cy, x1, y1);
+}
+
+void glPad::drawPolygon(const glm::dvec2 *vtx, int nvtx)
+{
+    nvgBeginPath(ctx);
+    nvgMoveTo(ctx, xOrigin+vtx[0].x, yOrigin+vtx[0].y);
+    for (int idx = 1; idx < nvtx; idx++)
+        nvgLineTo(ctx, xOrigin+vtx[idx].x, yOrigin+vtx[idx].y);
+    nvgClosePath(ctx);
+}
+
+void glPad::drawPolygonLine(const glm::dvec2 *vtx, int nvtx)
+{
+    nvgBeginPath(ctx);
+    nvgMoveTo(ctx, xOrigin+vtx[0].x, yOrigin+vtx[0].y);
+    for (int idx = 1; idx < nvtx; idx++)
+        nvgLineTo(ctx, xOrigin+vtx[idx].x, yOrigin+vtx[idx].y);
+}
 
 NVGalign glPad::toNVGTextAlign(TAHorizontal tah)
 {
