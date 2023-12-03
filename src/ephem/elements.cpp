@@ -95,6 +95,19 @@ double OrbitalElements::getMeanAnomalyE(double ea) const
         return e*sinh(ea) - ea;
 }
 
+bool OrbitalElements::getAscendingNode(glm::dvec3 &an) const
+{
+    double d = getRadiusVectorLength(omega);
+    an = N * d;
+    return (d >= 0.0);
+}
+
+bool OrbitalElements::getDescendingNode(glm::dvec3 &dn) const
+{
+    double d = getRadiusVectorLength(omega+pi);
+    dn = N * -d;
+    return (d >= 0.0);
+}
 
 
 // determine orbital data (free fall) by using masses

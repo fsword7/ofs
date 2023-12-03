@@ -13,24 +13,27 @@ public:
 
     OrbitalElements(double a, double e, double i, double theta, double omegab, double L, double mjd);
 
-    inline double getLinearEccentricity() const         { return le; }
-    inline double getApoapsis() const                   { return ad; }
-    inline double getPeriapsis() const                  { return pd; }
-    inline double getSemiMinorAxis() const              { return b; }
-    inline double getArgumentOfPeriapsis() const        { return omega; }
-    inline double getOrbitalPeriod() const              { return T; }
+    inline double getLinearEccentricity() const             { return le; }
+    inline double getApoapsis() const                       { return ad; }
+    inline double getPeriapsis() const                      { return pd; }
+    inline double getSemiMinorAxis() const                  { return b; }
+    inline double getArgumentOfPeriapsis() const            { return omega; }
+    inline double getOrbitalPeriod() const                  { return T; }
 
-    inline double getMJDEpoch() const                   { return mjdEpoch; }
+    inline double getMJDEpoch() const                       { return mjdEpoch; }
 
-    inline double getCircularVelocity(double r) const   { return sqrt(mu / r); };
+    inline double getCircularVelocity(double r) const       { return sqrt(mu / r); };
+    inline double getRadiusVectorLength(double phi) const   { return p / (1.0 + e*cos(phi)); }
 
-    inline double getMeanLongitude(double t) const      { return n*t + L; }
-    inline double getMeanAnomaly(double t) const        { return n * (t-tau); }
+    inline double getMeanLongitude(double t) const          { return n*t + L; }
+    inline double getMeanAnomaly(double t) const            { return n * (t-tau); }
     inline double getTrueAnomaly(double ma) const
         { return getTrueAnomalyE(getEccentricAnomaly(ma)); }
 
-    inline glm::dvec3 getoPosition() const              { return R; }
-    inline glm::dvec3 getoVelocity() const              { return V; }
+    inline glm::dvec3 getoPosition() const                  { return R; }
+    inline glm::dvec3 getoVelocity() const                  { return V; }
+    inline double getRadius() const                         { return r; }
+    inline double getVelocity() const                       { return v; }
 
     void setMasses(double m, double M);
     
@@ -38,6 +41,8 @@ public:
     double getEccentricAnomalyTA(double ta) const;
     double getTrueAnomalyE(double ea) const;
     double getMeanAnomalyE(double ea) const;
+    bool getAscendingNode(glm::dvec3 &an) const;
+    bool getDescendingNode(glm::dvec3 &dn) const;
 
     void setup(double m, double M, double mjd);
     void calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t);
@@ -56,6 +61,10 @@ public:
     double theta  = 0.0;    // longitude of ascending node [rad]
     double omegab = 0.0;    // longitude of periapsis [rad]
     double L      = 0.0;    // mean longitude at epoch
+    
+    double sint, cost;  // sin/cos of theta
+    double sini, cosi;  // sin/cos of i (inclination)
+    double sino, coso;  // sin/cos of omega
 
 private:
     // Secondary orbital element parameters
@@ -68,10 +77,6 @@ private:
     double tmp;         // calculation of true anomaly if e < 1
 
     double p;           // parameter of conic section
-
-    double sint, cost;  // sin/cos of theta
-    double sini, cosi;  // sin/cos of i (inclination)
-    double sino, coso;  // sin/cos of omega
 
     // Mass parameters
     double m;           // mass of orbiter [kg]
