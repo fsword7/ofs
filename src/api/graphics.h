@@ -44,6 +44,8 @@ public:
     virtual void startImGuiNewFrame() = 0;
     virtual void renderImGuiDrawData() = 0;
 
+    virtual double getElevation() = 0;
+
     virtual Font *createFont(int height, bool fixed, cchar_t *face,
         Font::Style style, int orientation, bool antialiased) = 0;
     virtual Pen *createPen(color_t color, int width, int style) = 0;

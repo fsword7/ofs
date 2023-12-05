@@ -53,6 +53,8 @@ public:
     void startImGuiNewFrame() override;
     void renderImGuiDrawData() override;
 
+    double getElevation() override;
+
     Font *createFont(int height, bool fixed, cchar_t *face, Font::Style style, int orientation, bool antialiased) override;
     Pen *createPen(color_t color, int width, int style) override;
     Brush *createBrush(color_t color) override;

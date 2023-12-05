@@ -201,15 +201,6 @@ void glClient::loadTextureFont()
 
 }
 
-void glClient::cbRenderScene(Player *player)
-{
-    if (scene != nullptr)
-    {
-        scene->update(player);
-        scene->render(player);
-    }
-}
-
 Texture *glClient::createSurface(int width, int height, uint32_t flags)
 {
     TextureManager mgr;
@@ -234,6 +225,20 @@ void glClient::clearSurface(Texture *surf, const color_t &color)
     glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     glClear(GL_COLOR_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void glClient::cbRenderScene(Player *player)
+{
+    if (scene != nullptr)
+    {
+        scene->update(player);
+        scene->render(player);
+    }
+}
+
+double glClient::getElevation()
+{
+    return 0.0;
 }
 
 Font *glClient::createFont(int height, bool fixed, cchar_t *face, Font::Style style, int orientation, bool antialiased)
