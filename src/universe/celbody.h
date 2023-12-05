@@ -11,6 +11,7 @@ class CelestialStar;
 class CelestialBody;
 class OrbitEphemeris;
 class pSystem;
+class vObject;
 
 // class PlanetarySystem
 // {
@@ -98,6 +99,9 @@ public:
     inline CelestialStar *getStar() const               { return cstar; }
     inline CelestialBody *getParent() const             { return cbody; }
 
+    inline void setVisualObject(vObject *vobj) const    { visualObject = vobj; }
+    inline vObject *getVisualObject() const             { return visualObject; }
+
     void attach(CelestialBody *parent, frameType type = rfUniversal);
 
     void convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel);
@@ -152,6 +156,8 @@ protected:
     CelestialStar *cstar = nullptr;
     CelestialBody *cbody = nullptr;             // Reference frame for orbits
     std::vector<CelestialBody *> secondaries;   // children of celstial body
+
+    mutable vObject *visualObject = nullptr;
 
     // Rotation/prcession parameters
     double crot = 0.0;      // Current rotation

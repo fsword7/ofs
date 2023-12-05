@@ -56,6 +56,11 @@ void vObject::init()
 
     vao->unbind();
     pgmObjectAsPoint->release();
+
+    // Assign surface data to internal object class
+    const CelestialBody *cbody = dynamic_cast<const CelestialBody *>(object);
+    if (cbody != nullptr)
+        cbody->setVisualObject(this);
 }
 
 void vObject::update(int now)
