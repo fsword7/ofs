@@ -134,6 +134,7 @@ private:
     tcRange txRange;
 
     // Elevation data parameters
+    bool     elevEnable = true; // for debugging purposes
     bool     elevOwn = false;
     int16_t *elev = nullptr;
     int16_t *ggelev = nullptr;  // Great-grandfather elevation data

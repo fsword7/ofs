@@ -137,7 +137,7 @@ void SurfaceTile::load()
     // Load (nightlight/water) mask texture if applicance
 
     // Load elevation data
-    int16_t *elev = getElevationData();
+    int16_t *elev = elevEnable ? getElevationData() : nullptr;
 
     if (lod == 0)
         mesh = createHemisphere(mgr.gridRes, nullptr, 0);
