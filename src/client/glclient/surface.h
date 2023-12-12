@@ -6,16 +6,17 @@
 #pragma once
 
 #include "utils/tree.h"
+#include "api/elevmgr.h"
 #include "ztreemgr.h"
 #include "texmgr.h"
 #include "shader.h"
-#include "elevmgr.h"
 
 // #define ELEV_STRIDE 0
 
 class VertexArray;
 class VertexBuffer;
 class IndexBuffer;
+class SurfaceTile;
 struct ObjectProperties;
 
 struct Vertex
@@ -178,12 +179,17 @@ public:
     static void ginit();
     static void gexit();
 
-    inline int getGridRes() const { return gridRes; }
-    inline int getElevRes() const { return elevRes; }
+    inline int getElevGrid() const { return elevGrids; }
+    inline int getElevScale() const { return elevScale; }
 
     SurfaceTile *findTile(int lod, int lat, int lng);
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
+
+    bool getTileIndex(double lat, double lng, int lod, int &ilat, int &ilng) const;
+    int16_t *readElevationFile(int lod, int ilat, int ilng, double eres) const;
+    double getElevationData(glm::dvec3 loc, int reqlod,
+        elevTileList_t &elevTiles, glm::dvec3 &nml, int &lod) const;
 
     // Creating planet surface - quadsphere
     Mesh *createHemisphere(int grid, int16_t *elev, double gelev);
@@ -249,8 +255,9 @@ private:
     zTreeManager *zTrees[5] = {};
     SurfaceTile *tiles[2];
 
-    int gridRes = 32; // 1 << 5
-    double elevRes = 1.0;
+    int elevGrids = 32; // 1 << 5
+    double elevScale = 1.0;
+    int  elevMode = 1;
 
     float dTime = 0.0;
     

@@ -37,3 +37,20 @@ struct elevHeader
     double   emin, emax, emean;     // Min, max, and mean elevation [m]
 };
 #pragma pack(pop)
+
+struct ElevationTile
+{
+    int lod;
+    double latmin, latmax;
+    double lngmin, lngmax;
+
+    // SurfaceTile *tile = nullptr;
+    int16_t *data = nullptr;
+    glm::dvec3 normal;
+
+    int tgtlod;
+    double lat0, lng0;
+    double lastAccess;
+};
+
+using elevTileList_t = std::vector<ElevationTile *>;

@@ -39,7 +39,6 @@ set(OGL_H_SRCS
     buffer.h
     # camera.h
     client.h
-    elevmgr.h
     fonts.h
     lights.h
     overlay.h

@@ -140,10 +140,10 @@ void SurfaceTile::load()
     int16_t *elev = elevEnable ? getElevationData() : nullptr;
 
     if (lod == 0)
-        mesh = createHemisphere(mgr.gridRes, nullptr, 0);
+        mesh = createHemisphere(mgr.elevGrids, nullptr, 0);
     else
-        mesh = mgr.createSpherePatch(mgr.gridRes, lod, ilat, ilng,
-            txRange, elev, mgr.elevRes, 0.0);
+        mesh = mgr.createSpherePatch(mgr.elevGrids, lod, ilat, ilng,
+            txRange, elev, mgr.elevScale, 0.0);
     type = tileInactive;
 }
 
