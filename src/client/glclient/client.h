@@ -74,7 +74,7 @@ private:
     Scene *scene = nullptr;
 };
 
-extern ofsLogger *glLogger;
+extern Logger *glLogger;
 
 inline void checkErrors()
 {

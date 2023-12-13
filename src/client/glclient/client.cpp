@@ -18,11 +18,11 @@
 
 glClient *gclient = nullptr;
 ModuleHandle myHandle = nullptr;
-ofsLogger *glLogger = nullptr;
+Logger *glLogger = nullptr;
 
 LIBCALL void initModule(ModuleHandle handle)
 {
-    glLogger = new ofsLogger(ofsLogger::logDebug, "client.log");
+    glLogger = new Logger(Logger::logDebug, "client.log");
     glLogger->info("--------- OpenGL client --------\n");
 
     gclient = new glClient(handle);

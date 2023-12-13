@@ -183,12 +183,11 @@ void CoreApp::render()
 // Logger *Logger::logger = nullptr;
 // Logger *logger = nullptr;
 
-ofsLogger *logger = nullptr;
+Logger *logger = nullptr;
 
 void CoreApp::init()
 {
-    // Logger::create(Logger::logDebug, "ofs.log");
-    logger = new ofsLogger(ofsLogger::logDebug, "ofs.log");
+    logger = new Logger(Logger::logDebug, "ofs.log");
 
     if (glfwInit() != GLFW_TRUE)
     {

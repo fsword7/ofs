@@ -14,7 +14,7 @@
 
 #pragma once
 
-class ofsLogger
+class Logger
 {
 public:
     using outStream = std::basic_ostream<char>;
@@ -30,28 +30,25 @@ public:
         logDebug
     };
 
-    ofsLogger()
+    Logger()
     : outLog(std::clog), outError(std::cerr)
     { }
 
-    ofsLogger(levelType logType, outStream &log, outStream &err)
+    Logger(levelType logType, outStream &log, outStream &err)
     : level(logType), outLog(log), outError(err)
     { }
 
-    ofsLogger(levelType logType, const fs::path &logName)
+    Logger(levelType logType, const fs::path &logName)
     : level(logType), outLog(std::clog), outError(std::cerr)
     {
         outLogFile.open(logName);
     }
 
-    ~ofsLogger();
-
-    // static Logger *create(levelType type, const fs::path &logName);
-    // static Logger *create(levelType logType, outStream &log, outStream &err);
-    // static Logger *create(levelType logType);
-
-    // static void destroyLogger()     { delete Logger::logger; }
-    // static Logger *getLogger()      { return Logger::logger; }
+    ~Logger()
+    {
+        if (outLogFile.is_open())
+            outLogFile.close();
+    }
 
     inline void setLevel(levelType nLevel)      { level = nLevel; }
 

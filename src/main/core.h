@@ -43,9 +43,8 @@ namespace fs = std::filesystem;
 #include "main/math.h"
 #include "main/json.h"
 #include "main/timedate.h"
-// #include "utils/logger.h"
 #include "utils/color.h"
 #include "utils/string.h"
 #include "api/module.h"
 
-extern ofsLogger *logger;
+extern Logger *logger;
