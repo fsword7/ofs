@@ -10,6 +10,9 @@
 #include "texmgr.h"
 #include "skpad.h"
 #include "scene.h"
+#include "surface.h"
+#include "vobject.h"
+#include "vbody.h"
 
 #include <dlfcn.h>
 
@@ -236,9 +239,14 @@ void glClient::cbRenderScene(Player *player)
     }
 }
 
-double glClient::getElevation()
+double glClient::getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod,
+    elevTileList_t *tiles, glm::dvec3 *normal, int *lod)
 {
-    return 0.0;
+    vBody *vobj = dynamic_cast<vBody *>(cbody->getVisualObject());
+    assert(vobj != nullptr);
+    SurfaceManager *smgr = vobj->getSurfaceManager();
+
+    return smgr->getElevationData(loc, reqlod, tiles, normal, lod);
 }
 
 Font *glClient::createFont(int height, bool fixed, cchar_t *face, Font::Style style, int orientation, bool antialiased)

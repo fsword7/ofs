@@ -363,16 +363,17 @@ int16_t *SurfaceManager::readElevationFile(int lod, int ilat, int ilng, double e
 }
 
 double SurfaceManager::getElevationData(glm::dvec3 loc, int reqlod,
-    elevTileList_t &elevTiles, glm::dvec3 &nml, int &lod) const
+    elevTileList_t *elevTiles, glm::dvec3 *normal, int *lod) const
 {
     double e = 0.0;
+    elevTileList_t &tiles = *elevTiles;
 
     if (elevMode > 0)
     {
         int lod, ilat, ilng;
         ElevationTile *t = nullptr;
 
-        for (auto tile : elevTiles)
+        for (auto tile : tiles)
         {
             if (tile->data != nullptr && reqlod == tile->tgtlod &&
                 loc.x >= tile->latmin && loc.x <= tile->latmax &&
@@ -386,10 +387,10 @@ double SurfaceManager::getElevationData(glm::dvec3 loc, int reqlod,
         if (t == nullptr)
         {
             // Find oldest elevation tile
-            t = elevTiles[0];
-            for (int idx = 1; idx < elevTiles.size(); idx++)
-                if (elevTiles[idx]->lastAccess < t->lastAccess)
-                    t = elevTiles[idx];
+            t = tiles[0];
+            for (int idx = 1; idx < elevTiles->size(); idx++)
+                if (tiles[idx]->lastAccess < t->lastAccess)
+                    t = tiles[idx];
 
             // Release old elevation data
             if (t->data != nullptr)
@@ -443,22 +444,25 @@ double SurfaceManager::getElevationData(glm::dvec3 loc, int reqlod,
                 e = e1*(1.0-wlat) + e2*wlat;
 
                 // Determine normals
-                double dlat = (t->latmax - t->latmin) / elevGrids;
-                double dlng = (t->lngmax - t->lngmin) / elevGrids;
-                double dz = dlat * object->getRadius();
-                double dx = dlng * object->getRadius() * cos(loc.x);
+                if (normal != nullptr)
+                {
+                    double dlat = (t->latmax - t->latmin) / elevGrids;
+                    double dlng = (t->lngmax - t->lngmin) / elevGrids;
+                    double dz = dlat * object->getRadius();
+                    double dx = dlng * object->getRadius() * cos(loc.x);
 
-                double nx1 = eptr[1]-eptr[0];
-                double nx2 = eptr[ELEV_STRIDE+1] - eptr[ELEV_STRIDE];
-                double nx = wlat*nx2 + (1.0-wlat)*nx1;
-                glm::dvec3 vnx(dx, nx, 0);
+                    double nx1 = eptr[1]-eptr[0];
+                    double nx2 = eptr[ELEV_STRIDE+1] - eptr[ELEV_STRIDE];
+                    double nx = wlat*nx2 + (1.0-wlat)*nx1;
+                    glm::dvec3 vnx(dx, nx, 0);
 
-                double nz1 = eptr[ELEV_STRIDE] - eptr[0];
-                double nz2 = eptr[ELEV_STRIDE+1] - eptr[1];
-                double nz = wlng*nz2 + (1.0-wlng)*nz1;
-                glm::dvec3 vnz(0, nz, dz);
+                    double nz1 = eptr[ELEV_STRIDE] - eptr[0];
+                    double nz2 = eptr[ELEV_STRIDE+1] - eptr[1];
+                    double nz = wlng*nz2 + (1.0-wlng)*nz1;
+                    glm::dvec3 vnz(0, nz, dz);
 
-                nml = glm::normalize(glm::cross(vnx, vnz));
+                    *normal = glm::normalize(glm::cross(vnx, vnz));
+                }
             }
             else if (elevMode == 2)
             {

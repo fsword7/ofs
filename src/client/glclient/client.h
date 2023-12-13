@@ -53,7 +53,8 @@ public:
     void startImGuiNewFrame() override;
     void renderImGuiDrawData() override;
 
-    double getElevation() override;
+    double getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod = 0,
+        elevTileList_t *tiles = nullptr, glm::dvec3 *normal = nullptr, int *lod = 0) override;
 
     Font *createFont(int height, bool fixed, cchar_t *face, Font::Style style, int orientation, bool antialiased) override;
     Pen *createPen(color_t color, int width, int style) override;

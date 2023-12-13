@@ -7,9 +7,11 @@
 
 #include "api/ofsapi.h"
 #include "api/draw.h"
+#include "api/elevmgr.h"
 #include <GLFW/glfw3.h>
 
 class Universe;
+class CelestialBody;
 class Player;
 class Sketchpad;
 class Texture;
@@ -44,7 +46,8 @@ public:
     virtual void startImGuiNewFrame() = 0;
     virtual void renderImGuiDrawData() = 0;
 
-    virtual double getElevation() = 0;
+    virtual double getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod = 0,
+        elevTileList_t *tiles = nullptr, glm::dvec3 *normal = nullptr, int *lod = 0) = 0;
 
     virtual Font *createFont(int height, bool fixed, cchar_t *face,
         Font::Style style, int orientation, bool antialiased) = 0;

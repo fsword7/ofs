@@ -13,6 +13,8 @@ public:
     vBody(const Object *object, Scene &scene);
     ~vBody();
 
+    inline SurfaceManager *getSurfaceManager() const { return smgr; }
+    
     void update(int now) override;
     void render(const ObjectListEntry &ole) override;
 

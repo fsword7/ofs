@@ -189,7 +189,7 @@ public:
     bool getTileIndex(double lat, double lng, int lod, int &ilat, int &ilng) const;
     int16_t *readElevationFile(int lod, int ilat, int ilng, double eres) const;
     double getElevationData(glm::dvec3 loc, int reqlod,
-        elevTileList_t &elevTiles, glm::dvec3 &nml, int &lod) const;
+        elevTileList_t *elevTiles, glm::dvec3 *nml, int *lod) const;
 
     // Creating planet surface - quadsphere
     Mesh *createHemisphere(int grid, int16_t *elev, double gelev);
