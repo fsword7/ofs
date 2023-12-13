@@ -66,7 +66,7 @@ void Scene::renderSystemObjects()
 
     for (auto ole : renderList)
     {
-        logger->debug("Rendering {}...\n", ole.object->getName());
+        glLogger->debug("Rendering {}...\n", ole.object->getName());
 
         ole.camClip = camera->getClip();
         ole.visual->render(ole);
@@ -121,7 +121,7 @@ void Scene::buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
                 ole.camClip = glm::vec2(ole.zNear, ole.zFar);
 
                 // logger->debug("{}: Adding to rendering list\n", body->getsName());
-                logger->debug("{}: P({:.6f},{:.6f},{:.6f}))\n",
+                glLogger->debug("{}: P({:.6f},{:.6f},{:.6f}))\n",
                     body->getsName(), ole.vpos.x, ole.vpos.y, ole.vpos.z);
 
                 addRenderList(ole);

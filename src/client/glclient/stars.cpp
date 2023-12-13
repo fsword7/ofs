@@ -33,7 +33,7 @@ void StarVertex::start()
     vertices = reinterpret_cast<starVertex *>(vbo->map());
     if (vertices == nullptr)
     {
-        logger->fatal("Can't render stars - aborted (error code: {})\n",
+        glLogger->fatal("Can't render stars - aborted (error code: {})\n",
             glGetError());
         pgm->release();
         vao->unbind();

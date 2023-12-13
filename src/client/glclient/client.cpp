@@ -18,20 +18,20 @@
 
 glClient *gclient = nullptr;
 ModuleHandle myHandle = nullptr;
-ofsLogger *logger = nullptr;
+ofsLogger *glLogger = nullptr;
 
 LIBCALL void initModule(ModuleHandle handle)
 {
-    logger = new ofsLogger(ofsLogger::logDebug, "client.log");
-    logger->info("--------- OpenGL client --------\n");
+    glLogger = new ofsLogger(ofsLogger::logDebug, "client.log");
+    glLogger->info("--------- OpenGL client --------\n");
 
     gclient = new glClient(handle);
     if (!ofsRegisterGraphicsClient(gclient))
     {
         printf("Can't register graphics client - aborted.\n");
-        delete gclient, logger;
+        delete gclient, glLogger;
         gclient = nullptr;
-        logger = nullptr;
+        glLogger = nullptr;
     }
 }
 
@@ -40,9 +40,9 @@ LIBCALL void exitModule(ModuleHandle handle)
     if (gclient != nullptr)
     {
         ofsUnregisterGraphicsClient(gclient);
-        delete gclient, logger;
+        delete gclient, glLogger;
         gclient = nullptr;
-        logger = nullptr;
+        glLogger = nullptr;
     }
 }
 
@@ -73,8 +73,8 @@ static void __attribute__ ((destructor)) destroyModule(void)
 void cbPrintError(int, cchar_t *errMessage)
 {
     printf("GLFW Error: %s\n", errMessage);
-    if (logger != nullptr)
-        logger->fatal("GLFW Error: {}\n", errMessage);
+    if (glLogger != nullptr)
+        glLogger->fatal("GLFW Error: {}\n", errMessage);
 }
 
 bool glClient::cbInitialize()
@@ -128,7 +128,7 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
         abort();
     }
 
-    logger->info("Loaded OpenGL version: {}.{}\n",
+    glLogger->info("Loaded OpenGL version: {}.{}\n",
         GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     // Initialize scene package

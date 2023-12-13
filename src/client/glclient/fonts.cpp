@@ -35,7 +35,7 @@ void TextureFont::ginit()
         return;
     if (FT_Init_FreeType(&font))
     {
-        logger->fatal("TTF: Can't initialize freetype library - aborted\n");
+        glLogger->fatal("TTF: Can't initialize freetype library - aborted\n");
     }
 }
 
@@ -120,21 +120,21 @@ TextureFont *TextureFont::load(Scene &scene, const fs::path &path, int size, int
 
     if (FT_New_Face(font, path.string().c_str(), 0, &face) != 0)
     {
-        logger->error("TFF: Can't open font %{}: {}\n",
+        glLogger->error("TFF: Can't open font %{}: {}\n",
             path.string(), strerror(errno));
         return nullptr;
     }
 
     if (!FT_IS_SCALABLE(face))
     {
-        logger->error("TTF: font {} is not scalable.\n", path.string());
+        glLogger->error("TTF: font {} is not scalable.\n", path.string());
         FT_Done_Face(face);
         return nullptr;
     }
 
     if (FT_Set_Char_Size(face, 0, size << 6, dpi, dpi) != 0)
     {
-        logger->error("TTF: Can't set {} on font {}\n",
+        glLogger->error("TTF: Can't set {} on font {}\n",
             size, path.string());
         FT_Done_Face(face);
         return nullptr;
@@ -142,12 +142,12 @@ TextureFont *TextureFont::load(Scene &scene, const fs::path &path, int size, int
 
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        logger->error("TTF: Unicode not supported on font {}\n", path.string());
+        glLogger->error("TTF: Unicode not supported on font {}\n", path.string());
         FT_Done_Face(face);
         return nullptr;
     }
 
-    logger->info("TTF: Loading {} ({}) {} glyphs...\n",
+    glLogger->info("TTF: Loading {} ({}) {} glyphs...\n",
         face->family_name, face->style_name, face->num_glyphs);
     
     TextureFont *font = new TextureFont(scene);

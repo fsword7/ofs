@@ -83,7 +83,7 @@ int16_t *SurfaceTile::readElevationFile(int lod, int ilat, int ilng, double scal
 
             if (hdr->code != FOURCC('E', 'L', 'E', 1))
             {
-                logger->info("*** Invalid elevation header - aborted.\n");
+                glLogger->info("*** Invalid elevation header - aborted.\n");
                 delete [] elevData;
                 return nullptr;
             }
@@ -225,7 +225,7 @@ bool SurfaceTile::loadElevationData()
         if (pelev == nullptr)
             return false;
 
-        logger->info("Interpolating elevation LOD {} data for LOD {}\n",
+        glLogger->info("Interpolating elevation LOD {} data for LOD {}\n",
             plod, lod);
 
         elev = new int16_t[ndat];
@@ -307,7 +307,7 @@ int16_t *SurfaceManager::readElevationFile(int lod, int ilat, int ilng, double e
 
             if (hdr->code != FOURCC('E', 'L', 'E', 1))
             {
-                logger->info("*** Invalid elevation header - aborted.\n");
+                glLogger->info("*** Invalid elevation header - aborted.\n");
                 delete [] elevData;
                 return nullptr;
             }

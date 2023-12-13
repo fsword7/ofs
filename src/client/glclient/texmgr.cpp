@@ -43,7 +43,7 @@ void TextureManager::loadDDSTextureFromMemory(Texture **txImage, const uint8_t *
     (*txImage)->id = SOIL_direct_load_DDS_from_memory((const unsigned char *)buf, nbuf, 0, 0, 0);
     if (*txImage == nullptr)
     {
-        logger->info("{}\n", SOIL_last_result());
+        glLogger->info("{}\n", SOIL_last_result());
         return;
     }
 
@@ -94,7 +94,7 @@ Texture *TextureManager::getTextureForRendering(int w, int h, uint32_t flags)
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE)
     {
-        logger->fatal("Framebuffer Failure - code {}\n", status);
+        glLogger->fatal("Framebuffer Failure - code {}\n", status);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, oldFB);
         delete tx;

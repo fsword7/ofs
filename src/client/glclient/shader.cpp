@@ -133,15 +133,15 @@ void ShaderSource::dump(cstr_t &source)
         if (newLine == true)
         {
             lineNumber++;
-            logger->verbose("{:04d}: ", lineNumber);
+            glLogger->verbose("{:04d}: ", lineNumber);
             newLine = false;
         }
 
-        logger->verbose("{}", source[idx]);
+        glLogger->verbose("{}", source[idx]);
         if (source[idx] == '\n')
             newLine = true;
     }
-    logger->verbose("\n\n");
+    glLogger->verbose("\n\n");
 }
 
 cstr_t ShaderSource::getLogInfo()
@@ -232,7 +232,7 @@ ShaderStatus ShaderSource::create(ShaderManager *shmgr, ShaderType type, const s
     if (status != shrSuccessful)
     {
         log = newShader->getLogInfo();
-        logger->verbose("Compiling shader source error:\n\n{}\n", log);
+        glLogger->verbose("Compiling shader source error:\n\n{}\n", log);
         delete newShader;
         return status;
     }
@@ -289,7 +289,7 @@ ShaderStatus ShaderProgram::link()
     if (status == GL_FALSE)
     {
         log = getLogInfo();
-        logger->verbose("Linking shader program error:\n\n{}\n", log);
+        glLogger->verbose("Linking shader program error:\n\n{}\n", log);
         return shrLinkError;
     }
 
@@ -452,10 +452,10 @@ void ShaderProgram::listUniforms()
         GLint location = glGetUniformLocation(id, name);
 
         if (size > 1)
-            logger->verbose("Uniform %d (loc=%d):\t%d %20s %-20s <Size: %d>\n",
+            glLogger->verbose("Uniform %d (loc=%d):\t%d %20s %-20s <Size: %d>\n",
                 idx, location, type, "-", name, size);
         else
-            logger->verbose("Uniform %d (loc=%d):\t%d %20s %-20s\n",
+            glLogger->verbose("Uniform %d (loc=%d):\t%d %20s %-20s\n",
                 idx, location, type, "-", name);   
     }
 }
@@ -530,7 +530,7 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name)
         std::ifstream vsFile(vsName);
         if (!vsFile.good())
         {
-            logger->verbose("Failed to open '%s' file: '%s'\n",
+            glLogger->verbose("Failed to open '%s' file: '%s'\n",
                 vsName, strerror(errno));
             return nullptr;
         }
@@ -546,7 +546,7 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name)
         std::ifstream fsFile(fsName);
         if (!fsFile.good())
         {
-            logger->verbose("Failed to open '%s' file: '%s'\n",
+            glLogger->verbose("Failed to open '%s' file: '%s'\n",
                 fsName, strerror(errno));
             return nullptr;
         }

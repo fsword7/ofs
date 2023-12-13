@@ -26,7 +26,7 @@ void Scene::initConstellations()
     for (auto aster : asterisms)
         asterismLines += aster->hipList.size();
 
-    logger->info("Total {} asterism lines\n", asterismLines);
+    glLogger->info("Total {} asterism lines\n", asterismLines);
     
     mvp = mat4Uniform(pgmAsterism->getID(), "mvp");
     uCamClip = vec2Uniform(pgmAsterism->getID(), "uCamClip");
@@ -70,9 +70,9 @@ void Scene::renderConstellations()
             const CelestialStar *star2 = starlib.getHIPstar(aster->hipList[sidx+1]);
 
             if (star1 == nullptr)
-                logger->warn("HIP {} not found in catalogue\n", aster->hipList[sidx]);
+                glLogger->warn("HIP {} not found in catalogue\n", aster->hipList[sidx]);
             if (star2 == nullptr)
-                logger->warn("HIP {} not found in catalogue\n", aster->hipList[sidx+1]);
+                glLogger->warn("HIP {} not found in catalogue\n", aster->hipList[sidx+1]);
             if (star1 == nullptr || star2 == nullptr)
                 continue;
 

@@ -26,7 +26,7 @@ void Scene::checkErrors()
     GLenum err;
     while((err = glGetError()) != GL_NO_ERROR)
     {
-        logger->debug("OpenGL Error: {}\n", err);
+        glLogger->debug("OpenGL Error: {}\n", err);
     }
 }
 
@@ -166,7 +166,7 @@ void Scene::render(Player *player)
 
     for (auto sun : nearStars)
     {
-        logger->info("Sun: {}\n", sun->getsName());
+        glLogger->info("Sun: {}\n", sun->getsName());
 
         if (!sun->haspSystem())
             continue;

@@ -499,11 +499,11 @@ glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng
 
 void logMatrix(const glm::dmat4 &m, cstr_t &desc)
 {
-    logger->debug("{} matrix:\n", desc);
-    logger->debug("{} {} {} {}\n", m[0][0], m[0][1], m[0][2], m[0][3]);
-    logger->debug("{} {} {} {}\n", m[1][0], m[1][1], m[1][2], m[1][3]);
-    logger->debug("{} {} {} {}\n", m[2][0], m[2][1], m[2][2], m[2][3]);
-    logger->debug("{} {} {} {}\n", m[3][0], m[3][1], m[3][2], m[3][3]);
+    glLogger->debug("{} matrix:\n", desc);
+    glLogger->debug("{} {} {} {}\n", m[0][0], m[0][1], m[0][2], m[0][3]);
+    glLogger->debug("{} {} {} {}\n", m[1][0], m[1][1], m[1][2], m[1][3]);
+    glLogger->debug("{} {} {} {}\n", m[2][0], m[2][1], m[2][2], m[2][3]);
+    glLogger->debug("{} {} {} {}\n", m[3][0], m[3][1], m[3][2], m[3][3]);
 }
 
 void SurfaceManager::setRenderParams(const ObjectListEntry &ole)
@@ -1013,15 +1013,15 @@ Mesh *SurfaceManager::createIcosphere(int maxlod)
     for (auto pos : IcosahedronVertices)
         vertices.push_back(pos);
     
-    logger->debug("Creating icosphere...\n");
+    glLogger->debug("Creating icosphere...\n");
 
     for (size_t lod = 0; lod < maxlod; lod++)
     {
-        logger->debug("Creating LOD {} level...\n", lod);
+        glLogger->debug("Creating LOD {} level...\n", lod);
 
         std::vector<uint32_t> newIndices;
 
-        logger->debug("Indices = {}\n", indices.size());
+        glLogger->debug("Indices = {}\n", indices.size());
 
         for (int idx = 0; idx < indices.size(); idx += 3)
         {
@@ -1082,7 +1082,7 @@ Mesh *SurfaceManager::createIcosphere(int maxlod)
             newIndices.push_back(mp13idx);
         }
 
-        logger->debug("Swapping indices...\n");
+        glLogger->debug("Swapping indices...\n");
 
         indices.swap(newIndices);
         newIndices.clear();
@@ -1091,14 +1091,14 @@ Mesh *SurfaceManager::createIcosphere(int maxlod)
     int nvtx = vertices.size();
     int nidx = indices.size();
 
-    logger->debug("Icosphere: {} vertices, {} indices\n", nvtx, nidx);
+    glLogger->debug("Icosphere: {} vertices, {} indices\n", nvtx, nidx);
 
     Vertex *vtx   = new Vertex[nvtx];
     uint16_t *idx = new uint16_t[nidx];
 
     for (int ivtx = 0; ivtx < nvtx; ivtx++)
     {
-        logger->debug("Vertex {:04d}: {} {} {}\n" ,ivtx, vertices[ivtx].x, vertices[ivtx].y, vertices[ivtx].z);
+        glLogger->debug("Vertex {:04d}: {} {} {}\n" ,ivtx, vertices[ivtx].x, vertices[ivtx].y, vertices[ivtx].z);
 
         vtx[ivtx].vx = float(vertices[ivtx].x * objSize);
         vtx[ivtx].vy = float(vertices[ivtx].y * objSize);
@@ -1118,7 +1118,7 @@ Mesh *SurfaceManager::createIcosphere(int maxlod)
         idx[iidx] = indices[iidx];
     }
 
-    logger->debug("Done - Creating mesh...\n");
+    glLogger->debug("Done - Creating mesh...\n");
 
     return new Mesh(nvtx, vtx, nidx, idx);
     
