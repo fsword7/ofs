@@ -179,8 +179,9 @@ void Universe::start(const TimeDate &td)
     cam->update();
     player->attach(earth, camTargetRelative);
     player->look(earth);
+
     // // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
-    // player->setGroundMode(earth, -80.705774, 28.632307, 150, 2);
+    // player->setGroundMode(earth, {-80.705774, 28.632307, .002}, 150);
 
     player->update(td);
 }

@@ -491,25 +491,25 @@ void Parser::analyze(std::istream &in)
         switch (token)
         {
         case tkBegin:
-            Logger::getLogger()->info("Begin\n");
+            logger->info("Begin\n");
             break;
         case tkEnd:
-            Logger::getLogger()->info("End\n");
+            logger->info("End\n");
             break;
         case tkName:
-            Logger::getLogger()->info("Name = {}\n", parser.getText());
+            logger->info("Name = {}\n", parser.getText());
             break;
         case tkString:
-            Logger::getLogger()->info("String = \"{}\"\n", parser.getText());
+            logger->info("String = \"{}\"\n", parser.getText());
             break;
         case tkNumber:
-            Logger::getLogger()->info("Number = {}\n", parser.getNumber());
+            logger->info("Number = {}\n", parser.getNumber());
             break;
         case tkGroup:
-            Logger::getLogger()->info("{ ... }\n");
+            logger->info("{ ... }\n");
             break;
         case tkArray:
-            Logger::getLogger()->info("[ ... ]\n");
+            logger->info("[ ... ]\n");
             break;
         default:
             // Logger::getLogger()->info("Unknown token = {}\n", token);

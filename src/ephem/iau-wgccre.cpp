@@ -63,7 +63,7 @@ Rotation *Rotation::create(cstr_t &name)
 {
     if (name == "p03lp-earth")
     {
-        Logger::getLogger()->verbose("Using P03LP rotation model...\n");
+        logger->verbose("Using P03LP rotation model...\n");
         return new EarthRotation();
     }
 

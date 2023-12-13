@@ -7,6 +7,7 @@
 
 #include "main/core.h"
 #include "api/graphics.h"
+#include "api/logger.h"
 #include "engine/engine.h"
 #include "engine/player.h"
 #include "engine/view.h"
@@ -179,18 +180,22 @@ void CoreApp::render()
 
 // ********* new package *********
 
-Logger *Logger::logger = nullptr;
+// Logger *Logger::logger = nullptr;
+// Logger *logger = nullptr;
+
+ofsLogger *logger = nullptr;
 
 void CoreApp::init()
 {
-    Logger::create(Logger::logDebug, "ofs.log");
+    // Logger::create(Logger::logDebug, "ofs.log");
+    logger = new ofsLogger(ofsLogger::logDebug, "ofs.log");
 
     if (glfwInit() != GLFW_TRUE)
     {
-        Logger::getLogger()->fatal("OFS: Unable to initialize GLFW interface.\n");
+        logger->fatal("OFS: Unable to initialize GLFW interface.\n");
         abort();
     }
-    Logger::getLogger()->info("OFS: Loaded GLFW version: {}\n",
+    logger->info("OFS: Loaded GLFW version: {}\n",
         glfwGetVersionString());
 
     // camera = new Camera(width, height);

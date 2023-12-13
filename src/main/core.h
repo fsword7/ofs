@@ -38,11 +38,14 @@ namespace fs = std::filesystem;
 
 #define ARRAY_SIZE(a)   (sizeof(a) / sizeof(a[0]))
 
+#include "api/logger.h"
 #include "main/date.h"
 #include "main/math.h"
 #include "main/json.h"
 #include "main/timedate.h"
-#include "utils/logger.h"
+// #include "utils/logger.h"
 #include "utils/color.h"
 #include "utils/string.h"
 #include "api/module.h"
+
+extern ofsLogger *logger;

@@ -81,8 +81,9 @@ set(OFS_CPP_SRCS
     # universe/system.cpp
     universe/universe.cpp
     utils/color.cpp
-    utils/logger.cpp
+    # utils/logger.cpp
     utils/string.cpp
+    utils/ztreemgr.cpp
     ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_glfw.cpp
 )
 
@@ -163,9 +164,10 @@ set(OFS_H_SRCS
     # universe/system.h
     universe/universe.h
     utils/color.h
-    utils/logger.h
+    # utils/logger.h
     utils/string.h
     utils/tree.h
+    utils/ztreemgr.h
 )
 
 set(OFSGL_CPP_SRCS
