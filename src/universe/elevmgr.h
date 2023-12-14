@@ -35,6 +35,8 @@ private:
     double elevGrids;
     double elevScale = 1.0;
 
+    mutable elevTileList_t localTiles;
+
     zTreeManager *zTrees[2];
 
     // bool own = false;

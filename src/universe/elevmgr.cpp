@@ -126,12 +126,12 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
     elevTileList_t *elevTiles, glm::dvec3 *normal, int *lod) const
 {
     double e = 0.0;
-    elevTileList_t &tiles = *elevTiles;
 
     if (elevMode > 0)
     {
-        int lod, ilat, ilng;
+        elevTileList_t &tiles = (elevTiles != nullptr) ? *elevTiles : localTiles;
         ElevationTile *t = nullptr;
+        int lod, ilat, ilng;
 
         for (auto tile : tiles)
         {
@@ -182,7 +182,6 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
 
             t->lat0 = t->lng0 = 0;
         }
-
 
         if (t->data != nullptr)
         {
