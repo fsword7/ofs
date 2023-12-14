@@ -341,11 +341,11 @@ void OrbitELP82::getEphemeris(double mjd, double *res)
 	res[5] = pwqw_dot*x1 + pwqw*x1_dot + qw2_dot*x2 + qw2*x2_dot - qw_dot*x3 - qw*x3_dot;
 	res[4] = -pw_dot*x1 - pw*x1_dot + qw_dot*x2 + qw*x2_dot + (pw2_dot+qw2_dot)*x3 + (pw2+qw2-1)*x3_dot;
 
-	logger->debug("ELP82B: Name: {} MJD: {} JD: {}\n",
+	ofsLogger->debug("ELP82B: Name: {} MJD: {} JD: {}\n",
 		"Lunar", mjd, (t[1] * sc) + jd2000);
-	logger->debug("ELP82B: P({:14.10f}, {:14.10f}, {:14.10f})\n",
+	ofsLogger->debug("ELP82B: P({:14.10f}, {:14.10f}, {:14.10f})\n",
 		res[0], res[1], res[2]);
-	logger->debug("ELP82B: V({:14.10f}, {:14.10f}, {:14.10f})\n",
+	ofsLogger->debug("ELP82B: V({:14.10f}, {:14.10f}, {:14.10f})\n",
 		res[3], res[4], res[5]);
 
 	// convert to m and m/s

@@ -29,18 +29,18 @@ zTreeManager *zTreeManager::create(const fs::path &pname, cstr_t &tname)
 
 bool zTreeManager::open(const fs::path &fname)
 {
-    // logger->info("Opening file {}...\n", fname.string());
+    ofsLogger->info("Opening file {}...\n", fname.string());
     zfile.open(fname.c_str(), std::ios::in|std::ios::binary);
     if (!zfile.is_open())
     {
-        // logger->info("Failed to open: {}\n", strerror(errno));
+        ofsLogger->info("Failed to open: {}\n", strerror(errno));
         return false;
     }
 
     zfile.seekg(0, zfile.end);
     auto fileSize = zfile.tellg();
     zfile.seekg(0, zfile.beg);
-    // logger->info("File length = {} bytes\n", fileSize);
+    ofsLogger->info("File length = {} bytes\n", (size_t)fileSize);
 
     zfile.read((char *)&hdr, sizeof(hdr));
     if (zfile.fail())
@@ -67,7 +67,7 @@ bool zTreeManager::open(const fs::path &fname)
         return false;
     }
 
-    // logger->info("Succesfully opened file\n");
+    ofsLogger->info("Succesfully opened file\n");
     return true;
 }
 
@@ -136,12 +136,12 @@ int zTreeManager::read(int lod, int lat, int lng, uint8_t **data, bool debug)
     uint32_t   zsize, usize;
     int        res;
 
-    // if (debug) logger->debug("Reading LOD {} Latitude {} Longitude {}\n",
-        // lod, lat, lng);
+    if (debug) ofsLogger->debug("Reading LOD {} Latitude {} Longitude {}\n",
+        lod, lat, lng);
 
     if (idx == ZTREE_NIL)
     {
-        // if (debug) logger->debug("Data not found - NIL data\n");
+        if (debug) ofsLogger->debug("Data not found - NIL data\n");
         *data = nullptr;
         return 0;
     }
@@ -149,13 +149,13 @@ int zTreeManager::read(int lod, int lat, int lng, uint8_t **data, bool debug)
     zsize = getDeflatedSize(idx);
     if (zsize == 0)
     {
-        // if (debug) logger->debug("Uncompressed failed - aborted.\n");
+        if (debug) ofsLogger->debug("Uncompressed failed - aborted.\n");
         *data = nullptr;
         return 0;
     }
     usize = getInflatedSize(idx);
 
-    // if (debug) logger->debug("Uncompressing {} -> {} bytes\n", zsize, usize);
+    if (debug) ofsLogger->debug("Uncompressing {} -> {} bytes\n", zsize, usize);
     
     zdata = new uint8_t[zsize];
     udata = new uint8_t[usize];

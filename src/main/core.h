@@ -47,4 +47,4 @@ namespace fs = std::filesystem;
 #include "utils/string.h"
 #include "api/module.h"
 
-extern Logger *logger;
+extern Logger *ofsLogger;

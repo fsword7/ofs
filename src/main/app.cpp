@@ -183,18 +183,18 @@ void CoreApp::render()
 // Logger *Logger::logger = nullptr;
 // Logger *logger = nullptr;
 
-Logger *logger = nullptr;
+Logger *ofsLogger = nullptr;
 
 void CoreApp::init()
 {
-    logger = new Logger(Logger::logDebug, "ofs.log");
+    ofsLogger = new Logger(Logger::logDebug, "ofs.log");
 
     if (glfwInit() != GLFW_TRUE)
     {
-        logger->fatal("OFS: Unable to initialize GLFW interface.\n");
+        ofsLogger->fatal("OFS: Unable to initialize GLFW interface.\n");
         abort();
     }
-    logger->info("OFS: Loaded GLFW version: {}\n",
+    ofsLogger->info("OFS: Loaded GLFW version: {}\n",
         glfwGetVersionString());
 
     // camera = new Camera(width, height);
