@@ -6,10 +6,15 @@
 #pragma once
 
 #include "universe/celbody.h"
+#include "universe/elevmgr.h"
 class CelestialPlanet : public CelestialBody
 {
 public:
     CelestialPlanet(cstr_t &name, celType type);
     ~CelestialPlanet() = default;
 
+    inline ElevationManager *getElevationManager() const    { return emgr; }
+    
+private:
+    ElevationManager *emgr = nullptr;
 };

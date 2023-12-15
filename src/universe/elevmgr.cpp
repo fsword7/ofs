@@ -4,10 +4,16 @@
 // Date:    Oct 18, 2023
 
 #include "main/core.h"
-#include "engine/object.h"
+#include "universe/body.h"
 #include "universe/surfmgr.h"
 #include "universe/elevmgr.h"
 
+
+ElevationManager::ElevationManager(CelestialPlanet *obj)
+: object(obj)
+{
+
+}
 
 // int16_t *ElevationManager::loadElevationTile(int lod, int ilat, int ilng, double elevRes) const
 // {

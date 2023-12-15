@@ -13,7 +13,7 @@
 #include "ephem/rotation.h"
 #include "universe/universe.h"
 #include "universe/star.h"
-#include "universe/celbody.h"
+#include "universe/body.h"
 // #include "universe/system.h"
 #include "universe/psystem.h"
 #include "universe/astro.h"
@@ -60,15 +60,15 @@ void Universe::init()
     // lunar = System::createBody("Moon", system, celType::cbMoon,
     //     "EclipticJ2000", "EquatorJ2000");
 
-    mercury = new CelestialBody("Mercury", cbPlanet);
-    // venus = new CelestialBody("Venus", cbPlanet);
-    earth = new CelestialBody("Earth", cbPlanet);
-    lunar = new CelestialBody("Lunar", cbMoon);
-    mars = new CelestialBody("Mars", cbPlanet);
-    jupiter = new CelestialBody("Jupiter", cbPlanet);
-    // saturn = new CelestialBody("Saturn", cbPlanet);
-    // uranus = new CelestialBody("Uranus", cbPlanet);
-    // neptune = new CelestialBody("Neptune", cbPlanet);
+    mercury = new CelestialPlanet("Mercury", cbPlanet);
+    // venus = new CelestialPlanet("Venus", cbPlanet);
+    earth = new CelestialPlanet("Earth", cbPlanet);
+    lunar = new CelestialPlanet("Lunar", cbMoon);
+    mars = new CelestialPlanet("Mars", cbPlanet);
+    jupiter = new CelestialPlanet("Jupiter", cbPlanet);
+    // saturn = new CelestialPlanet("Saturn", cbPlanet);
+    // uranus = new CelestialPlanet("Uranus", cbPlanet);
+    // neptune = new CelestialPlanet("Neptune", cbPlanet);
 
     sun->setEphemeris(OrbitVSOP87::create(*sun, "vsop87e-sol"));
 

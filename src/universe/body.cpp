@@ -9,5 +9,5 @@
 CelestialPlanet::CelestialPlanet(cstr_t &name, celType type)
 : CelestialBody(name, type)
 {
-
+    emgr = new ElevationManager(this);
 }

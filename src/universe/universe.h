@@ -12,7 +12,7 @@
 #include "universe/celbody.h"
 
 class Player;
-class CelestialBody;
+class CelestialPlanet;
 
 class OFSAPI Universe
 {
@@ -61,7 +61,7 @@ private:
     // Hacks (to be removed later)
 
     CelestialStar *sun;
-    CelestialBody *mercury, *venus, *earth;
-    CelestialBody *mars, *jupiter, *saturn;
-    CelestialBody *uranus, *neptune, *lunar;
+    CelestialPlanet *mercury, *venus, *earth;
+    CelestialPlanet *mars, *jupiter, *saturn;
+    CelestialPlanet *uranus, *neptune, *lunar;
 };

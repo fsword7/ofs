@@ -5,16 +5,16 @@
 
 #pragma once
 
-#include "client/glclient/ztreemgr.h"
 #include "api/ofsapi.h"
 #include "api/elevmgr.h"
+#include "utils/ztreemgr.h"
 
-class Object;
+class CelestialPlanet;
 
 class OFSAPI ElevationManager
 {
 public:
-    ElevationManager() = default;
+    ElevationManager(CelestialPlanet *planet);
     ~ElevationManager() = default;
 
     // int16_t *loadElevationTile(int lod, int ilat, int ilng, double elevRes) const;
@@ -26,7 +26,7 @@ public:
     // int16_t *getElevationData();
 
 private:
-    Object *object = nullptr;
+    CelestialPlanet *object = nullptr;
     int elevMode = 1;
 
     const int elevGrid = ELEV_RES;
