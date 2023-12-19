@@ -3,7 +3,10 @@
 // Author:  Tim Stark
 // Date:    Oct 18, 2023
 
+#define OPSAPI_SERVER_BUILD
+
 #include "main/core.h"
+#include "universe/star.h"
 #include "universe/body.h"
 #include "universe/surfmgr.h"
 #include "universe/elevmgr.h"
@@ -12,7 +15,12 @@
 ElevationManager::ElevationManager(CelestialPlanet *obj)
 : object(obj)
 {
+}
 
+void ElevationManager::setup(const fs::path &folder)
+{ 
+    zTrees[0] = zTreeManager::create(folder, "elev");
+    zTrees[1] = zTreeManager::create(folder, "elev_mod");
 }
 
 // int16_t *ElevationManager::loadElevationTile(int lod, int ilat, int ilng, double elevRes) const

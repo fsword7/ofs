@@ -17,6 +17,8 @@ public:
     ElevationManager(CelestialPlanet *planet);
     ~ElevationManager() = default;
 
+    void setup(const fs::path &folder);
+
     // int16_t *loadElevationTile(int lod, int ilat, int ilng, double elevRes) const;
     int16_t *readElevationFile(int lod, int ilat, int ilng, double scale) const;
 

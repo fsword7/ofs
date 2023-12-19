@@ -4,6 +4,7 @@
 // Date:    Oct 14, 2023
 
 #include "main/core.h"
+#include "universe/elevmgr.h"
 #include "client.h"
 #include "scene.h"
 #include "surface.h"
@@ -196,6 +197,7 @@ bool SurfaceTile::loadElevationData()
 
     elevOwn = false;
     elev = readElevationFile(lod, ilat, ilng, mgr.elevScale);
+    // elev = mgr.emgr->readElevationFile(lod, ilat, ilng, mgr.elevScale);
     if (elev != nullptr)
     {
         // logger->info("Loaded succesfully\n", lod);

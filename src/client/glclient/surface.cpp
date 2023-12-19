@@ -7,6 +7,8 @@
 #include "engine/object.h"
 #include "engine/player.h"
 #include "universe/star.h"
+#include "universe/body.h"
+#include "universe/elevmgr.h"
 #include "client.h"
 // #include "camera.h"
 #include "scene.h"
@@ -419,12 +421,15 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 
         bPolygonLines = true;
 
-        const CelestialBody *body = dynamic_cast<const CelestialBody *>(object);
+        const CelestialPlanet *body = dynamic_cast<const CelestialPlanet *>(object);
 
         str_t starName = body->getStar()->getsName();
         str_t bodyName = body->getsName();
 
         fs::path folder = fmt::format("data/systems/{}/{}/Orbiter", starName, bodyName);
+
+        emgr = body->getElevationManager();
+        // emgr->setup(folder);
 
         zTrees[0] = zTreeManager::create(folder, "surf");
         zTrees[2] = zTreeManager::create(folder, "elev");

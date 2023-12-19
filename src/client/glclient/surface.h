@@ -6,7 +6,7 @@
 #pragma once
 
 #include "utils/tree.h"
-#include "api/elevmgr.h"
+#include "universe/elevmgr.h"
 #include "ztreemgr.h"
 #include "texmgr.h"
 #include "shader.h"
@@ -251,6 +251,7 @@ private:
     vec2Uniform uCamClip;
 
     TextureManager tmgr;
+    ElevationManager *emgr = nullptr;
 
     zTreeManager *zTrees[5] = {};
     SurfaceTile *tiles[2];
