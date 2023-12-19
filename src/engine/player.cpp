@@ -318,6 +318,8 @@ void Player::rotateTheta(double theta)
 
 void Player::setGroundMode(Object *object, double lng, double lat, double heading, double alt)
 {
+    attach(object, camGroundObserver); 
+
     go.lng = lng;
     go.lat = lat;
     go.alt = alt;
@@ -330,7 +332,6 @@ void Player::setGroundMode(Object *object, double lng, double lat, double headin
             -clat,      slat,       0,
              slng*slat, slng*clat,  clng };
 
-    
 }
 
 void Player::setGroundMode(Object *object, glm::dvec3 loc)
