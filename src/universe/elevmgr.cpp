@@ -3,7 +3,7 @@
 // Author:  Tim Stark
 // Date:    Oct 18, 2023
 
-#define OPSAPI_SERVER_BUILD
+#define OFSAPI_SERVER_BUILD
 
 #include "main/core.h"
 #include "universe/star.h"
