@@ -124,7 +124,7 @@ std::istream &operator >> (std::istream &is, Mesh &mesh)
             }
             else if (!strncmp(cbuf, "ZBIAS", 5))
             {
-                sscanf(cbuf+5, "%hu", &zBias);
+                sscanf(cbuf+5, "%u", &zBias);
             }
             else if (!strncmp(cbuf, "STATIC", 6))
             {
@@ -162,14 +162,14 @@ std::istream &operator >> (std::istream &is, Mesh &mesh)
                     }
                     if (bNormal)
                     {
-                        int j = sscanf(cbuf, "%f%f%f%f%f%f%f%f",
+                        int j = sscanf(cbuf, "%lf%lf%lf%lf%lf%lf%lf%lf",
                             &v.x, &v.y, &v.z, &v.nx, &v.ny, &v.nz, &v.tu, &v.tv);
                         if (j < 6)
                             bCalcNormal = true;
                     }
                     else
                     {
-                        int j = sscanf(cbuf, "%f%f%f%f%f",
+                        int j = sscanf(cbuf, "%lf%lf%lf%lf%lf",
                             &v.x, &v.y, &v.z, &v.tu, &v.tv);
                     }
                 }

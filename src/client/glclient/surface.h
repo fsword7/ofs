@@ -7,7 +7,6 @@
 
 #include "utils/tree.h"
 #include "universe/elevmgr.h"
-#include "ztreemgr.h"
 #include "texmgr.h"
 #include "shader.h"
 
