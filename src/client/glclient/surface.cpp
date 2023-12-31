@@ -66,7 +66,7 @@ void SurfaceTile::setCenter(glm::dvec3 &cnml, glm::dvec3 &wpos)
     double slat = sin(latc), clat = cos(latc);
     double slng = sin(lngc), clng = cos(lngc);
 
-    cnml = glm::dvec3(clat*clng, slat, clat*slng);
+    cnml = glm::dvec3(clat*clng, slat, clat*-slng);
     wpos = glm::dvec3(acos(cnml.y) - (pi / 2.0), atan2(cnml.z, -cnml.x), 0);
 }
 
@@ -77,7 +77,7 @@ bool SurfaceTile::isInView(const glm::dmat4 &transform)
 
 void SurfaceTile::setSubregionRange(const tcRange &range)
 {
-    if ((ilng & 1) == 0)
+    if (ilng & 1)
     {   // Right column of tile
         txRange.tumin = (range.tumin + range.tumax) / 2.0;
         txRange.tumax = range.tumax;
@@ -109,7 +109,7 @@ void SurfaceTile::load()
 
     if (mgr.zTrees[0] != nullptr)
     {
-        szImage = mgr.zTrees[0]->read(lod+4, ilat, nlng - ilng - 1, &ddsImage);
+        szImage = mgr.zTrees[0]->read(lod+4, ilat, ilng, &ddsImage);
         if (szImage > 0 && ddsImage != nullptr)
             mgr.tmgr.loadDDSTextureFromMemory(&txImage, ddsImage, szImage, 0);
         // if (txImage != nullptr)
@@ -794,13 +794,12 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
         {
             lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
             slng = sin(lng), clng = cos(lng);
-            // tu = range.tumin + tur * float(x)/float(grid);
-            tu = range.tumax - tur * float(x)/float(grid);
+            tu = range.tumin + tur * float(x)/float(grid);
             erad = radius + gelev;
 
             if (elev != nullptr)
                 erad += (double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * selev) / 1000.0;
-            nml = glm::dvec3(clat*clng, slat, clat*slng);
+            nml = glm::dvec3(clat*clng, slat, clat*-slng);
             pos = nml * erad;
 
             vtx[cvtx].vx = float(pos.x);

@@ -73,8 +73,12 @@ void vObject::update(int now)
 
     grot = glm::dmat3(1.0); // ofsGetObjectGlobalRotation(object);
 
-    dmWorld = glm::dmat4(grot);
-    dmWorld = glm::translate(dmWorld, vpos);
+    // dmWorld = glm::transpose(grot);
+    // dmWorld = glm::translate(dmWorld, vpos);
+    dmWorld = { grot[1][1], grot[2][1], grot[3][1], 0,
+                grot[1][2], grot[2][2], grot[3][2], 0,
+                grot[1][3], grot[2][3], grot[3][3], 0,
+                vpos.x,     vpos.y,     vpos.z,     1 };
 }
 
 void vObject::renderObjectAsPoint(const ObjectListEntry &ole)

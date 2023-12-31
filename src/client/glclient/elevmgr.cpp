@@ -76,7 +76,7 @@ int16_t *SurfaceTile::readElevationFile(int lod, int ilat, int ilng, double scal
 
     if (mgr.zTrees[2] != nullptr)
     {
-        szData = mgr.zTrees[2]->read(lod+4, ilat, nlng-ilng-1, &elevData);
+        szData = mgr.zTrees[2]->read(lod+4, ilat, ilng, &elevData);
         // logger->info("Read {} bytes from elevation database\n", szData);
         if (szData > 0 && elevData != nullptr)
         {
@@ -148,15 +148,19 @@ void SurfaceTile::interpolateElevationGrid(int ilat, int ilng, int lod,
     int nlng = 2 << lod;
     double minlat = (pi/2) * (double)(nlat-2*ilat-2)/(double)nlat;
     double maxlat = (pi/2) * (double)(nlat-2*ilat)/(double)nlat;
-    double minlng = pi * (double)(2*nlng-ilng)/(double)nlng;
-    double maxlng = pi * (double)(2*nlng-ilng+2)/(double)nlng;
+    // double minlng = pi * (double)(2*nlng-ilng)/(double)nlng;
+    // double maxlng = pi * (double)(2*nlng-ilng+2)/(double)nlng;
+    double minlng = pi * (double)(ilng)/(double)nlng;
+    double maxlng = pi * (double)(ilng+1)/(double)nlng;
 
     int pnlat = 1 << plod;
     int pnlng = 2 << plod;
     double pminlat = (pi/2) * (double)(pnlat-2*pilat-2)/(double)pnlat;
     double pmaxlat = (pi/2) * (double)(pnlat-2*pilat)/(double)pnlat;
-    double pminlng = pi * (double)(2*pnlng-pilng)/(double)pnlng;
-    double pmaxlng = pi * (double)(2*pnlng-pilng+2)/(double)pnlng;
+    // double pminlng = pi * (double)(2*pnlng-pilng)/(double)pnlng;
+    // double pmaxlng = pi * (double)(2*pnlng-pilng+2)/(double)pnlng;
+    double pminlng = pi * (double)(pilng)/(double)pnlng;
+    double pmaxlng = pi * (double)(pilng+1)/(double)pnlng;
 
     // double dlat = (maxlat-minlat)/elevGrid;
     // double dlng = (maxlng-minlng)/elevGrid;

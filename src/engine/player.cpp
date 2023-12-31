@@ -82,7 +82,8 @@ void Camera::updateProjMatrix()
 
 void Camera::updateViewMatrix()
 {
-    view = rrot;
+    // view = rrot;
+    view = glm::transpose(rrot);
 }
 
 void Camera::update()
