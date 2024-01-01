@@ -75,9 +75,9 @@ void vObject::update(int now)
 
     // dmWorld = glm::transpose(grot);
     // dmWorld = glm::translate(dmWorld, vpos);
-    dmWorld = { grot[1][1], grot[2][1], grot[3][1], 0,
-                grot[1][2], grot[2][2], grot[3][2], 0,
-                grot[1][3], grot[2][3], grot[3][3], 0,
+    dmWorld = { grot[0][0], grot[1][0], grot[2][0], 0,
+                grot[0][1], grot[1][1], grot[2][1], 0,
+                grot[0][2], grot[1][2], grot[2][2], 0,
                 vpos.x,     vpos.y,     vpos.z,     1 };
 }
 

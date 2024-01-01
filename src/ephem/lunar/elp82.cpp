@@ -283,7 +283,7 @@ void OrbitELP82::getEphemeris(double mjd, double *res)
 			for (k = 1; k <= 4; k++) {
 				y     += pciv[nt][k+1] * t[k];
 				y_dot += pciv[nt][k+1] * t[k-1] * k;
-			}
+			}		
 			res[iv]   += x*sin(y);
 			res[iv+3] += x_dot*sin(y) + x*cos(y)*y_dot;
 		}

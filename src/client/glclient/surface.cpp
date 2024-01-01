@@ -229,7 +229,7 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
             erad = rad + gelev;
             if (elev != nullptr)
                 erad += double(elev[(grid+1 - y) * ELEV_STRIDE + x+1]);
-            nml = { slat*clng, clat, slat*slng };
+            nml = { slat*clng, clat, slat*-slng };
             pos = nml * erad;
             tu = a * x + du;
 
@@ -521,6 +521,8 @@ void SurfaceManager::setRenderParams(const ObjectListEntry &ole)
     prm.maxlod = 16;
     resScale = 1400.0 / double(camera->getHeight());
 
+    prm.urot = ole.orot;
+
     prm.dmViewProj = camera->getProjMatrix() * camera->getViewMatrix();
     // prm.dmWorld = dmWorld;
 
@@ -528,7 +530,6 @@ void SurfaceManager::setRenderParams(const ObjectListEntry &ole)
     // logMatrix(prm.dmWorld, "Model");
 
     // prm.urot = glm::dmat3(1); // ofsGetObjectRotation(object);
-    prm.urot = ole.orot;
     // opos = object->getuPosition(0);
     // opos = object->getoPosition();
     // cpos = player->getPosition(); //  camera->getGlobalPosition();
@@ -542,8 +543,12 @@ void SurfaceManager::setRenderParams(const ObjectListEntry &ole)
     prm.scale = 1.0;
     prm.clip = ole.camClip; //camera->getClip();
 
-    prm.dmWorld = glm::dmat4(prm.urot);
-    prm.dmWorld = glm::translate(prm.dmWorld, prm.cpos);
+    // prm.dmWorld = glm::dmat4(prm.urot);
+    // prm.dmWorld = glm::translate(prm.dmWorld, prm.cpos);
+    prm.dmWorld = { prm.urot[0][0], prm.urot[1][0], prm.urot[2][0], 0,
+                    prm.urot[0][1], prm.urot[1][1], prm.urot[2][1], 0,
+                    prm.urot[0][2], prm.urot[1][2], prm.urot[2][2], 0,
+                    prm.cpos.x,     prm.cpos.y,     prm.cpos.z,     1 };
 
     // logger->debug("Object name:     {}\n", object->getName());
     // logger->debug("Object position: {},{},{}\n", opos.x, opos.y, opos.z);

@@ -82,8 +82,8 @@ void Camera::updateProjMatrix()
 
 void Camera::updateViewMatrix()
 {
-    // view = rrot;
-    view = glm::transpose(rrot);
+    view = rrot;
+    // view = glm::transpose(rrot);
 }
 
 void Camera::update()
@@ -165,7 +165,7 @@ void Player::update(const TimeDate &td)
         // lpos -= (lrot.conjugate() * tv) * dt;
 
     glm::dvec3 wv = av * 0.5;
-    glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
+    glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, -wv.z) * cam.rqrot;
     cam.rqrot = glm::normalize(cam.rqrot + dr);
     cam.rrot = glm::mat3_cast(cam.rqrot);
 

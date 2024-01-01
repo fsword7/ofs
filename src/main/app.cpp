@@ -577,15 +577,15 @@ void CoreApp::keyImmediateSystem()
         // Keyboard angular conrtrol
         // X-axis angular control
         if (stateKey[ofs::keyCode::keyPad8])
-            av += glm::dvec3(dt * keyAttitudeAccel, 0, 0);
-        if (stateKey[ofs::keyCode::keyPad2])
             av += glm::dvec3(dt * -keyAttitudeAccel, 0, 0);
+        if (stateKey[ofs::keyCode::keyPad2])
+            av += glm::dvec3(dt * keyAttitudeAccel, 0, 0);
 
         // Y-axis angular control
         if (stateKey[ofs::keyCode::keyPad4])
-            av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
-        if (stateKey[ofs::keyCode::keyPad6])
             av += glm::dvec3(0, dt * -keyAttitudeAccel, 0);
+        if (stateKey[ofs::keyCode::keyPad6])
+            av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
 
         // Z-axis angular control
         if (stateKey[ofs::keyCode::keyPad7])
