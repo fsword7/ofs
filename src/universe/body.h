@@ -14,7 +14,7 @@ public:
     ~CelestialPlanet() = default;
 
     inline ElevationManager *getElevationManager() const    { return emgr; }
-    
+
 private:
     ElevationManager *emgr = nullptr;
 };

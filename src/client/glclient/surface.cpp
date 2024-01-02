@@ -142,7 +142,7 @@ void SurfaceTile::load()
     int16_t *elev = elevEnable ? getElevationData() : nullptr;
 
     if (lod == 0)
-        mesh = createHemisphere(mgr.elevGrids, nullptr, 0);
+        mesh = createHemisphere(mgr.elevGrids, elev, mgr.elevScale);
     else
         mesh = mgr.createSpherePatch(mgr.elevGrids, lod, ilat, ilng,
             txRange, elev, mgr.elevScale, 0.0);
@@ -336,10 +336,42 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
     }
 
     // Regenerate normals for terrain
-    if (elev != nullptr)
-    {
+    // if (elev != nullptr)
+    // {
+    //     double dy, dz, dydz, nx1, ny1, nz1;
+    //     int en;
 
-    }
+    //     dy = rad * pi/grid;
+    //     for (int y = 1; y < grid; y++)
+    //     {
+    //         lat = (pi/2.0) - y * f0ang;
+    //         slat = sin(lat), clat = cos(lat);
+    //         dz = rad * pi * cos(lat) / grid;
+    //         dydz = dy*dz;
+    //         for (int x = 0; x < x2; x++)
+    //         {
+    //             lng = x * f0ang;
+    //             if (!lng)
+    //                 lng -= pi;
+    //             slng = sin(lng), clng = cos(lng);
+    //             en = (grid+1-y)*ELEV_STRIDE + x+1;
+    //             glm::dvec3 nml = { 2.0 * dydz,
+    //                     dz * (elev[en-ELEV_STRIDE]-elev[en+ELEV_STRIDE]),
+    //                     dy*(elev[en-1]-elev[en+1])};
+    //             nml = glm::normalize(nml);
+
+    //             nx1 = nml.x*clat - nml.y*slat;
+    //             ny1 = nml.x*slat - nml.y*clat;
+    //             nz1 = nml.z;
+
+    //             vtx->nx = nx1*clng - nz1*slng;
+    //             vtx->ny = ny1;
+    //             vtx->nz = nx1*slng + nz1*clng;
+
+    //             vtx++;
+    //         }
+    //     }
+    // }
 
     return new Mesh(cvtx, vtx, cidx, idx);
 }

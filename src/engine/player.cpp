@@ -9,7 +9,7 @@
 #include "api/ofsapi.h"
 #include "main/timedate.h"
 // #include "engine/frame.h"
-#include "engine/object.h"
+#include "universe/celbody.h"
 #include "engine/player.h"
 
 // ******** Camera ********
@@ -164,6 +164,8 @@ void Player::update(const TimeDate &td)
     
         // lpos -= (lrot.conjugate() * tv) * dt;
 
+    CelestialBody *cbody = nullptr;
+
     glm::dvec3 wv = av * 0.5;
     glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, -wv.z) * cam.rqrot;
     cam.rqrot = glm::normalize(cam.rqrot + dr);
@@ -199,6 +201,16 @@ void Player::update(const TimeDate &td)
             break;
 
         case camGroundObserver:
+            cbody = dynamic_cast<CelestialBody *>(tgtObject);
+            assert(cbody != nullptr);
+
+            double rad = cbody->getRadius() + go.alt;
+            gpos = cbody->convertEquatorialToGlobal(go.lat, go.lng, rad);
+            gspos = gpos - cbody->getoPosition();
+
+            grot = cam.rrot;
+            gqrot = grot;
+
             // double rad = tgtObject->getRadius() + (go.alt / 1000.0);
             // // gpos = tgtObject->convertEquatorialToGlobal(go.lng, go.lat, rad);
             // gspos = gpos - tgtObject->getoPosition();
@@ -319,6 +331,8 @@ void Player::rotateTheta(double theta)
 
 void Player::setGroundMode(Object *object, double lng, double lat, double heading, double alt)
 {
+    if (dynamic_cast<CelestialBody *>(object) == nullptr)
+        return;
     attach(object, camGroundObserver); 
 
     go.lng = lng;
@@ -335,11 +349,18 @@ void Player::setGroundMode(Object *object, double lng, double lat, double headin
 
 }
 
-void Player::setGroundMode(Object *object, glm::dvec3 loc)
+void Player::setGroundMode(Object *object, glm::dvec3 loc, double heading)
 {
-    go.lat = loc.x;
-    go.lng = loc.y;
-    go.dir = loc.z;
+    if (dynamic_cast<CelestialBody *>(object) == nullptr)
+        return;
+    attach(object, camGroundObserver); 
+
+    go.lat = glm::radians(loc.x);
+    go.lng = glm::radians(loc.y);
+    go.dir = glm::radians(heading);
+
+    go.alt = loc.z;
+    go.alt0 = loc.z;
 
     double clat = cos(go.lat), slat = sin(go.lat);
     double clng = cos(go.lng), slng = sin(go.lng);

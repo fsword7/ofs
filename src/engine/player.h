@@ -6,6 +6,7 @@
 #pragma once
 
 class Object;
+class CelestialBody;
 class Player;
 
 enum cameraMode {
@@ -131,7 +132,7 @@ public:
     void rotateView(double phi, double theta);
 
     void setGroundMode(Object *object, double lng, double lat, double heading, double alt);
-    void setGroundMode(Object *object, glm::dvec3 loc);
+    void setGroundMode(Object *object, glm::dvec3 loc, double heading);
 
 private:
     Camera cam;

@@ -142,6 +142,25 @@ public:
     glm::dvec3 getPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const;
     glm::dvec3 getvPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const;
     glm::dvec3 getHeliocentric(double tjd) const;
+    
+    inline glm::dvec3 convertLocalToGlobal(const glm::dvec3 &loc)
+    {
+        return s0.R * loc + s0.pos;
+    }
+
+    inline glm::dvec3 convertEquatorialToLocal(double lat, double lng, double rad)
+    {
+        double slat = sin(lat), clat = cos(lat);
+        double slng = sin(lng), clng = cos(lng);
+        double xz = rad * clat;
+
+        return { xz*clng, rad*slat, xz*-slng };
+    }
+
+    inline glm::dvec3 convertEquatorialToGlobal(double lat, double lng, double rad)
+    {
+        return convertLocalToGlobal(convertEquatorialToLocal(lat, lng, rad));
+    }
 
 private:
     celType cbType = cbUnknown;
