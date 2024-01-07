@@ -77,7 +77,7 @@ double Camera::getFieldCorrection() const
 void Camera::updateProjMatrix()
 {
     proj = glm::perspective(fov, aspect, zNear, zFar);
-    // proj = glm::infinitePerspective(fov, aspect, zNear);
+    // proj = glm::perspectiveLH(fov, aspect, zNear, zFar);
 }
 
 void Camera::updateViewMatrix()
@@ -198,6 +198,12 @@ void Player::update(const TimeDate &td)
             gpos  = tgtObject->getoPosition() + gspos;
             grot  = tgtObject->getuOrientation(0) * cam.rrot;
             gqrot = grot;
+
+            // ofsLogger->debug("TR Local Position:    ({:f}, {:f}, {:f})\n", gspos.x, gspos.y, gspos.z);
+            // ofsLogger->debug("TR Global Position:   ({:f}, {:f}, {:f})\n", gpos.x, gpos.y, gpos.z);
+            // ofsLogger->debug("TR Location:          {:f} {:f}\n", glm::degrees(go.lat), glm::degrees(go.lng));
+            // ofsLogger->debug("TR Altitude:          {:f}\n", glm::length(gspos));
+
             break;
 
         case camGroundObserver:
@@ -205,11 +211,20 @@ void Player::update(const TimeDate &td)
             assert(cbody != nullptr);
 
             double rad = cbody->getRadius() + go.alt;
-            gpos = cbody->convertEquatorialToGlobal(go.lat, go.lng, rad);
-            gspos = gpos - cbody->getoPosition();
+            cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, rad);
+            gspos = cbody->getuOrientation(0) * cam.rpos;
+            gpos = cbody->getoPosition() + gspos;
 
+            // gpos = cbody->convertEquatorialToGlobal(go.lat, go.lng, rad);
+            // gspos = gpos - cbody->getoPosition();
+            
             grot = cam.rrot;
             gqrot = grot;
+
+            ofsLogger->debug("GO Local Position:    ({:f}, {:f}, {:f})\n", gspos.x, gspos.y, gspos.z);
+            ofsLogger->debug("GO Global Position:   ({:f}, {:f}, {:f})\n", gpos.x, gpos.y, gpos.z);
+            ofsLogger->debug("GO Location:          {:f} {:f}\n", glm::degrees(go.lat), glm::degrees(go.lng));
+            ofsLogger->debug("GO Altitude:          {:f}\n", rad);
 
             // double rad = tgtObject->getRadius() + (go.alt / 1000.0);
             // // gpos = tgtObject->convertEquatorialToGlobal(go.lng, go.lat, rad);
@@ -339,7 +354,7 @@ void Player::setGroundMode(Object *object, double lng, double lat, double headin
     go.lat = lat;
     go.alt = alt;
     go.dir = heading;
-
+    
     double clng = cos(lng), slng = sin(lng);
     double clat = cos(lat), slat = sin(lat);
 
@@ -351,7 +366,8 @@ void Player::setGroundMode(Object *object, double lng, double lat, double headin
 
 void Player::setGroundMode(Object *object, glm::dvec3 loc, double heading)
 {
-    if (dynamic_cast<CelestialBody *>(object) == nullptr)
+    CelestialBody *cbody = dynamic_cast<CelestialBody *>(object);
+    if (cbody == nullptr)
         return;
     attach(object, camGroundObserver); 
 
@@ -370,4 +386,13 @@ void Player::setGroundMode(Object *object, glm::dvec3 loc, double heading)
             -clat,      slat,       0,
              slng*slat, slng*clat,  clng };
 
+    double rad = cbody->getRadius() + go.alt;
+    cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, rad);
+    gspos = tgtObject->getuOrientation(0) * cam.rpos;
+    gpos  = tgtObject->getoPosition() + gspos;
+    grot  = tgtObject->getuOrientation(0) * cam.rrot;
+    gqrot = grot;
+
+    // ofsLogger->debug("GO: ({} {}) {} {}\n", glm::degrees(go.lat), glm::degrees(go.lng),
+    //     go.alt, glm::degrees(go.dir));
 }
