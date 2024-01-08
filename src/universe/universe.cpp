@@ -175,16 +175,15 @@ void Universe::start(const TimeDate &td)
     // player->attach(jupiter, camTargetRelative);
     // player->look(jupiter);
 
-    // cam->setPosition(earth->convertEquatorialToLocal(
-    //     glm::radians(28.632307), glm::radians(-80.705774), earth->getRadius()+50));
-    // // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
-    // cam->update();
-    // player->attach(earth, camTargetRelative);
-    // player->look(earth);
+    cam->setPosition(earth->convertEquatorialToLocal(
+        glm::radians(28.632307), glm::radians(-80.705774), earth->getRadius()+50));
+    // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
+    cam->update();
+    player->attach(earth, camTargetRelative);
+    player->look(earth);
 
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
-    player->setGroundMode(earth, { 28.632307, -80.705774, .002}, 150);
-    // player->look(earth);
+    // player->setGroundObserver(earth, { 28.632307, -80.705774, .002}, 150);
 
     player->update(td);
 }

@@ -99,6 +99,7 @@ public:
     inline bool isExternal() const              { return modeExternal; }
     inline bool isInternal() const              { return !modeExternal; }
     inline travelMode getTravelMode() const     { return modeTravel; }
+    inline cameraMode getCameraMode() const     { return modeCamera; }
     inline Camera *getCamera()                  { return &cam; }
     inline TimeDate *getTimeDate()              { return td; }
 
@@ -131,8 +132,10 @@ public:
     void orbit(double phi, double theta, double dist);
     void rotateView(double phi, double theta);
 
-    void setGroundMode(Object *object, double lng, double lat, double heading, double alt);
-    void setGroundMode(Object *object, glm::dvec3 loc, double heading);
+    void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
+    void setGroundObserver(Object *object, glm::dvec3 loc, double heading);
+    void shiftGroundObsewrver(double dx, double dy, double dh);
+    void rotateGroundObserver(double dphi, double dtheta);
 
 private:
     Camera cam;
