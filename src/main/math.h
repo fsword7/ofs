@@ -28,14 +28,49 @@ template <typename T> inline constexpr T mod2pi(T x)
 }
 
 
+// rotation matrices for left-handed rule
+// template <typename T>
+// inline glm::dmat3 xRotate(T radians)
+// {
+//     double sang = sin(radians), cang = cos(radians);
+//     return glm::dmat3(
+//         { 1.0,   0.0,   0.0  },
+//         { 0.0,   cang,  sang },
+//         { 0.0,  -sang,  cang }
+//     );
+// }
+
+// template <typename T>
+// inline glm::dmat3 yRotate(T radians)
+// {
+//     double sang = sin(radians), cang = cos(radians);
+//     return glm::dmat3(
+//         { cang,  0.0,  -sang  },
+//         { 0.0,   1.0,   0.0   },
+//         { sang,  0.0,   cang  }
+//     );
+// }
+
+// template <typename T>
+// inline glm::dmat3 zRotate(T radians)
+// {
+//     double sang = sin(radians), cang = cos(radians);
+//     return glm::dmat3(
+//         { cang,  sang,  0.0   },
+//         {-sang,  cang,  0.0   },
+//         { 0.0 ,  0.0,   1.0   }
+//     );
+// }
+
+// rotation matrices for right-handed rule
 template <typename T>
 inline glm::dmat3 xRotate(T radians)
 {
     double sang = sin(radians), cang = cos(radians);
     return glm::dmat3(
         { 1.0,   0.0,   0.0  },
-        { 0.0,   cang,  sang },
-        { 0.0,  -sang,  cang }
+        { 0.0,   cang, -sang },
+        { 0.0,   sang,  cang }
     );
 }
 
@@ -44,9 +79,9 @@ inline glm::dmat3 yRotate(T radians)
 {
     double sang = sin(radians), cang = cos(radians);
     return glm::dmat3(
-        { cang,  0.0,  -sang  },
+        { cang,  0.0,   sang  },
         { 0.0,   1.0,   0.0   },
-        { sang,  0.0,   cang  }
+        {-sang,  0.0,   cang  }
     );
 }
 
@@ -55,8 +90,8 @@ inline glm::dmat3 zRotate(T radians)
 {
     double sang = sin(radians), cang = cos(radians);
     return glm::dmat3(
-        { cang,  sang,  0.0   },
-        {-sang,  cang,  0.0   },
+        { cang, -sang,  0.0   },
+        { sang,  cang,  0.0   },
         { 0.0 ,  0.0,   1.0   }
     );
 }
