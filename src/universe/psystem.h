@@ -5,6 +5,7 @@
 
 #pragma once
 
+class Universe;
 class CelestialStar;
 class CelestialBody;
 class TimeDate;
@@ -20,7 +21,8 @@ public:
     void addPlanet(CelestialBody *planet, CelestialBody *cbody);
     void addGravity(CelestialBody *grav);
 
-    void loadSystems();
+    static bool loadSystems(Universe *universe, const cstr_t &sysName);
+    static bool loadPlanet(const cstr_t &cbName, pSystem *psys, fs::path cbFolder);
 
     void update(const TimeDate &td);
     void finalizeUpdate();

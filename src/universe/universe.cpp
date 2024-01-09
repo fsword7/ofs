@@ -30,35 +30,11 @@ void Universe::init()
 
     // CelestialStar *sun = stardb.find("Sol");
     sun = stardb.find("Sol");
+    assert(sun != nullptr);
 
-    pSystem *psys = new pSystem(sun);
-    // System *solSystem = createSolarSystem(sun);
-    // PlanetarySystem *system = solSystem->getPlanetarySystem();
-
-    // CelestialBody *mercury, *venus, *earth;
-    // CelestialBody *mars, *jupiter, *saturn;
-    // CelestialBody *uranus, *neptune, *lunar;
-
-    // mercury = System::createBody("Mercury", system, celType::cbPlanet,
-    //     "EclipticJ2000", "EquatorJ2000");
-    // venus = System::createBody("Venus", system, celType::cbPlanet,
-    //     "EclipticJ2000", "EquatorJ2000");
-    // earth = System::createBody("Earth", system, celType::cbPlanet,
-    //     "EclipticJ2000", "EclipticJ2000");
-    // mars = System::createBody("Mars", system, celType::cbPlanet,
-    //     "EclipticJ2000", "EquatorJ2000");
-    // jupiter = System::createBody("Jupiter", system, celType::cbPlanet,
-    //     "EclipticJ2000", "EquatorJ2000");
-    // saturn = System::createBody("Saturn", system, celType::cbPlanet,
-    //     "EclipticJ2000", "EquatorJ2000");
-    // uranus = System::createBody("Uranus", system, celType::cbPlanet,
-    //     "EclipticJ2000", "EquatorJ2000");
-    // neptune = System::createBody("Neptune", system, celType::cbPlanet,
-    //     "EclipticJ2000", "EquatorJ2000");
-
-    // system = earth->createPlanetarySystem();
-    // lunar = System::createBody("Moon", system, celType::cbMoon,
-    //     "EclipticJ2000", "EquatorJ2000");
+    if (!pSystem::loadSystems(this, sun->getsName()))
+        exit(1);
+    pSystem *psys = sun->getpSystem();
 
     mercury = new CelestialPlanet("Mercury", cbPlanet);
     // venus = new CelestialPlanet("Venus", cbPlanet);
@@ -139,10 +115,6 @@ void Universe::init()
     // psys->addPlanet(saturn, sun);
     // psys->addPlanet(uranus, sun);
     // psys->addPlanet(neptune, sun);
-
-    // std::ifstream in("systems/Sol/Sol.cfg", std::ios::in);
-    // System::loadSolarSystemObjects(in, *this, "systems");
-    // in.close();
 }
 
 void Universe::start(const TimeDate &td)
