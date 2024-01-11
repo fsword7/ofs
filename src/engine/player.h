@@ -66,11 +66,6 @@ public:
     void setRotation(const glm::dmat3 &vrot);
     void look(const glm::dvec3 &opos);
 
-    void update();
-
-    void updateProjMatrix();
-    void updateViewMatrix();
-
 private:
     int    width, height;
     double aspect;
@@ -83,7 +78,7 @@ private:
     glm::dmat3 rrot  = glm::dmat3(1);
     glm::dquat rqrot = glm::dquat(1, 0, 0, 0);
 
-    double     rdist = glm::length(rpos);
+    double rdist = glm::length(rpos);
 
     // Projection/view matrix
     glm::dmat4 proj;
@@ -103,6 +98,9 @@ public:
     inline Camera *getCamera()                  { return &cam; }
     inline TimeDate *getTimeDate()              { return td; }
 
+    inline glm::dmat4 getProjMatrix() const     { return proj; }
+    inline glm::dmat4 getViewMatrix() const     { return view; }
+
     inline glm::dvec3 getAngularControl() const     { return av; }
     inline glm::dvec3 getTravelControl() const      { return tv; }
 
@@ -116,6 +114,10 @@ public:
     double computeCoarseness(double maxCoarseness);
 
     void attach(Object *object, cameraMode mode = camGlobalFrame);
+
+    // void updateProjMatrix();
+    // void updateViewMatrix();
+    void updateCamera();
 
     void update(const TimeDate &td);
 
@@ -168,6 +170,10 @@ private:
     cameraMode modeCamera = camGlobalFrame;
 
     TimeDate *td = nullptr;
+
+    // Projection/view matrix
+    glm::dmat4 proj;
+    glm::dmat4 view;
 };
 
 // class Camera

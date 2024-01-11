@@ -28,8 +28,6 @@ void Camera::resize(int w, int h)
     width  = w;
     height = h;
     aspect = (double)width / (double)height;
-
-    updateProjMatrix();
 }
 
 void Camera::setPosition(const glm::dvec3 &vpos)
@@ -74,29 +72,12 @@ double Camera::getFieldCorrection() const
     return 2.0 * sfov / (ofs::degrees(fov) + sfov); 
 }
 
-void Camera::updateProjMatrix()
-{
-    proj = glm::perspective(fov, aspect, zNear, zFar);
-    // proj = glm::perspectiveLH(fov, aspect, zNear, zFar);
-}
-
-void Camera::updateViewMatrix()
-{
-    view = rrot;
-    // view = glm::transpose(rrot);
-}
-
-void Camera::update()
-{
-    updateProjMatrix();
-    updateViewMatrix();
-}
-
 // ******** Player ********
 
 Player::Player(TimeDate *td)
 : cam(SCR_WIDTH, SCR_HEIGHT), td(td)
 {
+    updateCamera();
 }
 
 Player::~Player()
@@ -135,7 +116,7 @@ void Player::attach(Object *object, cameraMode mode)
         }
     }
 
-    cam.update();
+    updateCamera();
 }
 
 void Player::look(Object *object)
@@ -149,47 +130,51 @@ void Player::look(Object *object)
     cam.rrot  = glm::lookAt(cam.rpos, opos, up);
     cam.rqrot = cam.rrot;
 
-    cam.update();
+    updateCamera();
+}
+
+void Player::updateCamera()
+{
+    cam.proj = glm::perspective(cam.fov, cam.aspect, cam.zNear, cam.zFar);
+    cam.view = grot;
 }
 
 void Player::update(const TimeDate &td)
 {
-        // // free travel mode
-        // // Update current position and attitude in local reference frame
-        // // applying angular velocity to rotation quaternion in local space.
-        // //
-        // //      dq/dt = q * w * t/2
-        // //      where w = (0, x, y, z)
-        // //
-
-        // vec3d_t wv = av * 0.5;
-        // quatd_t dr = quatd_t(1.0, wv.x(), wv.y(), wv.z()) * lrot;
-        // lrot = quatd_t(dr.coeffs() + dt * dr.coeffs());
-        // lrot.normalize();
-    
-        // lpos -= (lrot.conjugate() * tv) * dt;
 
     CelestialBody *cbody = nullptr;
 
-    glm::dvec3 wv = av * 0.5;
-    glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, -wv.z) * cam.rqrot;
-    cam.rqrot = glm::normalize(cam.rqrot + dr);
-    cam.rrot = glm::mat3_cast(cam.rqrot);
-
-    cam.rpos -= glm::conjugate(cam.rqrot) * tv;
-
-    // Logger::logger->debug("Angular Velocity\n");
-    // Logger::logger->debug("WV: {} {} {}\n", wv.x, wv.y, wv.z);
-    // Logger::logger->debug("DR: {} {} {} {}\n", dr.w, dr.x, dr.y, dr.z);
-    // Logger::logger->debug("Q:  {} {} {} {}\n", cam.rqrot.w, cam.rqrot.x, cam.rqrot.y, cam.rqrot.z);
-
-    // Logger::logger->debug("Rotation matrix:\n");
-    // Logger::logger->debug("{} {} {}\n", cam.rrot[0][0], cam.rrot[0][1], cam.rrot[0][2]);
-    // Logger::logger->debug("{} {} {}\n", cam.rrot[1][0], cam.rrot[1][1], cam.rrot[1][2]);
-    // Logger::logger->debug("{} {} {}\n", cam.rrot[2][0], cam.rrot[2][1], cam.rrot[2][2]);
-
     if (modeExternal)
     {
+
+        if (modeCamera == camTargetRelative || modeCamera == camTargetRelative)
+        {        
+            // free travel mode
+            // Update current position and attitude in local reference frame
+            // applying angular velocity to rotation quaternion in local space.
+            //
+            //      dq/dt = q * w * t/2
+            //      where w = (0, x, y, z)
+            //
+
+            glm::dvec3 wv = av * 0.5;
+            glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
+            cam.rqrot = glm::normalize(cam.rqrot + dr);
+            cam.rrot = glm::mat3_cast(cam.rqrot);
+
+            cam.rpos -= glm::conjugate(cam.rqrot) * tv;
+
+            // ofsLogger->debug("Angular Velocity\n");
+            // ofsLogger->debug("WV: {} {} {}\n", wv.x, wv.y, wv.z);
+            // ofsLogger->debug("DR: {} {} {} {}\n", dr.w, dr.x, dr.y, dr.z);
+            // ofsLogger->debug("Q:  {} {} {} {}\n", cam.rqrot.w, cam.rqrot.x, cam.rqrot.y, cam.rqrot.z);
+
+            // ofsLogger->debug("Rotation matrix:\n");
+            // ofsLogger->debug("{} {} {}\n", cam.rrot[0][0], cam.rrot[0][1], cam.rrot[0][2]);
+            // ofsLogger->debug("{} {} {}\n", cam.rrot[1][0], cam.rrot[1][1], cam.rrot[1][2]);
+            // ofsLogger->debug("{} {} {}\n", cam.rrot[2][0], cam.rrot[2][1], cam.rrot[2][2]);
+        }
+
         // External camera updates
         switch (modeCamera)
         {
@@ -222,22 +207,26 @@ void Player::update(const TimeDate &td)
                 gspos = cbody->getuOrientation(0) * cam.rpos;
                 gpos = cbody->getoPosition() + gspos;
 
-                // Calculating local horizon frame coordinates
+                // Calculating local horizon frame camera coordinates
                 // double cphi =   cos(go.phi),   sphi = -sin(go.phi);
                 // double ctheta = cos(go.theta), stheta = sin(go.theta);
                 // cam.rrot = { cphi, sphi*stheta, -sphi*ctheta,
                 //             0.0, ctheta, stheta,
                 //             sphi, -cphi*stheta, cphi*ctheta };
 
-                // cam.rrot = yRotate(go.phi) * xRotate(go.theta);
+                cam.rrot = yRotate(go.phi) * xRotate(go.theta);
 
-                // grot = go.R; // cbody->getuOrientation(0) * go.R * cam.rrot;
-                // gqrot = grot;
+                grot = go.R * cam.rrot; // cbody->getuOrientation(0) * go.R * cam.rrot;
+                gqrot = grot;
 
-                ofsLogger->debug("GO Local Position:    ({:f}, {:f}, {:f})\n", gspos.x, gspos.y, gspos.z);
-                ofsLogger->debug("GO Global Position:   ({:f}, {:f}, {:f})\n", gpos.x, gpos.y, gpos.z);
-                ofsLogger->debug("GO Location:          {:f} {:f}\n", glm::degrees(go.lat), glm::degrees(go.lng));
-                ofsLogger->debug("GO Altitude:          {:f}\n", rad);
+                // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
+                // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
+                // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[2][0], go.R[2][1], go.R[2][2]);
+
+                // ofsLogger->debug("GO Local Position:    ({:f}, {:f}, {:f})\n", gspos.x, gspos.y, gspos.z);
+                // ofsLogger->debug("GO Global Position:   ({:f}, {:f}, {:f})\n", gpos.x, gpos.y, gpos.z);
+                // ofsLogger->debug("GO Location:          {:f} {:f}\n", glm::degrees(go.lat), glm::degrees(go.lng));
+                // ofsLogger->debug("GO Altitude:          {:f}\n", rad);
 
                 // gdir = glm::normalize(tgtObject->getoPosition()-gpos);
                 // glm::dvec3 hdir = tmul(go.R, tmul(tgtObject->getuOrientation(0), gdir));
@@ -260,7 +249,7 @@ void Player::update(const TimeDate &td)
         // Internal camera updates
     }
 
-    cam.update();
+    updateCamera();
 }
 
 // rotate camera 
@@ -323,7 +312,7 @@ void Player::dolly(double dz)
         // Logger::logger->debug("Distance: {} <- {} / {}\n", glm::length(cam.rpos), ndist, cdist);
     }
 
-    cam.update();
+    updateCamera();
 }
 
 // X (phi) rotation
@@ -361,8 +350,8 @@ void Player::setGroundObserver(Object *object, double lng, double lat, double he
     go.alt = alt;
     go.dir = heading;
     
-    double clng = cos(lng), slng = -sin(lng);
-    double clat = cos(lat), slat = sin(lat);
+    double clng = cos(go.lng), slng = sin(go.lng);
+    double clat = cos(go.lat), slat = sin(go.lat);
 
     go.R = { clng*slat, clng*clat, -slng,
             -clat,      slat,       0,
@@ -385,16 +374,16 @@ void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
     go.alt0 = loc.z;
 
     go.phi = glm::radians(heading);
-    go.theta = pi/2.0;
+    go.theta = 0; // pi/2.0;
 
     // Set rotation matrix for local horizon frame
-    // double clat = cos(go.lat), slat = sin(go.lat);
-    // double clng = cos(go.lng), slng = -sin(go.lng);
-    // go.R = { clng*slat, clng*clat, -slng,
-    //         -clat,      slat,       0,
-    //          slng*slat, slng*clat,  clng };
+    double clat = cos(go.lat), slat = sin(go.lat);
+    double clng = cos(go.lng), slng = sin(go.lng);
+    go.R = { clng*slat, clng*clat, -slng,
+            -clat,      slat,       0,
+             slng*slat, slng*clat,  clng };
 
-    go.R = yRotate(go.lng) * zRotate(go.lat);
+    // go.R = yRotate(go.lng) * zRotate(go.lat);
 
     // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
     // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);

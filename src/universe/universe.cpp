@@ -123,39 +123,33 @@ void Universe::start(const TimeDate &td)
     Player *player = ofsAppCore->getPlayer();
 
     // cam->setPosition({ 0, 0, -sun->getRadius() * 4.0 });
-    // cam->update();
     // player->attach(sun, camTargetRelative);
     // player->look(sun);
 
     // cam->setPosition({ 0, 0, mercury->getRadius() * 4.0 });
-    // cam->update();
     // player->attach(mercury, camTargetRelative);
     // player->look(mercury);
 
     // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0 });
-    // cam->update();
     // player->attach(lunar, camTargetRelative);
     // player->look(lunar);
 
     // cam->setPosition({ 0, 0, mars->getRadius() * 4.0 });
-    // cam->update();
     // player->attach(mars, camTargetRelative);
     // player->look(mars);
 
     // cam->setPosition({ 0, 0, jupiter->getRadius() * 4.0 });
-    // cam->update();
     // player->attach(jupiter, camTargetRelative);
     // player->look(jupiter);
 
     cam->setPosition(earth->convertEquatorialToLocal(
         glm::radians(28.632307), glm::radians(-80.705774), earth->getRadius()+50));
     // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
-    cam->update();
     player->attach(earth, camTargetRelative);
     player->look(earth);
 
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
-    // player->setGroundObserver(earth, { 28.632307, -80.705774, .002}, 150);
+    // player->setGroundObserver(earth, { 28.632307, -80.705774, .050}, 150);
 
     player->update(td);
 }

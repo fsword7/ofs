@@ -348,9 +348,9 @@ void CelestialBody::updateRotation(const TimeDate &td)
     crot = ofs::posangle(Dphi + td.getSimTime1()*rotOmega - Lrel*cos_eps + rotofs);
 
     double cosr = cos(crot), sinr = sin(crot);
-    s1.R = { cosr, 0.0, -sinr,
-             0.0,  1.0,  0.0,
-             sinr, 0.0,  cosr };
+    s1.R = {  cosr, 0.0, sinr,
+              0.0,  1.0, 0.0,
+             -sinr, 0.0, cosr };
 
     s1.Q = s1.R;
 }

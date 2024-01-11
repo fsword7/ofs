@@ -570,81 +570,117 @@ void CoreApp::keyImmediateSystem()
     if (player->isExternal())
     {
         // External camera view
-
-        glm::dvec3 av = player->getAngularControl();
-        glm::dvec3 tv = player->getTravelControl();
-
-        // Keyboard angular conrtrol
-        // X-axis angular control
-        if (stateKey[ofs::keyCode::keyPad8])
-            av += glm::dvec3(dt * -keyAttitudeAccel, 0, 0);
-        if (stateKey[ofs::keyCode::keyPad2])
-            av += glm::dvec3(dt * keyAttitudeAccel, 0, 0);
-
-        // Y-axis angular control
-        if (stateKey[ofs::keyCode::keyPad4])
-            av += glm::dvec3(0, dt * -keyAttitudeAccel, 0);
-        if (stateKey[ofs::keyCode::keyPad6])
-            av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
-
-        // Z-axis angular control
-        if (stateKey[ofs::keyCode::keyPad7])
-            av += glm::dvec3(0, 0, dt * -keyAttitudeAccel);
-        if (stateKey[ofs::keyCode::keyPad9])
-            av += glm::dvec3(0, 0, dt * keyAttitudeAccel);
-
-        // Keyboard movement control
-        // // X-axis move control
-        // if (shiftStateKey[keyPad4])
-        //     tv.x() += dt * keyMovementControl;
-        // if (shiftStateKey[keyPad6])
-        //     tv.x() -= dt * keyMovementControl;
-
-        // // Y-axis move control
-        // if (shiftStateKey[keyPad8])
-        //     tv.y() += dt * keyMovementControl;
-        // if (shiftStateKey[keyPad2])
-        //     tv.y() -= dt * keyMovementControl;
-
-        // Z-axis move control
-        if (stateKey[ofs::keyCode::keyPad3])
-            tv.z += dt * keyMovementControl;
-        if (stateKey[ofs::keyCode::keyPad1])
-            tv.z -= dt * keyMovementControl;
-
-        // Braking control
-        if (stateKey[ofs::keyCode::keyPad5] || stateKey[ofs::keyCode::keyb])
+        cameraMode mode = player->getCameraMode();
+        if (mode == camGlobalFrame || mode == camTargetRelative)
         {
-            av *= exp(-dt * keyAttitudeBrake);
-            tv *= exp(-dt * keyMovementBrake);
+            glm::dvec3 av = player->getAngularControl();
+            glm::dvec3 tv = player->getTravelControl();
+
+            // Keyboard angular conrtrol
+            // X-axis angular control
+            if (stateKey[ofs::keyCode::keyPad8])
+                av += glm::dvec3(dt * -keyAttitudeAccel, 0, 0);
+            if (stateKey[ofs::keyCode::keyPad2])
+                av += glm::dvec3(dt * keyAttitudeAccel, 0, 0);
+
+            // Y-axis angular control
+            if (stateKey[ofs::keyCode::keyPad4])
+                av += glm::dvec3(0, dt * -keyAttitudeAccel, 0);
+            if (stateKey[ofs::keyCode::keyPad6])
+                av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
+
+            // Z-axis angular control
+            if (stateKey[ofs::keyCode::keyPad7])
+                av += glm::dvec3(0, 0, dt * -keyAttitudeAccel);
+            if (stateKey[ofs::keyCode::keyPad9])
+                av += glm::dvec3(0, 0, dt * keyAttitudeAccel);
+
+            // Keyboard movement control
+            // // X-axis move control
+            // if (shiftStateKey[keyPad4])
+            //     tv.x() += dt * keyMovementControl;
+            // if (shiftStateKey[keyPad6])
+            //     tv.x() -= dt * keyMovementControl;
+
+            // // Y-axis move control
+            // if (shiftStateKey[keyPad8])
+            //     tv.y() += dt * keyMovementControl;
+            // if (shiftStateKey[keyPad2])
+            //     tv.y() -= dt * keyMovementControl;
+
+            // Z-axis move control
+            if (stateKey[ofs::keyCode::keyPad3])
+                tv.z += dt * keyMovementControl;
+            if (stateKey[ofs::keyCode::keyPad1])
+                tv.z -= dt * keyMovementControl;
+
+            // Braking control
+            if (stateKey[ofs::keyCode::keyPad5] || stateKey[ofs::keyCode::keyb])
+            {
+                av *= exp(-dt * keyAttitudeBrake);
+                tv *= exp(-dt * keyMovementBrake);
+            }
+
+            player->setAngularControl(av);
+            player->setTravelControl(tv);
+
+            // Keyboard orbit movement controls
+            {
+                double coarseness = player->computeCoarseness(1.5);
+                glm::dquat q = { 1, 0, 0, 0 };
+
+                if (stateKey[ofs::keyCode::keyLeft])
+                    q *= yqRotate(dt * -keyRotationAccel * coarseness);
+                if (stateKey[ofs::keyCode::keyRight])
+                    q *= yqRotate(dt * keyRotationAccel * coarseness);
+                if (stateKey[ofs::keyCode::keyUp])
+                    q *= xqRotate(dt * -keyRotationAccel * coarseness);
+                if (stateKey[ofs::keyCode::keyDown])
+                    q *= xqRotate(dt * keyRotationAccel * coarseness);
+
+                if (q != glm::dquat(1, 0, 0, 0))
+                    player->orbit(q);
+            }
+
+            // Keyboard dolly control
+            if (stateKey[ofs::keyCode::keyHome])
+                player->dolly(-dt * 2.0);
+            if (stateKey[ofs::keyCode::keyEnd])
+                player->dolly(dt * 2.0);
         }
 
-        player->setAngularControl(av);
-        player->setTravelControl(tv);
-
-        // Keyboard orbit movement controls
+        if (mode == camGroundObserver)
         {
-            double coarseness = player->computeCoarseness(1.5);
-            glm::dquat q = { 1, 0, 0, 0 };
+            double dphi(0.0), dtheta(0.0);
+        
+            if (stateKey[ofs::keyCode::keyPad4])
+                dphi += dt * -0.5;
+            if (stateKey[ofs::keyCode::keyPad6])
+                dphi += dt * 0.5;
+            if (stateKey[ofs::keyCode::keyPad2])
+                dtheta += dt * -0.5;
+            if (stateKey[ofs::keyCode::keyPad8])
+                dtheta += dt * 0.5;
+
+            player->rotateView(dphi, dtheta);
+
+            double dx(0.0), dy(0.0), dh(0.0);
 
             if (stateKey[ofs::keyCode::keyLeft])
-                q *= yqRotate(dt * -keyRotationAccel * coarseness);
+                dx += -dt;
             if (stateKey[ofs::keyCode::keyRight])
-                q *= yqRotate(dt * keyRotationAccel * coarseness);
+                dx += dt;
             if (stateKey[ofs::keyCode::keyUp])
-                q *= xqRotate(dt * -keyRotationAccel * coarseness);
+                dy += dt;
             if (stateKey[ofs::keyCode::keyDown])
-                q *= xqRotate(dt * keyRotationAccel * coarseness);
+                dy -= dt;
+            if (ctrlStateKey[ofs::keyCode::keyUp])
+                dh += dt;
+            if (ctrlStateKey[ofs::keyCode::keyDown])
+                dh -= dt;
 
-            if (q != glm::dquat(1, 0, 0, 0))
-                player->orbit(q);
+            // player->shiftGroundObsewrver(dx, dy, dh);
         }
-
-        // Keyboard dolly control
-        if (stateKey[ofs::keyCode::keyHome])
-            player->dolly(-dt * 2.0);
-        if (stateKey[ofs::keyCode::keyEnd])
-            player->dolly(dt * 2.0);
     }
     else
     {

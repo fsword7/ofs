@@ -143,9 +143,19 @@ public:
     glm::dvec3 getvPlanetocentricFromEcliptic(const glm::dvec3 &pos, double tjd) const;
     glm::dvec3 getHeliocentric(double tjd) const;
     
-    inline glm::dvec3 convertLocalToGlobal(const glm::dvec3 &loc)
+    inline glm::dvec3 convertGlobalToLocal(const glm::dvec3 &gpos) const
     {
-        return s0.R * loc + s0.pos;
+        return glm::transpose(s0.R) * (gpos - s0.pos);
+    }
+
+    inline void convertGlobalToLocal(const glm::dvec3 &gpos, glm::dvec3 &lpos) const
+    {
+        lpos = glm::transpose(s0.R) * (gpos - s0.pos);
+    }
+    
+    inline glm::dvec3 convertLocalToGlobal(const glm::dvec3 &lpos) const
+    {
+        return (s0.R * lpos) + s0.pos;
     }
 
     inline glm::dvec3 convertEquatorialToLocal(double lat, double lng, double rad)
