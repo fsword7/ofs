@@ -28,10 +28,14 @@ struct GroundObserver
     double dir;         // ground direction (compass)
     double alt;         // Altitude
     double alt0;        // Altitude at sea level
-    double phi, theta;  // Camera direction at local horizon frame
+    double theta, phi;  // Camera direction at local horizon frame
     double panSpeed;    // speed at ground for movement controls (m/s)
 
+    glm::dvec3 av;      // angular velocity control
+    glm::dvec3 tv;      // travel velocity control
+
     glm::dmat3 R;       // local horizon frame
+    glm::dquat Q;       //    quaternion
 };
 
 class OFSAPI Camera
@@ -101,15 +105,19 @@ public:
     inline glm::dmat4 getProjMatrix() const     { return proj; }
     inline glm::dmat4 getViewMatrix() const     { return view; }
 
-    inline glm::dvec3 getAngularControl() const     { return av; }
-    inline glm::dvec3 getTravelControl() const      { return tv; }
-
     inline glm::dvec3 getPosition() const           { return gpos; }
     inline glm::dmat3 getRotation() const           { return grot; }
     inline glm::dquat getqRotation() const          { return gqrot; }
 
-    inline void setAngularControl(glm::dvec3 _av)   { av = _av; }
-    inline void setTravelControl(glm::dvec3 _tv)    { tv = _tv; }
+    inline glm::dvec3 getAngularControl() const         { return av; }
+    inline glm::dvec3 getTravelControl() const          { return tv; }
+    inline glm::dvec3 getGroundAngularControl() const   { return go.av; }
+    inline glm::dvec3 getGroundTravelControl() const    { return go.tv; }
+
+    inline void setAngularControl(glm::dvec3 _av)       { av = _av; }
+    inline void setTravelControl(glm::dvec3 _tv)        { tv = _tv; }
+    inline void setGroundAngularControl(glm::dvec3 av)  { go.av = av; }
+    inline void setGroundTravelControl(glm::dvec3 tv)   { go.tv = tv; }
 
     double computeCoarseness(double maxCoarseness);
 
@@ -132,12 +140,12 @@ public:
     void dolly(double dz);
     void orbit(const glm::dquat &drot);
     void orbit(double phi, double theta, double dist);
-    void rotateView(double phi, double theta);
+    void rotateView(double theta, double phi);
 
     void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
     void setGroundObserver(Object *object, glm::dvec3 loc, double heading);
     void shiftGroundObsewrver(double dx, double dy, double dh);
-    void rotateGroundObserver(double dphi, double dtheta);
+    void rotateGroundObserver(double dtheta, double dphi);
 
 private:
     Camera cam;

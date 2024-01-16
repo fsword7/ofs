@@ -214,10 +214,21 @@ void Player::update(const TimeDate &td)
                 //             0.0, ctheta, stheta,
                 //             sphi, -cphi*stheta, cphi*ctheta };
 
-                cam.rrot = yRotate(go.phi) * xRotate(go.theta);
+                // cam.rrot = xRotate(go.phi) * yRotate(go.theta);
+                // cam.rrot = glm::dmat3(1);
 
-                grot = go.R * cam.rrot; // cbody->getuOrientation(0) * go.R * cam.rrot;
-                gqrot = grot;
+                glm::dvec3 wv = go.av * 0.5;
+                glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
+                cam.rqrot = glm::normalize(cam.rqrot + dr);
+                cam.rrot = glm::mat3_cast(cam.rqrot);
+
+                // cam.rpos -= glm::conjugate(cam.rqrot) * tv;
+
+                // grot = go.R * cam.rrot; // cbody->getuOrientation(0) * go.R * cam.rrot;
+                // gqrot = grot;
+                
+                gqrot = go.Q * cam.rqrot;
+                grot  = glm::mat3_cast(gqrot);
 
                 // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
                 // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
@@ -253,10 +264,10 @@ void Player::update(const TimeDate &td)
 }
 
 // rotate camera 
-void Player::rotateView(double dphi, double dtheta)
+void Player::rotateView(double dtheta, double dphi)
 {
     if (modeExternal && modeCamera == camGroundObserver)
-        rotateGroundObserver(dphi, dtheta);
+        rotateGroundObserver(dtheta, dphi);
 }
 
 void Player::orbit(double phi, double theta, double dist)
@@ -373,21 +384,35 @@ void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
     go.alt = loc.z;
     go.alt0 = loc.z;
 
-    go.phi = glm::radians(heading);
-    go.theta = 0; // pi/2.0;
+    go.theta = 0; // glm::radians(heading);
+    go.phi = pi/2.0;
+
+    // Clear all ground velocity controls
+    go.av = { 0, 0, 0 };
+    go.tv = { 0, 0, 0 };
 
     // Set rotation matrix for local horizon frame
-    double clat = cos(go.lat), slat = sin(go.lat);
-    double clng = cos(go.lng), slng = sin(go.lng);
-    go.R = { clng*slat, clng*clat, -slng,
-            -clat,      slat,       0,
-             slng*slat, slng*clat,  clng };
+    // double clat = cos(go.lat), slat = sin(go.lat);
+    // double clng = cos(go.lng), slng = sin(go.lng);
+    // go.R = { clng*slat, clng*clat, -slng,
+    //         -clat,      slat,       0,
+    //          slng*slat, slng*clat,  clng };
 
+    // Topocentric horizon frame From Orbital Machanics for Enginerring Students
+    // Read page 257-261 for more information
+    // go.R = {-slng,       clng,      0,
+    //         -slat*clng, -slat*slng, clat,
+    //          clat*clng,  clat*slng, slat };
     // go.R = yRotate(go.lng) * zRotate(go.lat);
+    double rad = cbody->getRadius() + go.alt;
+    cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, rad);
+    go.R = glm::lookAt(cam.rpos, {0, 0, 0}, {0, 1, 0});
+    go.Q = go.R;
 
-    // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
-    // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
-    // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[2][0], go.R[2][1], go.R[2][2]);
+    ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
+    ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
+    ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[2][0], go.R[2][1], go.R[2][2]);
+    ofsLogger->debug("Q = {:f} {:f} {:f} {:f}\n", go.Q.w, go.Q.x, go.Q.y, go.Q.z);
 
     // double rad = cbody->getRadius() + go.alt;
     // cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, rad);
@@ -413,10 +438,10 @@ void Player::shiftGroundObsewrver(double dx, double dy, double dh)
              slng*slat,  slng*clat,   clng };
 }
 
-void Player::rotateGroundObserver(double dphi, double dtheta)
+void Player::rotateGroundObserver(double dtheta, double dphi)
 {
     if (modeExternal && modeCamera != camGroundObserver)
         return;
-    go.phi   += dphi;
     go.theta += dtheta;
+    go.phi   += dphi;
 }

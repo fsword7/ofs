@@ -651,35 +651,67 @@ void CoreApp::keyImmediateSystem()
 
         if (mode == camGroundObserver)
         {
-            double dphi(0.0), dtheta(0.0);
+            // double dphi(0.0), dtheta(0.0);
         
-            if (stateKey[ofs::keyCode::keyPad4])
-                dphi += dt * -0.5;
-            if (stateKey[ofs::keyCode::keyPad6])
-                dphi += dt * 0.5;
-            if (stateKey[ofs::keyCode::keyPad2])
-                dtheta += dt * -0.5;
-            if (stateKey[ofs::keyCode::keyPad8])
-                dtheta += dt * 0.5;
+            // if (stateKey[ofs::keyCode::keyPad4])
+            //     dphi += dt * -0.5;
+            // if (stateKey[ofs::keyCode::keyPad6])
+            //     dphi += dt * 0.5;
+            // if (stateKey[ofs::keyCode::keyPad2])
+            //     dtheta += dt * -0.5;
+            // if (stateKey[ofs::keyCode::keyPad8])
+            //     dtheta += dt * 0.5;
 
-            player->rotateView(dphi, dtheta);
+            // player->rotateView(dphi, dtheta);
 
-            double dx(0.0), dy(0.0), dh(0.0);
+            // double dx(0.0), dy(0.0), dh(0.0);
 
-            if (stateKey[ofs::keyCode::keyLeft])
-                dx += -dt;
-            if (stateKey[ofs::keyCode::keyRight])
-                dx += dt;
-            if (stateKey[ofs::keyCode::keyUp])
-                dy += dt;
-            if (stateKey[ofs::keyCode::keyDown])
-                dy -= dt;
-            if (ctrlStateKey[ofs::keyCode::keyUp])
-                dh += dt;
-            if (ctrlStateKey[ofs::keyCode::keyDown])
-                dh -= dt;
+            // if (stateKey[ofs::keyCode::keyLeft])
+            //     dx += -dt;
+            // if (stateKey[ofs::keyCode::keyRight])
+            //     dx += dt;
+            // if (stateKey[ofs::keyCode::keyUp])
+            //     dy += dt;
+            // if (stateKey[ofs::keyCode::keyDown])
+            //     dy -= dt;
+            // if (ctrlStateKey[ofs::keyCode::keyUp])
+            //     dh += dt;
+            // if (ctrlStateKey[ofs::keyCode::keyDown])
+            //     dh -= dt;
 
             // player->shiftGroundObsewrver(dx, dy, dh);
+
+            glm::dvec3 av = player->getGroundAngularControl();
+            // glm::dvec3 tv = player->getGroundTravelControl();
+
+            // Keyboard angular conrtrol
+            // X-axis angular control
+            if (stateKey[ofs::keyCode::keyPad8])
+                av += glm::dvec3(dt * -keyAttitudeAccel, 0, 0);
+            if (stateKey[ofs::keyCode::keyPad2])
+                av += glm::dvec3(dt * keyAttitudeAccel, 0, 0);
+
+            // Y-axis angular control
+            if (stateKey[ofs::keyCode::keyPad4])
+                av += glm::dvec3(0, dt * -keyAttitudeAccel, 0);
+            if (stateKey[ofs::keyCode::keyPad6])
+                av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
+
+            // Z-axis angular control
+            // if (stateKey[ofs::keyCode::keyPad7])
+            //     av += glm::dvec3(0, 0, dt * -keyAttitudeAccel);
+            // if (stateKey[ofs::keyCode::keyPad9])
+            //     av += glm::dvec3(0, 0, dt * keyAttitudeAccel);
+ 
+            // Braking control
+            if (stateKey[ofs::keyCode::keyPad5] || stateKey[ofs::keyCode::keyb])
+            {
+                av *= exp(-dt * keyAttitudeBrake);
+                // tv *= exp(-dt * keyMovementBrake);
+            }
+
+            player->setGroundAngularControl(av);
+            // player->setGroundTravelControl(tv);
         }
     }
     else
