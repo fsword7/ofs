@@ -207,24 +207,20 @@ void Player::update(const TimeDate &td)
                 gspos = cbody->getuOrientation(0) * cam.rpos;
                 gpos = cbody->getoPosition() + gspos;
 
-                // Calculating local horizon frame camera coordinates
-                // double cphi =   cos(go.phi),   sphi = -sin(go.phi);
-                // double ctheta = cos(go.theta), stheta = sin(go.theta);
-                // cam.rrot = { cphi, sphi*stheta, -sphi*ctheta,
-                //             0.0, ctheta, stheta,
-                //             sphi, -cphi*stheta, cphi*ctheta };
+                // Rotate camera in local frame. Negate theta value for 
+                // clockwise rotation. Points to east as default origin
+                // so that adding pi/2.0 to theta value for pointing to 
+                // north with zero heading.  
+                cam.rrot = xRotate(go.phi) * yRotate(-go.theta + pi/2.0);
 
-                // cam.rrot = xRotate(go.phi) * yRotate(go.theta);
-                // cam.rrot = glm::dmat3(1);
-
-                glm::dvec3 wv = go.av * 0.5;
-                glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
-                cam.rqrot = glm::normalize(cam.rqrot + dr);
-                cam.rrot = glm::mat3_cast(cam.rqrot);
+                // glm::dvec3 wv = go.av * 0.5;
+                // glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
+                // cam.rqrot = glm::normalize(cam.rqrot + dr);
+                // cam.rrot = glm::mat3_cast(cam.rqrot);
 
                 // cam.rpos -= glm::conjugate(cam.rqrot) * tv;
 
-                grot = cam.rrot * go.R;
+                grot = cam.rrot * go.R * cbody->getuOrientation(0);
                 gqrot = grot;
  
                 // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
@@ -381,20 +377,24 @@ void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
     go.alt = loc.z;
     go.alt0 = loc.z;
 
-    go.theta = 0; // glm::radians(heading);
-    go.phi = 0; // pi/2.0;
+    go.theta = glm::radians(heading);
+    go.phi = glm::radians(0.0);
 
     // Clear all ground velocity controls
     go.av = { 0, 0, 0 };
     go.tv = { 0, 0, 0 };
 
     // Set rotation matrix for local horizon frame
-    // for right-handed rule (OpenGL)
+    // for right-handed rule (OpenGL). Points
+    // to east as origin at (0, 0).
     double clat = cos(go.lat), slat = sin(go.lat);
     double clng = cos(go.lng), slng = sin(go.lng);
     go.R = { slat*clng,  clat*clng, slng,
             -clat,       slat,      0,
             -slat*slng, -clat*slng, clng };
+
+    // cam.rqrot = xqRotate(-go.phi) * yqRotate(go.theta - pi/2.0);
+    // cam.rrot  = glm::mat3_cast(cam.rqrot);
 
     // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
     // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
