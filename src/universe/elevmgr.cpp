@@ -57,7 +57,7 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
 
     if (zTrees[0] != nullptr)
     {
-        szData = zTrees[0]->read(lod+4, ilat, nlng-ilng-1, &elevData);
+        szData = zTrees[0]->read(lod+4, ilat, ilng, &elevData);
         // logger->info("Read {} bytes from elevation database\n", szData);
         if (szData > 0 && elevData != nullptr)
         {
