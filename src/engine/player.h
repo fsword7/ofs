@@ -144,7 +144,7 @@ public:
 
     // void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
     void setGroundObserver(Object *object, glm::dvec3 loc, double heading);
-    void shiftGroundObsewrver(double dx, double dy, double dh);
+    void shiftGroundObserver(double dx, double dy, double dh);
     void rotateGroundObserver(double dtheta, double dphi);
 
 private:
