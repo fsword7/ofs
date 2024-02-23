@@ -37,10 +37,6 @@ public:
     void update(double dt);
     void render();
 
-    void renderOverlay();
-    void displayPlanetInfo();
-    void displayPlanetocentric(double lat, double lng, double alt);
-
     Object *pickObject(const glm::dvec3 &pickRay);
 
 private:

@@ -234,6 +234,8 @@ void CoreApp::openSession()
 
     player = new Player(&td);
 
+    panel = new Panel(gclient, width, height, 8);
+
     if (gclient != nullptr)
     {
         gclient->cbStart(universe);
@@ -249,9 +251,12 @@ void CoreApp::closeSession()
     if (gclient != nullptr)
         gclient->hideWindow();
 
+    if (panel != nullptr)
+        delete panel;
     if (player != nullptr)
         delete player;
     player = nullptr;
+    panel = nullptr;
 
     bSession = false;
 }
@@ -682,7 +687,7 @@ void CoreApp::keyImmediateSystem()
             // player->shiftGroundObsewrver(dx, dy, dh);
 
             glm::dvec3 av = player->getGroundAngularControl();
-            // glm::dvec3 tv = player->getGroundTravelControl();
+            glm::dvec3 tv = player->getGroundTravelControl();
 
             // Keyboard angular conrtrol
             // X-axis angular control
@@ -698,10 +703,10 @@ void CoreApp::keyImmediateSystem()
                 av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
 
             // Z-axis angular control
-            // if (stateKey[ofs::keyCode::keyPad7])
-            //     av += glm::dvec3(0, 0, dt * -keyAttitudeAccel);
-            // if (stateKey[ofs::keyCode::keyPad9])
-            //     av += glm::dvec3(0, 0, dt * keyAttitudeAccel);
+            if (stateKey[ofs::keyCode::keyPad7])
+                av += glm::dvec3(0, 0, dt * -keyAttitudeAccel);
+            if (stateKey[ofs::keyCode::keyPad9])
+                av += glm::dvec3(0, 0, dt * keyAttitudeAccel);
  
             // Braking control
             if (stateKey[ofs::keyCode::keyPad5] || stateKey[ofs::keyCode::keyb])
@@ -711,7 +716,7 @@ void CoreApp::keyImmediateSystem()
             }
 
             player->setGroundAngularControl(av);
-            // player->setGroundTravelControl(tv);
+            player->setGroundTravelControl(tv);
         }
     }
     else

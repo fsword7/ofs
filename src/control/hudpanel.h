@@ -10,8 +10,11 @@
 #define HUD_ORBIT       2               // Orbit HUD panel
 #define HUD_MAX         HUD_ORBIT       // Maximum number of HUD panels
 
+class GraphicsClient;
 class Sketchpad;
+class Font;
 class Panel;
+class Player;
 
 class HUDPanel
 {
@@ -31,6 +34,10 @@ protected:
 private:
     const Panel *panel;
 
+    GraphicsClient *gc = nullptr;
+
+    Font *titleFont = nullptr;
+    Font *textFont = nullptr;
 };
 
 class HUDSurfacePanel : public HUDPanel

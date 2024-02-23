@@ -4,31 +4,26 @@
 // Date:    Apr 28, 2022
 
 #include "main/core.h"
-// #include "osd/gl/context.h"
-// #include "osd/gl/buffers.h"
-// #include "osd/gl/shader.h"
-#include "engine/engine.h"
-#include "engine/object.h"
-// #include "engine/player.h"
-// #include "engine/headup.h"
-#include "universe/celbody.h"
-// #include "render/overlay.h"
+#include "api/graphics.h"
+#include "api/draw.h"
+#include "control/panel.h"
+#include "engine/player.h"
 
-void Engine::renderOverlay()
-{
-    // double curTime = player->getJulianTime();
+// void Engine::renderOverlay()
+// {
+//     // double curTime = player->getJulianTime();
 
-    // color_t color(0.7, 0.7, 1.0, 1.0);
+//     // color_t color(0.7, 0.7, 1.0, 1.0);
 
-    // overlay->home();
-    // overlay->moveBy(15.0, 15.0);
-    // overlay->setColor(color);
+//     // overlay->home();
+//     // overlay->moveBy(15.0, 15.0);
+//     // overlay->setColor(color);
 
-    // displayPlanetInfo();
+//     // displayPlanetInfo();
 
-}
+// }
 
-void Engine::displayPlanetocentric(double lat, double lng, double alt)
+void Panel::displayPlanetocentric(double lat, double lng, double alt)
 {
     // char latHemi, lngHemi;
 
@@ -43,8 +38,20 @@ void Engine::displayPlanetocentric(double lat, double lng, double alt)
     // overlay->print(locObject);
 }
 
-void Engine::displayPlanetInfo()
+void Panel::displayPlanetInfo(const Player &player)
 {
+    Sketchpad *pad = gc->getSketchpad();
+
+    pad->beginDraw();
+    pad->setFont(titleFont);
+    pad->setTextPos(3, 3);
+    
+    // const Object *focus = player.getReferenceObject();
+    // pad->print(focus->getsName());
+
+
+    pad->endDraw();
+
     // const Object *focus = getFoucsedObject();
     // double jdTime = player->getJulianTime();
     // vec3d_t view = focus->getuPosition(jdTime) - player->getuPosition();

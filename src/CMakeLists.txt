@@ -4,10 +4,10 @@ set(OFS_CPP_SRCS
     control/mfd/panel.cpp
     control/mfd/surface.cpp
     control/hudpanel.cpp
+    control/info.cpp
     control/panel.cpp
     engine/engine.cpp
     # engine/frame.cpp
-    engine/headup.cpp
     engine/mesh.cpp
     engine/object.cpp
     # engine/observer.cpp

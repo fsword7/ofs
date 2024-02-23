@@ -153,4 +153,4 @@ protected:
     std::vector<ModuleEntry> moduleList;
 };
 
-extern CoreApp *ofsAppCore;
+// extern CoreApp *ofsAppCore;

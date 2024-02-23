@@ -47,4 +47,7 @@ namespace fs = std::filesystem;
 #include "utils/string.h"
 #include "api/module.h"
 
+class CoreApp;
+
+extern CoreApp *ofsAppCore;
 extern Logger *ofsLogger;
