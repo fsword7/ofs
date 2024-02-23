@@ -142,7 +142,7 @@ public:
     void orbit(double phi, double theta, double dist);
     void rotateView(double theta, double phi);
 
-    void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
+    // void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
     void setGroundObserver(Object *object, glm::dvec3 loc, double heading);
     void shiftGroundObsewrver(double dx, double dy, double dh);
     void rotateGroundObserver(double dtheta, double dphi);

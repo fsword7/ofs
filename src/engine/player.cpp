@@ -224,12 +224,9 @@ void Player::update(const TimeDate &td)
 
                 // cam.rpos -= glm::conjugate(cam.rqrot) * tv;
 
-                // grot = go.R * cam.rrot; // cbody->getuOrientation(0) * go.R * cam.rrot;
-                // gqrot = grot;
-                
-                gqrot = go.Q * cam.rqrot;
-                grot  = glm::mat3_cast(gqrot);
-
+                grot = cam.rrot * go.R;
+                gqrot = grot;
+ 
                 // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
                 // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
                 // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[2][0], go.R[2][1], go.R[2][2]);
@@ -350,25 +347,25 @@ void Player::rotateTheta(double theta)
 
 }
 
-void Player::setGroundObserver(Object *object, double lng, double lat, double heading, double alt)
-{
-    if (dynamic_cast<CelestialBody *>(object) == nullptr)
-        return;
-    attach(object, camGroundObserver); 
+// void Player::setGroundObserver(Object *object, double lng, double lat, double heading, double alt)
+// {
+//     if (dynamic_cast<CelestialBody *>(object) == nullptr)
+//         return;
+//     attach(object, camGroundObserver); 
 
-    go.lng = lng;
-    go.lat = lat;
-    go.alt = alt;
-    go.dir = heading;
+//     go.lng = lng;
+//     go.lat = lat;
+//     go.alt = alt;
+//     go.dir = heading;
     
-    double clng = cos(go.lng), slng = sin(go.lng);
-    double clat = cos(go.lat), slat = sin(go.lat);
+//     double clng = cos(go.lng), slng = sin(go.lng);
+//     double clat = cos(go.lat), slat = sin(go.lat);
 
-    go.R = { clng*slat, clng*clat, -slng,
-            -clat,      slat,       0,
-             slng*slat, slng*clat,  clng };
+//     go.R = { clng*slat, clng*clat, -slng,
+//             -clat,      slat,       0,
+//              slng*slat, slng*clat,  clng };
 
-}
+// }
 
 void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
 {
@@ -385,34 +382,24 @@ void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
     go.alt0 = loc.z;
 
     go.theta = 0; // glm::radians(heading);
-    go.phi = pi/2.0;
+    go.phi = 0; // pi/2.0;
 
     // Clear all ground velocity controls
     go.av = { 0, 0, 0 };
     go.tv = { 0, 0, 0 };
 
     // Set rotation matrix for local horizon frame
-    // double clat = cos(go.lat), slat = sin(go.lat);
-    // double clng = cos(go.lng), slng = sin(go.lng);
-    // go.R = { clng*slat, clng*clat, -slng,
-    //         -clat,      slat,       0,
-    //          slng*slat, slng*clat,  clng };
+    // for right-handed rule (OpenGL)
+    double clat = cos(go.lat), slat = sin(go.lat);
+    double clng = cos(go.lng), slng = sin(go.lng);
+    go.R = { slat*clng,  clat*clng, slng,
+            -clat,       slat,      0,
+            -slat*slng, -clat*slng, clng };
 
-    // Topocentric horizon frame From Orbital Machanics for Enginerring Students
-    // Read page 257-261 for more information
-    // go.R = {-slng,       clng,      0,
-    //         -slat*clng, -slat*slng, clat,
-    //          clat*clng,  clat*slng, slat };
-    // go.R = yRotate(go.lng) * zRotate(go.lat);
-    double rad = cbody->getRadius() + go.alt;
-    cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, rad);
-    go.R = glm::lookAt(cam.rpos, {0, 0, 0}, {0, 1, 0});
-    go.Q = go.R;
-
-    ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
-    ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
-    ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[2][0], go.R[2][1], go.R[2][2]);
-    ofsLogger->debug("Q = {:f} {:f} {:f} {:f}\n", go.Q.w, go.Q.x, go.Q.y, go.Q.z);
+    // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
+    // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
+    // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[2][0], go.R[2][1], go.R[2][2]);
+    // ofsLogger->debug("Q = {:f} {:f} {:f} {:f}\n", go.Q.w, go.Q.x, go.Q.y, go.Q.z);
 
     // double rad = cbody->getRadius() + go.alt;
     // cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, rad);
@@ -430,12 +417,16 @@ void Player::shiftGroundObsewrver(double dx, double dy, double dh)
     if (modeExternal && modeCamera != camGroundObserver)
         return;
 
-    // Set rotation matrix in local horizon frame
-    double clng = cos(go.lng), slng=-sin(go.lng);
-    double clat = cos(go.lat), slat=sin(go.lat);
-    go.R = { clng*slat,  clng*clat,  -slng, 
-            -clat,       slat,        0,
-             slng*slat,  slng*clat,   clng };
+    // go.lng += dx;
+    // go.lat += dy;
+
+    // // Set rotation matrix in local horizon frame
+    // double clng = cos(go.lng), slng=-sin(go.lng);
+    // double clat = cos(go.lat), slat=sin(go.lat);
+    // go.R = { clng*slat,  clng*clat,  -slng, 
+    //         -clat,       slat,        0,
+    //          slng*slat,  slng*clat,   clng };
+    // go.Q = go.R;
 }
 
 void Player::rotateGroundObserver(double dtheta, double dphi)
