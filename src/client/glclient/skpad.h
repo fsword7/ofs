@@ -13,7 +13,7 @@ class glFont : public Font
     friend class glPad;
 
 public:
-    glFont(int height, bool fixed, cchar_t *face, Style style = Normal, float orientation = 0.0f, bool antialiased = true);
+    glFont(cchar_t *face, int height, bool fixed, Style style = Normal, float orientation = 0.0f, bool antialiased = true);
     ~glFont() = default;
 
 private:
@@ -92,6 +92,9 @@ public:
     void setTextAlign(TAHorizontal tah=LEFT, TAVertical tav=TOP) override;
     void setTextBackgroundMode(BkgMode mode) override;
     bool text(int x, int y, cchar_t *str, int len = 0) override;
+    
+    void setTextPos(int x, int y) override;
+    int print(cstr_t &str) override;
 
 protected:
     NVGalign toNVGTextAlign(TAHorizontal tah);
@@ -119,4 +122,5 @@ private:
     int yOrigin = 0;
     int xCurrent;
     int yCurrent;
+    int xText, yText;
 };

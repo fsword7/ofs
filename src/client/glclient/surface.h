@@ -110,7 +110,7 @@ public:
     double getMeanElevation(const int16_t *elev) const;
     void interpolateElevationGrid(int ilat, int ilng, int lod,
         int pilat, int pilng, int plod, int16_t *pelev, int16_t *elev);
-    int16_t *readElevationFile(int lod, int ilat, int ilng, double eres);
+    // int16_t *readElevationFile(int lod, int ilat, int ilng, double eres);
     bool loadElevationData();
     int16_t *getElevationData();
 
@@ -185,10 +185,10 @@ public:
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 
-    bool getTileIndex(double lat, double lng, int lod, int &ilat, int &ilng) const;
-    int16_t *readElevationFile(int lod, int ilat, int ilng, double eres) const;
-    double getElevationData(glm::dvec3 loc, int reqlod,
-        elevTileList_t *elevTiles, glm::dvec3 *nml, int *lod) const;
+    // bool getTileIndex(double lat, double lng, int lod, int &ilat, int &ilng) const;
+    // int16_t *readElevationFile(int lod, int ilat, int ilng, double eres) const;
+    // double getElevationData(glm::dvec3 loc, int reqlod,
+    //     elevTileList_t *elevTiles, glm::dvec3 *nml, int *lod) const;
 
     // Creating planet surface - quadsphere
     Mesh *createHemisphere(int grid, int16_t *elev, double gelev);

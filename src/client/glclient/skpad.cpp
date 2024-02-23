@@ -15,7 +15,7 @@
 
 static std::map<std::string, std::string> fontCache;
 
-glFont::glFont(int height, bool fixed, cchar_t *face, Style style, float orientation, bool aa)
+glFont::glFont(cchar_t *face, int height, bool fixed, Style style, float orientation, bool aa)
 : Font(height, fixed, face, style, orientation),
   faceName(face), fontHeight(height),
   bAntialiased(aa), rotRadians(orientation)
@@ -211,6 +211,7 @@ void glPad::endPath()
     nvgClosePath(ctx);
 }
 
+
 void glPad::moveTo(int x, int y)
 {
     nvgMoveTo(ctx, xOrigin + x, yOrigin + y);
@@ -342,4 +343,28 @@ bool glPad::text(int x, int y, cchar_t *str, int len)
     nvgResetTransform(ctx);
 
     return true;   
+}
+
+void glPad::setTextPos(int x, int y)
+{
+    xText = x;
+    yText = y;
+}
+
+int glPad::print(cstr_t &str)
+{
+    if (cFont == nullptr)
+        return 0;
+
+    float ascender, descender, lineh, acw;
+    nvgTextMetrics(ctx, &ascender, &descender, &lineh, &acw);
+    uint32_t height = lineh - (lineh - ascender + descender) / 2.0;
+    
+    cchar_t *cstr = str.c_str();
+    int len = str.size();
+
+    nvgText(ctx, xText, yText, cstr, cstr+len);
+    yText += height;
+
+    return height;
 }

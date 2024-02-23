@@ -46,11 +46,11 @@ public:
     virtual void startImGuiNewFrame() = 0;
     virtual void renderImGuiDrawData() = 0;
 
-    virtual double getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod = 0,
-        elevTileList_t *tiles = nullptr, glm::dvec3 *normal = nullptr, int *lod = 0) = 0;
+    // virtual double getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod = 0,
+    //     elevTileList_t *tiles = nullptr, glm::dvec3 *normal = nullptr, int *lod = 0) = 0;
 
-    virtual Font *createFont(int height, bool fixed, cchar_t *face,
-        Font::Style style, int orientation, bool antialiased) = 0;
+    virtual Font *createFont(cchar_t *face, int height, bool fixed,
+        Font::Style style = Font::Style::Normal, int orientation = 0, bool antialiased = false) = 0;
     virtual Pen *createPen(color_t color, int width, int style) = 0;
     virtual Brush *createBrush(color_t color) = 0;
 

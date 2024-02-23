@@ -16,6 +16,7 @@ set(OGL_CPP_SRCS
     loader.cpp
     lights.cpp
     overlay.cpp
+    renderer.cpp
     ringmgr.cpp
     scene.cpp
     shader.cpp
@@ -42,6 +43,7 @@ set(OGL_H_SRCS
     fonts.h
     lights.h
     overlay.h
+    renderer.h
     ringmgr.h
     scene.h
     shader.h

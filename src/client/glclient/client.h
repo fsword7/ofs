@@ -38,11 +38,7 @@ public:
     void cbSetWindowTitle(cstr_t &title) override;
 
     void loadTextureFont();
-
-    Texture *createSurface(int width, int height, uint32_t flags = 0);
-    void releaseSurface(Texture *surf);
-    void clearSurface(Texture *surf, const color_t &color) override;
-
+ 
     void cbStart(Universe *universe) override;
     void cbRenderScene(Player *player) override;
 
@@ -53,16 +49,27 @@ public:
     void startImGuiNewFrame() override;
     void renderImGuiDrawData() override;
 
-    double getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod = 0,
-        elevTileList_t *tiles = nullptr, glm::dvec3 *normal = nullptr, int *lod = 0) override;
+    // double getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod = 0,
+    //     elevTileList_t *tiles = nullptr, glm::dvec3 *normal = nullptr, int *lod = 0) override;
 
-    Font *createFont(int height, bool fixed, cchar_t *face, Font::Style style, int orientation, bool antialiased) override;
+    Font *createFont(cchar_t *face, int height, bool fixed, Font::Style style, int orientation, bool antialiased) override;
     Pen *createPen(color_t color, int width, int style) override;
     Brush *createBrush(color_t color) override;
 
     void releaseFont(Font *font);
     void releasePen(Pen *pen);
     void releaseBrush(Brush *brush);
+
+    void initSurface();
+    Texture *createSurface(int width, int height, uint32_t flags = 0);
+    void releaseSurface(Texture *surf);
+    void clearSurface(Texture *surf, const color_t &color) override;
+    void fillSurface(Texture *surf, const color_t &color, int tx, int ty, int w, int h);
+    void blitSurface(Texture *surf, float tx, float ty, Texture *src, int flags);
+    void blitSurface(Texture *surf, float tx, float ty,
+        Texture *src, float sx, float sy, float w, float h, int flags);
+    void blitSurface( Texture *surf, float tx, float ty, float tw, float th,
+        Texture *src, float sx, float sy, float sw, float sh, int flags);
 
 private:
     int width, height;
@@ -72,6 +79,8 @@ private:
     TextureManager *texmgr = nullptr;
 
     Scene *scene = nullptr;
+
+    GLuint vao = 0, vbo = 0;
 };
 
 extern Logger *glLogger;

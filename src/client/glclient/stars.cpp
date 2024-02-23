@@ -13,6 +13,23 @@
 #include "starcolors.h"
 #include "stars.h"
 
+static void buildGlareStar(uint8_t *pixels, uint32_t log2Size, float scale, float base)
+{
+    const uint32_t size = 1u << log2Size;
+
+    for (uint32_t i = 0; i < size; i++)
+    {
+        float y = (float)i - size / 2;
+        for (uint32_t j = 0; j < size; j++)
+        {
+            float x = (float)j - size / 2;
+            auto r = (float)sqrt(x*x + y*y);
+            auto f = (float)pow(base, r*scale);
+            pixels[i*size+j] = (uint8_t)(255.99f * std::min(f, 1.0f));
+        }
+    }
+}
+
 // ******** Star Vertex ********
 
 StarVertex::StarVertex(Scene &scene)

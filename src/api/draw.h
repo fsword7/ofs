@@ -87,6 +87,9 @@ public:
     virtual bool textu32(int x, int y, const char32_t *str, int len = 0) { return false; }
     virtual bool text(int x, int y, const std::string &str) { return false; }
 
+    virtual void setTextPos(int x, int y) { }
+    virtual int print(cstr_t &str) { return -1; }
+ 
     // draw function calls
     virtual void moveTo(int x, int y) { }
     virtual void drawLineTo(int x, int y) { }

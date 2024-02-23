@@ -461,11 +461,11 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         fs::path folder = fmt::format("data/systems/{}/{}/Orbiter", starName, bodyName);
 
         emgr = body->getElevationManager();
-        // emgr->setup(folder);
+        emgr->setup(folder);
 
         zTrees[0] = zTreeManager::create(folder, "surf");
-        zTrees[2] = zTreeManager::create(folder, "elev");
-        zTrees[3] = zTreeManager::create(folder, "elev_mod");
+        // zTrees[2] = zTreeManager::create(folder, "elev");
+        // zTrees[3] = zTreeManager::create(folder, "elev_mod");
 
         for (int idx = 0; idx < 2; idx++)
         {

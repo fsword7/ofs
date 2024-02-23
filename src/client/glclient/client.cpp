@@ -7,6 +7,7 @@
 #include "engine/player.h"
 #include "universe/universe.h"
 #include "client.h"
+#include "renderer.h"
 #include "texmgr.h"
 #include "skpad.h"
 #include "scene.h"
@@ -204,32 +205,6 @@ void glClient::loadTextureFont()
 
 }
 
-Texture *glClient::createSurface(int width, int height, uint32_t flags)
-{
-    TextureManager mgr;
-
-    return mgr.getTextureForRendering(width, height, flags);
-}
-
-void glClient::releaseSurface(Texture *surf)
-{
-    delete surf;
-}
-
-void glClient::clearSurface(Texture *surf, const color_t &color)
-{
-    // Make ensure that frame buffer is not binded
-    GLint fbo;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
-    assert(fbo == 0);
-
-    // Clear entire surface with specific color
-    glBindFramebuffer(GL_FRAMEBUFFER, surf->fbo);
-    glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-    glClear(GL_COLOR_BUFFER_BIT);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
 void glClient::cbRenderScene(Player *player)
 {
     if (scene != nullptr)
@@ -239,19 +214,19 @@ void glClient::cbRenderScene(Player *player)
     }
 }
 
-double glClient::getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod,
-    elevTileList_t *tiles, glm::dvec3 *normal, int *lod)
-{
-    vBody *vobj = dynamic_cast<vBody *>(cbody->getVisualObject());
-    assert(vobj != nullptr);
-    SurfaceManager *smgr = vobj->getSurfaceManager();
+// double glClient::getElevationData(CelestialBody *cbody, glm::dvec3 loc, int reqlod,
+//     elevTileList_t *tiles, glm::dvec3 *normal, int *lod)
+// {
+//     vBody *vobj = dynamic_cast<vBody *>(cbody->getVisualObject());
+//     assert(vobj != nullptr);
+//     SurfaceManager *smgr = vobj->getSurfaceManager();
 
-    return smgr->getElevationData(loc, reqlod, tiles, normal, lod);
-}
+//     return smgr->getElevationData(loc, reqlod, tiles, normal, lod);
+// }
 
-Font *glClient::createFont(int height, bool fixed, cchar_t *face, Font::Style style, int orientation, bool antialiased)
+Font *glClient::createFont(cchar_t *face, int height, bool fixed, Font::Style style, int orientation, bool antialiased)
 {
-    return new glFont(height, fixed, face, style, orientation, antialiased);
+    return new glFont(face, height, fixed, style, orientation, antialiased);
 }
 
 
@@ -278,4 +253,210 @@ void  glClient::releasePen(Pen *pen)
 void glClient::releaseBrush(Brush *brush)
 {
     delete (glBrush *)brush;
+}
+
+// ******** Surface ********
+
+void glClient::initSurface()
+{
+    assert(vao == 0);
+
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, 24, NULL, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(0);
+}
+
+Texture *glClient::createSurface(int width, int height, uint32_t flags)
+{
+    TextureManager mgr;
+
+    return mgr.getTextureForRendering(width, height, flags);
+}
+
+void glClient::releaseSurface(Texture *surf)
+{
+    delete surf;
+}
+
+void glClient::clearSurface(Texture *surf, const color_t &color)
+{
+    // Make ensure that frame buffer is not binded
+    GLint fbo;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
+    assert(fbo == 0);
+
+    // Clear entire surface with specific color
+    glBindFramebuffer(GL_FRAMEBUFFER, surf->fbo);
+    glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void glClient::fillSurface(Texture *surf, const color_t &color, int tx, int ty, int w, int h)
+{
+    // Make ensure that frame buffer is not binded
+    GLint fbo;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
+    assert(fbo == 0);
+
+    glm::mat4 proj(1.0);
+
+    const GLfloat vertices[] = {
+        0, 0, (float)tx+w, (float)ty+h,
+        0, 0, (float)tx,   (float)ty,
+        0, 0, (float)tx+w, (float)ty,
+
+        0, 0, (float)tx,   (float)ty+h,
+        0, 0, (float)tx,   (float)ty,
+        0, 0, (float)tx+w, (float)ty+h
+    };
+
+    if (surf != nullptr)
+    {
+        gl::pushRenderTarget(surf);
+        proj = glm::ortho(0.0f, (float)surf->txWidth, 0.0f, (float)surf->txHeight);
+    }
+
+    // Set up vertex buffer
+    glBindVertexArray(vao);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+
+    // Now filling surface
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    if (surf != nullptr)
+        gl::popRenderTarget();
+}
+
+void glClient::blitSurface(Texture *surf, float tx, float ty, Texture *src, int flags)
+{
+    gl::pushRenderTarget(surf);
+
+    float tw = surf->txWidth;
+    float th = surf->txHeight;
+    float sw = src->txWidth;
+    float sh = src->txHeight;
+
+    float s0 = 0, s1 = 1;
+    float t0 = 0, t1 = 1;
+
+    const GLfloat vertices[] = {
+        s1, t1, tx+sw, ty+sh,
+        s0, t0, tx,    ty,
+        s1, t0, tx+sw, ty,
+
+        s0, t1, tx,    ty+sh,
+        s0, t0, tx,    ty,
+        s1, t1, tx+sw, ty+sh
+    };
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindVertexArray(vao);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    gl::popRenderTarget();
+}
+
+void glClient::blitSurface(Texture *surf, float tx, float ty,
+                           Texture *src, float sx, float sy,
+                           float w, float h, int flags)
+{
+    gl::pushRenderTarget(surf);
+
+    float tw = surf->txWidth;
+    float th = surf->txHeight;
+    float sw = src->txWidth;
+    float sh = src->txHeight;
+
+    float s0 = sx / (float)src->txWidth;
+    float s1 = (sx + w) / (float)src->txWidth;
+    float t0 = sy / (float)src->txHeight;
+    float t1 = (sy + h) / (float)src->txHeight;
+
+    const GLfloat vertices[] = {
+        s1, t1, tx+sw, ty+sh,
+        s0, t0, tx,    ty,
+        s1, t0, tx+sw, ty,
+
+        s0, t1, tx,    ty+sh,
+        s0, t0, tx,    ty,
+        s1, t1, tx+sw, ty+sh
+    };
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindVertexArray(vao);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    gl::popRenderTarget();
+}
+
+void glClient::blitSurface( Texture *surf, float tx, float ty, float tw, float th,
+                            Texture *src, float sx, float sy, float sw, float sh, 
+                            int flags)
+{
+    gl::pushRenderTarget(surf);
+
+    float s0 = sx / (float)src->txWidth;
+    float s1 = (sx + sw) / (float)src->txWidth;
+    float t0 = sy / (float)src->txHeight;
+    float t1 = (sy + sh) / (float)src->txHeight;
+
+    const GLfloat vertices[] = {
+        s1, t1, tx+sw, ty+sh,
+        s0, t0, tx,    ty,
+        s1, t0, tx+sw, ty,
+
+        s0, t1, tx,    ty+sh,
+        s0, t0, tx,    ty,
+        s1, t1, tx+sw, ty+sh
+    };
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindVertexArray(vao);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    gl::popRenderTarget();
 }
