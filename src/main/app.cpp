@@ -669,22 +669,24 @@ void CoreApp::keyImmediateSystem()
 
             player->rotateView(dphi, dtheta);
 
-            double dx(0.0), dy(0.0), dh(0.0);
+            glm::dvec3 dm(0, 0, 0);
+            double dh(0.0);
 
             if (stateKey[ofs::keyCode::keyLeft])
-                dx += -dt * 0.01;
+                dm.z -= dt * 0.01;
             if (stateKey[ofs::keyCode::keyRight])
-                dx += dt * 0.01;
+                dm.z += dt * 0.01;
             if (stateKey[ofs::keyCode::keyUp])
-                dy += dt * 0.01;
+                dm.x += dt * 0.01;
             if (stateKey[ofs::keyCode::keyDown])
-                dy -= dt * 0.01;
+                dm.x -= dt * 0.01;
             if (ctrlStateKey[ofs::keyCode::keyUp])
                 dh += dt;
             if (ctrlStateKey[ofs::keyCode::keyDown])
                 dh -= dt;
 
-            player->shiftGroundObserver(dx, dy, dh);
+            if (glm::length(dm) != 0)
+                player->shiftGroundObserver(dm, dh);
 
             // glm::dvec3 av = player->getGroundAngularControl();
             // glm::dvec3 tv = player->getGroundTravelControl();

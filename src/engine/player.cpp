@@ -10,6 +10,7 @@
 #include "main/timedate.h"
 // #include "engine/frame.h"
 #include "universe/celbody.h"
+#include "universe/body.h"
 #include "engine/player.h"
 
 // ******** Camera ********
@@ -94,6 +95,16 @@ double Player::computeCoarseness(double maxCoarseness)
     if (altitude > 0 && altitude < radius)
         coarse *= std::max(0.01, altitude/radius);
     return coarse;
+}
+
+double Player::getElevation(CelestialPlanet *cbody, double lat, double lng, double alt)
+{
+    ElevationManager *emgr = cbody->getElevationManager();
+    if (emgr == nullptr)
+        return 0.0;
+
+    int lod = 19;
+    return emgr->getElevationData({lat, lng, alt}, lod, &elevTiles);
 }
 
 void Player::attach(Object *object, cameraMode mode)
@@ -367,6 +378,11 @@ void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
     // Set rotation matrix for local horizon frame
     // for right-handed rule (OpenGL). Points
     // to east as origin at (0, 0).
+    //
+    //     |  slat  clat   0  | |  clng   0   slng |
+    // R = | -clat  slat   0  | |   0     0    0   |
+    //     |   0     0     0  | | -slng   0   clng |
+    //
     double clat = cos(go.lat), slat = sin(go.lat);
     double clng = cos(go.lng), slng = sin(go.lng);
     go.R = { slat*clng,  clat*clng, slng,
@@ -383,13 +399,17 @@ void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
     // ofsLogger->debug("Q = {:f} {:f} {:f} {:f}\n", go.Q.w, go.Q.x, go.Q.y, go.Q.z);
 }
 
-void Player::shiftGroundObserver(double dx, double dy, double dh)
+void Player::shiftGroundObserver(glm::dvec3 dm, double dh)
 {
     if (modeExternal && modeCamera != camGroundObserver)
         return;
 
-    go.lng += dx;
-    go.lat += dy;
+    // Rotate movement at the direction of camera view.
+    dm = cam.rrot * dm;
+
+    // Updating ground observer
+    go.lat += dm.z;
+    go.lng += dm.x;
     go.alt += dh;
     go.alt0 += dh;
     

@@ -32,6 +32,10 @@ void Object::endUpdate()
 {
     s0 = s1; // Move all to S0
     s1 = {}; // Clear all for next update
+
+    // Set identity for R and Q rotations
+    s1.R = glm::dmat3(1.0);
+    s1.Q = glm::dquat();
 }
 
 glm::dvec3 Object::getuPosition(double tjd) const

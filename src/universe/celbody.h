@@ -158,6 +158,20 @@ public:
         return (s0.R * lpos) + s0.pos;
     }
 
+    inline void convertLocalToEquatorial(const glm::dvec3 &lpos, double &lat, double &lng, double &rad)
+    {
+        glm::dvec3 w = glm::normalize(lpos);
+
+        rad = glm::length(lpos);
+        lat = asin(w.y);
+        lng = atan2(-w.z, w.x);
+    }
+
+    inline void convertGlobalToEquatorial(const glm::dvec3 &gpos, double &lat, double &lng, double &rad)
+    {
+         return convertLocalToEquatorial(convertGlobalToLocal(gpos), lat, lng, rad);
+    }
+
     inline glm::dvec3 convertEquatorialToLocal(double lat, double lng, double rad)
     {
         double slat = sin(lat), clat = cos(lat);

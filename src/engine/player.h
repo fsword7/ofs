@@ -7,6 +7,8 @@
 
 class Object;
 class CelestialBody;
+class CelestialPlanet;
+class ElevationTile;
 class Player;
 
 enum cameraMode {
@@ -123,6 +125,8 @@ public:
 
     void attach(Object *object, cameraMode mode = camGlobalFrame);
 
+    double getElevation(CelestialPlanet *cbody, double lat, double lng, double alt);
+
     // void updateProjMatrix();
     // void updateViewMatrix();
     void updateCamera();
@@ -144,7 +148,7 @@ public:
 
     // void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
     void setGroundObserver(Object *object, glm::dvec3 loc, double heading);
-    void shiftGroundObserver(double dx, double dy, double dh);
+    void shiftGroundObserver(glm::dvec3 dm, double dh);
     void rotateGroundObserver(double dtheta, double dphi);
 
 private:
@@ -182,6 +186,8 @@ private:
     // Projection/view matrix
     glm::dmat4 proj;
     glm::dmat4 view;
+
+    std::vector<ElevationTile *> elevTiles;
 };
 
 // class Camera
