@@ -40,14 +40,6 @@ public:
     inline Player    *getPlayer() { return player; }
     inline Universe  *getUniverse() { return universe; }
     
-    void initEngine();
-
-    View *pickView(float x, float y);
-
-    void start();
-    void update();
-    void render();
-
     void openSession();
     void closeSession();
     void updateWorld();
