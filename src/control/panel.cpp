@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 // #include "engine/player.h"
+#include "control/taskbar.h"
 #include "control/panel.h"
 #include "api/graphics.h"
 
@@ -12,12 +13,17 @@ Panel::Panel(GraphicsClient *gclient, int w, int h, int d)
 : gc(gclient), width(w), height(h), depth(d)
 {
 
+    if (gc != nullptr)
+        bar = new TaskBar(this);
+
     initResources();
 }
 
 Panel::~Panel()
 {
     cleanResources();
+    if (bar != nullptr)
+        delete bar;
 }
 
 void Panel::initResources()

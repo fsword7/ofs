@@ -10,8 +10,12 @@
 class Camera;
 class GraphicsClient;
 
+class TaskBar;
+
 class Panel
 {
+    friend class TaskBar;
+
 public:
     Panel(GraphicsClient *gclient, int w, int h, int d);
     ~Panel();
@@ -38,6 +42,8 @@ private:
     // Camera *camera = nullptr;
     HUDPanel *hud = nullptr;
     int hudMode = HUD_NONE;
+
+    TaskBar *bar = nullptr;
 
     Font *titleFont = nullptr;
     Font *textFont = nullptr;
