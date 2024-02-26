@@ -6,7 +6,7 @@
 #include "main/core.h"
 #include "api/graphics.h"
 #include "api/draw.h"
-#include "control/panel.h"
+#include "control/taskbar.h"
 #include "engine/player.h"
 
 // void Engine::renderOverlay()
@@ -23,7 +23,7 @@
 
 // }
 
-void Panel::displayPlanetocentric(double lat, double lng, double alt)
+void TaskBar::displayPlanetocentric(double lat, double lng, double alt)
 {
     // char latHemi, lngHemi;
 
@@ -38,7 +38,7 @@ void Panel::displayPlanetocentric(double lat, double lng, double alt)
     // overlay->print(locObject);
 }
 
-void Panel::displayPlanetInfo(const Player &player)
+void TaskBar::displayPlanetInfo(const Player &player)
 {
     Sketchpad *pad = gc->getSketchpad();
 

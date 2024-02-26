@@ -31,9 +31,6 @@ public:
     void setHUDMode(int mode);
     void drawHUD();
 
-    void displayPlanetocentric(double lat, double lng, double alt);
-    void displayPlanetInfo(const Player &player);
-
 private:
     int width, height;  // screen size
     int depth;          // color depth
@@ -44,7 +41,4 @@ private:
     int hudMode = HUD_NONE;
 
     TaskBar *bar = nullptr;
-
-    Font *titleFont = nullptr;
-    Font *textFont = nullptr;
 };

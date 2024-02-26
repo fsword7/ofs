@@ -29,20 +29,11 @@ Panel::~Panel()
 void Panel::initResources()
 {
 
-    // set fonts for planet information
-    titleFont = gc->createFont("Arial", 20, false, Font::Bold);
-    textFont = gc->createFont("Arial", 12, false, Font::Normal);
-
-
-
 }
 
 void Panel::cleanResources()
 {
-    if (titleFont != nullptr)
-        delete titleFont;
-    if (textFont != nullptr)
-        delete textFont;
+
 }
 
 void Panel::resize(int w, int h)

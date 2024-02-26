@@ -22,6 +22,8 @@ glFont::glFont(cchar_t *face, int height, bool fixed, Style style, float orienta
 {
     if (fixed == true)
         faceName = "Monospace";
+    faceName += std::to_string(-height);
+
     if (style & Bold)
         faceName += ":bold";
     if (style & Italic)
@@ -31,7 +33,9 @@ glFont::glFont(cchar_t *face, int height, bool fixed, Style style, float orienta
 
     // check font cache first
     std::string fname = faceName;
-    fname += height;
+ 
+    glLogger->debug("Font {}: Fontcache: {}\n", face, fname);
+
     if (auto fc = fontCache.find(fname); fc != fontCache.end())
     {
         fontFile = fc->second;
@@ -54,6 +58,7 @@ glFont::glFont(cchar_t *face, int height, bool fixed, Style style, float orienta
         {
             fontFile = (char *)file;
             fontCache[faceName] = fontFile;
+            glLogger->debug("Found: {}\n", (char *)file);
         }
     }
 

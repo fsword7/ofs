@@ -7,6 +7,8 @@
 
 class Panel;
 class GraphicsClient;
+class Player;
+class Font;
 
 class TaskBar
 {
@@ -16,7 +18,13 @@ public:
 
     void update();
 
+    void displayPlanetocentric(double lat, double lng, double alt);
+    void displayPlanetInfo(const Player &player);
+
 private:
     const Panel *panel = nullptr;
     GraphicsClient *gc = nullptr;
+
+    Font *titleFont = nullptr;
+    Font *textFont = nullptr;
 };
