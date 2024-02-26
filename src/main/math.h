@@ -14,7 +14,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-constexpr static const double pi = 3.14159265358979323846;
+// constexpr static const double pi   = 3.14159265358979323846;
+constexpr static const double pi   = std::numbers::pi_v<double>;
+constexpr static const double pi2  = (pi * 2.0);
+constexpr static const double pi05 = (pi / 2.0);
 
 template <typename T> inline constexpr T square(T x) { return x * x; }
 template <typename T> inline constexpr T cube(T x)   { return x * x * x; }
