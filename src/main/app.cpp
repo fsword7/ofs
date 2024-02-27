@@ -524,13 +524,13 @@ void CoreApp::keyImmediateSystem()
             double dh(0.0);
 
             if (stateKey[ofs::keyCode::keyLeft])
-                dm.z -= dt * 0.01;
+                dm.z -= dt * panSpeed;
             if (stateKey[ofs::keyCode::keyRight])
-                dm.z += dt * 0.01;
+                dm.z += dt * panSpeed;
             if (stateKey[ofs::keyCode::keyUp])
-                dm.x += dt * 0.01;
+                dm.x += dt * panSpeed;
             if (stateKey[ofs::keyCode::keyDown])
-                dm.x -= dt * 0.01;
+                dm.x -= dt * panSpeed;
             if (ctrlStateKey[ofs::keyCode::keyUp])
                 dh += dt;
             if (ctrlStateKey[ofs::keyCode::keyDown])

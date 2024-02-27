@@ -79,6 +79,9 @@ Player::Player(TimeDate *td)
 : cam(SCR_WIDTH, SCR_HEIGHT), td(td)
 {
     updateCamera();
+
+    // Allocating two elevation tiles
+    elevTiles.resize(2);
 }
 
 Player::~Player()
@@ -103,8 +106,12 @@ double Player::getElevation(CelestialPlanet *cbody, double lat, double lng, doub
     if (emgr == nullptr)
         return 0.0;
 
-    int lod = 19;
-    return emgr->getElevationData({lat, lng, alt}, lod, &elevTiles);
+    int lod = 15;
+    // int ilat, ilng;
+    // emgr->getTileIndex(lat, lng, lod, ilat, ilng);
+    // return 0.0;
+
+    return emgr->getElevationData({lat, lng, alt}, lod, &elevTiles);   
 }
 
 void Player::attach(Object *object, cameraMode mode)
@@ -153,7 +160,8 @@ void Player::updateCamera()
 void Player::update(const TimeDate &td)
 {
 
-    CelestialBody *cbody = nullptr;
+    CelestialPlanet *cbody = nullptr;
+    double elev = 0.0;
 
     if (modeExternal)
     {
@@ -207,10 +215,16 @@ void Player::update(const TimeDate &td)
 
             break;
 
+        // case camSolarSyncRelative:
+
         case camGroundObserver:
             {
-                cbody = dynamic_cast<CelestialBody *>(tgtObject);
+                cbody = dynamic_cast<CelestialPlanet *>(tgtObject);
                 assert(cbody != nullptr);
+
+                elev = getElevation(cbody, go.lat, go.lng, go.alt);
+                // ofsLogger->debug("Location: {:f}, {:f} -> {:f} feet\n",
+                //     glm::degrees(go.lat), glm::degrees(go.lng), elev);
 
                 // Calkculating planetocentric coordinates
                 double rad = cbody->getRadius() + go.alt;
@@ -242,19 +256,6 @@ void Player::update(const TimeDate &td)
                 // ofsLogger->debug("GO Global Position:   ({:f}, {:f}, {:f})\n", gpos.x, gpos.y, gpos.z);
                 // ofsLogger->debug("GO Location:          {:f} {:f}\n", glm::degrees(go.lat), glm::degrees(go.lng));
                 // ofsLogger->debug("GO Altitude:          {:f}\n", rad);
-
-                // gdir = glm::normalize(tgtObject->getoPosition()-gpos);
-                // glm::dvec3 hdir = tmul(go.R, tmul(tgtObject->getuOrientation(0), gdir));
-                // if (fabs(hdir.y) < 0.999999)
-                // {
-                //     go.theta = asin(hdir.y);
-                //     go.phi = atan2(-hdir.x, hdir.z);
-                // }
-                // else
-                // {
-                //     go.theta = (hdir.y > 0) ? pi/2.0 : -pi/2.0;
-                //     go.phi = 0.0;
-                // }
             }
             break;
         };
@@ -380,8 +381,8 @@ void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
     // to east as origin at (0, 0).
     //
     //     |  slat  clat   0  | |  clng   0   slng |
-    // R = | -clat  slat   0  | |   0     0    0   |
-    //     |   0     0     0  | | -slng   0   clng |
+    // R = | -clat  slat   0  | |   0     1    0   |
+    //     |   0     0     1  | | -slng   0   clng |
     //
     double clat = cos(go.lat), slat = sin(go.lat);
     double clng = cos(go.lng), slng = sin(go.lng);

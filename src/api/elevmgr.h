@@ -53,4 +53,4 @@ struct ElevationTile
     double lastAccess;
 };
 
-using elevTileList_t = std::vector<ElevationTile *>;
+using elevTileList_t = std::vector<ElevationTile>;

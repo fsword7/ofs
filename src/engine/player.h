@@ -14,6 +14,7 @@ class Player;
 enum cameraMode {
     camGlobalFrame,
     camTargetRelative,
+    camSolarSyncRelative,
     camGroundObserver
 };
 
@@ -187,7 +188,7 @@ private:
     glm::dmat4 proj;
     glm::dmat4 view;
 
-    std::vector<ElevationTile *> elevTiles;
+    std::vector<ElevationTile> elevTiles;
 };
 
 // class Camera

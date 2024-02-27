@@ -57,15 +57,15 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
 
     if (zTrees[0] != nullptr)
     {
-        szData = zTrees[0]->read(lod+4, ilat, ilng, &elevData);
-        // logger->info("Read {} bytes from elevation database\n", szData);
+        szData = zTrees[0]->read(lod, ilat, ilng, &elevData);
+        ofsLogger->info("Read {} bytes from elevation database\n", szData);
         if (szData > 0 && elevData != nullptr)
         {
             hdr = (elevHeader *)elevData;
 
             if (hdr->code != FOURCC('E', 'L', 'E', 1))
             {
-                // logger->info("*** Invalid elevation header - aborted.\n");
+                ofsLogger->info("*** Invalid elevation header - aborted.\n");
                 delete [] elevData;
                 return nullptr;
             }
@@ -130,8 +130,11 @@ bool ElevationManager::getTileIndex(double lat, double lng, int lod, int &ilat, 
     int nlat = 1 << lod;
     int nlng = 2 << lod;
 
-    ilat = (int)(((pi/2.0) - lat) / (pi * nlat));
-    ilng = (int)((lng + pi) / ((pi*2.0) * nlng));
+    ilat = (int)((pi05 - lat) / pi * nlat);
+    ilng = (int)((lng + pi) / pi2 * nlng);
+
+    // ofsLogger->debug("Location: {:f}, {:f}\n", glm::degrees(lat), glm::degrees(lng));
+    // ofsLogger->debug("Tile Index: {}/{}, {}/{} LOD: {}\n", ilat, nlat, ilng, nlng, lod);
 
     return true;
 }
@@ -141,6 +144,9 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
 {
     double e = 0.0;
 
+    if (zTrees[0] == nullptr)
+        return 0.0;
+
     if (elevMode > 0)
     {
         elevTileList_t &tiles = (elevTiles != nullptr) ? *elevTiles : localTiles;
@@ -149,11 +155,11 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
 
         for (auto tile : tiles)
         {
-            if (tile->data != nullptr && reqlod == tile->tgtlod &&
-                loc.x >= tile->latmin && loc.x <= tile->latmax &&
-                loc.y >= tile->lngmin && loc.y <= tile->lngmax)
+            if (tile.data != nullptr && reqlod == tile.tgtlod &&
+                loc.x >= tile.latmin && loc.x <= tile.latmax &&
+                loc.y >= tile.lngmin && loc.y <= tile.lngmax)
             {
-                t = tile;
+                t = &tile;
                 break;
             }
         }
@@ -161,10 +167,10 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
         if (t == nullptr)
         {
             // Find oldest elevation tile
-            t = tiles[0];
+            t = &tiles[0];
             for (int idx = 1; idx < elevTiles->size(); idx++)
-                if (tiles[idx]->lastAccess < t->lastAccess)
-                    t = tiles[idx];
+                if (tiles[idx].lastAccess < t->lastAccess)
+                    t = &tiles[idx];
 
             // Release old elevation data
             if (t->data != nullptr)
@@ -187,8 +193,14 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
                     t->tgtlod = reqlod;
                     t->latmin = (0.5 - (double(ilat+1)/double(nlat)))*pi;
                     t->latmax = (0.5 - (double(ilat)/double(nlat)))*pi;
-                    t->lngmin = double(ilng)/double(nlng)*(pi*2.0) - pi;
-                    t->lngmax = double(ilng+1)/double(nlng)*(pi*2.0) - pi;
+                    t->lngmin = double(ilng)/double(nlng)*pi2 - pi;
+                    t->lngmax = double(ilng+1)/double(nlng)*pi2 - pi;
+
+                    // ofsLogger->debug("LOD Level:    {}\n", lod);
+                    // ofsLogger->debug("Index:        {}/{}, {}/{}\n", ilat, nlat, ilng, nlng);
+                    // ofsLogger->debug("Lat  Min/Max: {:f} - {:f}\n", glm::degrees(t->latmin), glm::degrees(t->latmax));
+                    // ofsLogger->debug("Long Min/Max: {:f} - {:f}\n", glm::degrees(t->lngmin), glm::degrees(t->lngmax));
+                    // ofsLogger->debug("Location:     {:f}, {:f}\n", glm::degrees(loc.x), glm::degrees(loc.y));
 
                     break;
                 }
@@ -200,10 +212,12 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
         if (t->data != nullptr)
         {
             int16_t *elevBase = t->data + ELEV_STRIDE + 1;
-            double latidx = (loc.x - t->latmin) * elevGrids / (t->latmax - t->latmin);
-            double lngidx = (loc.y - t->lngmin) * elevGrids / (t->lngmax - t->lngmin);
+            double latidx = (loc.x - t->latmin) * elevGrid / (t->latmax - t->latmin);
+            double lngidx = (loc.y - t->lngmin) * elevGrid / (t->lngmax - t->lngmin);
             int lat0 = (int)latidx;
             int lng0 = (int)lngidx;
+
+            // ofsLogger->debug("Tile Index: {}, {}\n", lat0, lng0);
 
             int16_t *eptr = elevBase + lat0 * ELEV_STRIDE + lng0;
             if (elevMode == 1)

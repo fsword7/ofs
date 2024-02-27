@@ -39,7 +39,7 @@ private:
 
     mutable elevTileList_t localTiles;
 
-    zTreeManager *zTrees[2];
+    zTreeManager *zTrees[2] = { nullptr, nullptr};
 
     // bool own = false;
     // int16_t *elev = nullptr;

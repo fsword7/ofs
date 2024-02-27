@@ -130,6 +130,8 @@ protected:
     double keyMovementControl = 25.0;     
     double keyMovementBrake = 10.0;
 
+    double panSpeed = 0.05;
+
     // Mouse controls
     float xLast, yLast;
 

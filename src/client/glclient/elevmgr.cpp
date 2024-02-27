@@ -197,7 +197,7 @@ bool SurfaceTile::loadElevationData()
 
     elevOwn = false;
     // elev = readElevationFile(lod, ilat, ilng, mgr.elevScale);
-    elev = mgr.emgr->readElevationFile(lod, ilat, ilng, mgr.elevScale);
+    elev = mgr.emgr->readElevationFile(lod+4, ilat, ilng, mgr.elevScale);
     if (elev != nullptr)
     {
         // logger->info("Loaded succesfully\n", lod);
