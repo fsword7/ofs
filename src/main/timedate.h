@@ -25,6 +25,7 @@ public:
     inline double getJD1() const            { return jd1; }
 
     inline double getFPS() const            { return fps; }
+    inline double getTimeWarp() const       { return timeWarp; }
 
     void reset(double mjd = 0.0);
 
