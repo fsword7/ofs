@@ -149,11 +149,17 @@ void Universe::start(const TimeDate &td)
     // player->look(earth);
 
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
-    // player->setGroundObserver(earth, { 28.632307, -80.705774, .002}, 150);
+    player->setGroundObserver(earth, { 28.632307, -80.705774, 1}, 150);
 
     // Observe Rocky Mountains in Denver metro area
-    player->setGroundObserver(earth, { 39.7309918,-104.7046216, 5}, 270);
-    
+    // player->setGroundObserver(earth, { 39.7309918, -104.7046216, 5}, 270);
+
+    // Observe Grand Canyon in Arizona
+    // player->setGroundObserver(earth, { 36.018679, -112.121223, 5}, 0);
+
+    // Observe Hawaiian islands
+    // player->setGroundObserver(earth, { 21.059613, -157.957629, 3}, 0);
+
     // player->setGroundObserver(earth, { 40, 0, .100}, 0);
 
     player->update(td);

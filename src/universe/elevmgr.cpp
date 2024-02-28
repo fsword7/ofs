@@ -44,7 +44,7 @@ void ElevationManager::setup(const fs::path &folder)
 //     return elev;
 // }
 
-int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double scale) const
+int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double elevScale) const
 {
     elevHeader *hdr = nullptr;
     const int nelev = ELEV_LENGTH;
@@ -82,7 +82,7 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
 
             case 8: // unsigned byte (8-bit)
                 for (int idx = 0; idx < nelev; idx++)
-                    elev[idx] = *ptr++;
+                    elev[idx] = (int16_t)(*ptr++);
                 break;
 
             case -16: // signed short (16-bit)
@@ -91,6 +91,9 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
                     elev[idx] = *ptr16++;
                 break;
             }
+
+            // All done, release elevation data from file
+            delete [] elevData;
         }
     }
 
@@ -98,9 +101,9 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
     if (elev != nullptr)
     {
         // Elevation scale
-        if (hdr->scale != 0)
+        if (hdr->scale != elevScale)
         {
-            double scale = hdr->scale / scale;
+            double scale = hdr->scale / elevScale;
             for (int idx = 0; idx < nelev; idx++)
                 elev[idx] = int16_t(elev[idx] * scale);
         }
@@ -108,15 +111,12 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
         // Elevation offset
         if (hdr->offset != 0)
         {
-            int16_t ofs = int16_t(hdr->offset / scale);
+            int16_t ofs = int16_t(hdr->offset / elevScale);
             for (int idx = 0; idx < nelev; idx++)
                 elev[idx] += ofs;
         }
     }
 
-    // All done, release elevation data from file
-    if (elevData != nullptr)
-        delete [] elevData;
     return elev;
 }
 
