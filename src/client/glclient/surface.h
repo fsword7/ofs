@@ -138,7 +138,7 @@ private:
     bool     elevOwn = false;
     int16_t *elev = nullptr;
     int16_t *ggelev = nullptr;  // Great-grandfather elevation data
-    double   elevMean;
+    double   elevMean = 0.0;
 };
 
 class SurfaceHandler
@@ -180,6 +180,7 @@ public:
 
     inline int getElevGrid() const { return elevGrids; }
     inline int getElevScale() const { return elevScale; }
+    inline int getElevMode() const { return elevMode; }
 
     SurfaceTile *findTile(int lod, int lat, int lng);
 

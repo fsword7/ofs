@@ -27,6 +27,8 @@ public:
         glm::dvec3 *normal = nullptr, int *lod = 0) const;
     // int16_t *getElevationData();
 
+    inline int getMode() const      { return elevMode; }
+
 private:
     CelestialPlanet *object = nullptr;
     int elevMode = 1;

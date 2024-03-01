@@ -144,48 +144,61 @@ void SurfaceTile::interpolateElevationGrid(int ilat, int ilng, int lod,
 {
     double lat, lng, e;
 
+    // Current tile parameters
     int nlat = 1 << lod;
     int nlng = 2 << lod;
-    double minlat = (pi/2) * (double)(nlat-2*ilat-2)/(double)nlat;
-    double maxlat = (pi/2) * (double)(nlat-2*ilat)/(double)nlat;
+    double minlat = pi05 * (double)(nlat-2*ilat-2)/(double)nlat;
+    double maxlat = pi05 * (double)(nlat-2*ilat)/(double)nlat;
     double minlng = pi * (double)(2*ilng-nlng)/(double)nlng;
     double maxlng = pi * (double)(2*ilng-nlng+2)/(double)nlng;
 
+    // Parent tile parameters
     int pnlat = 1 << plod;
     int pnlng = 2 << plod;
-    double pminlat = (pi/2) * (double)(pnlat-2*pilat-2)/(double)pnlat;
-    double pmaxlat = (pi/2) * (double)(pnlat-2*pilat)/(double)pnlat;
+    double pminlat = pi05 * (double)(pnlat-2*pilat-2)/(double)pnlat;
+    double pmaxlat = pi05 * (double)(pnlat-2*pilat)/(double)pnlat;
     double pminlng = pi * (double)(2*pilng-pnlng)/(double)pnlng;
     double pmaxlng = pi * (double)(2*pilng-pnlng+2)/(double)pnlng;
 
-    // double dlat = (maxlat-minlat)/elevGrid;
-    // double dlng = (maxlng-minlng)/elevGrid;
+    int grids = mgr.getElevGrid();
+    double dlat = (maxlat-minlat)/grids;
+    double dlng = (maxlng-minlng)/grids;
 
     int16_t *elevBase = elev + ELEV_STRIDE+1;
     int16_t *pelevBase = pelev + ELEV_STRIDE+1;
 
-    // for (int yidx = -1; yidx <= elevGrid+1; yidx++)
-    // {
-    //     lat = minlat + yidx*dlat;
-    //     double idxlat = (lat - pminlat) * elevGrid/(pmaxlat-pminlat);
-    //     int lat0 = (int)floor(idxlat);
-    //     for (int xidx = -1; xidx <= elevGrid+1, xidx++)
-    //     {
-    //         lng = minlng + xidx*dlng;
-    //         double idxlng = (lng - pminlng) * elevGrid / (pmaxlng-pminlng);
-    //         int lng0 = (int)floor(idxlng);
+    for (int yidx = -1; yidx <= grids+1; yidx++)
+    {
+        lat = minlat + yidx*dlat;
+        double idxlat = (lat - pminlat) * grids/(pmaxlat-pminlat);
+        int lat0 = (int)floor(idxlat);
 
-    //         int16_t *eptr = pelevBase + lat0*elevStribe + lng0;
+        for (int xidx = -1; xidx <= grids+1; xidx++)
+        {
+            lng = minlng + xidx*dlng;
+            double idxlng = (lng - pminlng) * grids/(pmaxlng-pminlng);
+            int lng0 = (int)floor(idxlng);
 
-    //         double wlat = idxlat-lat0;
-    //         double wlng = idxlng-lng0;
-    //         e = (1.0 - wlat) * (eptr[0]*(1.0-wlng) + eptr[1]*wlng + wlat*(eptr[elevStride)*(1.0-wlng) + eptr[elevStride+1]*wlng);
+            int16_t *eptr = pelevBase + lat0*ELEV_STRIDE+lng0;
 
+            if (mgr.getElevMode() == 1)
+            {
+                // Linear interpolation
+                double wlat = idxlat - lat0;
+                double wlng = idxlng - lng0;
 
-    //         elevBase[xidx*elevStride+yidx] = (int16_t)e;
+                e = (1.0-wlat)*(eptr[0]*(1.0-wlng) + eptr[1]*wlng) +
+                    wlat*(eptr[ELEV_STRIDE]*(1.0-wlng) + eptr[ELEV_STRIDE+1]*wlng);
+            }
+            else
+            {
+                // Cubic spline interpolation
+                // TODO: Implement that later.
+            }
 
-    //     }
-    // }
+            elevBase[yidx*ELEV_STRIDE+xidx] = (int16_t)e;
+        }
+    }
 }
 
 bool SurfaceTile::loadElevationData()
@@ -269,8 +282,7 @@ int16_t *SurfaceTile::getElevationData()
     }
     else
     {
-        // Globe tiles
-        // Do that later
+        // TODO: Implement globe tiles
     }
 
     if (ggelev != nullptr)
