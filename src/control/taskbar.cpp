@@ -12,14 +12,20 @@
 TaskBar::TaskBar(const Panel *panel)
 : panel(panel), gc(panel->gc)
 {
+    initPlanetInfo();
 }
 
 TaskBar::~TaskBar()
 {
-
+    cleanPlanetInfo();
 }
 
-void TaskBar::update()
+void TaskBar::update(const Player &player, double simt)
+{
+}
+
+void TaskBar::render(const Player &player)
 {
 
+    // displayPlanetInfo(player);
 }

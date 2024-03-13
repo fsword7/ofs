@@ -23,6 +23,21 @@
 
 // }
 
+void TaskBar::initPlanetInfo()
+{
+    titleFont = gc->createFont("Arial", 20, false, Font::Bold);
+    textFont = gc->createFont("Arial", 12, false);
+    // ipad = gc->createSketchpad(nullptr);
+}
+
+void TaskBar::cleanPlanetInfo()
+{
+    if (titleFont != nullptr)
+        delete titleFont;
+    if (textFont != nullptr)
+        delete textFont;
+}
+
 void TaskBar::displayPlanetocentric(double lat, double lng, double alt)
 {
     // char latHemi, lngHemi;
@@ -41,9 +56,14 @@ void TaskBar::displayPlanetocentric(double lat, double lng, double alt)
 void TaskBar::displayPlanetInfo(const Player &player)
 {
     Sketchpad *pad = gc->getSketchpad();
+    if (pad == nullptr)
+        return;
+
+    color_t col = color_t(0.40, 0.60, 1.0, 1.0);
 
     pad->beginDraw();
     pad->setFont(titleFont);
+    pad->setTextColor(col);
     pad->setTextPos(3, 3);
     
     // const Object *focus = player.getReferenceObject();

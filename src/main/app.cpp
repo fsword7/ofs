@@ -154,7 +154,16 @@ void CoreApp::renderScene()
 {
     if (gclient != nullptr)
         gclient->cbRenderScene(player);
+    // Rendering 2D overlay panel
+    if (panel != nullptr)
+        panel->render(*player);
 }
+
+// void CoreApp::render2D()
+// {
+//     if (panel != nullptr)
+//         panel->render(player);
+// }
 
 void CoreApp::drawHUD()
 {
@@ -232,6 +241,9 @@ void CoreApp::endTimeStep(bool running)
         universe->finalizeUpdate();
 
     td.endStep(running);
+
+    if (panel != nullptr)
+        panel->update(*player, td.getSimTime1(), td.getSysTime1());
 }
 
 void CoreApp::pause(bool bPause)

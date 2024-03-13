@@ -16,8 +16,8 @@ HUDPanel::HUDPanel(const Panel *panel)
 
     gc = ofsAppCore->getClient();
 
-    titleFont = gc->createFont("Arial", 20, false, Font::Bold);
-    textFont = gc->createFont("Arial", 12, false);
+    // titleFont = gc->createFont("Arial", 20, false, Font::Bold);
+    // textFont = gc->createFont("Arial", 12, false);
 }
 
 void HUDPanel::draw(Sketchpad *pad)

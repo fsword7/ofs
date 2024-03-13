@@ -7,8 +7,8 @@
 
 #include "control/hudpanel.h"
 
-class Camera;
 class GraphicsClient;
+class Player;
 
 class TaskBar;
 
@@ -27,6 +27,8 @@ public:
     inline int getHUDMode() const   { return (hud != nullptr) ? hud->getMode() : HUD_NONE; }
 
     void resize(int w, int h);
+    void update(const Player &player, double simt, double syst);
+    void render(const Player &player);
 
     void setHUDMode(int mode);
     void drawHUD();

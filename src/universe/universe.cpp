@@ -130,10 +130,6 @@ void Universe::start(const TimeDate &td)
     // player->attach(mercury, camTargetRelative);
     // player->look(mercury);
 
-    // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0 });
-    // player->attach(lunar, camTargetRelative);
-    // player->look(lunar);
-
     // cam->setPosition({ 0, 0, mars->getRadius() * 4.0 });
     // player->attach(mars, camTargetRelative);
     // player->look(mars);
@@ -160,7 +156,12 @@ void Universe::start(const TimeDate &td)
     // Observe Hawaiian islands
     // player->setGroundObserver(earth, { 21.059613, -157.957629, 3}, 0);
 
-    // player->setGroundObserver(earth, { 40, 0, .100}, 0);
+    // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
+    // player->attach(lunar, camTargetRelative);
+    // player->look(lunar);
+
+    // Ground observer on Lunar
+    // player->setGroundObserver(lunar, { 0, 0, 3 }, 0);
 
     player->update(td);
 }

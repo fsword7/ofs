@@ -4,10 +4,10 @@
 // Date:    Nov 11, 2023
 
 #include "main/core.h"
-// #include "engine/player.h"
+#include "api/graphics.h"
+#include "engine/player.h"
 #include "control/taskbar.h"
 #include "control/panel.h"
-#include "api/graphics.h"
 
 Panel::Panel(GraphicsClient *gclient, int w, int h, int d)
 : gc(gclient), width(w), height(h), depth(d)
@@ -59,6 +59,18 @@ void Panel::setHUDMode(int mode)
     default:
         hud = nullptr;
     }
+}
+
+void Panel::update(const Player &player, double simt, double syst)
+{
+    if (bar != nullptr)
+        bar->update(player, simt);
+}
+
+void Panel::render(const Player &player)
+{
+    if (bar != nullptr)
+        bar->render(player);
 }
 
 void Panel::drawHUD()

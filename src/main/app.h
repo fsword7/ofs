@@ -44,6 +44,7 @@ public:
     void closeSession();
     void updateWorld();
     void renderScene();
+    // void render2D();
     void drawHUD();
 
     // Module function calls
