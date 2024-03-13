@@ -1,35 +1,35 @@
-// vvessel.cpp - Visual Vessel package
+// vvehicle.cpp - Visual Vehicle package
 //
 // Author:  Tim Stark
 // Date:    Sep 13, 2022
 
 #include "main/core.h"
 #include "engine/object.h"
-#include "engine/vessel.h"
+#include "engine/vehicle.h"
 
 #include "client.h"
 #include "scene.h"
 #include "vmesh.h"
 #include "vobject.h"
-#include "vvessel.h"
+#include "vVehicle.h"
 
-vVessel::vVessel(const Object *object, Scene &scene)
+vVehicle::vVehicle(const Object *object, Scene &scene)
 : vObject(object, scene)
 {
-    vessel = dynamic_cast<const Vessel *>(object);
+    vehicle = dynamic_cast<const Vehicle *>(object);
 }
 
-vVessel::~vVessel()
+vVehicle::~vVehicle()
 {
     
 }
 
-void vVessel::loadMeshes()
+void vVehicle::loadMeshes()
 {
 
 }
 
-void vVessel::render(const ObjectListEntry &ole)
+void vVehicle::render(const ObjectListEntry &ole)
 {
     for (auto mesh : meshList)
     {

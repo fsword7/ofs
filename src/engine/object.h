@@ -26,15 +26,6 @@ public:
 class OFSAPI Object
 {
 public:
-    // enum oldObjectType
-    // {
-    //     objUnknown = 0,
-    //     objPlayer,
-    //     objVessel,
-    //     objCelestialStar,
-    //     objCelestialBody,
-    // };
-
     Object(const cstr_t &name, ObjectType type)
     : objType(type)
     {

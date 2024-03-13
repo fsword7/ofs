@@ -9,14 +9,14 @@
 #include "api/draw.h"
 #include "ephem/elements.h"
 #include "engine/object.h"
-#include "engine/vessel.h"
+#include "engine/vehicle.h"
 #include "universe/celbody.h"
 #include "control/panel.h"
 #include "control/mfd/panel.h"
 #include "control/mfd/surface.h"
 
-MFDSurface::MFDSurface(Panel *panel, const MFDSpec &spec, Vessel *vessel)
-: MFDInstrument(panel, spec, vessel)
+MFDSurface::MFDSurface(Panel *panel, const MFDSpec &spec, Vehicle *vehicle)
+: MFDInstrument(panel, spec, vehicle)
 {
 
 }

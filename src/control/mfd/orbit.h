@@ -10,7 +10,7 @@ class Vessel;
 class MFDOrbit : public MFDInstrument
 {
 public:
-    MFDOrbit(Panel *panel, const MFDSpec &spec, Vessel *vessel);
+    MFDOrbit(Panel *panel, const MFDSpec &spec, Vehicle *vehicle);
     virtual ~MFDOrbit();
 
     void init(const MFDSpec &spec);

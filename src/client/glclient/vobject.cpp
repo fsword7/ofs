@@ -12,7 +12,7 @@
 #include "vobject.h"
 #include "vbody.h"
 #include "vstar.h"
-#include "vvessel.h"
+#include "vvehicle.h"
 
 vObject::vObject(const Object *obj, Scene &scene)
 : object(obj), scene(scene)
@@ -141,8 +141,8 @@ vObject *vObject::create(const Object *object, Scene &scene)
         return new vStar(object, scene);
     case ObjectType::objCelestialBody:
         return new vBody(object, scene);
-    case ObjectType::objVessel:
-        return new vVessel(object, scene);
+    case ObjectType::objVehicle:
+        return new vVehicle(object, scene);
     }
 
     return nullptr;

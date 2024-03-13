@@ -5,7 +5,7 @@
 
 #pragma once
 
-class Vessel;
+class Vehicle;
 class Panel;
 class Pen;
 
@@ -33,7 +33,7 @@ class MFDInstrument
 {
 public:
 
-    MFDInstrument(Panel *panel, const MFDSpec &spec, Vessel *vessel);
+    MFDInstrument(Panel *panel, const MFDSpec &spec, Vehicle *vehicle);
     virtual ~MFDInstrument() = default;
 
     static MFDInstrument *create(Panel *panel, const MFDSpec &spec);
@@ -64,7 +64,7 @@ protected:
 
 protected:
     Panel *panel = nullptr;
-    Vessel *vessel = nullptr;
+    Vehicle *vehicle = nullptr;
     GraphicsClient *gc = nullptr;
     Sketchpad *skpad = nullptr;
 

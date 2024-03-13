@@ -1,4 +1,4 @@
-// supervessel.cpp - super vessel package
+// supervehicle.cpp - Super Vehicle package
 //
 // Author:  Tim Stark
 // Date:    Apr 25, 2022
@@ -6,34 +6,34 @@
 #include "main/core.h"
 #include "ephem/elements.h"
 #include "engine/rigidbody.h"
-#include "engine/vessel.h"
-#include "engine/supervessel.h"
+#include "engine/vehicle.h"
+#include "engine/supervehicle.h"
 
-SuperVessel::SuperVessel()
-: RigidBody("", objVessel)
+SuperVehicle::SuperVehicle()
+: RigidBody("", objVehicle)
 {
     
 }
 
-bool SuperVessel::addVessel(Vessel *vessel1, int port1, Vessel *vessel2, int port2)
+bool SuperVehicle::addVehicle(Vehicle *vehicle1, int port1, Vehicle *vehicle2, int port2)
 {
     int vidx;
-    for (vidx = 0; vidx < vessels.size(); vidx++)
-        if (vessels[vidx] == vessel1)
+    for (vidx = 0; vidx < vehicles.size(); vidx++)
+        if (vehicles[vidx] == vehicle1)
             break;
-    if (vidx == vessels.size())
+    if (vidx == vehicles.size())
         return false;
 
-    VesselList entry;
+    VehicleList entry;
     
-    entry.vessel = vessel2;
+    entry.vehicle = vehicle2;
 
-    glm::dvec3 as = vessel2->ports[port2]->dir;
-    glm::dvec3 bs = vessel2->ports[port2]->rot;
+    glm::dvec3 as = vehicle2->ports[port2]->dir;
+    glm::dvec3 bs = vehicle2->ports[port2]->rot;
     glm::dvec3 cs = glm::cross(as, bs);
 
-    glm::dvec3 at = vessel1->ports[port1]->dir;
-    glm::dvec3 bt = vessel1->ports[port1]->rot;
+    glm::dvec3 at = vehicle1->ports[port1]->dir;
+    glm::dvec3 bt = vehicle1->ports[port1]->rot;
     glm::dvec3 ct = glm::cross(at, bt);
 
     glm::dmat3 R;
@@ -74,47 +74,47 @@ bool SuperVessel::addVessel(Vessel *vessel1, int port1, Vessel *vessel2, int por
 
     entry.rrot = R * vlist[vidx].rrot;
     entry.rq = entry.rrot;
-    entry.rpos = vlist[vidx].rpos + (vlist[vidx].rrot * vessel1->ports[port1]->port) -
-        (entry.rrot * vessel2->ports[port2]->port);
+    entry.rpos = vlist[vidx].rpos + (vlist[vidx].rrot * vehicle1->ports[port1]->port) -
+        (entry.rrot * vehicle2->ports[port2]->port);
 
-    // vessel2->setSupervessel(this);
+    // Vehicle2->setSuperVehicle(this);
 
     return true;
 }
 
-void SuperVessel::attach(Vessel *vessel)
+void SuperVehicle::attach(Vehicle *vehicle)
 {
-    // if (vessel->superVessel == nullptr)
-    //     addVessel(vessel);
+    // if (Vehicle->superVehicle == nullptr)
+    //     addVehicle(Vehicle);
 }
 
-void SuperVessel::detach(Vessel *vessel)
+void SuperVehicle::detach(Vehicle *vehicle)
 {
-    for (std::vector<Vessel *>::iterator p = vessels.begin(); p != vessels.end(); ++p)
-        if (*p == vessel) {
-            vessels.erase(p);
+    for (std::vector<Vehicle *>::iterator p = vehicles.begin(); p != vehicles.end(); ++p)
+        if (*p == vehicle) {
+            vehicles.erase(p);
             break;
         }
 }
 
-void SuperVessel::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double dt)
+void SuperVehicle::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double dt)
 {
 
 }
 
-void SuperVessel::updateMassCG()
+void SuperVehicle::updateMassCG()
 {
     mass = 0.0;
     glm::dvec3 ncg = { 0, 0, 0};
     for(auto vdata : vlist)
     {
-        double vmass = vdata.vessel->getMass();
+        double vmass = vdata.vehicle->getMass();
         mass += vmass;
         ncg  += vdata.rpos * vmass;
     }
     ncg /= mass;
 
-    // Shift center gravity for supervessel position
+    // Shift center gravity for superVehicle position
     // glm::dvec3 dp = s0->R * (cg - ncg);
     // s0->pos += dp;
     // rposAdd += dp;
@@ -124,7 +124,7 @@ void SuperVessel::updateMassCG()
     cg = ncg;
 }
 
-void SuperVessel::update(bool force)
+void SuperVehicle::update(bool force)
 {
 
     updateMassCG();

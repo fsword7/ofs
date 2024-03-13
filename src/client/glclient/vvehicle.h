@@ -1,4 +1,4 @@
-// vvessel.h - Visual Vessel package
+// vvehicle.h - Visual Vehicle package
 //
 // Author:  Tim Stark
 // Date:    Sep 13, 2022
@@ -6,7 +6,7 @@
 #pragma once
 
 class vMesh;
-class Vessel;
+class Vehicle;
 
 struct vMeshEntry
 {
@@ -14,18 +14,18 @@ struct vMeshEntry
     glm::mat4 trans;
     bool isVisible;
 };
-class vVessel : public vObject
+class vVehicle : public vObject
 {
 public:
-    vVessel(const Object *object, Scene &scene);
-    ~vVessel();
+    vVehicle(const Object *object, Scene &scene);
+    ~vVehicle();
 
     void loadMeshes();
 
     void render(const ObjectListEntry &ole) override;
 
 private:
-    const Vessel *vessel = nullptr;
+    const Vehicle *vehicle = nullptr;
     std::vector<vMeshEntry> meshList;
 
 };

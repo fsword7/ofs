@@ -10,7 +10,7 @@ class Vessel;
 class MFDSurface : public MFDInstrument
 {
 public:
-    MFDSurface(Panel *panel, const MFDSpec &spec, Vessel *vessel);
+    MFDSurface(Panel *panel, const MFDSpec &spec, Vehicle *vehicle);
     virtual ~MFDSurface();
 
     void init(const MFDSpec &spec);

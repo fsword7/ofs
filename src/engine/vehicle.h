@@ -1,4 +1,4 @@
-// vessel.h - Vessel (spacecraft) package
+// vehicle.h - Vehicle package
 //
 // Author:  Tim Stark
 // Date:    Apr 24, 2022
@@ -25,7 +25,7 @@
 
 // };
 
-class SuperVessel;
+class SuperVehicle;
 class Mesh;
 
 // planetary surface parameters for flight simulation (air flight)
@@ -132,7 +132,7 @@ struct MeshEntry
     bool isVisible;
     Mesh *mesh;
 };
-class VesselBase : public RigidBody
+class VehicleBase : public RigidBody
 {
 public:
     enum FlightStatus
@@ -143,8 +143,8 @@ public:
         fsCrashed   // Crashed
     };
 
-    VesselBase();
-    virtual ~VesselBase() = default;
+    VehicleBase();
+    virtual ~VehicleBase() = default;
 
     virtual void getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt);
     virtual bool addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am, double dt);
@@ -162,13 +162,17 @@ protected:
 
 };
 
-class Vessel : public VesselBase
+class Vehicle : public VehicleBase
 {
-    friend class SuperVessel;
+    friend class SuperVehicle;
 
 public:
-    Vessel();
-    virtual ~Vessel() = default;
+    Vehicle();
+    virtual ~Vehicle() = default;
+
+    void clearModule();
+    bool registerModule(cstr_t &name);
+    bool loadModule(cstr_t &name);
 
     inline void clearTouchdownPoints()          { tpVertices.clear(); }
 
@@ -186,7 +190,9 @@ public:
     virtual void update(bool force);
 
 private:
-    SuperVessel *superVessel = nullptr;
+    SuperVehicle *superVehicle = nullptr;
+
+    ModuleHandle handle = nullptr;
 
     double  lift;   // Lift force from wings
     double  drag;   // drag from atomspheric forces

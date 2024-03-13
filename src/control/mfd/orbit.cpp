@@ -9,14 +9,14 @@
 #include "api/draw.h"
 #include "ephem/elements.h"
 #include "engine/object.h"
-#include "engine/vessel.h"
+#include "engine/vehicle.h"
 #include "universe/celbody.h"
 #include "control/panel.h"
 #include "control/mfd/panel.h"
 #include "control/mfd/orbit.h"
 
-MFDOrbit::MFDOrbit(Panel *panel, const MFDSpec &spec, Vessel *vessel)
-: MFDInstrument(panel, spec, vessel)
+MFDOrbit::MFDOrbit(Panel *panel, const MFDSpec &spec, Vehicle *vehicle)
+: MFDInstrument(panel, spec, vehicle)
 {
     // refOrbit = vessel->getOrbitReference();
     shpOrbit = new OrbitalElements();
@@ -96,8 +96,8 @@ void MFDOrbit::draw(Sketchpad *skpad)
 
     if (bValidShip)
     {
-        glm::dvec3 pos = vessel->getoPosition() - refOrbit->getoPosition();
-        glm::dvec3 vel = vessel->getoVelocity() - refOrbit->getoVelocity();
+        glm::dvec3 pos = vehicle->getoPosition() - refOrbit->getoPosition();
+        glm::dvec3 vel = vehicle->getoVelocity() - refOrbit->getoVelocity();
         shpOrbit->calculate(pos, vel, 0);
         scale = pixRadius / (shpOrbit->e < 1.0) ? shpOrbit->getApoapsis() :
             std::max(2.0 * shpOrbit->getPeriapsis(), shpOrbit->getRadius());

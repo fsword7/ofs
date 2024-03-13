@@ -7,14 +7,14 @@
 #include "main/app.h"
 #include "api/graphics.h"
 #include "api/draw.h"
-#include "engine/vessel.h"
+#include "engine/vehicle.h"
 #include "control/panel.h"
 #include "control/mfd/panel.h"
 
 DrawColor MFDInstrument::drawColors[3][2];
 
-MFDInstrument::MFDInstrument(Panel *panel, const MFDSpec &spec, Vessel *vessel)
-: panel(panel), flags(spec.flags), vessel(vessel)
+MFDInstrument::MFDInstrument(Panel *panel, const MFDSpec &spec, Vehicle *vehicle)
+: panel(panel), flags(spec.flags), vehicle(vehicle)
 {
     init(spec);
 }

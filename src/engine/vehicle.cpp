@@ -1,4 +1,4 @@
-// vessel.cpp - Vessel (spacecraft) package
+// vehicle.cpp - Vehicle package
 //
 // Author:  Tim Stark
 // Date:    Apr 24, 2022
@@ -6,7 +6,7 @@
 #include "main/core.h"
 #include "ephem/elements.h"
 #include "engine/rigidbody.h"
-#include "engine/vessel.h"
+#include "engine/vehicle.h"
 #include "universe/astro.h"
 
 void surface_t::setLanded(double _lng, double _lat, double alt, double dir,
@@ -35,31 +35,93 @@ void surface_t::setLanded(double _lng, double _lat, double alt, double dir,
 
 }
 
-// ******** VesselBase ********
+// ******** VehicleBase ********
 
-VesselBase::VesselBase()
-: RigidBody("", objVessel)
+VehicleBase::VehicleBase()
+: RigidBody("", objVehicle)
 {
     
 }
 
-void VesselBase::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
+void VehicleBase::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
 {
 }
 
-bool VesselBase::addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
+bool VehicleBase::addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
 {
     return false;
 }
 
-// ******** Vessel ********
+// ******** Vehicle ********
 
-Vessel::Vessel()
+Vehicle::Vehicle()
 {
 
 }
 
-void Vessel::setGenericDefaults()
+void Vehicle::clearModule()
+{
+    if (handle != nullptr)
+        ofsUnloadModule(handle);
+    handle = nullptr;
+}
+
+bool Vehicle::registerModule(cstr_t &name)
+{
+    assert(handle == nullptr);
+    cstr_t path = "modules/Vehicles/";
+
+#ifdef __WIN32__
+    std::string fname = fmt::format("{}/lib{}.dll", path, name);
+#else /* __WIN32__ */
+    std::string fname = fmt::format("{}/lib{}.so", path, name);
+#endif /* __WIN32__ */
+    handle = ofsLoadModule(fname.c_str());
+    if (handle == nullptr)
+    {
+        printf("Failed loading module %s: %s\n",
+            name.c_str(), ofsGetModuleError());      
+        return false;
+    }
+
+    int (*fncVersion)() = (int(*)())ofsGetProcAddress(handle, "getModuleVersion");
+    int version = (fncVersion ? fncVersion() : 0);
+
+    ofsGetProcAddress(handle, "ovcInit");
+    ofsGetProcAddress(handle, "ovcExit");
+
+    return true;
+}
+
+bool Vehicle::loadModule(cstr_t &name)
+{
+//     cstr_t path = "modules/Vehicles/";
+
+// #ifdef __WIN32__
+//     std::string fname = fmt::format("{}/lib{}.dll", path, name);
+// #else /* __WIN32__ */
+//     std::string fname = fmt::format("{}/lib{}.so", path, name);
+// #endif /* __WIN32__ */
+//     ModuleHandle handle = ofsLoadModule(fname.c_str());
+
+//     if (handle == nullptr)
+//     {
+//         printf("Failed loading module %s: %s\n",
+//             name.c_str(), ofsGetModuleError());
+//         return nullptr;
+//     }
+
+//     // Start initialization routine in module.
+//     // void (*initModule)(ModuleHandle) =
+//     //     (void(*)(ModuleHandle))ofsGetProcAddress(handle, "initModule");
+//     // printf("initModule - %p (%p)\n", initModule, handle);
+//     // if (initModule != nullptr)
+//     //     initModule(handle);
+
+    return false;
+}
+
+void Vehicle::setGenericDefaults()
 {
     // Object stands above 2 meters with 3 legs
     tdVertex_t tdvtx[3];
@@ -76,7 +138,7 @@ void Vessel::setGenericDefaults()
 
 }
 
-void Vessel::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
+void Vehicle::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
 {
     // Number of touchdown points must be least 3 points
     assert(ntd >= 3);
@@ -109,7 +171,7 @@ void Vessel::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
 
 }
 
-void Vessel::initLanded(Object *object, double lat, double lng, double dir)
+void Vehicle::initLanded(Object *object, double lat, double lng, double dir)
 {
 
     // double slng = sin(lng), clng = cos(lng);
@@ -132,17 +194,17 @@ void Vessel::initLanded(Object *object, double lat, double lng, double dir)
     fsType = fsLanded;
 }
 
-void Vessel::initDocked()
+void Vehicle::initDocked()
 {
     
 }
 
-void Vessel::initOrbiting()
+void Vehicle::initOrbiting()
 {
 
 }
 
-void Vessel::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
+void Vehicle::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
 {
     glm::dvec3 F = Fadd;
     glm::dvec3 M = Ladd;
@@ -155,12 +217,12 @@ void Vessel::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, 
     am  += M/mass;
 }
 
-bool Vessel::addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
+bool Vehicle::addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
 {
     return false;
 }
 
-void Vessel::updateMass()
+void Vehicle::updateMass()
 {
     pfmass = fmass;
     fmass = 0.0;
@@ -169,7 +231,7 @@ void Vessel::updateMass()
     mass = emass + fmass;
 }
 
-void Vessel::update(bool force)
+void Vehicle::update(bool force)
 {
 
     if (fsType == fsFlight)

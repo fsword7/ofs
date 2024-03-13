@@ -30,7 +30,7 @@ set(OGL_CPP_SRCS
     vmesh.cpp
     vobject.cpp
     vstar.cpp
-    vvessel.cpp
+    vvehicle.cpp
     ztreemgr.cpp
     ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_glfw.cpp
     ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_opengl3.cpp
@@ -56,7 +56,7 @@ set(OGL_H_SRCS
     vmesh.h
     vobject.h
     vstar.h
-    vvessel.h
+    vvehicle.h
     ztreemgr.h
 )
 

@@ -14,8 +14,8 @@ set(OFS_CPP_SRCS
     # engine/observer.cpp
     engine/player.cpp
     engine/rigidbody.cpp
-    engine/supervessel.cpp
-    engine/vessel.cpp
+    engine/supervehicle.cpp
+    engine/vehicle.cpp
     engine/view.cpp
     ephem/earth/atmo.cpp
     ephem/earth/nrlmsise00_data.cpp
@@ -92,6 +92,7 @@ set(OFS_H_SRCS
     api/graphics.h
     api/module.h
     api/ofsapi.h
+    api/vehicle.h
     control/mfd/orbit.h
     control/mfd/panel.h
     control/mfd/surface.h
@@ -105,8 +106,8 @@ set(OFS_H_SRCS
     # engine/observer.h
     engine/player.h
     engine/rigidbody.h
-    engine/supervessel.h
-    engine/vessel.h
+    engine/supervehicle.h
+    engine/vehicle.h
     engine/view.h
     ephem/earth/atmo.h
     ephem/earth/nrlmsise00_math.hpp
