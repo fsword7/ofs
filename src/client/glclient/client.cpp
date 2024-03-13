@@ -20,6 +20,7 @@
 glClient *gclient = nullptr;
 ModuleHandle myHandle = nullptr;
 Logger *glLogger = nullptr;
+Scene *glScene = nullptr;
 
 LIBCALL void initModule(ModuleHandle handle)
 {
@@ -133,7 +134,7 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
         GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     // Initialize scene package
-    scene = new Scene(width, height);
+    glScene = new Scene(width, height);
     // scene->init();
 
     ofsInitGLFW(window);
@@ -187,16 +188,16 @@ void glClient::setViewportSize(int w, int h)
     width = w;
     height = h;
 
-    if (scene != nullptr)
-        scene->resize(width, height);
+    if (glScene != nullptr)
+        glScene->resize(width, height);
 }
 
 void glClient::cbStart(Universe *universe)
 {
-    if (scene != nullptr)
+    if (glScene != nullptr)
     {
-        scene->init(universe);
-        scene->start();
+        glScene->init(universe);
+        glScene->start();
     }
 }
 
@@ -207,10 +208,10 @@ void glClient::loadTextureFont()
 
 void glClient::cbRenderScene(Player *player)
 {
-    if (scene != nullptr)
+    if (glScene != nullptr)
     {
-        scene->update(player);
-        scene->render(player);
+        glScene->update(player);
+        glScene->render(player);
     }
 }
 
@@ -224,11 +225,15 @@ void glClient::cbRenderScene(Player *player)
 //     return smgr->getElevationData(loc, reqlod, tiles, normal, lod);
 // }
 
+Sketchpad *glClient::createSketchpad(Texture *surf, bool antialiased) 
+{
+    return new glPad(surf, antialiased);
+}
+
 Font *glClient::createFont(cchar_t *face, int height, bool fixed, Font::Style style, int orientation, bool antialiased)
 {
     return new glFont(face, height, fixed, style, orientation, antialiased);
 }
-
 
 Pen *glClient::createPen(color_t color, int width, int style)
 {

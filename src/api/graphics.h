@@ -34,6 +34,7 @@ public:
     virtual void cbStart(Universe *universe) = 0;
     virtual void cbRenderScene(Player *player) = 0;
 
+    virtual Sketchpad *createSketchpad(Texture *tex, bool antialiased) { return nullptr; }
     virtual Sketchpad *getSketchpad() const = 0;
     virtual Texture *createSurface(int width, int height, uint32_t flags = 0) = 0;
     virtual void releaseSurface(Texture *surf) = 0;

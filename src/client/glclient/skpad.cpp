@@ -7,6 +7,8 @@
 
 #include "main/core.h"
 #include "client.h"
+#include "scene.h"
+#include "renderer.h"
 #include "texmgr.h"
 #include "skpad.h"
 
@@ -98,11 +100,14 @@ void glPad::begin()
 {   
     if (txPad != nullptr)
     {
+        gl::pushRenderTarget(txPad);
         width = txPad->txWidth;
         height = txPad->txHeight;
     }
     else
     {
+        width = glScene->getWidth();
+        height = glScene->getHeight();
         glDisable(GL_CULL_FACE);
     }
 
@@ -115,6 +120,7 @@ void glPad::end()
     nvgEndFrame(ctx);
     if (txPad != nullptr)
     {
+        gl::popRenderTarget();
         txPad->bind();
         glGenerateMipmap(GL_TEXTURE_2D);
     }

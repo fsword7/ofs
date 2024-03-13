@@ -37,6 +37,7 @@ public:
     bool cbDisplayFrame() override;
     void cbSetWindowTitle(cstr_t &title) override;
 
+    Sketchpad *createSketchpad(Texture *tex, bool antialiased) override;
     void loadTextureFont();
  
     void cbStart(Universe *universe) override;
@@ -78,12 +79,13 @@ private:
     Sketchpad *skpad = nullptr;
     TextureManager *texmgr = nullptr;
 
-    Scene *scene = nullptr;
+    // Scene *scene = nullptr;
 
     GLuint vao = 0, vbo = 0;
 };
 
 extern Logger *glLogger;
+extern Scene *glScene;
 
 inline void checkErrors()
 {
