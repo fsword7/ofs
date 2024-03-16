@@ -8,17 +8,17 @@
 #include "main/core.h"
 #include "engine/object.h"
 
-Object::Object(json &cfg, ObjectType type)
-: objType(type)
-{
-    std::string name = "(Unknown)";
+// Object::Object(json &cfg, ObjectType type)
+// : objType(type)
+// {
+//     std::string name = "(Unknown)";
 
-    // getValueString(cfg, "Name", str);
-    setsName(name);
+//     // getValueString(cfg, "Name", str);
+//     setsName(name);
 
-    // getValueReal(cfg, "Mass", mass);
-    // getValueReal(cfg, "Radius", radius);
-}
+//     // getValueReal(cfg, "Mass", mass);
+//     // getValueReal(cfg, "Radius", radius);
+// }
 
 void Object::update(bool force)
 {
@@ -74,12 +74,12 @@ void Object::updateCullingRadius()
     cullingRadius = getBoundingRadius();
 }
 
-void Object::getValueReal(json &data, cstr_t &name, double &value)
-{
-    value = data[name].get<double>();
-}
+// void Object::getValueReal(json &data, cstr_t &name, double &value)
+// {
+//     value = data[name].get<double>();
+// }
 
-void Object::getValueString(json &data, cstr_t &name, str_t &value)
-{
-    value = data[name].get<std::string>();
-}
+// void Object::getValueString(json &data, cstr_t &name, str_t &value)
+// {
+//     value = data[name].get<std::string>();
+// }

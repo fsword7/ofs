@@ -21,8 +21,11 @@ public:
     void addPlanet(CelestialBody *planet, CelestialBody *cbody);
     void addGravity(CelestialBody *grav);
 
-    static bool loadSystems(Universe *universe, const cstr_t &sysName);
-    static bool loadPlanet(const cstr_t &cbName, pSystem *psys, fs::path cbFolder);
+    // static bool loadSystems(Universe *universe, cstr_t &sysName);
+    // static bool loadPlanet(const cstr_t &cbName, pSystem *psys, fs::path cbFolder);
+
+    static bool loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbFolder);
+    static bool loadSystems(Universe *universe, cstr_t &sysName);
 
     void update(const TimeDate &td);
     void finalizeUpdate();

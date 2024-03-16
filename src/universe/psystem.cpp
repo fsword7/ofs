@@ -10,6 +10,8 @@
 #include "universe/star.h"
 #include "universe/psystem.h"
 
+#include "yaml-cpp/yaml.h"
+
 pSystem::pSystem(CelestialStar *star)
 : primaryStar(star)
 {
@@ -60,19 +62,89 @@ void pSystem::finalizeUpdate()
         body->endUpdate();
 }
 
-bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, fs::path cbFolder)
+// bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, fs::path cbFolder)
+// {
+//     ofsLogger->info("Loading planet {}...\n", cbName);
+//     str_t fileName = cbName + ".json";
+
+//     std::ifstream jFile(cbFolder / fileName);
+//     if (!jFile.is_open())
+//     {
+//         ofsLogger->info("Can't open {} json file: {}\n", cbName, strerror(errno));
+//         return false;
+//     }
+//     json data = json::parse(jFile, nullptr, true, true);
+//     jFile.close();
+
+//     // for (auto item : data.items())
+//     // {
+//     //     ofsLogger->info("Item {}: \n", item.key());
+//     //     // if (!item.key().find("Planet"))
+//     //     // {
+//     //     //     if (!item.value().is_string())
+//     //     //         continue;
+//     //     //     auto cbName = item.value().get<std::string>();
+//     //     //     fs::path cbFolder = sysFolder / cbName;
+//     //     //     loadPlanet(cbName, psys, cbFolder);
+//     //     // }
+//     // }
+
+//     return false;
+// }
+
+// bool pSystem::loadSystems(Universe *universe, cstr_t &sysName)
+// {
+//     ofsLogger->info("Loading {} system...\n", sysName);
+
+//     fs::path sysFolder = "data/systems/" + sysName;
+//     str_t fileName = sysName + ".json";
+
+//     std::ifstream jFile(sysFolder / fileName);
+//     if (!jFile.is_open())
+//     {
+//         ofsLogger->info("Can't open {} json file: {}\n", sysName, strerror(errno));
+//         return false;
+//     }
+//     json data = json::parse(jFile, nullptr, true, true);
+//     // std::cout << std::setw(4) << data << "\n\n";
+//     jFile.close();
+
+//     auto sys = data["System"];
+//     std::string name;
+//     if (sys.is_string())
+//         name = sys.get<std::string>();
+
+//     StarDatabase &stardb = universe->getStarDatabase();
+//     CelestialStar *sun = stardb.find(name);
+//     if (sun == nullptr)
+//     {
+//         ofsLogger->info("System: {}: star not found\n", name);
+//         return false;
+//     }
+//     pSystem *psys = new pSystem(sun);
+
+//     for (auto item : data.items())
+//     {
+//         // ofsLogger->info("Item {}: \n", item.key());
+//         if (!item.key().find("Planet"))
+//         {
+//             if (!item.value().is_string())
+//                 continue;
+//             auto cbName = item.value().get<std::string>();
+//             fs::path cbFolder = sysFolder / cbName;
+//             loadPlanet(cbName, psys, cbFolder);
+//         }
+//     }
+//     return true;
+// }
+
+bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbFolder)
 {
     ofsLogger->info("Loading planet {}...\n", cbName);
-    str_t fileName = cbName + ".json";
+    str_t fileName = cbName + ".yaml";
 
-    std::ifstream jFile(cbFolder / fileName);
-    if (!jFile.is_open())
-    {
-        ofsLogger->info("Can't open {} json file: {}\n", cbName, strerror(errno));
-        return false;
-    }
-    json data = json::parse(jFile);
-    jFile.close();
+    YAML::Node config;
+    config = YAML::LoadFile(cbFolder + fileName);
 
     // for (auto item : data.items())
     // {
@@ -90,27 +162,53 @@ bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, fs::path cbFolder)
     return false;
 }
 
-bool pSystem::loadSystems(Universe *universe, const cstr_t &sysName)
+bool pSystem::loadSystems(Universe *universe, cstr_t &sysName)
 {
     ofsLogger->info("Loading {} system...\n", sysName);
 
-    fs::path sysFolder = "data/systems/" + sysName;
-    str_t fileName = sysName + ".json";
+    str_t sysFolder = "data/systems/" + sysName + "/";
+    str_t fileName = sysName + ".yaml";
 
-    std::ifstream jFile(sysFolder / fileName);
-    if (!jFile.is_open())
-    {
-        ofsLogger->info("Can't open {} json file: {}\n", sysName, strerror(errno));
-        return false;
+    YAML::Node config;
+
+    try {
+        config = YAML::LoadFile(sysFolder + fileName);
     }
-    json data = json::parse(jFile);
-    // std::cout << std::setw(4) << data << "\n\n";
-    jFile.close();
+    catch (YAML::Exception &e)
+    {
+        ofsLogger->info("Error: {}\n", e.what());
+    }
 
-    auto sys = data["System"];
+    // for (auto it = config.begin(); it != config.end(); ++it)
+    // {
+    //     std::string key = it->first.as<std::string>();
+    //     YAML::Node value = it->second;
+    //     ofsLogger->info("Key: {}:", key);
+    //     switch (value.Type())
+    //     {
+    //     case YAML::NodeType::Null:
+    //         ofsLogger->info(" (Null)\n");
+    //         break;
+    //     case YAML::NodeType::Scalar:
+    //         ofsLogger->info(" (Scalar) {}\n",
+    //             value.as<std::string>());
+    //         break;
+    //     case YAML::NodeType::Sequence:
+    //         ofsLogger->info(" (Sequence)\n");
+    //         break;
+    //     case YAML::NodeType::Map:
+    //         ofsLogger->info(" (Map)\n");
+    //         break;
+    //     case YAML::NodeType::Undefined:
+    //         ofsLogger->info(" (Undefined)\n");
+    //         break;
+    //     }
+    // }
+
+    YAML::Node sys = config["system"];
     std::string name;
-    if (sys.is_string())
-        name = sys.get<std::string>();
+    if (sys.IsScalar())
+        name = sys.as<std::string>();
 
     StarDatabase &stardb = universe->getStarDatabase();
     CelestialStar *sun = stardb.find(name);
@@ -120,18 +218,15 @@ bool pSystem::loadSystems(Universe *universe, const cstr_t &sysName)
         return false;
     }
     pSystem *psys = new pSystem(sun);
+    ofsLogger->info("Creating {} planetary system...\n", name);
 
-    for (auto item : data.items())
+    for (auto planet : config["planets"])
     {
-        // ofsLogger->info("Item {}: \n", item.key());
-        if (!item.key().find("Planet"))
-        {
-            if (!item.value().is_string())
-                continue;
-            auto cbName = item.value().get<std::string>();
-            fs::path cbFolder = sysFolder / cbName;
-            loadPlanet(cbName, psys, cbFolder);
-        }
+        // ofsLogger->info("Planet: {}\n", planet.as<std::string>());
+        str_t cbName = planet.as<std::string>();
+        str_t cbFolder = sysFolder + cbName + "/";
+        loadPlanet(cbName, psys, cbFolder);
     }
+
     return true;
 }

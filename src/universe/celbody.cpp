@@ -61,22 +61,22 @@
 //     return ownSystem;
 // }
 
-CelestialBody::CelestialBody(json &cfg, celType type)
-: RigidBody(cfg, (type == cbStar) ? objCelestialStar : objCelestialBody),
-  cbType(type)
-{
+// CelestialBody::CelestialBody(json &cfg, celType type)
+// : RigidBody(cfg, (type == cbStar) ? objCelestialStar : objCelestialBody),
+//   cbType(type)
+// {
 
-    // getValueReal(cfg, "LAN", Lrel0);
-    // getValueReal(cfg, "LAN_MJD", mjd_rel);
-    // getValueReal(cfg, "SidRotPeriod", rotT);
-    // getValueReal(cfg, "SidRotOffset", Dphi);
-    // getValueReal(cfg, "Obliquity", eps_rel);
+//     // getValueReal(cfg, "LAN", Lrel0);
+//     // getValueReal(cfg, "LAN_MJD", mjd_rel);
+//     // getValueReal(cfg, "SidRotPeriod", rotT);
+//     // getValueReal(cfg, "SidRotOffset", Dphi);
+//     // getValueReal(cfg, "Obliquity", eps_rel);
 
-    // getValueReal(cfg, "PrecessionPeriod", precT);
-    // getValueReal(cfg, "PrecessionObliquity", eps_ref);
-    // getValueReal(cfg, "PreccesionLAN", lan_ref);
+//     // getValueReal(cfg, "PrecessionPeriod", precT);
+//     // getValueReal(cfg, "PrecessionObliquity", eps_ref);
+//     // getValueReal(cfg, "PreccesionLAN", lan_ref);
 
-}
+// }
 
 void CelestialBody::attach(CelestialBody *parent, frameType type)
 {
@@ -425,21 +425,21 @@ glm::dvec3 CelestialBody::getHeliocentric(double tjd) const
     return glm::dvec3( lng, lat, glm::length(opos));
 }
 
-bool CelestialBody::load(json &cfg)
-{
+// bool CelestialBody::load(json &cfg)
+// {
 
-    // getValueReal(cfg, "Mass", mass);
-    // getValueReal(cfg, "Radius", radius);
+//     // getValueReal(cfg, "Mass", mass);
+//     // getValueReal(cfg, "Radius", radius);
 
-    // getValueReal(cfg, "LAN", Lrel0);
-    // getValueReal(cfg, "LAN_MJD", mjd_rel);
-    // getValueReal(cfg, "SidRotPeriod", rotT);
-    // getValueReal(cfg, "SidRotOffset", Dphi);
-    // getValueReal(cfg, "Obliquity", eps_rel);
+//     // getValueReal(cfg, "LAN", Lrel0);
+//     // getValueReal(cfg, "LAN_MJD", mjd_rel);
+//     // getValueReal(cfg, "SidRotPeriod", rotT);
+//     // getValueReal(cfg, "SidRotOffset", Dphi);
+//     // getValueReal(cfg, "Obliquity", eps_rel);
 
-    // getValueReal(cfg, "PrecessionPeriod", precT);
-    // getValueReal(cfg, "PrecessionObliquity", eps_ref);
-    // getValueReal(cfg, "PreccesionLAN", lan_ref);
+//     // getValueReal(cfg, "PrecessionPeriod", precT);
+//     // getValueReal(cfg, "PrecessionObliquity", eps_ref);
+//     // getValueReal(cfg, "PreccesionLAN", lan_ref);
     
-    return true;
-}
+//     return true;
+// }

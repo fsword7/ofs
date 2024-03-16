@@ -17,7 +17,6 @@
 // #include "universe/system.h"
 #include "universe/psystem.h"
 #include "universe/astro.h"
-#include "scripts/parser.h"
 
 #include "main/app.h"
 #include "engine/player.h"

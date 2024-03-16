@@ -32,7 +32,7 @@ public:
         objNames[0] = name;
     }
 
-    Object(json &cfg, ObjectType type);
+    // Object(json &cfg, ObjectType type);
     
     virtual ~Object() = default;
 
@@ -88,8 +88,8 @@ public:
     virtual double getLuminosity(double lum, double dist) const { return 0; }
     virtual double getApparentMagnitude(glm::dvec3 sun, double irradiance, glm::dvec3 view) const { return 0; }
 
-    void getValueReal(json &data, cstr_t &name, double &value);
-    void getValueString(json &data, cstr_t &name, str_t &value);
+    // void getValueReal(json &data, cstr_t &name, double &value);
+    // void getValueString(json &data, cstr_t &name, str_t &value);
 
 private:
     ObjectType objType = objUnknown;

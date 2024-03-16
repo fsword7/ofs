@@ -66,7 +66,6 @@ set(OFS_CPP_SRCS
     # render/vstar.cpp
     # render/vvessel.cpp
     # render/ztreemgr.cpp
-    scripts/parser.cpp
     universe/astro.cpp
     universe/atmo.cpp
     universe/body.cpp
@@ -149,7 +148,6 @@ set(OFS_H_SRCS
     # render/vstar.h
     # render/vvessel.h
     # render/ztreemgr.h
-    scripts/parser.h
     universe/astro.h
     universe/atmo.h
     universe/body.h
@@ -199,7 +197,6 @@ target_link_libraries(ofs
     Freetype::Freetype
     fmt::fmt
     ZLIB::ZLIB
-    nlohmann_json::nlohmann_json
     yaml-cpp::yaml-cpp
     imgui
     glfw

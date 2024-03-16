@@ -86,11 +86,11 @@ public:
     {
     }
 
-    CelestialBody(json &cfg, celType type);
+    // CelestialBody(json &cfg, celType type);
 
     virtual ~CelestialBody() = default;
 
-    bool load(json &cfg);
+    // bool load(json &cfg);
 
     inline void addSecondary(CelestialBody *body)       { secondaries.push_back(body); }
     inline secondaries_t &getSecondaries() const        { return secondaries; }

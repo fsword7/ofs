@@ -17,7 +17,7 @@ public:
     : Object(name, type)
     { }
     
-    RigidBody(json &cfg, ObjectType type);
+    // RigidBody(json &cfg, ObjectType type);
 
     virtual ~RigidBody() = default;
 
