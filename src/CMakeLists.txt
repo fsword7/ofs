@@ -200,6 +200,7 @@ target_link_libraries(ofs
     fmt::fmt
     ZLIB::ZLIB
     nlohmann_json::nlohmann_json
+    yaml-cpp::yaml-cpp
     imgui
     glfw
     OpenGL::GL

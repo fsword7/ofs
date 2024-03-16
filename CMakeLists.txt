@@ -18,6 +18,7 @@ find_package(fmt REQUIRED)
 find_package(ZLIB REQUIRED)
 #find_package(lua REQUIRED)
 find_package(nlohmann_json 3.2.0 REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 set(OFS_SOURCE_ROOT_DIR ${CMAKE_SOURCE_DIR})
 
