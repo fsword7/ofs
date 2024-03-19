@@ -8,6 +8,7 @@
 #include "ephem/elements.h"
 #include "engine/rigidbody.h"
 #include "ephem/vsop87/vsop87.h"
+#include "ephem/lunar/elp82.h"
 #include "ephem/rotation.h"
 // #include "ephem/elements.h"
 #include "universe/elevmgr.h"
@@ -61,22 +62,41 @@
 //     return ownSystem;
 // }
 
-// CelestialBody::CelestialBody(json &cfg, celType type)
-// : RigidBody(cfg, (type == cbStar) ? objCelestialStar : objCelestialBody),
-//   cbType(type)
-// {
+CelestialBody::CelestialBody(YAML::Node &config, celType type)
+: RigidBody(config, (type == cbStar) ? objCelestialStar : objCelestialBody),
+  cbType(type)
+{
 
-//     // getValueReal(cfg, "LAN", Lrel0);
-//     // getValueReal(cfg, "LAN_MJD", mjd_rel);
-//     // getValueReal(cfg, "SidRotPeriod", rotT);
-//     // getValueReal(cfg, "SidRotOffset", Dphi);
-//     // getValueReal(cfg, "Obliquity", eps_rel);
+    if (config["Orbit"].IsScalar())
+    {
+        str_t epName = config["Orbit"].as<str_t>();
+        OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
+        if (orbit == nullptr)
+            orbit = OrbitELP82::create(*this, epName);
 
-//     // getValueReal(cfg, "PrecessionPeriod", precT);
-//     // getValueReal(cfg, "PrecessionObliquity", eps_ref);
-//     // getValueReal(cfg, "PreccesionLAN", lan_ref);
+        if (orbit != nullptr)
+            setEphemeris(orbit);
+        else
+            ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
+    }
 
-// }
+    // getValueReal(cfg, "LAN", Lrel0);
+    // getValueReal(cfg, "LAN_MJD", mjd_rel);
+    // getValueReal(cfg, "SidRotPeriod", rotT);
+    // getValueReal(cfg, "SidRotOffset", Dphi);
+    // getValueReal(cfg, "Obliquity", eps_rel);
+
+    // getValueReal(cfg, "PrecessionPeriod", precT);
+    // getValueReal(cfg, "PrecessionObliquity", eps_ref);
+    // getValueReal(cfg, "PreccesionLAN", lan_ref);
+
+}
+
+CelestialBody::~CelestialBody()
+{
+    if (ephemeris != nullptr)
+        delete ephemeris;
+}
 
 void CelestialBody::attach(CelestialBody *parent, frameType type)
 {

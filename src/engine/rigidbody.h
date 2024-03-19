@@ -16,8 +16,8 @@ public:
     RigidBody(cstr_t &name, ObjectType type)
     : Object(name, type)
     { }
-    
-    // RigidBody(json &cfg, ObjectType type);
+
+    RigidBody(YAML::Node &config, ObjectType type);
 
     virtual ~RigidBody() = default;
 

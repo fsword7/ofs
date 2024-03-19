@@ -6,19 +6,42 @@
 #define OPSAPI_SERVER_BUILD
 
 #include "main/core.h"
+// #include "yaml-cpp/yaml.h"
 #include "engine/object.h"
 
-// Object::Object(json &cfg, ObjectType type)
-// : objType(type)
-// {
-//     std::string name = "(Unknown)";
 
-//     // getValueString(cfg, "Name", str);
-//     setsName(name);
+Object::Object(YAML::Node &config, ObjectType type)
+: objType(type)
+{
+    std::string name = "(unknown)";
 
-//     // getValueReal(cfg, "Mass", mass);
-//     // getValueReal(cfg, "Radius", radius);
-// }
+    if (config["Name"].IsScalar())
+    {
+        setsName(config["Name"].as<std::string>());
+        ofsLogger->info("Planet: {}\n", getsName());
+    }
+
+    if (config["Mass"].IsScalar())
+    {
+        setMass(config["Mass"].as<double>());
+        ofsLogger->info("Mass: {:f}\n", getMass());
+    }
+
+    if (config["Radius"].IsScalar())
+    {
+        setRadius(config["Radius"].as<double>());
+        ofsLogger->info("Radius: {:f}\n", getRadius());
+    }
+
+    if (config["GeomAlbedo"].IsScalar())
+    {
+        setAlbedo(config["GeomAlbedo"].as<double>());
+        ofsLogger->info("Albedo: {:f}\n", getAlbedo());
+    }
+
+    // if (config["Color"].IsSequence())
+    //     geomColor = config["Color"].as<color_t>();
+}
 
 void Object::update(bool force)
 {

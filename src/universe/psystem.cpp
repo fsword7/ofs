@@ -138,28 +138,56 @@ void pSystem::finalizeUpdate()
 //     return true;
 // }
 
+struct {
+    const char *name;
+    celType type;
+} celTypes[2] = {
+    { "planet", cbPlanet },
+    { "moon", cbMoon }
+};
+
 bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbFolder)
 {
-    ofsLogger->info("Loading planet {}...\n", cbName);
+    ofsLogger->info("Loading {}...\n", cbName);
     str_t fileName = cbName + ".yaml";
 
     YAML::Node config;
     config = YAML::LoadFile(cbFolder + fileName);
 
-    // for (auto item : data.items())
-    // {
-    //     ofsLogger->info("Item {}: \n", item.key());
-    //     // if (!item.key().find("Planet"))
-    //     // {
-    //     //     if (!item.value().is_string())
-    //     //         continue;
-    //     //     auto cbName = item.value().get<std::string>();
-    //     //     fs::path cbFolder = sysFolder / cbName;
-    //     //     loadPlanet(cbName, psys, cbFolder);
-    //     // }
-    // }
+    if (config["Activate"].IsScalar())
+    {
+        if (config["Activate"].as<bool>() == false)
+        {
+            ofsLogger->info("OFS Info: Disabled celestial body: {}\n",
+                cbName);
+            return false;
+        }
+    }
 
-    return false;
+    if (config["System"].IsScalar())
+    {
+        std::string sysName = config["System"].as<std::string>();
+    }
+
+    celType type = cbUnknown;
+    if (config["Type"].IsScalar())
+    {
+        std::string typeName = config["Type"].as<std::string>();
+        for (auto ctype : celTypes)
+            if (ctype.name == typeName)
+                type = ctype.type;
+        if (type == cbUnknown)
+        {
+            ofsLogger->info("OFS Error: Unknown celestial body type: {}\n",
+                typeName);
+            return false;
+        }
+    }
+
+    CelestialPlanet *cbody = new CelestialPlanet(config, type);
+    delete cbody;
+
+    return true;
 }
 
 bool pSystem::loadSystems(Universe *universe, cstr_t &sysName)

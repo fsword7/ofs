@@ -11,3 +11,15 @@ CelestialPlanet::CelestialPlanet(cstr_t &name, celType type)
 {
     emgr = new ElevationManager(this);
 }
+
+CelestialPlanet::CelestialPlanet(YAML::Node &config, celType type)
+: CelestialBody(config, type)
+{
+    emgr = new ElevationManager(this);   
+}
+
+CelestialPlanet::~CelestialPlanet()
+{
+    if (emgr != nullptr)
+        delete emgr;
+}

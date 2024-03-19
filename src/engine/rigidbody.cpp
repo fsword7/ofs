@@ -9,12 +9,11 @@
 #include "ephem/rotation.h"
 #include "universe/frame.h"
 
-// RigidBody::RigidBody(json &cfg, ObjectType type)
-// : Object(cfg, type)
-// {
+RigidBody::RigidBody(YAML::Node &config, ObjectType type)
+: Object(config, type)
+{
 
-// }
-
+}
 
 // glm::dvec3 RigidBody::getuPosition(double tjd) const
 // {

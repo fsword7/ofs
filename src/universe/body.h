@@ -7,11 +7,13 @@
 
 #include "universe/celbody.h"
 #include "universe/elevmgr.h"
+
 class CelestialPlanet : public CelestialBody
 {
 public:
     CelestialPlanet(cstr_t &name, celType type);
-    ~CelestialPlanet() = default;
+    CelestialPlanet(YAML::Node &config, celType type);
+    ~CelestialPlanet();
 
     inline ElevationManager *getElevationManager() const    { return emgr; }
 

@@ -27,7 +27,7 @@
 #include <mutex>
 #include <algorithm>
 
-// #include "yaml-cpp/yaml.h"
+#include "yaml-cpp/yaml.h"
 
 typedef const char          cchar_t;
 typedef std::string         str_t;
