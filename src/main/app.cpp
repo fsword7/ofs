@@ -95,10 +95,16 @@ void CoreApp::openSession()
 
     bSession = true;
     bStarted = true;
+
+    ofsLogger->info("\nStarting of sesssion\n");
+    ofsLogger->info("--------------------\n");
 }
 
 void CoreApp::closeSession()
 {
+    ofsLogger->info("-----------------\n");
+    ofsLogger->info("Ending of session\n\n");
+
     if (gclient != nullptr)
         gclient->hideWindow();
 
