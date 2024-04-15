@@ -67,6 +67,8 @@ public:
     static CelestialStar *create(double ra, double de, double pc,
         cchar_t *spType, double appMag, double ci, double lum);
 
+    void configure(YAML::Node &config);
+
 private: 
     // Star catalogue parameters
     uint32_t hip;           // Hippocrais number

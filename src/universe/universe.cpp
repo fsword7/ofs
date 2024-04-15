@@ -27,99 +27,24 @@ void Universe::init()
     constellations.load("data/constellations/western/constellationship.fab");
     // constellations.load("constellations/western_rey/constellationship.fab");
 
-    // CelestialStar *sun = stardb.find("Sol");
-    sun = stardb.find("Sol");
-    assert(sun != nullptr);
-
-    if (!pSystem::loadSystems(this, sun->getsName()))
+    if (!pSystem::loadSystems(this, "Sol"))
         exit(1);
-    pSystem *psys = sun->getpSystem();
-
-    mercury = new CelestialPlanet("Mercury", cbPlanet);
-    // venus = new CelestialPlanet("Venus", cbPlanet);
-    earth = new CelestialPlanet("Earth", cbPlanet);
-    lunar = new CelestialPlanet("Lunar", cbMoon);
-    mars = new CelestialPlanet("Mars", cbPlanet);
-    jupiter = new CelestialPlanet("Jupiter", cbPlanet);
-    // saturn = new CelestialPlanet("Saturn", cbPlanet);
-    // uranus = new CelestialPlanet("Uranus", cbPlanet);
-    // neptune = new CelestialPlanet("Neptune", cbPlanet);
-
-    sun->setEphemeris(OrbitVSOP87::create(*sun, "vsop87e-sol"));
-
-    mercury->setEphemeris(OrbitVSOP87::create(*mercury, "vsop87b-mercury"));
-    mercury->setMass(6.418542e+23);
-    mercury->setRadius(3389.5);
-    mercury->setAlbedo(0.250);
-    mercury->setColor(color_t(0.52, 0.36, 0.16));
-
-    // venus->setEphemeris(OrbitVSOP87::create(*venus, "vsop87b-venus"));
-    // venus->setMass(6.418542e+23);
-    // venus->setRadius(3389.5);
-    // venus->setAlbedo(0.250);
-    // venus->setColor(color_t(0.52, 0.36, 0.16));
-
-    earth->setEphemeris(OrbitVSOP87::create(*earth, "vsop87b-earth"));
-    // earth->setRotation(Rotation::create("p03lp-earth"));
-    // earth->setRotation(Rotation::create("iau-earth"));
-    earth->setMass(5.9722e+24);
-    earth->setRadius(6378.140);
-    earth->setAlbedo(0.449576);
-    earth->setColor(color_t(0.856, 0.910, 1.0));
-
-    mars->setEphemeris(OrbitVSOP87::create(*mars, "vsop87b-mars"));
-    mars->setMass(6.418542e+23);
-    mars->setRadius(3389.5);
-    mars->setAlbedo(0.250);
-    mars->setColor(color_t(0.52, 0.36, 0.16));
-
-    jupiter->setEphemeris(OrbitVSOP87::create(*jupiter, "vsop87b-jupiter"));
-    jupiter->setMass(6.418542e+23);
-    jupiter->setRadius(3389.5);
-    jupiter->setAlbedo(0.250);
-    jupiter->setColor(color_t(0.52, 0.36, 0.16));
-
-    // saturn->setEphemeris(OrbitVSOP87::create(*saturn, "vsop87b-saturn"));
-    // saturn->setMass(6.418542e+23);
-    // saturn->setRadius(3389.5);
-    // saturn->setAlbedo(0.250);
-    // saturn->setColor(color_t(0.52, 0.36, 0.16));
-
-    // uranus->setEphemeris(OrbitVSOP87::create(*uranus, "vsop87b-uranus"));
-    // uranus->setMass(6.418542e+23);
-    // uranus->setRadius(3389.5);
-    // uranus->setAlbedo(0.250);
-    // uranus->setColor(color_t(0.52, 0.36, 0.16));
-
-    // neptune->setEphemeris(OrbitVSOP87::create(*neptune, "vsop87b-neptune"));
-    // neptune->setMass(6.418542e+23);
-    // neptune->setRadius(3389.5);
-    // neptune->setAlbedo(0.250);
-    // neptune->setColor(color_t(0.52, 0.36, 0.16));
-
-    // lunar->setOrbit(VSOP87Orbit::create("elp-mpp02-llr-lunar"));
-    // lunar->setRotation(Rotation::create("iau-lunar"));
-    lunar->setEphemeris(OrbitELP82::create(*lunar, "elp82b-lunar"));
-    lunar->setMass(7.342e+22);
-    lunar->setRadius(1738.14);
-    lunar->setAlbedo(0.136);
-    lunar->setColor(color_t(1.0, 0.945582, 0.865));
-
-    psys->addPlanet(mercury, sun);
-    // psys->addPlanet(venus, sun);
-    psys->addPlanet(earth, sun);
-    psys->addPlanet(lunar, earth);
-    psys->addPlanet(mars, sun);
-    psys->addPlanet(jupiter, sun);
-    // psys->addPlanet(saturn, sun);
-    // psys->addPlanet(uranus, sun);
-    // psys->addPlanet(neptune, sun);
 }
 
 void Universe::start(const TimeDate &td)
 {
     Camera *cam = ofsAppCore->getCamera();
     Player *player = ofsAppCore->getPlayer();
+
+    CelestialStar *sun = stardb.find("Sol");
+    pSystem *psys = sun->getpSystem();
+    CelestialBody *earth = psys->find("Earth");
+    CelestialBody *lunar = psys->find("Lunar");
+
+    assert(sun != nullptr);
+    assert(psys != nullptr);
+    assert(earth != nullptr);
+    assert(lunar != nullptr);
 
     // cam->setPosition({ 0, 0, -sun->getRadius() * 4.0 });
     // player->attach(sun, camTargetRelative);
@@ -199,6 +124,11 @@ void Universe::finalizeUpdate()
         if (psys != nullptr)
             psys->finalizeUpdate();
     }
+}
+
+void Universe::addSystem(pSystem *psys)
+{
+
 }
 
 // System *Universe::createSolarSystem(CelestialStar *star)

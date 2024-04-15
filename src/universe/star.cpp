@@ -4,6 +4,7 @@
 // Date:    Apr 16, 2022
 
 #include "main/core.h"
+#include "ephem/vsop87/vsop87.h"
 #include "universe/celbody.h"
 #include "universe/star.h"
 #include "universe/psystem.h"
@@ -63,4 +64,32 @@ CelestialStar *CelestialStar::create(double ra, double de, double pc,
     star->temp = temp;
 
     return star;
+}
+
+void CelestialStar::configure(YAML::Node &config)
+{
+    if (config["Mass"].IsScalar())
+    {
+        setMass(config["Mass"].as<double>());
+        // knownFlags |= cbKnownMass;
+        ofsLogger->info("Mass: {:f}\n", getMass());
+    }
+
+    if (config["Radius"].IsScalar())
+    {
+        setRadius(config["Radius"].as<double>());
+        knownFlags |= cbKnownRadius;
+        ofsLogger->info("Radius: {:f}\n", getRadius());
+    }
+
+    if (config["Orbit"].IsScalar())
+    {
+        str_t epName = config["Orbit"].as<str_t>();
+        OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
+
+        if (orbit != nullptr)
+            setEphemeris(orbit);
+        else
+            ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
+    }
 }

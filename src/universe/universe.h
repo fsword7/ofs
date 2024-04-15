@@ -31,6 +31,7 @@ public:
 
     // System *createSolarSystem(CelestialStar *star);
     // System *getSolarSystem(CelestialStar *star) const;
+    void addSystem(pSystem *psys);
 
     CelestialStar *findStar(cstr_t &name) const;
 
