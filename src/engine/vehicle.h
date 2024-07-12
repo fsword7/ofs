@@ -25,7 +25,9 @@
 
 // };
 
+class VehicleModule;
 class SuperVehicle;
+class Vehicle;
 class Mesh;
 
 // planetary surface parameters for flight simulation (air flight)
@@ -125,6 +127,9 @@ struct port_t
     glm::dvec3 rot;     // longitudional rotation alignment direction
 };
 
+typedef VehicleModule *(*ovcInit_t)(Vehicle *);
+typedef void (*ovcExit_t)(VehicleModule *);
+
 struct MeshEntry
 {
     str_t meshName;
@@ -168,7 +173,7 @@ class Vehicle : public VehicleBase
 
 public:
     Vehicle();
-    virtual ~Vehicle() = default;
+    virtual ~Vehicle();
 
     void clearModule();
     bool registerModule(cstr_t &name);
@@ -193,6 +198,12 @@ private:
     SuperVehicle *superVehicle = nullptr;
 
     ModuleHandle handle = nullptr;
+    struct {
+        VehicleModule *module = nullptr;
+        int version = 0;
+        ovcInit_t ovcInit = nullptr;
+        ovcExit_t ovcExit = nullptr;
+    } vif;
 
     double  lift;   // Lift force from wings
     double  drag;   // drag from atomspheric forces

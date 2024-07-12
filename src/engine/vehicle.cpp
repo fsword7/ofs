@@ -59,11 +59,25 @@ Vehicle::Vehicle()
 
 }
 
+Vehicle::~Vehicle()
+{
+    if (vif.module != nullptr)
+        clearModule();
+}
+
 void Vehicle::clearModule()
 {
+    if (vif.module != nullptr && vif.ovcExit != nullptr)
+        vif.ovcExit(vif.module);
     if (handle != nullptr)
         ofsUnloadModule(handle);
     handle = nullptr;
+
+    // Clear all rehgister module
+    vif.module  = nullptr;
+    vif.version = 0;
+    vif.ovcInit = nullptr;
+    vif.ovcExit = nullptr;
 }
 
 bool Vehicle::registerModule(cstr_t &name)
@@ -85,40 +99,29 @@ bool Vehicle::registerModule(cstr_t &name)
     }
 
     int (*fncVersion)() = (int(*)())ofsGetProcAddress(handle, "getModuleVersion");
-    int version = (fncVersion ? fncVersion() : 0);
 
-    ofsGetProcAddress(handle, "ovcInit");
-    ofsGetProcAddress(handle, "ovcExit");
+    vif.version = (fncVersion ? fncVersion() : 0);
+    vif.ovcInit = (ovcInit_t)ofsGetProcAddress(handle, "ovcInit");
+    vif.ovcExit = (ovcExit_t)ofsGetProcAddress(handle, "ovcExit");
 
     return true;
 }
 
 bool Vehicle::loadModule(cstr_t &name)
 {
-//     cstr_t path = "modules/Vehicles/";
+    clearModule();
 
-// #ifdef __WIN32__
-//     std::string fname = fmt::format("{}/lib{}.dll", path, name);
-// #else /* __WIN32__ */
-//     std::string fname = fmt::format("{}/lib{}.so", path, name);
-// #endif /* __WIN32__ */
-//     ModuleHandle handle = ofsLoadModule(fname.c_str());
+    if (!registerModule(name))
+    {
+        char *code = dlerror();
+        ofsLogger->error("Can't load vehicle module: {} (code: {})\n", name, code);
+        return false;
+    }
 
-//     if (handle == nullptr)
-//     {
-//         printf("Failed loading module %s: %s\n",
-//             name.c_str(), ofsGetModuleError());
-//         return nullptr;
-//     }
-
-//     // Start initialization routine in module.
-//     // void (*initModule)(ModuleHandle) =
-//     //     (void(*)(ModuleHandle))ofsGetProcAddress(handle, "initModule");
-//     // printf("initModule - %p (%p)\n", initModule, handle);
-//     // if (initModule != nullptr)
-//     //     initModule(handle);
-
-    return false;
+    if (vif.ovcInit != nullptr)
+        vif.module = vif.ovcInit(this);
+    
+    return true;
 }
 
 void Vehicle::setGenericDefaults()

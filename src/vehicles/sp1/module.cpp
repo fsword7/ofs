@@ -35,26 +35,35 @@ LIBCALL void exitModule(ModuleHandle handle)
     // }
 }
 
-static void __attribute__ ((constructor)) setupModule(void)
+LIBCALL VehicleModule *ovcInit(Vehicle *vehicle)
 {
-    printf("OpenGL client module loaded.\n");
-
-    Dl_info info;
-    int ret = dladdr((void *)setupModule, &info);
-    if (ret == 0)
-    {
-        printf("dladdr failed - aborted\n");
-        assert(false);
-    }
-    // void (*initModule)(ModuleHandle) =
-    //     (void(*)(ModuleHandle))ofsGetProcAddress(info.dli_fbase, "initModule");
-    // printf("initModule - %p (%p)\n", initModule, info.dli_fbase);
-    myHandle = info.dli_fbase;
-    initModule(myHandle);
+    return nullptr;
 }
 
-static void __attribute__ ((destructor)) destroyModule(void)
+LIBCALL void ovcExit(Vehicle *vehicle)
 {
-    exitModule(myHandle);
-    printf("Space Plane 1 vessel module unloaded.\n");
 }
+
+// static void __attribute__ ((constructor)) setupModule(void)
+// {
+//     printf("OpenGL client module loaded.\n");
+
+//     Dl_info info;
+//     int ret = dladdr((void *)setupModule, &info);
+//     if (ret == 0)
+//     {
+//         printf("dladdr failed - aborted\n");
+//         assert(false);
+//     }
+//     // void (*initModule)(ModuleHandle) =
+//     //     (void(*)(ModuleHandle))ofsGetProcAddress(info.dli_fbase, "initModule");
+//     // printf("initModule - %p (%p)\n", initModule, info.dli_fbase);
+//     myHandle = info.dli_fbase;
+//     initModule(myHandle);
+// }
+
+// static void __attribute__ ((destructor)) destroyModule(void)
+// {
+//     exitModule(myHandle);
+//     printf("Space Plane 1 vessel module unloaded.\n");
+// }
