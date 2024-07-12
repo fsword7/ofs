@@ -73,6 +73,8 @@ include_directories(src)
 # Compiling for creating orbital data headers
 add_subdirectory(src/tools/vsop87)
 # add_subdirectory(src/tools/elp82b)
+add_subdirectory(src/tools/txedit)
+add_subdirectory(src/tools/txpack)
 
 # Compiling for client modules
 add_subdirectory(src/client/glclient)
