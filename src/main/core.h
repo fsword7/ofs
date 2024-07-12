@@ -27,6 +27,7 @@
 #include <mutex>
 #include <algorithm>
 
+#define YAML_CPP_API
 #include "yaml-cpp/yaml.h"
 
 typedef const char          cchar_t;
