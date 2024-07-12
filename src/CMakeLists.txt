@@ -34,11 +34,11 @@ set(OFS_CPP_SRCS
     ephem/vsop87/uranus.cpp
     ephem/vsop87/venus.cpp
     ephem/vsop87/vsop87.cpp
-    ephem/earth-p03lp.cpp
+    # ephem/earth-p03lp.cpp
     ephem/elements.cpp
     ephem/elp-mpp02.cpp
     ephem/ephemeris.cpp
-    ephem/iau-wgccre.cpp
+    # ephem/iau-wgccre.cpp
     ephem/orbit.cpp
     ephem/rotation.cpp
     ephem/spice.cpp
@@ -166,6 +166,7 @@ set(OFS_H_SRCS
     utils/color.h
     utils/string.h
     utils/tree.h
+    utils/yaml.h
     utils/ztreemgr.h
 )
 
