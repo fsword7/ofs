@@ -9,6 +9,7 @@
 #include "api/ofsapi.h"
 #include "main/timedate.h"
 // #include "engine/frame.h"
+#include "engine/vehicle.h"
 #include "universe/celbody.h"
 #include "universe/body.h"
 #include "engine/player.h"
@@ -263,6 +264,13 @@ void Player::update(const TimeDate &td)
     else
     {
         // Internal camera updates
+
+        assert(tgtObject->getType() == objVehicle);
+        
+        // Set global position/rotation for on the air
+        grot  = tgtObject->getuOrientation(0) * cam.rrot;
+        gspos = grot * (cam.rpos + vcpos);
+        gpos  = tgtObject->getoPosition() + gspos;
     }
 
     updateCamera();

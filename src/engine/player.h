@@ -6,6 +6,7 @@
 #pragma once
 
 class Object;
+class Vehicle;
 class CelestialBody;
 class CelestialPlanet;
 class ElevationTile;
@@ -15,14 +16,15 @@ enum cameraMode {
     camGlobalFrame,
     camTargetRelative,
     camSolarSyncRelative,
-    camGroundObserver
+    camGroundObserver,
+    camCockpit
 };
 
 enum travelMode
 {
     travelFreeFlight,
     travelExternal,
-    travelCocpkit
+    travelCockpit
 };
 
 struct GroundObserver
@@ -164,6 +166,8 @@ private:
     glm::dvec3 gdir;    // Direction
     glm::dmat3 grot;
     glm::dquat gqrot;
+
+    glm::dvec3 vcpos;   // virtual cockpit position
 
     double ephi = 0.0;      // current phi rotation (external)
     double etheta = 0.0;    // current theta rotation (external)
