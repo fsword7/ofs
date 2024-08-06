@@ -50,6 +50,8 @@ namespace fs = std::filesystem;
 #include "api/module.h"
 
 class CoreApp;
+class TimeDate;
 
 extern CoreApp *ofsAppCore;
 extern Logger *ofsLogger;
+extern TimeDate *ofsDate;

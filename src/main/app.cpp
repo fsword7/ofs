@@ -22,6 +22,7 @@
 // Global variables
 CoreApp *ofsAppCore = nullptr;
 Logger *ofsLogger = nullptr;
+TimeDate *ofsDate = nullptr;
 
 CoreApp::CoreApp()
 : width(SCR_WIDTH), height(SCR_HEIGHT)
@@ -39,6 +40,7 @@ CoreApp::CoreApp()
 void CoreApp::init()
 {
     ofsLogger = new Logger(Logger::logDebug, "ofs.log");
+    ofsDate = &td;
 
     if (glfwInit() != GLFW_TRUE)
     {
