@@ -10,6 +10,8 @@ class CoreApp;
 
 int main(int argc, char **argv)
 {
+    std::cout << "Working directory: " << fs::current_path() << std::endl;
+
     ofsAppCore = new CoreApp();
 
     ofsAppCore->init();

@@ -13,6 +13,8 @@
 
 void sdlCoreApp::init()
 {
+    std::cout << "Working directory: " << getcwd() << std::endl;
+
     Logger::create(Logger::logDebug, "ofs.log");
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
