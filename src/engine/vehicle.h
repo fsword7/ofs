@@ -28,6 +28,8 @@
 class VehicleModule;
 class SuperVehicle;
 class Vehicle;
+class HUDPanel;
+class Sketchpad;
 class Mesh;
 
 // planetary surface parameters for flight simulation (air flight)
@@ -64,6 +66,8 @@ struct surface_t
     glm::dmat3 l2h;            // planet to local horizon [planet frame]
 };
 
+using csurface_t = const surface_t;
+
 enum AirfoilType_t
 {
     liftVertical,           // lift is vetical (elevator, aileron, etc)
@@ -95,25 +99,87 @@ struct tank_t
     double efficiency;      // fuel efficiency factor
 };
 
-struct thruster_t
+struct thrust_t
 {
     glm::dvec3 pos;            // thruster position in vessel frame
     glm::dvec3 dir;            // thrister direction
 
+    double maxth;           // Maximum thrust force [N]
+    double isp;
+    double pfac;
+
+    double level;           // level [0..1]
+    double lvperm;          // level permament
+    double lvover;          // level override
+
     tank_t  *tank;          // propellant resources
+
+    inline void setThrustLevel(double lvl)
+    {
+        double dlevel = lvl - lvperm;
+        lvperm = lvl;
+        if (tank != nullptr && tank->mass > 0)
+            level = std::max(0.0, std::min(1.0, level + dlevel));
+    }
+
+    inline void adjustThrustLevel(double dlvl)
+    {
+        lvperm += dlvl;
+        if (tank != nullptr && tank->mass > 0)
+            level = std::max(0.0, std::min(1.0, level + dlvl));
+    }
+
+    inline void setThrustOverride(double lvl)
+    {
+        lvover = lvl;
+    }
+
+    inline void adjustThrustOverride(double dlvl)
+    {
+        lvover += dlvl;
+    }
 };
+
+using thlist_t = std::vector<thrust_t *>;
+
+struct thrustgrp_t
+{
+    thlist_t thrusters;
+    double sum_maxth;
+};
+using tglist_t = std::vector<thrustgrp_t *>;
 
 enum thrustType_t
 {
-    thrustMain,             // main thruster
-    thrustRetro,            // retro thruster
-    thrustHover             // hover thruster
+    thgMain = 0,            // main thruster
+    thgRetro,               // retro thruster
+    thgHover,               // hover thruster
+
+    thgAttPitchUp,          // Attitude: Rotate pitch up
+    thgAttPitchDown,        // Attitude: Rotate pitch down
+    thgAttYawLeft,          // Attitude: Rotate yaw left
+    thgAttYawRight,         // Attitude: Rotate yaw right
+    thgAttBankLeft,         // Attitude: Rotate bank left
+    thgAttBankRight,        // Attitude: Rotate bank right
+    
+    thgTraUp,               // Translation: Move up
+    thgTraDown,             // Translation: Move down
+    thgTraLeft,             // Translation: Move Left
+    thgTraRight,            // Translation: Move right
+    thgTraForward,          // Translation: Move forward
+    thgTraBackward,         // Translation: Move backward
+
+    thgMaxThrusters,
+
+    thgUser = 0x80          // User-definable thrusters
 };
 
 // touchdown points for collision detection
 struct tdVertex_t
 {
     glm::dvec3 pos;            // position in vessel frame
+
+    // Mass-spring-damper parameters
     double  stiffness;      // suspension - stiffness [ N/m ] 
     double  damping;        // suspension - damping
     double  compression;    // suspension - compression factor
@@ -148,11 +214,15 @@ public:
         fsCrashed   // Crashed
     };
 
-    VehicleBase();
+    VehicleBase(cstr_t &name);
+    VehicleBase(YAML::Node &config);
     virtual ~VehicleBase() = default;
 
-    virtual void getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt);
-    virtual bool addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am, double dt);
+    inline surface_t *getSurfaceParameters() { return &surfParam; }
+    inline csurface_t *getSurfaceParameters() const { return &surfParam; }
+    
+    // virtual void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
+    virtual bool addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
 
 protected:
     FlightStatus fsType = fsFlight;
@@ -172,7 +242,8 @@ class Vehicle : public VehicleBase
     friend class SuperVehicle;
 
 public:
-    Vehicle();
+    Vehicle(cstr_t &name = "(self)");
+    Vehicle(YAML::Node &config);
     virtual ~Vehicle();
 
     void clearModule();
@@ -182,11 +253,11 @@ public:
     inline void clearTouchdownPoints()          { tpVertices.clear(); }
 
     void initLanded(Object *object, double lat, double lng, double dir);
+    void initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const glm::dvec3 &rot, const glm::dvec3 *vrot);
     void initDocked();
-    void initOrbiting();
 
-    void getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt) override;
-    bool addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt) override;
+    void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt) override;
+    bool addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt) override;
     
     void setGenericDefaults();
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
@@ -194,6 +265,34 @@ public:
     void updateMass();
     virtual void update(bool force);
 
+    void updateBodyForces();
+    void updateAerodynamicForces();
+    void updateThrustForces();
+
+    void drawHUD(HUDPanel *hud, Sketchpad *pad);
+
+    void createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank = nullptr);
+    bool deleteThruster(thrust_t *th);
+
+    // void setThrustLevel(thrust_t *th, double level);
+    // void adjustThrustLevel(thrust_t *th, double dlevel);
+    // void setThrustOverride(thrust_t *th, double level);
+    // void adjustThrustOverride(thrust_t *th, double dlevel);
+
+    void createThrusterGroup(thrustgrp_t *tg, thrustType_t type);
+
+    void setThrustGroupLevel(thrustgrp_t *tg, double level);
+    void adjustThrustGroupLevel(thrustgrp_t *tg, double dlevel);
+    void setThrustGroupOverride(thrustgrp_t *tg, double level);
+    void adjustThrustGroupOverride(thrustgrp_t *tg, double dlevel);
+
+    void setThrustGroupLevel(thrustType_t type, double level);
+    void adjustThrustGroupLevel(thrustType_t type, double dlevel);
+    void setThrustGroupOverride(thrustType_t type, double level);
+    void adjustThrustGroupOverride(thrustType_t type, double dlevel);
+
+    double getThrustGroupLevel(thrustgrp_t *tg);
+ 
 private:
     SuperVehicle *superVehicle = nullptr;
 
@@ -210,6 +309,12 @@ private:
     
     double  emass, fmass, pfmass; // empty mass, fuel mass, and previous fuel mass
 
+    glm::dvec3 flin;        // linear moment (force)
+    glm::dvec3 amom;        // angular moment (torque)
+    glm::dvec3 cflin;       // Collecting linear force
+    glm::dvec3 camom;       // Collecting torque force
+    glm::dvec3 thrust;      // linear thrust force
+
     // Collision detection parameters (touchdown points)
     std::vector<tdVertex_t> tpVertices; // touchdown vertices (vessel frame)
     glm::dvec3 tpNormal;                   // upward normal of touchdown plane (vessel frame)
@@ -219,4 +324,8 @@ private:
     std::vector<port_t *> ports;        // docking port list
 
     std::vector<MeshEntry *> meshList;
+
+    std::vector<thrust_t *> thrustList;         // Individual thruster list
+    std::vector<thrustgrp_t *> thgrpList;       // Main thruster group list
+    std::vector<thrustgrp_t *> thgrpUserList;   // User thruster group list
 };

@@ -114,13 +114,13 @@ public:
 
     inline celType getCelestialType() const { return cbType; }
 
-    inline void setPlanetarySystem(pSystem *psys)       { system = psys; }
+    // inline void setPlanetarySystem(pSystem *psys)       { system = psys; }
     inline void setEphemeris(OrbitEphemeris *ephem)     { ephemeris = ephem; }
     // inline void setInSystem(PlanetarySystem *system) { inSystem = system; }
 
     // inline PlanetarySystem *getOwnSystem() const    { return ownSystem; }
     // inline PlanetarySystem *getInSystem() const     { return inSystem; }
-    inline pSystem *getPlanetarySystem() const          { return system; }
+    // inline pSystem *getPlanetarySystem() const          { return system; }
 
     inline glm::dvec3 getcPosition() const          { return cpos; }
     inline glm::dvec3 getcVelocity() const          { return cvel; }
@@ -192,7 +192,7 @@ protected:
     color_t color = color_t(0.7f, 0.7f, 0.7f, 1.0f);
     uint32_t knownFlags = 0;
 
-    pSystem *system = nullptr;
+    // pSystem *system = nullptr;
     OrbitEphemeris *ephemeris = nullptr;
 
     CelestialStar *cstar = nullptr;

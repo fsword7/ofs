@@ -9,8 +9,8 @@
 #include "engine/vehicle.h"
 #include "engine/supervehicle.h"
 
-SuperVehicle::SuperVehicle()
-: RigidBody("", objVehicle)
+SuperVehicle::SuperVehicle(YAML::Node &config)
+: RigidBody(config, objVehicle)
 {
     
 }

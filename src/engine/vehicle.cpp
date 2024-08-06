@@ -4,6 +4,8 @@
 // Date:    Apr 24, 2022
 
 #include "main/core.h"
+#include "api/draw.h"
+#include "control/hudpanel.h"
 #include "ephem/elements.h"
 #include "engine/rigidbody.h"
 #include "engine/vehicle.h"
@@ -37,26 +39,42 @@ void surface_t::setLanded(double _lng, double _lat, double alt, double dir,
 
 // ******** VehicleBase ********
 
-VehicleBase::VehicleBase()
-: RigidBody("", objVehicle)
-{
-    
-}
-
-void VehicleBase::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
+VehicleBase::VehicleBase(cstr_t &name)
+: RigidBody(name, objVehicle)
 {
 }
 
-bool VehicleBase::addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
+VehicleBase::VehicleBase(YAML::Node &config)
+: RigidBody(config, objVehicle)
+{
+}
+
+// void VehicleBase::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double dt)
+// {
+// }
+
+bool VehicleBase::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt)
 {
     return false;
 }
 
 // ******** Vehicle ********
 
-Vehicle::Vehicle()
+Vehicle::Vehicle(cstr_t &name)
+: VehicleBase(name)
 {
+    setGenericDefaults();
+    thgrpList.reserve(thgMaxThrusters);
+    for (int idx = 0; idx < thgMaxThrusters; idx++)
+        thgrpList[idx] = nullptr;
+}
 
+Vehicle::Vehicle(YAML::Node &config)
+: VehicleBase(config)
+{
+    thgrpList.reserve(thgMaxThrusters);
+    for (int idx = 0; idx < thgMaxThrusters; idx++)
+        thgrpList[idx] = nullptr;
 }
 
 Vehicle::~Vehicle()
@@ -191,10 +209,48 @@ void Vehicle::initLanded(Object *object, double lat, double lng, double dir)
         // landrot = {  sp->clng*sp->slat*sdir - sp->lng*cdir,   sp->clng*sp->clat,  -sp->clng*sp->slat*cdir - sp->slng*sdir,
         //             -sp->clat*sdir,                           sp->slat,            sp->clat*cdir,
         //              sp->slng*sp->slat*sdir + sp->clng*cdir,  sp->clat*sp->slng,  -sp->slng*sp->slat*cdir + sp->clng*sdir }; 
+
+        // Set rotation matrix for local horizon frame
+        // for right-handed rule (OpenGL). Points
+        // to east as origin at (0, 0).
+        //
+        //     |  slat  clat   0  | |  clng   0   slng |
+        // R = | -clat  slat   0  | |   0     1    0   |
+        //     |   0     0     1  | | -slng   0   clng |
+        //
+        // double clat = cos(lat), slat = sin(lat);
+        // double clng = cos(lng), slng = sin(lng);
+        // go.R = { slat*clng,  clat*clng, slng,
+        //         -clat,       slat,      0,
+        //         -slat*slng, -clat*slng, clng };
+        // go.Q = go.R;
+
     }
 
 
     fsType = fsLanded;
+}
+
+void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const glm::dvec3 &rot, const glm::dvec3 *vrot)
+{
+    // Assign current position/velocity
+    cpos = pos, cvel = vel;
+
+    oel.calculate(cpos, cvel, ofsDate->getSimTime0());
+
+    // Make sure that we are above ground (sanity check)
+    double rad = glm::length(cpos);
+    double elev = 0.0;
+    if (rad < cbody->getRadius() + elev)
+    {
+        double scale = (cbody->getRadius() + elev) / rad;
+        cpos *= scale;
+    }
+
+    // s0.R = rot;
+    s0.Q = s0.R;
+    if (vrot != nullptr)
+        s0.omega = *vrot;
 }
 
 void Vehicle::initDocked()
@@ -202,25 +258,23 @@ void Vehicle::initDocked()
     
 }
 
-void Vehicle::initOrbiting()
-{
-
-}
-
-void Vehicle::getIntermediateMoments(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
+void Vehicle::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt)
 {
     glm::dvec3 F = Fadd;
     glm::dvec3 M = Ladd;
 
     // Check for surface forces and collision detection
-    addSurfaceForces(state, F, M, dt);
+    addSurfaceForces(F, M, state, tfrac, dt);
 
-    // Updates linear and angular moments
+    // Computing with N-body gravitional pull.
+    RigidBody::getIntermediateMoments(acc, am, state, tfrac, dt);
+
+    // Update linear and angular moments in vehicle reference frame
     acc += state.Q * F/mass;
     am  += M/mass;
 }
 
-bool Vehicle::addSurfaceForces(const StateVectors &state, glm::dvec3 &acc, glm::dvec3 &am,  double dt)
+bool Vehicle::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt)
 {
     return false;
 }
@@ -260,3 +314,153 @@ void Vehicle::update(bool force)
     // Update mass for fuel consumption
     updateMass();
 }
+
+void Vehicle::updateBodyForces()
+{
+    // updateAerodynamicForces();
+    updateThrustForces();
+}
+
+void Vehicle::updateAerodynamicForces()
+{
+
+}
+
+void Vehicle::updateThrustForces()
+{
+
+    glm::dvec3 thrust = { 0, 0, 0 };
+    glm::dvec3 F;
+
+    for (auto th : thrustList)
+    {
+        th->level = std::max(0.0, std::min(1.0, th->lvperm + th->lvover));
+        if (th->level > 0.0)
+        {   
+            tank_t *tank = th->tank;
+
+            double th0 = th->level * th->maxth;
+            F = th->dir * th0;
+            thrust += F;
+            camom += glm::cross(F, th->pos);
+        }
+        th->lvover = 0.0;
+    }
+
+    cflin += thrust;
+}
+
+void Vehicle::drawHUD(HUDPanel *hud, Sketchpad *pad)
+{
+    hud->drawDefault(pad);
+}
+
+// Thruster 
+
+void Vehicle::createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank)
+{
+
+}
+
+bool Vehicle::deleteThruster(thrust_t *th)
+{
+    
+    for (auto it = thrustList.begin(); it != thrustList.end(); it++)
+    {
+        if (*it == th)
+        {
+            it = thrustList.erase(it);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// void Vehicle::setThrustLevel(thrust_t *th, double level)
+// {
+//     double dlevel = level - th->lvperm;
+//     th->lvperm = level;
+//     if (th->tank != nullptr && th->tank->mass > 0)
+//         th->level = std::max(0.0, std::min(1.0, th->level + dlevel));
+// }
+
+// void Vehicle::adjustThrustLevel(thrust_t *th, double dlevel)
+// {
+//     th->lvperm += dlevel;
+//     if (th->tank != nullptr && th->tank->mass > 0)
+//         th->level = std::max(0.0, std::min(1.0, th->level + dlevel));
+// }
+
+// void Vehicle::setThrustOverride(thrust_t *th, double level)
+// {
+//     th->lvover = level;
+// }
+
+// void Vehicle::adjustThrustOverride(thrust_t *th, double dlevel)
+// {
+//     th->lvover += dlevel;
+// }
+
+// Thruster Group
+
+void Vehicle::createThrusterGroup(thrustgrp_t *tg, thrustType_t type)
+{
+    
+}
+
+
+void Vehicle::setThrustGroupLevel(thrustgrp_t *tg, double level)
+{
+    for (auto th : tg->thrusters)
+        th->setThrustLevel(level);
+}
+
+void Vehicle::adjustThrustGroupLevel(thrustgrp_t *tg, double dlevel)
+{
+    for (auto th : tg->thrusters)
+        th->adjustThrustLevel(dlevel);
+}
+
+void Vehicle::setThrustGroupOverride(thrustgrp_t *tg, double level)
+{
+    for (auto th : tg->thrusters)
+        th->setThrustOverride(level);
+}
+
+void Vehicle::adjustThrustGroupOverride(thrustgrp_t *tg, double dlevel)
+{
+    for (auto th : tg->thrusters)
+        th->adjustThrustOverride(dlevel);
+}
+
+
+void Vehicle::setThrustGroupLevel(thrustType_t type, double level)
+{
+    setThrustGroupLevel(thgrpList[type], level);
+}
+
+void Vehicle::adjustThrustGroupLevel(thrustType_t type, double dlevel)
+{
+    adjustThrustGroupLevel(thgrpList[type], dlevel);
+}
+
+void Vehicle::setThrustGroupOverride(thrustType_t type, double level)
+{
+    setThrustGroupOverride(thgrpList[type], level);
+}
+
+void Vehicle::adjustThrustGroupOverride(thrustType_t type, double dlevel)
+{
+    setThrustGroupOverride(thgrpList[type], dlevel);
+}
+
+
+double Vehicle::getThrustGroupLevel(thrustgrp_t *tg)
+{
+    double level = 0.0;
+    for (auto th : tg->thrusters)
+        level += th->level;
+    return tg->thrusters.size() > 0 ? level / tg->thrusters.size() : 0.0;
+}
+
