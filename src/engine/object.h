@@ -17,10 +17,10 @@ public:
     // All state vectors in assciated frame
     glm::dvec3 pos;        // position
     glm::dvec3 vel;        // linear velocity
+    glm::dvec3 omega;      // angular velocity
     
     glm::dmat3 R;          // rotation matrix
     glm::dquat Q;          // orientation
-    glm::dvec3 omega;      // angular velocity
 };
 
 class OFSAPI Object
@@ -125,7 +125,7 @@ protected:
     glm::dvec3 rvelBase, rvelAdd;  // baae/incremental of relative velocity
     glm::dmat3 rrotBase, rrotAdd;  // base/incremental of relative orientation
 
-    Object *cbody = nullptr;    // orbit reference body
+    // Object *cbody = nullptr;    // orbit reference body
 
     std::vector<ReferenceMark *> referenceMarks;
 };

@@ -53,7 +53,7 @@ void Object::beginUpdate()
 
 void Object::endUpdate()
 {
-    s0 = s1; // Move all to S0
+    s0 = s1; // Move all to S0 for on the air
     s1 = {}; // Clear all for next update
 
     // Set identity for R and Q rotations
