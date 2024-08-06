@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "universe/universe.h"
 #include "universe/celbody.h"
+#include "universe/astro.h"
 #include "universe/body.h"
 #include "universe/star.h"
 #include "universe/psystem.h"
@@ -40,7 +41,7 @@ void pSystem::addBody(CelestialBody *cbody)
     bodies.push_back(cbody);
 }
 
-void pSystem::addGravity(CelestialBody *grav)
+void pSystem::addGravity(Celestial *grav)
 {
     gravities.push_back(grav);
 }
@@ -61,6 +62,49 @@ CelestialBody *pSystem::find(cstr_t &name) const
         if (body->getsName() == name)
             return body;
     return nullptr;
+}
+
+glm::dvec3 pSystem::addSingleGravityPerturbation(const glm::dvec3 &rpos, const Celestial *body) const
+{
+    return { 0, 0, 0 };
+}
+
+// Calculate data with individual gravitational pull. 
+glm::dvec3 pSystem::addSingleGravity(const glm::dvec3 &rpos, const Celestial *body) const
+{
+    double d = glm::length(rpos);
+    return rpos * (astro::G * body->getMass() / (d*d*d)) + addSingleGravityPerturbation(rpos, body);
+}
+
+// Calculate data with N-body gravitational pull from entire system.
+glm::dvec3 pSystem::addGravity(const glm::dvec3 &gpos, const Celestial *exclude) const
+{
+    glm::dvec3 acc = {};
+
+    for (auto grav : gravities)
+    {
+        if (grav == exclude)
+            continue;
+        acc += addSingleGravity(grav->s0.pos - gpos, grav);
+    }
+
+    return acc;
+}
+
+// Calculate data with N-body gravitational pull from entire system.
+glm::dvec3 pSystem::addGravityIntermediate(const glm::dvec3 &gpos, double step, const Celestial *exclude) const
+{
+    glm::dvec3 acc = {};
+
+    for (auto grav : gravities)
+    {
+        if (grav == exclude)
+            continue;
+        // acc += addSingleGravity(grav->s0.pos - gpos, grav);
+        acc += addSingleGravity(grav->interpolatePosition(step) - gpos, grav);
+    }
+
+    return acc;
 }
 
 void pSystem::update(const TimeDate &td)

@@ -5,16 +5,16 @@
 
 #pragma once
 
-#include "engine/object.h"
+#include "engine/celestial.h"
 #include "ephem/elements.h"
 
 class Frame;
 
-class OFSAPI RigidBody : public Object
+class OFSAPI RigidBody : public Celestial
 {
 public:
     RigidBody(cstr_t &name, ObjectType type)
-    : Object(name, type)
+    : Celestial(name, type)
     { }
 
     RigidBody(YAML::Node &config, ObjectType type);
@@ -37,7 +37,9 @@ public:
     // glm::dvec3 getoPosition(double tjd) const override;
 
     virtual void update(bool force);
-    
+
+    virtual void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
+ 
 protected:
     // Reference frame parameters
     Frame *orbitFrame = nullptr;
@@ -49,5 +51,9 @@ protected:
     OrbitalElements oel;
     bool orbitValid = false;
 
-    glm::dvec3 cpos, cvel; // state vectors in reference frame
+    glm::dvec3 cpos, cvel;  // state vectors in reference frame
+    glm::dvec3 acc;         // current linear accelration
+    glm::dvec3 arot;        // current angular accelration
+    glm::dvec3 pmi;         // principal moments of inertia
+    glm::dvec3 torque;      // current torque of CG
 };

@@ -7,10 +7,11 @@
 #include "engine/rigidbody.h"
 #include "ephem/orbit.h"
 #include "ephem/rotation.h"
+#include "universe/psystem.h"
 #include "universe/frame.h"
 
 RigidBody::RigidBody(YAML::Node &config, ObjectType type)
-: Object(config, type)
+: Celestial(config, type)
 {
 
 }
@@ -54,8 +55,44 @@ RigidBody::RigidBody(YAML::Node &config, ObjectType type)
 //     return orbit->getPosition(tjd);
 // }
 
+void RigidBody::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double step, double dt)
+{
+    // pSystem *system = nullptr;
+
+    assert(system != nullptr);
+
+    acc = system->addGravityIntermediate(state.pos, step, this);
+    am = {};
+
+    if (cbody != nullptr)
+    {
+        glm::dvec3 R0 = state.Q * cbody->interpolatePosition(step) - state.pos;
+        double r0 = glm::length(R0);
+        glm::dvec3 Re = R0/r0;
+        double mag = 3.0 * (astro::G * cbody->getMass()) / (r0*r0*r0);
+        am = glm::cross(pmi*Re, Re) * mag;
+    }
+}
+
 void RigidBody::update(bool force)
 {
-
+    // {
+    //     {
+    //         flushPosition();
+    //         flushVelocity();
+    //         s1.pos = cpos;
+    //         s1.vel = cvel;
+    //         // getIntermediateMomentsPert(accp, am, s0, 0, dt, cbody);
+    //         oel.calculate(cpos, cvel, ofsDate->getSimTime0());
+    //     }
+    //     //calculateEncke();
+    //     s1.pos = cbody->s1.pos + cpos;
+    //     s1.vel = cbody->s1.vel + cvel;
+    //     flushPosition();
+    //     flushVelocity();
+    //     s1.R = glm::mat3_cast(s1.Q);
+    //     getIntermediateMoments(acc, am, s1, 1, dt);
+    // }
+    
     Object::update(force);
 }
