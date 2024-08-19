@@ -167,7 +167,8 @@ private:
     glm::dmat3 grot;
     glm::dquat gqrot;
 
-    glm::dvec3 vcpos;   // virtual cockpit position
+    glm::dvec3 *vcpos = nullptr;    // virtual cockpit position
+    glm::dvec3 *vcdir = nullptr;    // virtual cockpit direction
 
     double ephi = 0.0;      // current phi rotation (external)
     double etheta = 0.0;    // current theta rotation (external)

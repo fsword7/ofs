@@ -134,6 +134,18 @@ void Player::attach(Object *object, cameraMode mode)
             break;
         }
     }
+    else
+    {
+        assert(tgtObject->getType() == objVehicle);
+        Vehicle *vehicle = dynamic_cast<Vehicle *>(tgtObject);
+
+        vcpos = vehicle->getCameraPosition();
+        vcdir = vehicle->getCameraDirection();
+
+        grot = tgtObject->getuOrientation(0) * cam.rrot;
+        gspos = tgtObject->getuOrientation(0) * *vcpos;
+        gpos = gspos + tgtObject->getuPosition(0);
+    }
 
     updateCamera();
 }
@@ -269,7 +281,7 @@ void Player::update(const TimeDate &td)
         
         // Set global position/rotation for on the air
         grot  = tgtObject->getuOrientation(0) * cam.rrot;
-        gspos = grot * (cam.rpos + vcpos);
+        gspos = grot * (cam.rpos + *vcpos);
         gpos  = tgtObject->getoPosition() + gspos;
     }
 
