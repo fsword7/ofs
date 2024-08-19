@@ -32,7 +32,8 @@ namespace astro
 {
     constexpr double G     = 6.673889e-11;  // official graviational constant [N (m/kg)^2]
     constexpr double J2000 = 2451545.0;     // Epoch J2000 [Jan 1, 2000 at 12:00 UTC]
-    
+    constexpr double MJD2000 = 51544.5;
+
     constexpr double day   = (1.0/86400.0); // Julian date/seconds
     
     // MJD - modified julian date since Nov 17, 1858
