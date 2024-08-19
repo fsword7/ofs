@@ -5,12 +5,13 @@
 
 #include "main/core.h"
 #include "ephem/elements.h"
+#include "engine/celestial.h"
 #include "engine/rigidbody.h"
 #include "engine/vehicle.h"
 #include "engine/supervehicle.h"
 
 SuperVehicle::SuperVehicle(YAML::Node &config)
-: RigidBody(config, objVehicle)
+: RigidBody(config, objVehicle, cbVehicle)
 {
     
 }

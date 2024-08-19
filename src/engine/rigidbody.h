@@ -13,11 +13,11 @@ class Frame;
 class OFSAPI RigidBody : public Celestial
 {
 public:
-    RigidBody(cstr_t &name, ObjectType type)
-    : Celestial(name, type)
+    RigidBody(cstr_t &name, ObjectType type, celType cbtype)
+    : Celestial(name, type, cbtype)
     { }
 
-    RigidBody(YAML::Node &config, ObjectType type);
+    RigidBody(YAML::Node &config, ObjectType type, celType ctype);
 
     virtual ~RigidBody() = default;
 
@@ -48,8 +48,8 @@ protected:
     Orbit *orbit = nullptr;
     Rotation *rotation = nullptr;
 
-    OrbitalElements oel;
-    bool orbitValid = false;
+    // OrbitalElements oel;
+    // bool orbitValid = false;
 
     glm::dvec3 cpos, cvel;  // state vectors in reference frame
     glm::dvec3 acc;         // current linear accelration

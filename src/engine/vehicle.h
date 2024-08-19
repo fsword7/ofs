@@ -6,6 +6,7 @@
 #pragma once
 
 #include "engine/rigidbody.h"
+#include "api/elevmgr.h"
 
 // class SuperVessel
 // {
@@ -36,39 +37,54 @@ class Mesh;
 struct surface_t
 {
     void setLanded(double lng, double lat, double alt, double dir,
-        const glm::dvec3 &nml, const Object *object);
+        const glm::dvec3 &nml, const Celestial *object);
 
-    const Object *body;     // celestial body reference
+    void setLanded(const glm::dvec3 &loc, double dir, const Celestial *object);
+    void update(const StateVectors &s, const StateVectors &os, const Celestial *object,
+        elevTileList_t *etile = nullptr);
 
+    const Celestial *body;     // celestial body reference
+
+    glm::dvec3 ploc;        // local planet coordinates
+    
     // ship parameters for flight simulation
     double  lng, lat, rad;  // ship's position in planet's
                             // local equatorial coordinates
-    double  clng, slng;     // cosines and sines of
-    double  clat, slat;     //   longtidude and latitude
+    double  heading;        // compass orientation [radians]
+    double  alt, alt0;      // altitude above ground/mean radius
+    double  pitch, bank;    // ship orientation in horizon frame
+
     double  airSpeed;       // air speed relative to wind
     double  groundSpeed;    // ground speed relative to ground
-    double  altitude;       // ship's altitude above ground
-    double  altitude0;      // ship's altitude above mean radius
-    double  pitch, bank;    // ship orientation in horizon frame
-    double  heading;        // compass orientation [radians]
+    glm::dvec3 gvglob;      // ground velocity global frame
+    glm::dvec3 gvlocal;     // ground velocity local frame
+    glm::dvec3 avglob;      // airspeed global frame
+    glm::dvec3 avlocal;     // airspeed local frame
+    glm::dvec3 wvglob;      // wind global frame
+
+    double  clng, slng;     // cosines and sines of
+    double  clat, slat;     //   longtidude and latitude
 
     // ground parameters
-    glm::dvec3 surfNormal;  // surface normal in local horizon frame
+    glm::dvec3 snml;        // surface normal in local horizon frame (+y up)
     double  elev;           // ground elevation to relative mean radius
 
     // atomsphere parameters
-    bool    inAtomsphere;   // ship within planetary atomsphere
+    bool    isInAtomsphere; // ship within planetary atomsphere
     double  atmPressure;    // atomsphere pressure [Pa]
     double  atmDensity;     // atomsphere density [Kg/m^3]
     double  atmTemp;        // atomsphere temperature [K]
     double  atmMach;        // atomsphere mach number
 
-    glm::dmat3 l2h;            // planet to local horizon [planet frame]
+    glm::dmat3 l2h;         // planet to local horizon [planet frame]
+
+    glm::dmat3 R;
+    glm::dquat Q;
 };
 
 using csurface_t = const surface_t;
 
-enum AirfoilType_t
+enum airfoilType_t
 {
     liftVertical,           // lift is vetical (elevator, aileron, etc)
     liftHorizontal          // lift is horizationtal (rudder, etc)
@@ -86,7 +102,8 @@ enum ControlType_t
 
 struct airfoil_t
 {
-    AirfoilType_t align;    // Vetical/Honzontal type
+    airfoilType_t align;    // Vetical/Honzontal type
+    glm::dvec3 ref;         // Lift/drag reference point
     double c;               // airfoil chord length;
     double S;               // reference area (wing)
     double A;               // aspect ratio (b^2/S with wingspan b)
@@ -155,19 +172,19 @@ enum thrustType_t
     thgRetro,               // retro thruster
     thgHover,               // hover thruster
 
-    thgAttPitchUp,          // Attitude: Rotate pitch up
-    thgAttPitchDown,        // Attitude: Rotate pitch down
-    thgAttYawLeft,          // Attitude: Rotate yaw left
-    thgAttYawRight,         // Attitude: Rotate yaw right
-    thgAttBankLeft,         // Attitude: Rotate bank left
-    thgAttBankRight,        // Attitude: Rotate bank right
+    thgRotPitchUp,          // Rotation Attitude: Rotate pitch up
+    thgRotPitchDown,        // Rotation Attitude: Rotate pitch down
+    thgRotYawLeft,          // Rotation Attitude: Rotate yaw left
+    thgRotYawRight,         // Rotation Attitude: Rotate yaw right
+    thgRotBankLeft,         // Rotation Attitude: Rotate bank left
+    thgRotBankRight,        // Rotation Attitude: Rotate bank right
     
-    thgTraUp,               // Translation: Move up
-    thgTraDown,             // Translation: Move down
-    thgTraLeft,             // Translation: Move Left
-    thgTraRight,            // Translation: Move right
-    thgTraForward,          // Translation: Move forward
-    thgTraBackward,         // Translation: Move backward
+    thgLinMoveUp,           // Linear Attitude: Move up
+    thgLinMoveDown,         // Linear Attitude: Move down
+    thgLinMoveLeft,         // Linear Attitude: Move Left
+    thgLinMoveRight,        // Linear Attitude: Move right
+    thgLinMoveForward,      // Linear Attitude: Move forward
+    thgLinMoveBackward,     // Linear Attitude: Move backward
 
     thgMaxThrusters,
 
@@ -183,6 +200,10 @@ struct tdVertex_t
     double  stiffness;      // suspension - stiffness [ N/m ] 
     double  damping;        // suspension - damping
     double  compression;    // suspension - compression factor
+
+    // surface force parameters
+    double tdy;
+    double fn, flat, flng;
 };
 
 // docking port definition
@@ -208,6 +229,7 @@ class VehicleBase : public RigidBody
 public:
     enum FlightStatus
     {
+        fsFree,     // Free observating mode
         fsFlight,   // in flight
         fsDriving,  // driving on ground
         fsLanded,   // Landed/All stopped
@@ -221,6 +243,8 @@ public:
     inline surface_t *getSurfaceParameters() { return &surfParam; }
     inline csurface_t *getSurfaceParameters() const { return &surfParam; }
     
+    void updateSurfaceParam();
+
     // virtual void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
     virtual bool addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
 
@@ -228,6 +252,8 @@ protected:
     FlightStatus fsType = fsFlight;
 
     surface_t surfParam;    // ship parameters in planet atomsphere
+    // surface_t sp;               // surface parameters
+
     glm::dmat3  landrot;      // Ship orientation in local planet frame
 
     glm::dvec3 F;      // Linear moment
@@ -235,6 +261,7 @@ protected:
     glm::dvec3 Fadd;   // collecting linear forces
     glm::dvec3 Ladd;   // collecting torque components
 
+    mutable elevTileList_t etile;
 };
 
 class Vehicle : public VehicleBase
@@ -252,7 +279,11 @@ public:
 
     inline void clearTouchdownPoints()          { tpVertices.clear(); }
 
+    inline glm::dvec3 *getCameraPosition()      { return &vcpos; }
+    inline glm::dvec3 *getCameraDirection()     { return &vcdir; }
+
     void initLanded(Object *object, double lat, double lng, double dir);
+    void initLanded(Celestial *object, const glm::dvec3 &loc, double dir);
     void initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const glm::dvec3 &rot, const glm::dvec3 *vrot);
     void initDocked();
 
@@ -261,6 +292,8 @@ public:
     
     void setGenericDefaults();
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
+
+    void updateUserAttitudeControls(int *ctrlKeyboard);
 
     void updateMass();
     virtual void update(bool force);
@@ -271,7 +304,7 @@ public:
 
     void drawHUD(HUDPanel *hud, Sketchpad *pad);
 
-    void createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank = nullptr);
+    thrust_t *createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank = nullptr);
     bool deleteThruster(thrust_t *th);
 
     // void setThrustLevel(thrust_t *th, double level);
@@ -279,7 +312,7 @@ public:
     // void setThrustOverride(thrust_t *th, double level);
     // void adjustThrustOverride(thrust_t *th, double dlevel);
 
-    void createThrusterGroup(thrustgrp_t *tg, thrustType_t type);
+    void createThrusterGroup(thrust_t **th, int nThrusts, thrustType_t type);
 
     void setThrustGroupLevel(thrustgrp_t *tg, double level);
     void adjustThrustGroupLevel(thrustgrp_t *tg, double dlevel);
@@ -292,7 +325,15 @@ public:
     void adjustThrustGroupOverride(thrustType_t type, double dlevel);
 
     double getThrustGroupLevel(thrustgrp_t *tg);
- 
+
+    void createDefaultEngine(thrustType_t type, double power);
+    void createDefaultAttitudeSet(double maxth);
+
+    // Aerodynamics parameters
+
+    airfoil_t *createAirfoil(airfoilType_t align, const glm::dvec3 &pos, 
+        double c, double S, double A);
+
 private:
     SuperVehicle *superVehicle = nullptr;
 
@@ -303,6 +344,12 @@ private:
         ovcInit_t ovcInit = nullptr;
         ovcExit_t ovcExit = nullptr;
     } vif;
+
+    // Virtual cockpit camera parameters
+    glm::dvec3  vcpos = { 0, 0, 0 };    // camera offset (vehicle frame)
+    glm::dvec3  vcdir = { 0, 0, 1 };    // camera direction (forward)
+
+    int rcsMode = 0;
 
     double  lift;   // Lift force from wings
     double  drag;   // drag from atomspheric forces
@@ -328,4 +375,6 @@ private:
     std::vector<thrust_t *> thrustList;         // Individual thruster list
     std::vector<thrustgrp_t *> thgrpList;       // Main thruster group list
     std::vector<thrustgrp_t *> thgrpUserList;   // User thruster group list
+
+    std::vector<airfoil_t *> airfoilList;       // airfoil wing list
 };

@@ -10,8 +10,8 @@
 #include "universe/psystem.h"
 #include "universe/frame.h"
 
-RigidBody::RigidBody(YAML::Node &config, ObjectType type)
-: Celestial(config, type)
+RigidBody::RigidBody(YAML::Node &config, ObjectType type, celType celtype)
+: Celestial(config, type, celtype)
 {
 
 }

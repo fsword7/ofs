@@ -11,7 +11,7 @@
 #include "universe/astro.h"
 
 CelestialStar::CelestialStar(cstr_t &name)
-: CelestialBody(name, cbStar)
+: CelestialBody(name, objCelestialStar, cbStar)
 {
 
 }
