@@ -43,7 +43,7 @@ void Celestial::setup(YAML::Node &config)
     Dphi += Lrel0 * cos(eps_rel);
     Dphi = fmod(Dphi, pi2);
 
-    str_t epName = yaml::getValue<str_t>(config, "Orbit");
+    str_t epName = yaml::getValueString<str_t>(config, "Orbit");
     if (!epName.empty())
     {
         OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
@@ -196,16 +196,23 @@ void Celestial::updateRotation()
     crot = ofs::posangle(Dphi + ofsDate->getSimTime1()*rotOmega - Lrel*cos_eps + rotofs);
 
     double cosr = cos(crot), sinr = sin(crot);
-    s1.R = {  cosr, 0.0, sinr,
-              0.0,  1.0, 0.0,
-             -sinr, 0.0, cosr };
+    glm::dmat3 rot;
+
+    rot = {  cosr, 0.0, sinr,
+             0.0,  1.0, 0.0,
+            -sinr, 0.0, cosr };
+    s1.R = Recl * rot;
     s1.Q = s1.R;
+
+    objRotation  = s1.R;
+    objqRotation = s1.Q;
 }
 
 void Celestial::update(bool force)
 {
 
-    updatePrecission();
+    if (precT != 0.0)
+        updatePrecission();
     updateRotation();
 
     // RigidBody::update(force);
