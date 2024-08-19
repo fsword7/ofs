@@ -58,6 +58,12 @@ void pSystem::addCelestial(Celestial *cel)
         [](Celestial *a, Celestial *b) { return a->getMass() > b->getMass(); } );
 }
 
+void pSystem::sortCelestials()
+{
+    std::sort(celestials.begin(), celestials.end(),
+        [](Celestial *a, Celestial *b) { return a->getMass() > b->getMass(); } );
+}
+
 void pSystem::addPlanet(CelestialBody *planet, CelestialBody *parent)
 {
     planets.push_back(planet);

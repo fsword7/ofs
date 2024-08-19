@@ -24,6 +24,7 @@ public:
     void addPlanet(CelestialBody *planet, CelestialBody *cbody);
     void addVehicle(Vehicle *vehicle);
     void addCelestial(Celestial *cel);
+    void sortCelestials();
 
     Celestial *find(cstr_t &name) const;
 
