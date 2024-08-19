@@ -82,6 +82,8 @@ public:
 
     virtual glm::dvec3 getoPosition() const     { return objPosition; }
     virtual glm::dvec3 getoVelocity() const     { return objVelocity; }
+    virtual glm::dmat3 getoRotation() const     { return objRotation; }
+    // virtual glm::dquat getoRotation() const     { return objqRotation; }
     virtual glm::dvec3 getbPosition() const     { return baryPosition; }
     virtual glm::dvec3 getbVelocity() const     { return baryVelocity; }
 

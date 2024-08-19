@@ -85,7 +85,7 @@ void Scene::buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
 
         {
             glm::dvec3 opos = body->getoPosition();
-            glm::dmat3 orot = body->getuOrientation(0);
+            glm::dmat3 orot = body->getoRotation();
             glm::dvec3 vpos = opos - obs;
 
             double vdist = glm::length(vpos);
