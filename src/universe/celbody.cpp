@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "api/celbody.h"
+#include "api/ofsapi.h"
 #include "ephem/elements.h"
 #include "engine/rigidbody.h"
 #include "ephem/vsop87/vsop87.h"
@@ -62,23 +63,22 @@
 //     return ownSystem;
 // }
 
-CelestialBody::CelestialBody(YAML::Node &config, celType type)
-: RigidBody(config, (type == cbStar) ? objCelestialStar : objCelestialBody),
-  cbType(type)
+CelestialBody::CelestialBody(YAML::Node &config, ObjectType type, celType cbtype)
+: RigidBody(config, type, cbtype)
 {
 
-    if (config["Orbit"].IsScalar())
-    {
-        str_t epName = config["Orbit"].as<str_t>();
-        OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
-        if (orbit == nullptr)
-            orbit = OrbitELP82::create(*this, epName);
+    // if (config["Orbit"].IsScalar())
+    // {
+    //     str_t epName = config["Orbit"].as<str_t>();
+    //     OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
+    //     if (orbit == nullptr)
+    //         orbit = OrbitELP82::create(*this, epName);
 
-        if (orbit != nullptr)
-            setEphemeris(orbit);
-        else
-            ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
-    }
+    //     if (orbit != nullptr)
+    //         setEphemeris(orbit);
+    //     else
+    //         ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
+    // }
 
     // getValueReal(cfg, "LAN", Lrel0);
     // getValueReal(cfg, "LAN_MJD", mjd_rel);
@@ -144,242 +144,14 @@ void CelestialBody::attach(CelestialBody *parent, frameType type)
     }
 }
 
-void CelestialBody::convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel)
-{
-    // double cosp = cos(pol[0]), sinp = sin(pol[0]); // Phi
-    double cosp = cos(pol[0]), sinp = -sin(pol[0]); // Phi
-    double cost = cos(pol[1]), sint = sin(pol[1]); // Theta
-    double rad  = pol[2] * KM_PER_AU;
-    double xz   = rad * cost;
+// void CelestialBody::update(const TimeDate &td, bool force)
+// {
 
-    if (hpos)
-    {
-        xyz[0] = xz * cosp;
-        xyz[2] = xz * sinp;
-        xyz[1] = rad * sint;
-    }
+//     updatePrecission();
+//     updateRotation();
 
-    if (hvel)
-    {
-        double vl = xz * pol[3];
-        double vb = rad * pol[4];
-        double vr = pol[5] * KM_PER_AU;
-
-        xyz[3] = cosp*cost*vr - cosp*sint*vb - sinp*vl;
-        xyz[4] = sint*vr      + cost*vb;
-        xyz[5] = sinp*cost*vr - sinp*sint*vb + cosp*vl;
-    }
-}
-
-uint32_t CelestialBody::getEphemerisState(const TimeDate &td, double *res)
-{
-    uint16_t req = EPHEM_TRUEPOS|EPHEM_TRUEVEL|EPHEM_BARYPOS|EPHEM_BARYVEL;
-
-    if (ephemeris == nullptr)
-        return 0;
-    return ephemeris->getOrbitData(td.getMJD1(), req, res);
-}
-
-bool CelestialBody::updateEphemeris(const TimeDate &td)
-{
-    double state[12];
-    int flags;
-    bool htrue = false;
-    bool hbary = false;
-    bool hvel = false;
- 
-    // Updating secondaries (planets/moons) recursively
-    // from origin of star or specific body
-    for (auto body : secondaries)
-        body->updateEphemeris(td);
-
-    if (flags = getEphemerisState(td, state))
-    {
-        if (flags & EPHEM_TRUEBARY)
-        {
-            // For celestial body with no planetary system
-
-            // Get orbital or barycentric position/velocity either
-            double *s;
-            if (flags & EPHEM_TRUEPOS)
-            {
-                s = state;
-                if (flags & EPHEM_TRUEVEL)
-                    hvel = true;
-            }
-            else if (flags & EPHEM_BARYPOS)
-            {
-                s = state+6;
-                if (flags & EPHEM_BARYVEL)
-                    hvel = true;
-            }
-
-            if (flags & EPHEM_POLAR)
-                convertPolarToXYZ(s, s, true, hvel);
-            htrue = hbary = true;
-            cpos = bpos = { s[0], s[1], s[2] };
-            if (hvel == true)
-                cvel = bvel = { s[3], s[4], s[5] };
-        }
-        else
-        {
-            // For celestial body with planetary system
-
-            // Orbital position/velocity
-            if (flags & EPHEM_TRUEPOS)
-            {
-                htrue = true;
-                hvel = (flags & EPHEM_TRUEVEL) != 0;
-                if (flags & EPHEM_POLAR)
-                    convertPolarToXYZ(state, state, true, hvel);
-                cpos = { state[0], state[1], state[2] };
-                if (flags & EPHEM_TRUEVEL)
-                    cvel = { state[3], state[4], state[5] };
-            }
-
-            // Barycentre position/velocity
-            if (flags & EPHEM_BARYPOS)
-            {
-                hbary = true;
-                hvel = (flags & EPHEM_BARYVEL) != 0;
-                if (flags & EPHEM_POLAR)
-                    convertPolarToXYZ(state+6, state+6, true, hvel);
-                bpos = { state[6], state[7], state[8] };
-                if (flags & EPHEM_BARYVEL)
-                    bvel = { state[9], state[10], state[11] };
-            }
-        }
-    }
-    else
-    {
-        // Updating orbital elements
-        oel.update(0, bpos, bvel);
-        hbary = true;
-    }
-
-    // Updating barycentre positions and velocity through reference frame.
-    if (hbary && htrue)
-    {
-        // With known orbital and barycentirc position/velocity,
-        // just calculate difference between them. 
-        bposofs = bpos - cpos;
-        bvelofs = bvel - cvel;
-    }
-    else
-    {
-        // Celculate wobbling position/velocity
-        // by using mass of celestial body for new
-        // orbital or barycentric position/velocity
-        bposofs = { 0, 0, 0 };
-        bvelofs = { 0, 0, 0 };
-        double bmass = mass;
-        for (auto body : secondaries)
-        {
-            bposofs += body->bpos * body->getMass();
-            bvelofs += body->bvel * body->getMass();
-            if (!body->bparent)
-                bmass += body->getMass();
-        }
-        bposofs /= bmass;
-        bvelofs /= bmass;
-
-        if (htrue)
-        {
-            bpos = cpos + bposofs;
-            bvel = cvel + bvelofs;
-        }
-        else
-        {
-            cpos = bpos - bposofs;
-            cvel = bvel - bvelofs;
-        }
-    }
-
-    for (auto body : secondaries)
-    {
-        if (body->bparent)
-        {
-            body->cpos += bposofs;
-            body->cvel += bvelofs;
-            body->bpos += bposofs;
-            body->bvel += bvelofs;
-        }
-    }
-
-    bparent = (flags & EPHEM_PARENT) != 0;
-
-    return bparent;
-}
-
-void CelestialBody::updatePostEphemeris(const TimeDate &td)
-{
-    s1.pos = cpos;
-    s1.vel = cvel;
-    if (cbody != nullptr)
-    {
-        // Relative to origin of barycentre (star)
-        s1.pos += cbody->s1.pos;
-        s1.vel += cbody->s1.vel;
-    }
-    objPosition = s1.pos;
-    objVelocity = s1.vel;
-    baryPosition = bpos;
-    baryVelocity = bvel;
-
-    // Logger::getLogger()->info("{}: P({:.6f},{:.6f},{:.6f}) V({:.6f},{:.6f},{:.6f})\n", getsName(),
-    //     objPosition.x, objPosition.y, objPosition.z,
-    //     objVelocity.x, objVelocity.y, objVelocity.z);
-
-    // Updating secondaries recursively
-    for (auto body : secondaries)
-        body->updatePostEphemeris(td);
-}
-
-void CelestialBody::updatePrecission(const TimeDate &td)
-{
-    Lrel = Lrel0 + precOmega * (td.getMJD1() - mjd_rel);
-    double sinl = sin(Lrel), cosl = cos(Lrel);
-
-    glm::dmat3 Rrel = { cosl,   -sinl*sin_eps,      -sinl*cos_eps, 
-                        0,      cos_eps,            -sin_eps,
-                        sinl,   cosl*sin_eps,       cosl*cos_eps };
-
-    if (eps_ref)
-        R_ref_rel = R_ref * R_ref_rel;
-    
-    Raxis = R_ref_rel * glm::dvec3( 0, 1, 0 );
-    eps_ecl = acos(Raxis.y);
-    lan_ecl = atan2(-Raxis.y, Raxis.z);
-
-    double sinL = sin(lan_ecl), cosL = cos(lan_ecl);
-    double sine = sin(eps_ecl), cose = cos(eps_ecl);
-
-    Recl = { cosL,  -sinL*sine, -sinL*cose,
-            0,      cose,       -sine,
-            sinL,   cosL*sine,  cosL*cose };
-    
-    double cos_poff = cosL*R_ref_rel[0][0] * sinL*R_ref_rel[2][0];
-    double sin_poff = -(cosL*R_ref_rel[0][2] * sinL*R_ref_rel[2][2]);
-    rotOffset = atan2(sin_poff, cos_poff);
-}
-
-void CelestialBody::updateRotation(const TimeDate &td)
-{
-    crot = ofs::posangle(Dphi + td.getSimTime1()*rotOmega - Lrel*cos_eps + rotofs);
-
-    double cosr = cos(crot), sinr = sin(crot);
-    s1.R = {  cosr, 0.0, sinr,
-              0.0,  1.0, 0.0,
-             -sinr, 0.0, cosr };
-
-    s1.Q = s1.R;
-}
-
-void CelestialBody::update(const TimeDate &td, bool force)
-{
-
-    RigidBody::update(force);
-}
+//     RigidBody::update(force);
+// }
 
 glm::dmat3 CelestialBody::getEquatorial(double tjd) const
 {
