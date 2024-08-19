@@ -9,6 +9,7 @@
 #include "api/graphics.h"
 #include "api/logger.h"
 #include "engine/engine.h"
+#include "engine/vehicle.h"
 #include "engine/player.h"
 #include "engine/view.h"
 #include "universe/universe.h"
@@ -73,6 +74,16 @@ void CoreApp::cleanup()
 
     if (guimgr != nullptr)
         delete guimgr;
+}
+
+void CoreApp::setFocusingObject(Celestial *object)
+{
+    focObject = object;
+    if (object->getType() == objVehicle)
+    {
+        pfocVehicle = focVehicle;
+        focVehicle = dynamic_cast<Vehicle *>(object);
+    }
 }
 
 void CoreApp::openSession()
@@ -601,6 +612,42 @@ void CoreApp::keyImmediateSystem()
 void CoreApp::keyImmediateOnRunning()
 {
 
+    // Clear all keyboard controls for thrusters
+    // for (int idx = 0; idx < thgMaxThrusters; idx++)
+    //     ctrlKeyThrusters[idx] = 0;
+
+    // Reaction Control System controls
+    // if (bEnableRCS)
+    // {
+        // rotation controls
+        // if (stateKey[ofs::keyPad8])         ctrlKeyThrusters[thgRotPitchUp]      = 1000;
+        // if (ctrlStateKey[ofs::keyPad8])     ctrlKeyThrusters[thgRotPitchUp]      = 100;
+        // if (stateKey[ofs::keyPad2])         ctrlKeyThrusters[thgRotPitchDown]    = 1000;
+        // if (ctrlStateKey[ofs::keyPad2])     ctrlKeyThrusters[thgRotPitchDown]    = 100;
+        // if (stateKey[ofs::keyPad4])         ctrlKeyThrusters[thgRotYawLeft]      = 1000;
+        // if (ctrlStateKey[ofs::keyPad4])     ctrlKeyThrusters[thgRotYawLeft]      = 100;
+        // if (stateKey[ofs::keyPad6])         ctrlKeyThrusters[thgRotYawRight]     = 1000;
+        // if (ctrlStateKey[ofs::keyPad6])     ctrlKeyThrusters[thgRotYawRight]     = 100;
+        // if (stateKey[ofs::keyPad7])         ctrlKeyThrusters[thgRotBankLeft]     = 1000;
+        // if (ctrlStateKey[ofs::keyPad7])     ctrlKeyThrusters[thgRotBankLeft]     = 100;
+        // if (stateKey[ofs::keyPad9])         ctrlKeyThrusters[thgRotBankRight]    = 1000;
+        // if (ctrlStateKey[ofs::keyPad9])     ctrlKeyThrusters[thgRotBankRight]    = 100;
+
+        // linear controls
+        // if (stateKey[ofs::keyUp])           ctrlKeyThrusters[thgLinMoveUp]       = 1000;
+        // if (ctrlStateKey[ofs::keyUp])       ctrlKeyThrusters[thgLinMoveUp]       = 100;
+        // if (stateKey[ofs::keyDown])         ctrlKeyThrusters[thgLinMoveDown]     = 1000;
+        // if (ctrlStateKey[ofs::keyDown])     ctrlKeyThrusters[thgLinMoveDown]     = 100;
+        // if (stateKey[ofs::keyLeft])         ctrlKeyThrusters[thgLinMoveLeft]     = 1000;
+        // if (ctrlStateKey[ofs::keyLeft])     ctrlKeyThrusters[thgLinMoveLeft]     = 100;
+        // if (stateKey[ofs::keyRight])        ctrlKeyThrusters[thgLinMoveRight]    = 1000;
+        // if (ctrlStateKey[ofs::keyRight])    ctrlKeyThrusters[thgLinMoveRight]    = 100;
+        // if (stateKey[ofs::keyPad1])         ctrlKeyThrusters[thgLinMoveForward]  = 1000;
+        // if (ctrlStateKey[ofs::keyPad1])     ctrlKeyThrusters[thgLinMoveForward]  = 100;
+        // if (stateKey[ofs::keyPad3])         ctrlKeyThrusters[thgLinMoveBackward] = 1000;
+        // if (ctrlStateKey[ofs::keyPad3])     ctrlKeyThrusters[thgLinMoveBackward] = 100;
+
+    // }
 }
 
 // ******** Mouse Controls ********

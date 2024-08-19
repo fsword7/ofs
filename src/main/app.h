@@ -16,6 +16,8 @@ class View;
 class Panel;
 class GraphicsClient;
 class GUIManager;
+class Celestial;
+class Vehicle;
 
 struct ModuleEntry
 {
@@ -46,6 +48,8 @@ public:
     void renderScene();
     // void render2D();
     void drawHUD();
+
+    void setFocusingObject(Celestial *object);
 
     // Module function calls
     void loadStartupModules();
@@ -103,6 +107,11 @@ protected:
 
     GraphicsClient *gclient = nullptr;
 
+    // Focusing vehicle object
+    Celestial *focObject = nullptr;
+    Vehicle *focVehicle = nullptr;
+    Vehicle *pfocVehicle = nullptr;
+
     int width, height;
 
     double currentTime = 0.0;
@@ -123,6 +132,9 @@ protected:
     bool shiftStateKey[512];
     bool ctrlStateKey[512];
     bool altStateKey[512];
+
+    // int ctrlKeyThrusters[thgMaxThrusters];
+    // int ctrlJoyThrusters[thgMaxThrusters];
 
     double keyAttitudeAccel = ofs::radians(5.0);
     double keyAttitudeBrake = ofs::radians(60.0);
