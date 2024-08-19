@@ -8,7 +8,7 @@
 #include "ephem/vsop87/vsop87.h"
 #include "ephem/vsop87/earth.h"
 
-OrbitVSOP87Earth::OrbitVSOP87Earth(CelestialBody &cbody, vsop87p_t &series)
+OrbitVSOP87Earth::OrbitVSOP87Earth(Celestial &cbody, vsop87p_t &series)
 : OrbitVSOP87(cbody, series)
 {
     a0 = 1.0; // semi-major axis [AU]

@@ -6,7 +6,7 @@
 class OrbitVSOP87Sol : public OrbitVSOP87
 {
 public:
-    OrbitVSOP87Sol(CelestialBody &cbody, vsop87p_t &series);
+    OrbitVSOP87Sol(Celestial &cbody, vsop87p_t &series);
     virtual ~OrbitVSOP87Sol() = default;
 
     uint16_t getOrbitData(double mjd, uint16_t req, double *res) override;

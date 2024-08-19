@@ -8,7 +8,7 @@
 class OrbitELP82Lunar : public OrbitELP82
 {
 public:
-    OrbitELP82Lunar(CelestialBody &cbody);
+    OrbitELP82Lunar(Celestial &cbody);
     virtual ~OrbitELP82Lunar() = default;
 
     uint16_t getOrbitData(double mjd, uint16_t req, double *res) override;

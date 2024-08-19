@@ -9,7 +9,7 @@
 #include "ephem/lunar/elp82.h"
 #include "ephem/lunar/lunar.h"
 
-OrbitELP82Lunar::OrbitELP82Lunar(CelestialBody &cbody)
+OrbitELP82Lunar::OrbitELP82Lunar(Celestial &cbody)
 : OrbitELP82(cbody)
 {
 }

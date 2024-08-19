@@ -8,7 +8,7 @@
 
 // #include "ephem/earth/earth.h"
 
-OrbitEphemeris::OrbitEphemeris(CelestialBody &cbody)
+OrbitEphemeris::OrbitEphemeris(Celestial &cbody)
 : cbody(cbody)
 {
     

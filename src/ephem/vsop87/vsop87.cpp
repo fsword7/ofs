@@ -33,7 +33,7 @@
 #include "ephem/vsop87/vsop87ura.cpp" // Uranus
 #include "ephem/vsop87/vsop87nep.cpp" // Neptune
 
-OrbitVSOP87::OrbitVSOP87(CelestialBody &cbody, vsop87p_t &series)
+OrbitVSOP87::OrbitVSOP87(Celestial &cbody, vsop87p_t &series)
 : OrbitEphemeris(cbody), series(series)
 {
 	setSeries(series.type);
@@ -158,7 +158,7 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 	}
 }
 
-OrbitEphemeris *OrbitVSOP87::create(CelestialBody &cbody, cstr_t &name)
+OrbitEphemeris *OrbitVSOP87::create(Celestial &cbody, cstr_t &name)
 {
 	if (name == "vsop87e-sol")
 		return new OrbitVSOP87Sol(cbody, sun_XYZ);

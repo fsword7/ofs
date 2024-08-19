@@ -8,7 +8,7 @@
 #include "ephem/ephemeris.h"
 #include "ephem/spice.h"
 
-OrbitSPICE::OrbitSPICE(CelestialBody &cbody)
+OrbitSPICE::OrbitSPICE(Celestial &cbody)
 : OrbitEphemeris(cbody)
 {
 }

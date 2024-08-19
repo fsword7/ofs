@@ -12,7 +12,7 @@
 
 #include "ephem/lunar/elp82dat.cpp"
 
-OrbitELP82::OrbitELP82(CelestialBody &cbody)
+OrbitELP82::OrbitELP82(Celestial &cbody)
 : OrbitEphemeris(cbody)
 {
 	init();
@@ -358,7 +358,7 @@ void OrbitELP82::getEphemeris(double mjd, double *res)
 	// res[5] *= vscale;
 }
 
-OrbitEphemeris *OrbitELP82::create(CelestialBody &cbody, cstr_t &name)
+OrbitEphemeris *OrbitELP82::create(Celestial &cbody, cstr_t &name)
 {
 	if (name == "elp82b-lunar")
 		return new OrbitELP82Lunar(cbody);

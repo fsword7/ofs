@@ -5,7 +5,7 @@
 
 #pragma once
 
-class CelestialBody;
+class Celestial;
 
 struct elp82main_t
 {
@@ -24,14 +24,14 @@ typedef double SEQ6[6];
 class OrbitELP82 : public OrbitEphemeris
 {
 public:
-    OrbitELP82(CelestialBody &cbody);
+    OrbitELP82(Celestial &cbody);
     ~OrbitELP82();
 
     void getEphemeris(double mjd, double *res);
 
     virtual uint16_t getOrbitData(double mjd, uint16_t req, double *res) = 0;
 
-    static OrbitEphemeris *create(CelestialBody &cbody, cstr_t &name);
+    static OrbitEphemeris *create(Celestial &cbody, cstr_t &name);
 
 protected:
     void init();

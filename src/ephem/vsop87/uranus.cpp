@@ -8,7 +8,7 @@
 #include "ephem/vsop87/vsop87.h"
 #include "ephem/vsop87/uranus.h"
 
-OrbitVSOP87Uranus::OrbitVSOP87Uranus(CelestialBody &cbody, vsop87p_t &series)
+OrbitVSOP87Uranus::OrbitVSOP87Uranus(Celestial &cbody, vsop87p_t &series)
 : OrbitVSOP87(cbody, series)
 {
     a0 = 19.2; // semi-major axis [AU]

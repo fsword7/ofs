@@ -37,10 +37,10 @@ struct vsop87p_t
 class OrbitVSOP87 : public OrbitEphemeris
 {
 public:
-    OrbitVSOP87(CelestialBody &cbody, vsop87p_t &series);
+    OrbitVSOP87(Celestial &cbody, vsop87p_t &series);
     virtual ~OrbitVSOP87();
 
-    static OrbitEphemeris *create(CelestialBody &cbody, cstr_t &name);
+    static OrbitEphemeris *create(Celestial &cbody, cstr_t &name);
 
 protected:
     void setSeries(char series);

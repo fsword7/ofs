@@ -8,7 +8,7 @@
 class OrbitSPICE : public OrbitEphemeris
 {
 public:
-    OrbitSPICE(CelestialBody &cbody);
+    OrbitSPICE(Celestial &cbody);
     virtual ~OrbitSPICE();
 
     // static OrbitEphemeris *create(CelestialBody &cbody, cstr_t &name);
