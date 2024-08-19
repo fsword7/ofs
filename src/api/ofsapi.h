@@ -39,6 +39,7 @@ enum ObjectType
     objUnknown = 0,
     objPlayer,
     objVehicle,
+    objCelestial,
     objCelestialStar,
     objCelestialBody,
 };
