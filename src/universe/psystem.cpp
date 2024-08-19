@@ -9,6 +9,7 @@
 #include "universe/astro.h"
 #include "universe/body.h"
 #include "universe/star.h"
+#include "engine/vehicle.h"
 #include "universe/psystem.h"
 
 #include "yaml-cpp/yaml.h"
@@ -33,30 +34,54 @@ void pSystem::addStar(CelestialStar *star)
     if (!star->haspSystem())
         star->setpSystem(this);
     stars.push_back(star);
-    bodies.push_back(star);
+    // bodies.push_back(star);
+    addBody(star);
+    addCelestial(star);
 }
 
-void pSystem::addBody(CelestialBody *cbody)
+void pSystem::addBody(Celestial *cbody)
 {
     bodies.push_back(cbody);
 }
 
-void pSystem::addGravity(Celestial *grav)
+void pSystem::addVehicle(Vehicle *vehicle)
 {
-    gravities.push_back(grav);
+    vehicles.push_back(vehicle);
+    addBody(vehicle);
+}
+
+void pSystem::addCelestial(Celestial *cel)
+{
+    celestials.push_back(cel);
+
+    std::sort(celestials.begin(), celestials.end(),
+        [](Celestial *a, Celestial *b) { return a->getMass() > b->getMass(); } );
 }
 
 void pSystem::addPlanet(CelestialBody *planet, CelestialBody *parent)
 {
     planets.push_back(planet);
     addBody(planet);
-    addGravity(planet);
+    addCelestial(planet);
     planet->setStar(primaryStar);
     planet->setPlanetarySystem(this);
     planet->attach(parent);
 }
 
-CelestialBody *pSystem::find(cstr_t &name) const
+bool pSystem::removeVehicle(Vehicle *vehicle)
+{
+    return false;
+}
+
+Vehicle *pSystem::getVehicle(cstr_t &name, bool incase) const
+{
+    for (auto vehicle : vehicles)
+        if (vehicle->getName() == name)
+            return vehicle;
+    return nullptr;
+}
+
+Celestial *pSystem::find(cstr_t &name) const
 {
     for (auto body : bodies)
         if (body->getsName() == name)
@@ -81,11 +106,11 @@ glm::dvec3 pSystem::addGravity(const glm::dvec3 &gpos, const Celestial *exclude)
 {
     glm::dvec3 acc = {};
 
-    for (auto grav : gravities)
+    for (auto cel : celestials)
     {
-        if (grav == exclude)
+        if (cel == exclude)
             continue;
-        acc += addSingleGravity(grav->s0.pos - gpos, grav);
+        acc += addSingleGravity(cel->s0.pos - gpos, cel);
     }
 
     return acc;
@@ -96,24 +121,26 @@ glm::dvec3 pSystem::addGravityIntermediate(const glm::dvec3 &gpos, double step, 
 {
     glm::dvec3 acc = {};
 
-    for (auto grav : gravities)
+    for (auto cel : celestials)
     {
-        if (grav == exclude)
+        if (cel == exclude)
             continue;
-        // acc += addSingleGravity(grav->s0.pos - gpos, grav);
-        acc += addSingleGravity(grav->interpolatePosition(step) - gpos, grav);
+        // acc += addSingleGravity(cel->s0.pos - gpos, cel);
+        acc += addSingleGravity(cel->interpolatePosition(step) - gpos, cel);
     }
 
     return acc;
 }
 
-void pSystem::update(const TimeDate &td)
+void pSystem::update(bool force)
 {
 
     for (auto star : stars)
-        star->updateEphemeris(td);
+        star->updateEphemeris();
     for (auto star : stars)
-        star->updatePostEphemeris(td);   
+        star->updatePostEphemeris();
+    for (auto cel : celestials)
+        cel->update(force);
 }
 
 void pSystem::finalizeUpdate()
@@ -212,7 +239,7 @@ bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbFolder)
     if (config["System"].IsScalar())
     {
         std::string sysName = config["System"].as<std::string>();
-        parent = psys->find(sysName);
+        parent = dynamic_cast<CelestialBody *>(psys->find(sysName));
         if (parent == nullptr)
         {
             ofsLogger->error("OFS Error: Unknown system: {}\n", sysName);
