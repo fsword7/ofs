@@ -7,6 +7,7 @@
 
 #include "main/core.h"
 #include "engine/player.h"
+#include "engine/vehicle.h"
 #include "ephem/orbit.h"
 #include "ephem/vsop87/vsop87.h"
 #include "ephem/lunar/elp82.h"
@@ -29,6 +30,8 @@ void Universe::init()
 
     if (!pSystem::loadSystems(this, "Sol"))
         exit(1);
+
+
 }
 
 void Universe::start(const TimeDate &td)
@@ -36,10 +39,13 @@ void Universe::start(const TimeDate &td)
     Camera *cam = ofsAppCore->getCamera();
     Player *player = ofsAppCore->getPlayer();
 
-    CelestialStar *sun = stardb.find("Sol");
+    CelestialStar *sun = dynamic_cast<CelestialStar *>(stardb.find("Sol"));
     pSystem *psys = sun->getpSystem();
-    CelestialBody *earth = psys->find("Earth");
-    CelestialBody *lunar = psys->find("Lunar");
+    CelestialBody *earth = dynamic_cast<CelestialBody *>(psys->find("Earth"));
+    CelestialBody *lunar = dynamic_cast<CelestialBody *>(psys->find("Lunar"));
+
+    // vehicle = new Vehicle();
+    // psys->addVehicle(vehicle);
 
     assert(sun != nullptr);
     assert(psys != nullptr);
@@ -64,12 +70,19 @@ void Universe::start(const TimeDate &td)
 
     // cam->setPosition(earth->convertEquatorialToLocal(
     //     glm::radians(28.632307), glm::radians(-80.705774), earth->getRadius()+50));
-    // // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
+    // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
     // player->attach(earth, camTargetRelative);
     // player->look(earth);
 
+    cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
+    player->attach(earth, camTargetUnlocked);
+    player->look(earth);
+
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
-    player->setGroundObserver(earth, { 28.632307, -80.705774, 1}, 150);
+    // player->setGroundObserver(earth, { 28.632307, -80.705774, 1}, 150);
+
+    // vehicle->initLanded(earth, { 28.632307, -80.705774, 0}, 150);
+    // player->attach(vehicle);
 
     // Observe Rocky Mountains in Denver metro area
     // player->setGroundObserver(earth, { 39.7309918, -104.7046216, 5}, 270);
@@ -109,7 +122,7 @@ void Universe::update(Player *player, const TimeDate &td)
         // Logger::getLogger()->info("{}: Solar System List\n", sun->getsName());
         pSystem *psys = sun->getpSystem();
         if (psys != nullptr)
-            psys->update(td);
+            psys->update(true);
 
     }
 }

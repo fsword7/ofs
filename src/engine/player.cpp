@@ -125,12 +125,25 @@ void Player::attach(Object *object, cameraMode mode)
     {
         switch (modeCamera)
         {
+        case camTargetUnlocked:
+            // Move observer to target object but
+            // not locked to target rotation
+            gspos = cam.rpos;
+            gpos  = tgtObject->getoPosition() + gspos;
+            grot  = cam.rrot;
+            break;
+
         case camTargetRelative:
             // Move observer to target object
-            gspos = tgtObject->getuOrientation(0) * cam.rpos;
+            gspos = tgtObject->getoRotation() * cam.rpos;
             gpos  = tgtObject->getoPosition() + gspos;
-            grot  = tgtObject->getuOrientation(0) * cam.rrot;
+            grot  = tgtObject->getoRotation() * cam.rrot;
             gqrot = grot;
+            break;
+
+        case camSolarSyncRelative:
+            // Move observer to target object
+            // with solar sync
             break;
         }
     }
@@ -179,7 +192,7 @@ void Player::update(const TimeDate &td)
     if (modeExternal)
     {
 
-        if (modeCamera == camTargetRelative || modeCamera == camTargetRelative)
+        if (modeCamera == camTargetRelative || modeCamera == camTargetUnlocked)
         {        
             // free travel mode
             // Update current position and attitude in local reference frame
@@ -215,10 +228,16 @@ void Player::update(const TimeDate &td)
             grot = cam.rrot;
             break;
 
-        case camTargetRelative:
-            gspos = tgtObject->getuOrientation(0) * cam.rpos;
+        case camTargetUnlocked:
+            gspos = cam.rpos;
             gpos  = tgtObject->getoPosition() + gspos;
-            grot  = tgtObject->getuOrientation(0) * cam.rrot;
+            grot  = cam.rrot;
+            break;
+
+        case camTargetRelative:
+            gspos = tgtObject->getoRotation() * cam.rpos;
+            gpos  = tgtObject->getoPosition() + gspos;
+            grot  = tgtObject->getoRotation() * cam.rrot;
             gqrot = grot;
 
             // ofsLogger->debug("TR Local Position:    ({:f}, {:f}, {:f})\n", gspos.x, gspos.y, gspos.z);

@@ -12,6 +12,7 @@
 #include "universe/celbody.h"
 
 class Player;
+class Vehicle;
 class CelestialPlanet;
 
 class OFSAPI Universe
@@ -65,4 +66,5 @@ private:
     CelestialPlanet *mercury, *venus, *earth;
     CelestialPlanet *mars, *jupiter, *saturn;
     CelestialPlanet *uranus, *neptune, *lunar;
+    Vehicle *vehicle = nullptr;
 };

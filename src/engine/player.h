@@ -15,6 +15,7 @@ class Player;
 enum cameraMode {
     camGlobalFrame,
     camTargetRelative,
+    camTargetUnlocked,
     camSolarSyncRelative,
     camGroundObserver,
     camCockpit
