@@ -12,7 +12,8 @@ class AtomsphereEarthNRLMSISE00 : public Atomsphere
 public:
     AtomsphereEarthNRLMSISE00();
 
-    void getAtmParams(const inAtmParam &in, AtmParam &out);
+    void getAtmConstants(atmconst_t &atmc);
+    void getAtmParams(const iatmprm_t &in, atmprm_t &out) override;
 
 private:
     atmos::CNrlmsise00 atm;

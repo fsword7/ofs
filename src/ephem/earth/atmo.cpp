@@ -29,7 +29,17 @@ AtomsphereEarthNRLMSISE00::AtomsphereEarthNRLMSISE00()
 
 }
 
-void AtomsphereEarthNRLMSISE00::getAtmParams(const inAtmParam &in, AtmParam &out)
+void AtomsphereEarthNRLMSISE00::getAtmConstants(atmconst_t &atmc)
+{
+    // Assign atomspheric constants;
+    atmc.altLimit = 2500;
+    atmc.p0 = 101325;
+    atmc.rho0 = 1.2250;
+    atmc.R = 286.91;
+    atmc.gamma = 1.4;
+}
+
+void AtomsphereEarthNRLMSISE00::getAtmParams(const iatmprm_t &in, atmprm_t &out)
 {
     std::array<double, 7> ap = { 3.0 };
     std::array<double, 9> d = { 0 };

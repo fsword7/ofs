@@ -3,6 +3,14 @@
 // Author:  Tim Stark
 // Date:    Jul 3, 2022
 
+
+struct atmprm_t
+{
+    double T;       // Temperature [K]
+    double p;       // Pressure [Pa]
+    double rho;     // Density [kg/m^3]
+};
+
 class Atomsphere
 {
 public:
