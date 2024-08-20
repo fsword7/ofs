@@ -97,6 +97,10 @@ void Universe::start(const TimeDate &td)
     // player->attach(lunar, camTargetRelative);
     // player->look(lunar);
 
+    // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
+    // player->attach(lunar, camTargetUnlocked);
+    // player->look(lunar);
+
     // Ground observer on Lunar
     // player->setGroundObserver(lunar, { 0, 0, 3 }, 0);
 
