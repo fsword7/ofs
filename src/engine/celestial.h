@@ -27,6 +27,12 @@ enum celType
     cbComet
 };
 
+enum frameType
+{
+    rfUniversal = 0,
+    rfBodyFixed
+};
+
 using secondaries_t = const std::vector<Celestial *>;
 
 class OFSAPI Celestial : public Object
@@ -59,6 +65,8 @@ public:
     inline void flushVelocity()                 { brvel = irvel, irvel = {}; }
     
     inline double getRotationPeriod() const             { return rotT; }
+
+    void attach(Celestial *parent, frameType type = rfUniversal);
 
     StateVectors interpolateState(double step);
     glm::dvec3 interpolatePosition(double step) const;

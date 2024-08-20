@@ -42,26 +42,6 @@ class vObject;
 //     std::vector<CelestialBody *> bodies;
 // };
 
-// enum celType
-// {
-//     cbUnknown = 0,
-//     cbObserver,
-//     cbStar,
-//     cbPlanet,
-//     cbDwarfPlanet,
-//     cbMoon,
-//     cbSubmoon,
-//     cbAsteroid,
-//     cbComet
-// };
-
-enum frameType
-{
-    rfUniversal = 0,
-    rfBodyFixed
-};
-
-// using secondaries_t = const std::vector<CelestialBody *>;
 
 class OFSAPI CelestialBody : public RigidBody
 {
@@ -90,26 +70,11 @@ public:
 
     // bool load(json &cfg);
 
-    // inline void addSecondary(CelestialBody *body)       { secondaries.push_back(body); }
-    // inline secondaries_t &getSecondaries() const        { return secondaries; }
-
     inline void setStar(CelestialStar *star)            { cstar = star; }
     inline CelestialStar *getStar() const               { return cstar; }
     inline CelestialBody *getParent() const             { return cbody; }
 
-    // inline void setVisualObject(vObject *vobj) const    { visualObject = vobj; }
-    // inline vObject *getVisualObject() const             { return visualObject; }
-
     // inline double getRotationPeriod() const             { return rotT; }
-    
-    void attach(CelestialBody *parent, frameType type = rfUniversal);
-
-    // void convertPolarToXYZ(double *pol, double *xyz, bool hpos, bool hvel);
-    // uint32_t getEphemerisState(double *res);
-    // bool updateEphemeris();
-    // void updatePostEphemeris();
-
-    // virtual void update(const TimeDate &td, bool force);
 
     // inline celType getCelestialType() const { return cbType; }
 

@@ -80,6 +80,52 @@ void Celestial::setupRotation()
     updateRotation();
 }
 
+void Celestial::attach(Celestial *parent, frameType type)
+{
+    assert(parent != nullptr);
+
+    if (parent != cbody)
+    {
+        cbody = parent;
+        parent->addSecondary(this);
+
+        // elements->setup(mass, cbody->getMass(), 0); // td.mjdRef);
+
+        uint16_t flags = 1;
+        if (flags)
+        {
+            // if (flags & EPHEM_TRUEPOS)
+            //     s0->pos = bpos;
+            // if (flags & EPHEM_TRUEVEL)
+            //     s0->vel = bvel;
+            // if (flags & EPHEM_BARYPOS)
+            //     bpos = s0->pos;
+            // if (flags & EPHEM_BARYVEL)
+            //     bvel = s0->vel;
+        }
+        else
+        {
+            oel.getPositionVelocity(0, s0.pos, s0.vel);
+            // s0.pos = cbody->Recl * s0.pos;
+            // s0.vel = cbody->Recl * s0.vel;
+            // oel.calculate(0, s0.pos, s0.vel);
+
+            bpos = s0.pos;
+            bvel = s0.vel;
+        }
+
+        // Relative to parent celestial body
+        s0.pos += cbody->s0.pos;
+        s0.vel += cbody->s0.vel;
+        bpos += cbody->s0.pos;
+        bvel += cbody->s0.vel;
+
+        // On the air
+        objPosition = s0.pos;
+        objVelocity = s0.vel;
+    }
+}
+
 StateVectors Celestial::interpolateState(double step)
 {
     if (step == 0.0)
