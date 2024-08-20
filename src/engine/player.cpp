@@ -356,7 +356,7 @@ void Player::orbit(const glm::dquat &drot)
 {
     if (tgtObject == nullptr)
         return;
-    if (modeExternal && modeCamera != camTargetRelative)
+    if (modeExternal && modeCamera == camGroundObserver)
         return;
 
     glm::dvec3 vpos = cam.rpos;
@@ -375,7 +375,7 @@ void Player::dolly(double dz)
 {
     if (tgtObject == nullptr)
         return;
-    if (modeExternal && modeCamera != camTargetRelative)
+    if (modeExternal && modeCamera == camGroundObserver)
         return;
 
     // double fact = std::max(1.0/opos.z, 1.0/(1.0 - dz));
