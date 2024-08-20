@@ -142,16 +142,16 @@ protected:
     double crot = 0.0;      // Current rotation
     double rotofs = 0.0;    // Rotation offset (precession)
 
-    glm::dmat3 R_ref_rel;   // rotation matrix
-    glm::dmat3 Recl;    // Precession matrix
-    glm::dquat Qecl;    // Precession quaternion
+    glm::dmat3 Rref_rel;   // rotation matrix
+    glm::dmat3 Recl;       // Precession matrix
+    glm::dquat Qecl;       // Precession quaternion
 
 private:
 
     // Precission/rotation perameters
     double      eps_ref;            // precession reference axis - obliquity against ecluptic normal
     double      lan_ref;            // precession reference axis - longitude of ascending node in ecliptic
-    glm::dmat3  R_ref;              // rotation matrix - ecliptic normal
+    glm::dmat3  Rref;               // rotation matrix - ecliptic normal
 
     double      eps_ecl;            // obliquity of axis
     double      lan_ecl;            // longitude of ascending node

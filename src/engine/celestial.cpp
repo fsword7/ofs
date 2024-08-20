@@ -54,24 +54,21 @@ void Celestial::setup(YAML::Node &config)
         else
             ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
     }
-
-    // if (config["Orbit"].IsScalar())
-    // {
-    //     str_t epName = config["Orbit"].as<str_t>();
-    //     OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
-    //     if (orbit == nullptr)
-    //         orbit = OrbitELP82::create(*this, epName);
-
-    //     if (orbit != nullptr)
-    //         setEphemeris(orbit);
-    //     else
-    //         ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
-    // }
-
 }
 
 void Celestial::setupRotation()
 {
+    Rref = glm::dmat3();
+    if (eps_ref)
+    {
+        glm::dmat3 Lref;
+        double sine = sin(eps_ref), cose = cos(eps_ref);
+        double sinl = sin(lan_ref), cosl = cos(lan_ref);
+        Rref = { 1, 0, 0,  0,cose,-sine,  0,sine, cose };
+        Lref = { cosl,0,sinl,  0,1,0,  -sinl,0,cosl };
+        Rref = Lref * Rref;
+    }
+
     precOmega = (precT ? pi2/precT : 0.0);
     rotOmega = pi2/rotT;
     cos_eps = cos(eps_rel), sin_eps = sin(eps_rel);
@@ -202,27 +199,27 @@ void Celestial::updatePrecission()
     Lrel = Lrel0 + precOmega * (ofsDate->getMJD1() - mjd_rel);
     double sinl = sin(Lrel), cosl = cos(Lrel);
 
-    glm::dmat3 Rrel = { cosl,   -sinl*sin_eps,       sinl*cos_eps, 
+    glm::dmat3 Rrel = { cosl,   -sinl*sin_eps,      -sinl*cos_eps, 
                         0,      cos_eps,            -sin_eps,
-                       -sinl,   cosl*sin_eps,        cosl*cos_eps };
+                        sinl,   cosl*sin_eps,        cosl*cos_eps };
 
     if (eps_ref)
-        R_ref_rel = R_ref * R_ref_rel;
+        Rrel = Rref * Rrel;
     
-    Raxis = R_ref_rel * glm::dvec3( 0, 1, 0 );
+    Raxis = Rrel * glm::dvec3( 0, 1, 0 );
     eps_ecl = acos(Raxis.y);
-    lan_ecl = atan2(-Raxis.y, Raxis.z);
+    lan_ecl = atan2(-Raxis.x, Raxis.z);
 
     double sinL = sin(lan_ecl), cosL = cos(lan_ecl);
     double sine = sin(eps_ecl), cose = cos(eps_ecl);
 
-    Recl = { cosL,  -sinL*sine,  sinL*cose,
+    Recl = { cosL,  -sinL*sine,  -sinL*cose,
              0,      cose,       -sine,
-            -sinL,   cosL*sine,  cosL*cose };
+             sinL,   cosL*sine,  cosL*cose };
     
-    double cos_poff = cosL*R_ref_rel[0][0] * sinL*R_ref_rel[2][0];
-    double sin_poff = -(cosL*R_ref_rel[0][2] * sinL*R_ref_rel[2][2]);
-    rotOffset = atan2(sin_poff, cos_poff);
+    double cos_poff = cosL*Rrel[0][0] * sinL*Rrel[2][0];
+    double sin_poff = -(cosL*Rrel[0][2] * sinL*Rrel[2][2]);
+    rotofs = atan2(sin_poff, cos_poff);
 }
 
 glm::dmat3 Celestial::getRotation(double t) const
