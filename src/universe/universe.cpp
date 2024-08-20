@@ -41,9 +41,12 @@ void Universe::start(const TimeDate &td)
 
     CelestialStar *sun = dynamic_cast<CelestialStar *>(stardb.find("Sol"));
     pSystem *psys = sun->getpSystem();
-    CelestialBody *earth = dynamic_cast<CelestialBody *>(psys->find("Earth"));
-    CelestialBody *lunar = dynamic_cast<CelestialBody *>(psys->find("Lunar"));
-
+    Celestial *earth = dynamic_cast<Celestial *>(psys->find("Earth"));
+    Celestial *lunar = dynamic_cast<Celestial *>(psys->find("Lunar"));
+    Celestial *mars = dynamic_cast<Celestial *>(psys->find("Mars"));
+    Celestial *mercury = dynamic_cast<Celestial *>(psys->find("Mercury"));
+    Celestial *jupiter = dynamic_cast<Celestial *>(psys->find("Jupiter"));
+  
     // vehicle = new Vehicle();
     // psys->addVehicle(vehicle);
 
@@ -51,21 +54,24 @@ void Universe::start(const TimeDate &td)
     assert(psys != nullptr);
     assert(earth != nullptr);
     assert(lunar != nullptr);
+    assert(mars != nullptr);
+    assert(mercury != nullptr);
+    assert(jupiter != nullptr);
 
     // cam->setPosition({ 0, 0, -sun->getRadius() * 4.0 });
     // player->attach(sun, camTargetRelative);
     // player->look(sun);
 
     // cam->setPosition({ 0, 0, mercury->getRadius() * 4.0 });
-    // player->attach(mercury, camTargetRelative);
+    // player->attach(mercury, camSolarSyncRelative, sun);
     // player->look(mercury);
 
     // cam->setPosition({ 0, 0, mars->getRadius() * 4.0 });
-    // player->attach(mars, camTargetRelative);
+    // player->attach(mars, camSolarSyncRelative, sun);
     // player->look(mars);
 
     // cam->setPosition({ 0, 0, jupiter->getRadius() * 4.0 });
-    // player->attach(jupiter, camTargetRelative);
+    // player->attach(jupiter, camSolarSyncRelative, sun);
     // player->look(jupiter);
 
     // cam->setPosition(earth->convertEquatorialToLocal(
@@ -98,11 +104,15 @@ void Universe::start(const TimeDate &td)
     // player->setGroundObserver(earth, { 21.059613, -157.957629, 3}, 0);
 
     // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
-    // player->attach(lunar, camTargetRelative);
+    // player->attach(lunar, camSolarSyncRelative);
     // player->look(lunar);
 
     // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
-    // player->attach(lunar, camTargetUnlocked);
+    // player->attach(lunar, camSolarSyncRelative, sun);
+    // player->look(lunar);
+
+    // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
+    // player->attach(lunar, camSolarSyncRelative, earth);
     // player->look(lunar);
 
     // Ground observer on Lunar
