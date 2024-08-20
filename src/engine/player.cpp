@@ -284,7 +284,7 @@ void Player::update(const TimeDate &td)
                 // Calkculating planetocentric coordinates
                 double rad = cbody->getRadius() + go.alt;
                 cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, rad);
-                gspos = cbody->getuOrientation(0) * cam.rpos;
+                gspos = cam.rpos * cbody->getoRotation();
                 gpos = cbody->getoPosition() + gspos;
 
                 // Rotate camera in local frame. Negate theta value for 
@@ -300,7 +300,7 @@ void Player::update(const TimeDate &td)
 
                 // cam.rpos -= glm::conjugate(cam.rqrot) * tv;
 
-                grot = cam.rrot * go.R * cbody->getuOrientation(0);
+                grot = cam.rrot * go.R * cbody->getoRotation();
                 gqrot = grot;
  
                 // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
