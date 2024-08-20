@@ -486,7 +486,7 @@ void CoreApp::keyImmediateSystem()
         // External camera view
         cameraMode mode = player->getCameraMode();
         if (mode == camGlobalFrame || mode == camTargetRelative || 
-            mode == camTargetUnlocked || mode == camSolarSyncRelative)
+            mode == camTargetUnlocked || mode == camTargetSync)
         {
             glm::dvec3 av = player->getAngularControl();
             glm::dvec3 tv = player->getTravelControl();

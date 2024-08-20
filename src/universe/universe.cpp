@@ -63,15 +63,15 @@ void Universe::start(const TimeDate &td)
     // player->look(sun);
 
     // cam->setPosition({ 0, 0, mercury->getRadius() * 4.0 });
-    // player->attach(mercury, camSolarSyncRelative, sun);
+    // player->attach(mercury, camTargetSync, sun);
     // player->look(mercury);
 
     // cam->setPosition({ 0, 0, mars->getRadius() * 4.0 });
-    // player->attach(mars, camSolarSyncRelative, sun);
+    // player->attach(mars, camTargetSync, sun);
     // player->look(mars);
 
     // cam->setPosition({ 0, 0, jupiter->getRadius() * 4.0 });
-    // player->attach(jupiter, camSolarSyncRelative, sun);
+    // player->attach(jupiter, camTargetSync, sun);
     // player->look(jupiter);
 
     // cam->setPosition(earth->convertEquatorialToLocal(
@@ -85,7 +85,7 @@ void Universe::start(const TimeDate &td)
     // player->look(earth);
 
     cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
-    player->attach(earth, camSolarSyncRelative, sun);
+    player->attach(earth, camTargetSync, sun);
     player->look(earth);
 
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
@@ -104,15 +104,15 @@ void Universe::start(const TimeDate &td)
     // player->setGroundObserver(earth, { 21.059613, -157.957629, 3}, 0);
 
     // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
-    // player->attach(lunar, camSolarSyncRelative);
+    // player->attach(lunar, camTargetSync);
     // player->look(lunar);
 
     // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
-    // player->attach(lunar, camSolarSyncRelative, sun);
+    // player->attach(lunar, camTargetSync, sun);
     // player->look(lunar);
 
     // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
-    // player->attach(lunar, camSolarSyncRelative, earth);
+    // player->attach(lunar, camTargetSync, earth);
     // player->look(lunar);
 
     // Ground observer on Lunar

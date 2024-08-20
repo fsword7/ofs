@@ -118,12 +118,10 @@ double Player::getElevation(CelestialPlanet *cbody, double lat, double lng, doub
 void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
 {
     tgtObject = object;
-    if (sobject != nullptr && mode == camSolarSyncRelative)
-        sunObject = sobject;
+    if (sobject != nullptr && mode == camTargetSync)
+        syncObject = sobject;
 
     modeCamera = mode;
-
-    glm::dvec3 spos, tpos;
 
     if (modeExternal)
     {
@@ -145,15 +143,18 @@ void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
             gqrot = grot;
             break;
 
-        case camSolarSyncRelative:
-            // Move observer to target object
-            // with solar sync
-            spos = sunObject->getoPosition();
-            tpos = tgtObject->getoPosition();
-            hrot  = glm::lookAt(spos, tpos, { 0, 1, 0});
-            gspos = cam.rpos * hrot;
-            gpos  = tpos + gspos;
-            grot  = cam.rrot * hrot;
+        case camTargetSync:
+            {
+                // Move observer to target object
+                // with solar/object sync
+                glm::dvec3 opos, tpos;
+                opos = syncObject->getoPosition();
+                tpos = tgtObject->getoPosition();
+                osrot  = glm::lookAt(opos, tpos, { 0, 1, 0});
+                gspos = cam.rpos * osrot;
+                gpos  = tpos + gspos;
+                grot  = cam.rrot * osrot;
+            }
             break;
         }
     }
@@ -203,7 +204,7 @@ void Player::update(const TimeDate &td)
     {
 
         if (modeCamera == camTargetRelative || modeCamera == camTargetUnlocked ||
-            modeCamera == camSolarSyncRelative)
+            modeCamera == camTargetSync)
         {        
             // free travel mode
             // Update current position and attitude in local reference frame
@@ -258,16 +259,16 @@ void Player::update(const TimeDate &td)
 
             break;
 
-        case camSolarSyncRelative:
+        case camTargetSync:
             {
-                glm::dvec3 spos, tpos;
+                glm::dvec3 opos, tpos;
 
-                spos  = sunObject->getoPosition();
+                opos  = syncObject->getoPosition();
                 tpos  = tgtObject->getoPosition();
-                hrot  = glm::lookAt(spos, tpos, { 0, 1, 0});
-                gspos = cam.rpos * hrot;
+                osrot = glm::lookAt(opos, tpos, { 0, 1, 0});
+                gspos = cam.rpos * osrot;
                 gpos  = tpos + gspos;
-                grot  = cam.rrot * hrot;
+                grot  = cam.rrot * osrot;
             }
             break;
 

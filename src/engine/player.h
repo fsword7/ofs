@@ -16,7 +16,7 @@ enum cameraMode {
     camGlobalFrame,
     camTargetRelative,
     camTargetUnlocked,
-    camSolarSyncRelative,
+    camTargetSync,
     camGroundObserver,
     camCockpit
 };
@@ -160,7 +160,7 @@ private:
     // PlayerFrame *frame = nullptr;
 
     Celestial *tgtObject = nullptr;
-    Celestial *sunObject = nullptr;
+    Celestial *syncObject = nullptr;
 
     // Global (universal) parmeters
     glm::dvec3 gspos;   // Relative to target in global coordinates
@@ -168,7 +168,7 @@ private:
     glm::dvec3 gdir;    // Direction
     glm::dmat3 grot;
     glm::dquat gqrot;
-    glm::dmat3 hrot;    // solar-sync reference frame
+    glm::dmat3 osrot;   // solar/object-sync reference frame
 
     glm::dvec3 *vcpos = nullptr;    // virtual cockpit position
     glm::dvec3 *vcdir = nullptr;    // virtual cockpit direction
