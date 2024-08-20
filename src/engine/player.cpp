@@ -137,10 +137,13 @@ void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
 
         case camTargetRelative:
             // Move observer to target object
-            gspos = tgtObject->getoRotation() * cam.rpos;
-            gpos  = tgtObject->getoPosition() + gspos;
-            grot  = tgtObject->getoRotation() * cam.rrot;
-            gqrot = grot;
+            {
+                glm::dmat3 trot = tgtObject->getoRotation();
+                gspos = cam.rpos * trot;
+                gpos  = tgtObject->getoPosition() + gspos;
+                grot  = cam.rrot * trot;
+                gqrot = grot;
+            }
             break;
 
         case camTargetSync:
@@ -247,11 +250,13 @@ void Player::update(const TimeDate &td)
             break;
 
         case camTargetRelative:
-            gspos = tgtObject->getoRotation() * cam.rpos;
-            gpos  = tgtObject->getoPosition() + gspos;
-            grot  = tgtObject->getoRotation() * cam.rrot;
-            gqrot = grot;
-
+            {
+                glm::dmat3 trot = tgtObject->getoRotation();
+                gspos = cam.rpos * trot;
+                gpos  = tgtObject->getoPosition() + gspos;
+                grot  = cam.rrot * trot;
+                gqrot = grot;
+            }
             // ofsLogger->debug("TR Local Position:    ({:f}, {:f}, {:f})\n", gspos.x, gspos.y, gspos.z);
             // ofsLogger->debug("TR Global Position:   ({:f}, {:f}, {:f})\n", gpos.x, gpos.y, gpos.z);
             // ofsLogger->debug("TR Location:          {:f} {:f}\n", glm::degrees(go.lat), glm::degrees(go.lng));
