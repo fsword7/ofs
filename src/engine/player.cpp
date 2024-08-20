@@ -115,11 +115,15 @@ double Player::getElevation(CelestialPlanet *cbody, double lat, double lng, doub
     return emgr->getElevationData({lat, lng, alt}, lod, &elevTiles);   
 }
 
-void Player::attach(Object *object, cameraMode mode)
+void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
 {
     tgtObject = object;
+    if (sobject != nullptr && mode == camSolarSyncRelative)
+        sunObject = sobject;
 
     modeCamera = mode;
+
+    glm::dvec3 spos, tpos;
 
     if (modeExternal)
     {
@@ -144,6 +148,12 @@ void Player::attach(Object *object, cameraMode mode)
         case camSolarSyncRelative:
             // Move observer to target object
             // with solar sync
+            spos = sunObject->getoPosition();
+            tpos = tgtObject->getoPosition();
+            hrot  = glm::lookAt(spos, tpos, { 0, 1, 0});
+            gspos = cam.rpos * hrot;
+            gpos  = tpos + gspos;
+            grot  = cam.rrot * hrot;
             break;
         }
     }
@@ -163,7 +173,7 @@ void Player::attach(Object *object, cameraMode mode)
     updateCamera();
 }
 
-void Player::look(Object *object)
+void Player::look(Celestial *object)
 {
     if (object == nullptr)
         return;
@@ -192,7 +202,8 @@ void Player::update(const TimeDate &td)
     if (modeExternal)
     {
 
-        if (modeCamera == camTargetRelative || modeCamera == camTargetUnlocked)
+        if (modeCamera == camTargetRelative || modeCamera == camTargetUnlocked ||
+            modeCamera == camSolarSyncRelative)
         {        
             // free travel mode
             // Update current position and attitude in local reference frame
@@ -247,7 +258,18 @@ void Player::update(const TimeDate &td)
 
             break;
 
-        // case camSolarSyncRelative:
+        case camSolarSyncRelative:
+            {
+                glm::dvec3 spos, tpos;
+
+                spos  = sunObject->getoPosition();
+                tpos  = tgtObject->getoPosition();
+                hrot  = glm::lookAt(spos, tpos, { 0, 1, 0});
+                gspos = cam.rpos * hrot;
+                gpos  = tpos + gspos;
+                grot  = cam.rrot * hrot;
+            }
+            break;
 
         case camGroundObserver:
             {
@@ -299,7 +321,7 @@ void Player::update(const TimeDate &td)
         assert(tgtObject->getType() == objVehicle);
         
         // Set global position/rotation for on the air
-        grot  = tgtObject->getuOrientation(0) * cam.rrot;
+        grot  = tgtObject->getoRotation() * cam.rrot;
         gspos = grot * (cam.rpos + *vcpos);
         gpos  = tgtObject->getoPosition() + gspos;
     }
@@ -394,10 +416,9 @@ void Player::rotateTheta(double theta)
 
 }
 
-void Player::setGroundObserver(Object *object, glm::dvec3 loc, double heading)
+void Player::setGroundObserver(Celestial *object, glm::dvec3 loc, double heading)
 {
-    CelestialBody *cbody = dynamic_cast<CelestialBody *>(object);
-    if (cbody == nullptr)
+    if (object == nullptr)
         return;
     attach(object, camGroundObserver); 
 

@@ -74,8 +74,12 @@ void Universe::start(const TimeDate &td)
     // player->attach(earth, camTargetRelative);
     // player->look(earth);
 
+    // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
+    // player->attach(earth, camTargetUnlocked);
+    // player->look(earth);
+
     cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
-    player->attach(earth, camTargetUnlocked);
+    player->attach(earth, camSolarSyncRelative, sun);
     player->look(earth);
 
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774

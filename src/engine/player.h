@@ -7,7 +7,7 @@
 
 class Object;
 class Vehicle;
-class CelestialBody;
+class Celestial;
 class CelestialPlanet;
 class ElevationTile;
 class Player;
@@ -127,7 +127,7 @@ public:
 
     double computeCoarseness(double maxCoarseness);
 
-    void attach(Object *object, cameraMode mode = camGlobalFrame);
+    void attach(Celestial *object, cameraMode mode = camGlobalFrame, Celestial *sobject = nullptr);
 
     double getElevation(CelestialPlanet *cbody, double lat, double lng, double alt);
 
@@ -143,7 +143,7 @@ public:
     void addPhi(double dphi);     // X rotation
     void addTheta(double dtheta); // Y rotation
 
-    void look(Object *object);
+    void look(Celestial *object);
 
     void dolly(double dz);
     void orbit(const glm::dquat &drot);
@@ -151,7 +151,7 @@ public:
     void rotateView(double theta, double phi);
 
     // void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
-    void setGroundObserver(Object *object, glm::dvec3 loc, double heading);
+    void setGroundObserver(Celestial *object, glm::dvec3 loc, double heading);
     void shiftGroundObserver(glm::dvec3 dm, double dh);
     void rotateGroundObserver(double dtheta, double dphi);
 
@@ -159,7 +159,8 @@ private:
     Camera cam;
     // PlayerFrame *frame = nullptr;
 
-    Object *tgtObject = nullptr;
+    Celestial *tgtObject = nullptr;
+    Celestial *sunObject = nullptr;
 
     // Global (universal) parmeters
     glm::dvec3 gspos;   // Relative to target in global coordinates
@@ -167,6 +168,7 @@ private:
     glm::dvec3 gdir;    // Direction
     glm::dmat3 grot;
     glm::dquat gqrot;
+    glm::dmat3 hrot;    // solar-sync reference frame
 
     glm::dvec3 *vcpos = nullptr;    // virtual cockpit position
     glm::dvec3 *vcdir = nullptr;    // virtual cockpit direction
