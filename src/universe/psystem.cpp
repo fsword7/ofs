@@ -146,7 +146,7 @@ void pSystem::update(bool force)
     for (auto star : stars)
         star->updatePostEphemeris();
     for (auto cel : celestials)
-        cel->update(force);
+        cel->updateCelestial(force);
 }
 
 void pSystem::finalizeUpdate()

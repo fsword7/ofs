@@ -31,6 +31,7 @@ public:
 
     void beginStep(double dt, bool bRunning);
     void endStep(bool bRunning);
+    void setTimeWarp(double twarp);
 
 private:
 

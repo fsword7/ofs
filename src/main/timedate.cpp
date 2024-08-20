@@ -68,3 +68,8 @@ void TimeDate::endStep(bool running)
     }
 }
 
+void TimeDate::setTimeWarp(double twarp)
+{
+    timeWarp = twarp;
+}
+

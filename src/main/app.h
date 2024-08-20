@@ -68,6 +68,9 @@ public:
     // Time/date update routines
     bool beginTimeStep(bool running);
     void endTimeStep(bool running);
+    void setWarpFactor(double warp);
+    void increaseTimeWarp();
+    void decreaseTimeWarp();
     void pause(bool flag);
     void freeze(bool flag);
     void suspend();

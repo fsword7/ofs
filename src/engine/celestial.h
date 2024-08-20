@@ -41,7 +41,7 @@ public:
 
     void setup(YAML::Node &config);
 
-    void update(bool force);
+    void updateCelestial(bool force);
 
     inline celType getCelestialType() const { return cbType; }
 

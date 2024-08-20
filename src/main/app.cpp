@@ -265,6 +265,29 @@ void CoreApp::endTimeStep(bool running)
         panel->update(*player, td.getSimTime1(), td.getSysTime1());
 }
 
+void CoreApp::setWarpFactor(double warp)
+{
+    if (warp == td.getTimeWarp())
+        return;
+    const double eps = 1e-6;
+    if (fabs(warp - td.getTimeWarp()) > eps)
+        td.setTimeWarp(warp);
+}
+
+void CoreApp::increaseTimeWarp()
+{
+    const double eps = 1e-6;
+    double logtw = log10(td.getTimeWarp());
+    setWarpFactor(pow(10.0, floor(logtw+eps)+1.0));
+}
+
+void CoreApp::decreaseTimeWarp()
+{
+    const double eps = 1e-6;
+    double logtw = log10(td.getTimeWarp());
+    setWarpFactor(pow(10.0, floor(logtw+eps)-1.0));
+}
+
 void CoreApp::pause(bool bPause)
 {
     if (bRunning != bPause)
@@ -448,6 +471,10 @@ void CoreApp::keyBufferedSystem(char32_t key, int mods)
 void CoreApp::keyBufferedOnRunning(char32_t key, int mods)
 {
 
+    // if (stateKey[keyCode::keyF3])
+    //     increaseTimeWarp();
+    // else if (stateKey[keyCode::keyF4])
+    //     decreaseTimeWarp();
 }
 
 void CoreApp::keyImmediateSystem()
@@ -649,6 +676,11 @@ void CoreApp::keyImmediateOnRunning()
         // if (ctrlStateKey[ofs::keyPad3])     ctrlKeyThrusters[thgLinMoveBackward] = 100;
 
     // }
+
+    if (stateKey[ofs::keyF4])
+        increaseTimeWarp();
+    else if (stateKey[ofs::keyF3])
+        decreaseTimeWarp();
 }
 
 // ******** Mouse Controls ********

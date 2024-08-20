@@ -156,9 +156,9 @@ void Celestial::updatePrecission()
     Lrel = Lrel0 + precOmega * (ofsDate->getMJD1() - mjd_rel);
     double sinl = sin(Lrel), cosl = cos(Lrel);
 
-    glm::dmat3 Rrel = { cosl,   -sinl*sin_eps,      -sinl*cos_eps, 
+    glm::dmat3 Rrel = { cosl,   -sinl*sin_eps,       sinl*cos_eps, 
                         0,      cos_eps,            -sin_eps,
-                        sinl,   cosl*sin_eps,       cosl*cos_eps };
+                       -sinl,   cosl*sin_eps,        cosl*cos_eps };
 
     if (eps_ref)
         R_ref_rel = R_ref * R_ref_rel;
@@ -170,9 +170,9 @@ void Celestial::updatePrecission()
     double sinL = sin(lan_ecl), cosL = cos(lan_ecl);
     double sine = sin(eps_ecl), cose = cos(eps_ecl);
 
-    Recl = { cosL,  -sinL*sine, -sinL*cose,
-            0,      cose,       -sine,
-            sinL,   cosL*sine,  cosL*cose };
+    Recl = { cosL,  -sinL*sine,  sinL*cose,
+             0,      cose,       -sine,
+            -sinL,   cosL*sine,  cosL*cose };
     
     double cos_poff = cosL*R_ref_rel[0][0] * sinL*R_ref_rel[2][0];
     double sin_poff = -(cosL*R_ref_rel[0][2] * sinL*R_ref_rel[2][2]);
@@ -188,12 +188,16 @@ glm::dmat3 Celestial::getRotation(double t) const
     rot = {  cosr, 0.0, sinr,
              0.0,  1.0, 0.0,
             -sinr, 0.0, cosr };
-    return Recl * rot;
+    return rot * Recl;
 }
 
 void Celestial::updateRotation()
 {
     crot = ofs::posangle(Dphi + ofsDate->getSimTime1()*rotOmega - Lrel*cos_eps + rotofs);
+
+    // if (getsName() == "Earth")
+    //     ofsLogger->info("Time: {} -> rot {} ({} degreees)\n",
+    //         ofsDate->getSimTime1(), crot, glm::degrees(crot));
 
     double cosr = cos(crot), sinr = sin(crot);
     glm::dmat3 rot;
@@ -201,15 +205,17 @@ void Celestial::updateRotation()
     rot = {  cosr, 0.0, sinr,
              0.0,  1.0, 0.0,
             -sinr, 0.0, cosr };
-    s1.R = Recl * rot;
+    s1.R = rot * Recl;
+    // s1.R = rot;
     s1.Q = s1.R;
 
     objRotation  = s1.R;
     objqRotation = s1.Q;
 }
 
-void Celestial::update(bool force)
+void Celestial::updateCelestial(bool force)
 {
+    // ofsLogger->info("Yes, here.\n");
 
     if (precT != 0.0)
         updatePrecission();
