@@ -142,7 +142,6 @@ protected:
     double crot = 0.0;      // Current rotation
     double rotofs = 0.0;    // Rotation offset (precession)
 
-    glm::dmat3 Rref_rel;   // rotation matrix
     glm::dmat3 Recl;       // Precession matrix
     glm::dquat Qecl;       // Precession quaternion
 
@@ -168,7 +167,7 @@ private:
     double      Dphi = 0.0;         // Rotation offset at t=0.
     double      rotT = 0.0;         // Rotation Period
     double      rotOmega = 0.0;     // Angular velocity
-    double      rotOffset = 0.0;    // 
+
     glm::dvec3  Raxis;              // rotation axis (north pole) in global frame
 
 };
