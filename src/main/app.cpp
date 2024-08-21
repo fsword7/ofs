@@ -13,6 +13,7 @@
 #include "engine/player.h"
 #include "engine/view.h"
 #include "universe/universe.h"
+#include "universe/astro.h"
 // #include "render/scene.h"
 #include "control/panel.h"
 #include "control/hudpanel.h"
@@ -93,7 +94,8 @@ void CoreApp::openSession()
     std::chrono::duration<double> nowTime = now.time_since_epoch();
     // Logger::getLogger()->info("Today MJD Time: {} => {}\n",
     //     astro::MJD(nowTime.count()), astro::getMJDDateStr(astro::MJD(nowTime.count())));
-    td.reset(nowTime.count());
+    td.reset(astro::MJD2000);
+    td.jumpTo(astro::MJD(nowTime.count()));
     prevTime = now;
 
     player = new Player(&td);

@@ -5,10 +5,12 @@
 
 #pragma once
 
+#include "universe/astro.h"
+
 class TimeDate
 {
 public:
-    TimeDate() = default;
+    TimeDate();
 
     inline double getSysTime0() const       { return syst0; }
     inline double getSysTime1() const       { return syst1; }
@@ -27,11 +29,13 @@ public:
     inline double getFPS() const            { return fps; }
     inline double getTimeWarp() const       { return timeWarp; }
 
-    void reset(double mjd = 0.0);
+    void reset(double mjd = astro::MJD2000);
 
     void beginStep(double dt, bool bRunning);
     void endStep(bool bRunning);
     void setTimeWarp(double twarp);
+
+    double jumpTo(double mjd);
 
 private:
 

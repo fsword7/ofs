@@ -28,22 +28,25 @@
 #define SOLAR_RADIUS        696000.0
 #define SOLAR_MASS          1.9885e30
 
+#define SECONDS_PER_DAY     86400.0
+
 namespace astro
 {
     constexpr double G     = 6.673889e-11;  // official graviational constant [N (m/kg)^2]
     constexpr double J2000 = 2451545.0;     // Epoch J2000 [Jan 1, 2000 at 12:00 UTC]
     constexpr double MJD2000 = 51544.5;
 
-    constexpr double day   = (1.0/86400.0); // Julian date/seconds
+    constexpr double day = ( 1.0/SECONDS_PER_DAY ); // Julian date/seconds
     
     // MJD - modified julian date since Nov 17, 1858
     // JD  - julian date since Jan 1, 4713 BC at noon
 
     // Convert from system time at starting Jan 1, 1970 UTC
-    inline double MJD(double t)     { return 40587.0 + t * day; }    // Convert sys time to MKD
-    inline double JD(double t)      { return 24400587.5 + t * day; } // Convert sys time to JD
+    inline double MJD(double t)         { return 40587.0 + t * day; }    // Convert sys time to MKD
+    inline double JD(double t)          { return 24400587.5 + t * day; } // Convert sys time to JD
 
-    inline double Day(double t)     { return t * day; }
+    inline double days(double t)        { return t * day; }
+    inline double seconds(double mjd)   { return mjd * SECONDS_PER_DAY; }
 
     // const glm::dquat J2000ObliquityRotation = glm::dquat({J2000Obliquity, 0, 0});
     const glm::dquat J2000ObliquityRotation = glm::dquat({-J2000Obliquity, 0, 0});

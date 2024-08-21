@@ -5,9 +5,13 @@
 
 #include "main/core.h"
 #include "main/timedate.h"
-#include "universe/astro.h"
 
-void TimeDate::reset(double t)
+TimeDate::TimeDate()
+{
+    reset(astro::MJD2000);
+}
+
+void TimeDate::reset(double mjd)
 {
     // Reset system/simulation time
     syst0 = syst1 = sysdt = 0.0;
@@ -20,7 +24,7 @@ void TimeDate::reset(double t)
     fps = systa = 0.0;
 
     // Reset julian dates
-    mjdref = astro::MJD(t);
+    mjdref = mjd;
     mjd0 = mjd1 = mjdref;
     // jd0 = jd1 = mjdref;
 }
@@ -36,7 +40,7 @@ void TimeDate::beginStep(double dt, bool running)
     {
         simdt1 = sysdt * timeWarp;
         simt1 = simt0 + simdt1;
-        mjd1 = mjdref + astro::Day(simt1);
+        mjd1 = mjdref + astro::days(simt1);
         // jd1 = jdref + astro::Day(simt1);
         // Logger::getLogger()->info("MJD Time: {} => {}\n",
         //     mjd1, astro::getMJDDateStr(mjd1));
@@ -66,6 +70,15 @@ void TimeDate::endStep(bool running)
         mjd0 = mjd1;
         jd0 = jd1;
     }
+}
+
+double TimeDate::jumpTo(double mjd)
+{
+    double dt = astro::seconds(mjd - mjd0);
+    mjd0 = mjd1 = mjd;
+    simt0 = simt1 = astro::seconds(mjd - mjdref);
+
+    return dt;
 }
 
 void TimeDate::setTimeWarp(double twarp)
