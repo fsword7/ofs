@@ -41,6 +41,9 @@ struct elevHeader
 struct ElevationTile
 {
     int lod;
+    int ilat, ilng;
+    int nlat, nlng;
+
     double latmin, latmax;
     double lngmin, lngmax;
 

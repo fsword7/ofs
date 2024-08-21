@@ -261,7 +261,9 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
                     int nlat = 1 << lod;
                     int nlng = 2 << lod;
 
-                    t->lod = lod;
+                    t->lod  = lod;
+                    t->ilat = ilat, t->nlat = nlat;
+                    t->ilng = ilng, t->nlng = nlng;
                     t->tgtlod = reqlod;
                     t->latmin = (0.5 - (double(ilat+1)/double(nlat)))*pi;
                     t->latmax = (0.5 - (double(ilat)/double(nlat)))*pi;
@@ -301,6 +303,11 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
                 double e1 = eptr[0]*(1.0-wlng) + eptr[1]*wlng;
                 double e2 = eptr[ELEV_STRIDE]*(1.0-wlng) + eptr[ELEV_STRIDE+1]*wlng;
                 e = e1*(1.0-wlat) + e2*wlat;
+
+                // ofsLogger->debug("Tile LOD: {} Index ({},{})\n", t->lod, t->ilat, t->ilng);
+                // ofsLogger->debug("Loc: {:f} {:f} Elev: {:f} {:f} ==> {:f}\n", wlat, wlng, e1, e2, e);
+                // ofsLogger->debug("Data: {} {}\n", eptr[0], eptr[1]);
+                // ofsLogger->debug("Data: {} {}\n", eptr[ELEV_STRIDE], eptr[ELEV_STRIDE+1]);
 
                 // Determine normals
                 if (normal != nullptr)
