@@ -120,6 +120,76 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
     return elev;
 }
 
+bool ElevationManager::readElevationModFile(int lod, int ilat, int ilng, double elevScale, int16_t *elev) const
+{
+    elevHeader *hdr = nullptr;
+    const int nelev = ELEV_LENGTH;
+    uint8_t *ptr, *elevData = nullptr;
+    int szData = 0;
+    double rescale;
+    int16_t offset;
+
+    int nlat = 1 << lod;
+    int nlng = 2 << lod;
+
+    if (zTrees[1] != nullptr)
+    {
+        szData = zTrees[1]->read(lod, ilat, ilng, &elevData);
+        ofsLogger->info("Read {} bytes from elevation (modified) database\n", szData);
+        if (szData > 0 && elevData != nullptr)
+        {
+            hdr = (elevHeader *)elevData;
+
+            if (hdr->code != FOURCC('E', 'L', 'E', 1))
+            {
+                ofsLogger->info("*** Invalid elevation (modified) header - aborted.\n");
+                delete [] elevData;
+                return false;
+            }
+
+            // elev = new int16_t[nelev];
+            ptr = elevData + hdr->hdrSize;
+
+            rescale = (hdr->scale != elevScale) ? hdr->scale / elevScale : 1.0;
+            offset = (hdr->offset != 0.0) ? (int16_t)(hdr->offset / elevScale) : 0;
+
+            switch (hdr->format)
+            {
+            case 0: // flat land (null data)
+                for (int idx = 0; idx < nelev; idx++)
+                    elev[idx] = offset;
+                break;
+
+            case 8: // unsigned byte (8-bit)
+                {
+                    uint8_t mask = UCHAR_MAX;
+                    for (int idx = 0; idx < nelev; idx++,ptr++)
+                        if (*ptr != mask)
+                            elev[idx] = ((int16_t)(*ptr) * rescale) + offset;
+                }
+                break;
+
+            case -16: // signed short (16-bit)
+                {
+                    uint16_t mask = SHRT_MAX;
+                    int16_t *ptr16 = (int16_t *)ptr;
+                    for (int idx = 0; idx < nelev; idx++,ptr++)
+                        if (*ptr != mask)
+                            elev[idx] = (*ptr * rescale) + offset;
+                }
+                break;
+            }
+
+            // All done, release elevation data from file
+            delete [] elevData;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 // int16_t *ElevationManager::getElevationData()
 // {
 //     return nullptr;
@@ -186,6 +256,8 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
 
                 if (t->data != nullptr)
                 {
+                    readElevationModFile(lod+4, ilat, ilng, elevGrids, t->data);
+
                     int nlat = 1 << lod;
                     int nlng = 2 << lod;
 

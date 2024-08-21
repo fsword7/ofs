@@ -21,6 +21,7 @@ public:
 
     // int16_t *loadElevationTile(int lod, int ilat, int ilng, double elevRes) const;
     int16_t *readElevationFile(int lod, int ilat, int ilng, double scale) const;
+    bool readElevationModFile(int lod, int ilat, int ilng, double elevScale, int16_t *elev) const;
 
     bool getTileIndex(double lat, double lng, int lod, int &ilat, int &ilng) const;
     double getElevationData(glm::dvec3 loc, int reqlod = 0, elevTileList_t *elevTiles = nullptr,
