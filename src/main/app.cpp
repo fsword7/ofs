@@ -92,8 +92,8 @@ void CoreApp::openSession()
     // Starting current time from system time
     auto now = std::chrono::system_clock::now();
     std::chrono::duration<double> nowTime = now.time_since_epoch();
-    // Logger::getLogger()->info("Today MJD Time: {} => {}\n",
-    //     astro::MJD(nowTime.count()), astro::getMJDDateStr(astro::MJD(nowTime.count())));
+    ofsLogger->info("Today MJD Time: {} Date: {}\n",
+        astro::MJD(nowTime.count()), astro::getMJDDateStr(astro::MJD(nowTime.count())));
     td.reset(astro::MJD2000);
     td.jumpTo(astro::MJD(nowTime.count()));
     prevTime = now;
@@ -252,6 +252,9 @@ bool CoreApp::beginTimeStep(bool running)
 
     prevTime = now;
     td.beginStep(dt, running);
+
+    ofsLogger->info("Current MJD Time: {:f} Date: {}\n", td.getMJD1(),
+        astro::getMJDDateStr(td.getMJD1()));
 
     return true;
 }
