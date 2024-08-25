@@ -65,80 +65,6 @@ double SurfaceTile::getMeanElevation(const int16_t *elev) const
     return melev / ((grids+1)*(grids+1));
 }
 
-
-// int16_t *SurfaceTile::readElevationFile(int lod, int ilat, int ilng, double scale)
-// {
-//     elevHeader *hdr = nullptr;
-//     const int nelev = ELEV_LENGTH;
-//     uint8_t *ptr, *elevData = nullptr;
-//     int16_t *elev = nullptr;
-//     int szData = 0;
-
-//     if (mgr.zTrees[2] != nullptr)
-//     {
-//         szData = mgr.zTrees[2]->read(lod+4, ilat, ilng, &elevData);
-//         // logger->info("Read {} bytes from elevation database\n", szData);
-//         if (szData > 0 && elevData != nullptr)
-//         {
-//             hdr = (elevHeader *)elevData;
-
-//             if (hdr->code != FOURCC('E', 'L', 'E', 1))
-//             {
-//                 glLogger->info("*** Invalid elevation header - aborted.\n");
-//                 delete [] elevData;
-//                 return nullptr;
-//             }
-
-//             elev = new int16_t[nelev];
-//             ptr = elevData + hdr->hdrSize;
-
-//             switch (hdr->format)
-//             {
-//             case 0: // flat land (null data)
-//                 for (int idx = 0; idx < nelev; idx++)
-//                     elev[idx] = 0;
-//                 break;
-
-//             case 8: // unsigned byte (8-bit)
-//                 for (int idx = 0; idx < nelev; idx++)
-//                     elev[idx] = *ptr++;
-//                 break;
-
-//             case -16: // signed short (16-bit)
-//                 int16_t *ptr16 = (int16_t *)ptr;
-//                 for (int idx = 0; idx < nelev; idx++)
-//                     elev[idx] = *ptr16++;
-//                 break;
-//             }
-//         }
-//     }
-
-//     // Adjust elevation data by scale and offset
-//     if (elev != nullptr)
-//     {
-//         // Elevation scale
-//         if (hdr->scale != 0)
-//         {
-//             double scale = hdr->scale / scale;
-//             for (int idx = 0; idx < nelev; idx++)
-//                 elev[idx] = int16_t(elev[idx] * scale);
-//         }
-
-//         // Elevation offset
-//         if (hdr->offset != 0)
-//         {
-//             int16_t ofs = int16_t(hdr->offset / scale);
-//             for (int idx = 0; idx < nelev; idx++)
-//                 elev[idx] += ofs;
-//         }
-//     }
-
-//     // All done, release elevation data from file
-//     if (elevData != nullptr)
-//         delete [] elevData;
-//     return elev;
-// }
-
 void SurfaceTile::interpolateElevationGrid(int ilat, int ilng, int lod,
     int pilat, int pilng, int plod, int16_t *pelev, int16_t *elev)
 {
@@ -213,6 +139,7 @@ bool SurfaceTile::loadElevationData()
     elev = mgr.emgr->readElevationFile(lod+4, ilat, ilng, mgr.elevScale);
     if (elev != nullptr)
     {
+        mgr.emgr->readElevationModFile(lod+4, ilat, ilng, mgr.elevScale, elev);
         // logger->info("Loaded succesfully\n", lod);
         elevOwn = true;
     }
