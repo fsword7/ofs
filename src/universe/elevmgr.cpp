@@ -23,27 +23,6 @@ void ElevationManager::setup(const fs::path &folder)
     zTrees[1] = zTreeManager::create(folder, "elev_mod");
 }
 
-// int16_t *ElevationManager::loadElevationTile(int lod, int ilat, int ilng, double elevRes) const
-// {
-//     int16_t *elev = nullptr;
-
-//     // if (mode > 0)
-//     // {
-//     //     const int ndat = elevStride*elevStride;
-
-//     //     if (zTrees[0] != nullptr)
-//     //     {
-//     //         int szData = zTrees[0]->read(lod, ilat, ilng, &data);
-//     //         if (data != nullptr)
-//     //         {
-
-//     //         }
-//     //     }
-//     // }
-
-//     return elev;
-// }
-
 int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double elevScale) const
 {
     elevHeader *hdr = nullptr;
@@ -51,6 +30,8 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
     uint8_t *ptr, *elevData = nullptr;
     int16_t *elev = nullptr;
     int szData = 0;
+    double rescale;
+    int16_t offset;
 
     int nlat = 1 << lod;
     int nlng = 2 << lod;
@@ -72,48 +53,41 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
 
             elev = new int16_t[nelev];
             ptr = elevData + hdr->hdrSize;
+            rescale = (hdr->scale != elevScale) ? hdr->scale / elevScale : 1.0;
+            offset = (hdr->offset != 0.0) ? (int16_t)(hdr->offset / elevScale) : 0;
 
             switch (hdr->format)
             {
             case 0: // flat land (null data)
                 for (int idx = 0; idx < nelev; idx++)
-                    elev[idx] = 0;
+                    elev[idx] = offset;
                 break;
 
             case 8: // unsigned byte (8-bit)
-                for (int idx = 0; idx < nelev; idx++)
-                    elev[idx] = (int16_t)(*ptr++);
+                {
+                    uint8_t *ptr8 = (uint8_t *)ptr;
+                    for (int idx = 0; idx < nelev; idx++,ptr8++)
+                        elev[idx] = (*ptr8 * rescale) + offset;
+                }
                 break;
 
             case -16: // signed short (16-bit)
-                int16_t *ptr16 = (int16_t *)ptr;
-                for (int idx = 0; idx < nelev; idx++)
-                    elev[idx] = *ptr16++;
+                {
+                    int16_t *ptr16 = (int16_t *)ptr;
+                    for (int idx = 0; idx < nelev; idx++,ptr16++)
+                        elev[idx] = (*ptr16 * rescale) + offset;
+                }
                 break;
             }
 
             // All done, release elevation data from file
             delete [] elevData;
-        }
-    }
 
-    // Adjust elevation data by scale and offset
-    if (elev != nullptr)
-    {
-        // Elevation scale
-        if (hdr->scale != elevScale)
-        {
-            double scale = hdr->scale / elevScale;
-            for (int idx = 0; idx < nelev; idx++)
-                elev[idx] = int16_t(elev[idx] * scale);
-        }
-
-        // Elevation offset
-        if (hdr->offset != 0)
-        {
-            int16_t ofs = int16_t(hdr->offset / elevScale);
-            for (int idx = 0; idx < nelev; idx++)
-                elev[idx] += ofs;
+            // uint32_t cksum = 0;
+            // for (int idx = 0; idx < ELEV_LENGTH; idx++)
+            //     cksum += elev[idx];
+            // ofsLogger->debug("Elevation Scale: {:f} Offset: {:f}\n", hdr->scale, hdr->offset);
+            // ofsLogger->debug("Data: {:p} Checksum: {:x}\n", fmt::ptr(elev), cksum);
         }
     }
 
@@ -162,20 +136,21 @@ bool ElevationManager::readElevationModFile(int lod, int ilat, int ilng, double 
 
             case 8: // unsigned byte (8-bit)
                 {
-                    uint8_t mask = UCHAR_MAX;
-                    for (int idx = 0; idx < nelev; idx++,ptr++)
-                        if (*ptr != mask)
-                            elev[idx] = ((int16_t)(*ptr) * rescale) + offset;
+                    uint8_t mask8 = UCHAR_MAX;
+                    uint8_t *ptr8 = (uint8_t *)ptr;
+                    for (int idx = 0; idx < nelev; idx++,ptr8++)
+                        if (*ptr8 != mask8)
+                            elev[idx] = (*ptr8 * rescale) + offset;
                 }
                 break;
 
             case -16: // signed short (16-bit)
                 {
-                    uint16_t mask = SHRT_MAX;
+                    uint16_t mask16 = SHRT_MAX;
                     int16_t *ptr16 = (int16_t *)ptr;
-                    for (int idx = 0; idx < nelev; idx++,ptr++)
-                        if (*ptr != mask)
-                            elev[idx] = (*ptr * rescale) + offset;
+                    for (int idx = 0; idx < nelev; idx++,ptr16++)
+                        if (*ptr16 != mask16)
+                            elev[idx] = (*ptr16 * rescale) + offset;
                 }
                 break;
             }
@@ -252,11 +227,11 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
             for (lod = reqlod; lod >= 0; lod--)
             {
                 getTileIndex(loc.x, loc.y, lod, ilat, ilng);
-                t->data = readElevationFile(lod+4, ilat, ilng, elevGrids);
+                t->data = readElevationFile(lod+4, ilat, ilng, elevScale);
 
                 if (t->data != nullptr)
                 {
-                    readElevationModFile(lod+4, ilat, ilng, elevGrids, t->data);
+                    readElevationModFile(lod+4, ilat, ilng, elevScale, t->data);
 
                     int nlat = 1 << lod;
                     int nlng = 2 << lod;
@@ -276,6 +251,11 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
                     // ofsLogger->debug("Long Min/Max: {:f} - {:f}\n", glm::degrees(t->lngmin), glm::degrees(t->lngmax));
                     // ofsLogger->debug("Location:     {:f}, {:f}\n", glm::degrees(loc.x), glm::degrees(loc.y));
 
+                    // uint32_t cksum = 0;
+                    // for (int idx = 0; idx < ELEV_LENGTH; idx++)
+                    //     cksum += t->data[idx];
+                    // ofsLogger->debug("Data: {:p} Checksum: {:x}\n", fmt::ptr(t->data), cksum);
+
                     break;
                 }
             }
@@ -292,6 +272,7 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
             int lng0 = (int)lngidx;
 
             // ofsLogger->debug("Tile Index: {}, {}\n", lat0, lng0);
+            // dump(t->data);
 
             int16_t *eptr = elevBase + lat0 * ELEV_STRIDE + lng0;
             if (elevMode == 1)
@@ -305,9 +286,14 @@ double ElevationManager::getElevationData(glm::dvec3 loc, int reqlod,
                 e = e1*(1.0-wlat) + e2*wlat;
 
                 // ofsLogger->debug("Tile LOD: {} Index ({},{})\n", t->lod, t->ilat, t->ilng);
-                // ofsLogger->debug("Loc: {:f} {:f} Elev: {:f} {:f} ==> {:f}\n", wlat, wlng, e1, e2, e);
+                // ofsLogger->debug("Loc: {:f} {:f} ==> Elev {:f}\n", wlat, wlng, e);
                 // ofsLogger->debug("Data: {} {}\n", eptr[0], eptr[1]);
                 // ofsLogger->debug("Data: {} {}\n", eptr[ELEV_STRIDE], eptr[ELEV_STRIDE+1]);
+                
+                // uint32_t cksum = 0;
+                // for (int idx = 0; idx < ELEV_LENGTH; idx++)
+                //     cksum += t->data[idx];
+                // ofsLogger->debug("Data: {:p} Checksum: {:x}\n", fmt::ptr(t->data), cksum);
 
                 // Determine normals
                 if (normal != nullptr)
