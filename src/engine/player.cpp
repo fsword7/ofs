@@ -101,18 +101,16 @@ double Player::computeCoarseness(double maxCoarseness)
     return coarse;
 }
 
-double Player::getElevation(CelestialPlanet *cbody, double lat, double lng, double alt)
+double Player::getGroundElevation(CelestialPlanet *cbody, double lat, double lng)
 {
+    double elev = 0.0;
     ElevationManager *emgr = cbody->getElevationManager();
-    if (emgr == nullptr)
-        return 0.0;
-
-    int lod = 15;
-    // int ilat, ilng;
-    // emgr->getTileIndex(lat, lng, lod, ilat, ilng);
-    // return 0.0;
-
-    return emgr->getElevationData({lat, lng, alt}, lod, &elevTiles);   
+    if (emgr != nullptr)
+    {
+        int rlod = int(32.0 - log(std::max(go.alt0, 0.1))*(1.0 / log(2.0)));
+        elev = emgr->getElevationData({lat, lng, go.alt0}, rlod, &elevTiles);
+    }
+    return elev / 1000.0; 
 }
 
 void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
@@ -282,13 +280,15 @@ void Player::update(const TimeDate &td)
                 cbody = dynamic_cast<CelestialPlanet *>(tgtObject);
                 assert(cbody != nullptr);
 
-                elev = getElevation(cbody, go.lat, go.lng, go.alt);
+                go.alt0 = cbody->getRadius();
+                go.elev = getGroundElevation(cbody, go.lat, go.lng);
+                go.alt  = go.alt0 + go.elev;
                 // ofsLogger->debug("Location: {:f}, {:f} -> {:f} feet\n",
                 //     glm::degrees(go.lat), glm::degrees(go.lng), elev);
 
                 // Calkculating planetocentric coordinates
-                double rad = cbody->getRadius() + go.alt;
-                cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, rad);
+                double vcalt = go.alt + go.vcofs;
+                cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, vcalt);
                 gspos = cam.rpos * cbody->getoRotation();
                 gpos = cbody->getoPosition() + gspos;
 
@@ -431,9 +431,7 @@ void Player::setGroundObserver(Celestial *object, glm::dvec3 loc, double heading
     go.lat = glm::radians(loc.x);
     go.lng = glm::radians(loc.y);
     go.dir = glm::radians(heading);
-
-    go.alt = loc.z;
-    go.alt0 = loc.z;
+    go.vcofs = loc.z;
 
     go.theta = glm::radians(heading);
     go.phi = glm::radians(0.0);

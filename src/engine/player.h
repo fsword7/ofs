@@ -34,8 +34,11 @@ struct GroundObserver
     double dir;         // ground direction (compass)
     double alt;         // Altitude
     double alt0;        // Altitude at sea level
+    double elev;        // Elevation from sea level
     double theta, phi;  // Camera direction at local horizon frame
     double panSpeed;    // speed at ground for movement controls (m/s)
+
+    double vcofs;       // cockpit offset from AGL level
 
     glm::dvec3 av;      // angular velocity control
     glm::dvec3 tv;      // travel velocity control
@@ -129,7 +132,7 @@ public:
 
     void attach(Celestial *object, cameraMode mode = camGlobalFrame, Celestial *sobject = nullptr);
 
-    double getElevation(CelestialPlanet *cbody, double lat, double lng, double alt);
+    double getGroundElevation(CelestialPlanet *cbody, double lat, double lng);
 
     // void updateProjMatrix();
     // void updateViewMatrix();
