@@ -54,7 +54,8 @@ bool StarColors::load(const fs::path &fname)
         sscanf(cells[D58_nFGREEN].c_str(), "%f", &g);
         sscanf(cells[D58_nFBLUE].c_str(), "%f", &b);
 
-        color = color_t(r, g, b);
+        // color = color_t(r, g, b);
+        color = { r, g, b };
         if (cells[D58_nCMF] == "2deg")
         {
             colors2.push_back(color);

@@ -763,8 +763,7 @@ void SurfaceManager::renderStar(const ObjectListEntry &ole)
     uViewProj = glm::mat4(prm.dmViewProj);
     uModel = glm::mat4(prm.dmWorld);
     uRadius = objSize;
-    uColor = glm::vec4(ole.color.getRed(), ole.color.getGreen(),
-                       ole.color.getBlue(), ole.color.getAlpha());
+    uColor = ole.color.vec4();
     uCentralDir = prm.cdir;
     uCamClip = ole.camClip;
     uTime = dTime;
