@@ -99,6 +99,9 @@ void glClient::cbCleanup()
         glfwDestroyWindow(window);
     window = nullptr;
 
+    // Global initialization
+    glPad::gexit();
+
     // Release GLFW inteface
     glfwTerminate();
 }
@@ -139,6 +142,9 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
 
     ofsInitGLFW(window);
     ImGui_ImplOpenGL3_Init("#version 430");
+
+    // Global initialization
+    glPad::ginit();
 
     return window;
 }

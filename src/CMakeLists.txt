@@ -1,9 +1,9 @@
 
 set(OFS_CPP_SRCS
+    control/hud/panel.cpp
     control/mfd/orbit.cpp
     control/mfd/panel.cpp
     control/mfd/surface.cpp
-    control/hudpanel.cpp
     control/info.cpp
     control/panel.cpp
     control/taskbar.cpp
@@ -93,10 +93,10 @@ set(OFS_H_SRCS
     api/module.h
     api/ofsapi.h
     api/vehicle.h
+    control/hud/panel.h
     control/mfd/orbit.h
     control/mfd/panel.h
     control/mfd/surface.h
-    control/hudpanel.h
     control/panel.h
     control/taskbar.h
     engine/celestial.h

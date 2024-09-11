@@ -32,6 +32,10 @@ void checkError(cchar_t *str)
 }
 #endif
 
+void gl::sync()
+{
+}
+
 void gl::pushRenderTarget(Texture *tex)
 {
     assert(tex != nullptr);
@@ -84,4 +88,12 @@ void gl::popRenderTarget()
     // Restore previous framebuffer and viewport
     glBindFramebuffer(GL_FRAMEBUFFER, save.fbo);
     glViewport(save.viewport[0], save.viewport[1], save.viewport[2], save.viewport[3]);
+}
+
+void gl::pushFlag(int flag, bool val)
+{
+}
+
+void gl::popFlag()
+{
 }

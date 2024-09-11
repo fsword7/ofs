@@ -56,7 +56,7 @@ private:
 class glPad : public Sketchpad
 {
 public:
-    glPad(Texture *tex, bool antialiased);
+    glPad(Texture *tex, bool antialiased = false);
     virtual ~glPad();
 
     static void ginit();
@@ -70,8 +70,8 @@ public:
     color_t setTextColor(color_t color) override;
     color_t setBackgroundColor(color_t color) override;
 
-    void begin();
-    void end();
+    void beginDraw() override;
+    void endDraw() override;
 
     void beginPath();
     void endPath();

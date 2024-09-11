@@ -17,7 +17,11 @@ namespace gl
 #else
     inline void checkError(cchar_t *str) {}
 #endif
+    void sync();
 
     void pushRenderTarget(Texture *tex);
     void popRenderTarget();
+
+    void pushFlag(int flag, bool val);
+    void popFlag();
 };

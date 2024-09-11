@@ -17,6 +17,11 @@
 
 static std::map<std::string, std::string> fontCache;
 
+NVGcontext *ctxNormal = nullptr;
+NVGcontext *ctxFlipped = nullptr;
+NVGcontext *ctxNormalaa = nullptr;
+NVGcontext *ctxFlippedaa = nullptr;
+
 glFont::glFont(cchar_t *face, int height, bool fixed, Style style, float orientation, bool aa)
 : Font(height, fixed, face, style, orientation),
   faceName(face), fontHeight(height),
@@ -70,8 +75,8 @@ glFont::glFont(cchar_t *face, int height, bool fixed, Style style, float orienta
     FcConfigDestroy(config);
 }
 
-glPad::glPad(Texture *tex, bool aa)
-: Sketchpad(), txPad(tex), antiAliased(aa)
+glPad::glPad(Texture *tex, bool antialiased)
+: Sketchpad(), txPad(tex), antiAliased(antialiased)
 {
     textAlign = (NVGalign)(NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
     textBkgMode = TRANSPARENT;
@@ -83,12 +88,21 @@ glPad::~glPad()
 
 void glPad::ginit()
 {
+    ctxNormal = nvgCreateGL3(NVG_STENCIL_STROKES);
+    ctxFlipped = nvgCreateGL3(NVG_STENCIL_STROKES|NVG_YFLIP);
+    ctxNormalaa = nvgCreateGL3(NVG_STENCIL_STROKES|NVG_ANTIALIAS);
+    ctxFlippedaa = nvgCreateGL3(NVG_STENCIL_STROKES|NVG_ANTIALIAS|NVG_YFLIP);
 
+    assert(ctxNormal != nullptr && ctxFlipped != nullptr && 
+           ctxNormalaa != nullptr && ctxFlippedaa != nullptr);
 }
 
 void glPad::gexit()
 {
-
+    nvgDeleteGL3(ctxNormal);
+    nvgDeleteGL3(ctxFlipped);
+    nvgDeleteGL3(ctxNormalaa);
+    nvgDeleteGL3(ctxFlippedaa);
 }
 
 NVGcolor glPad::getNVGColor(color_t color)
@@ -96,18 +110,21 @@ NVGcolor glPad::getNVGColor(color_t color)
     return nvgRGBAf(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 }
 
-void glPad::begin()
+void glPad::beginDraw()
 {   
     if (txPad != nullptr)
     {
+        ctx = antiAliased ? ctxFlippedaa : ctxFlipped;
         gl::pushRenderTarget(txPad);
         width = txPad->txWidth;
         height = txPad->txHeight;
     }
     else
     {
+        ctx = antiAliased ? ctxNormalaa : ctxNormal;
         width = glScene->getWidth();
         height = glScene->getHeight();
+        // gl::pushFlag(GL_CULL_FACE, false);
         glDisable(GL_CULL_FACE);
     }
 
@@ -115,7 +132,7 @@ void glPad::begin()
     nvgBeginFrame(ctx, width, height, 1.0);
 }
 
-void glPad::end()
+void glPad::endDraw()
 {
     nvgEndFrame(ctx);
     if (txPad != nullptr)
@@ -126,8 +143,10 @@ void glPad::end()
     }
     else
     {
-
+        // gl::popFlag();
+        glEnable(GL_CULL_FACE);
     }
+    gl::sync();
 }
 
 Font *glPad::setFont(Font *font)
@@ -374,6 +393,7 @@ int glPad::print(cstr_t &str)
     cchar_t *cstr = str.c_str();
     int len = str.size();
 
+    nvgFillColor(ctx, textNVGColor);
     nvgText(ctx, xText, yText, cstr, cstr+len);
     yText += height;
 
