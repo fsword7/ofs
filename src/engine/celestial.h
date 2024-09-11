@@ -84,17 +84,17 @@ public:
 
     inline glm::dvec3 convertGlobalToLocal(const glm::dvec3 &gpos) const
     {
-        return glm::transpose(s0.R) * (gpos - s0.pos);
+        return (gpos - s0.pos) * glm::transpose(s0.R);
     }
 
     inline void convertGlobalToLocal(const glm::dvec3 &gpos, glm::dvec3 &lpos) const
     {
-        lpos = glm::transpose(s0.R) * (gpos - s0.pos);
+        lpos = (gpos - s0.pos) * glm::transpose(s0.R);
     }
     
     inline glm::dvec3 convertLocalToGlobal(const glm::dvec3 &lpos) const
     {
-        return (s0.R * lpos) + s0.pos;
+        return (lpos * s0.R) + s0.pos;
     }
 
     inline void convertLocalToEquatorial(const glm::dvec3 &lpos, double &lat, double &lng, double &rad) const
@@ -104,6 +104,12 @@ public:
         rad = glm::length(lpos);
         lat = asin(w.y);
         lng = atan2(-w.z, w.x);
+    }
+
+    inline glm::dvec3 convertLocalToEquatorial(const glm::dvec3 &lpos) const
+    {
+        glm::dvec3 w = glm::normalize(lpos);
+        return { asin(w.y), atan2(-w.z, w.x), glm::length(lpos) };
     }
 
 private:

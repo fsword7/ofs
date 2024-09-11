@@ -117,11 +117,16 @@ public:
     inline glm::dvec3 getPosition() const           { return gpos; }
     inline glm::dmat3 getRotation() const           { return grot; }
     inline glm::dquat getqRotation() const          { return gqrot; }
+    inline glm::dvec3 getrPosition() const          { return cam.rpos; }
+    inline glm::dmat3 getrRotation() const          { return cam.rrot; }
 
     inline glm::dvec3 getAngularControl() const         { return av; }
     inline glm::dvec3 getTravelControl() const          { return tv; }
     inline glm::dvec3 getGroundAngularControl() const   { return go.av; }
     inline glm::dvec3 getGroundTravelControl() const    { return go.tv; }
+
+    inline Celestial *getReferenceObject()              { return tgtObject; }
+    inline const Celestial *getReferenceObject() const  { return tgtObject; }
 
     inline void setAngularControl(glm::dvec3 _av)       { av = _av; }
     inline void setTravelControl(glm::dvec3 _tv)        { tv = _tv; }

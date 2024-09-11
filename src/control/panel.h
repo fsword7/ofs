@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include "control/hudpanel.h"
+#include "control/hud/panel.h"
+// #include "control/mfd/panel.h"
 
 class GraphicsClient;
 class Player;

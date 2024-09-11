@@ -27,5 +27,5 @@ void TaskBar::update(const Player &player, double simt)
 void TaskBar::render(const Player &player)
 {
 
-    // displayPlanetInfo(player);
+    displayPlanetInfo(player);
 }

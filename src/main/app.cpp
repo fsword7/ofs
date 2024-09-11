@@ -16,7 +16,6 @@
 #include "universe/astro.h"
 // #include "render/scene.h"
 #include "control/panel.h"
-#include "control/hudpanel.h"
 #include "main/guimgr.h"
 #include "main/app.h"
 #include "main/keys.h"

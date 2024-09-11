@@ -13,6 +13,9 @@ Panel::Panel(GraphicsClient *gclient, int w, int h, int d)
 : gc(gclient), width(w), height(h), depth(d)
 {
 
+    hudMode = HUD_NONE;
+    hud = nullptr;
+
     if (gc != nullptr)
         bar = new TaskBar(this);
 
@@ -56,6 +59,7 @@ void Panel::setHUDMode(int mode)
     case HUD_ORBIT:
         // hud = new HUDOrbitPanel(this);
         break;
+    // case HUD_PINFO:
     default:
         hud = nullptr;
     }
