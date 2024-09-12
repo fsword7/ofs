@@ -80,6 +80,16 @@ glPad::glPad(Texture *tex, bool antialiased)
 {
     textAlign = (NVGalign)(NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
     textBkgMode = TRANSPARENT;
+
+    if (txPad != nullptr) {
+        width = txPad->txWidth;
+        height = txPad->txHeight;
+        ctx = antiAliased ? ctxFlippedaa : ctxFlipped;
+    } else {
+        width = glScene->getWidth();
+        height = glScene->getHeight();
+        ctx = antiAliased ? ctxNormalaa : ctxNormal;
+    }
 }
 
 glPad::~glPad()
@@ -114,16 +124,10 @@ void glPad::beginDraw()
 {   
     if (txPad != nullptr)
     {
-        ctx = antiAliased ? ctxFlippedaa : ctxFlipped;
         gl::pushRenderTarget(txPad);
-        width = txPad->txWidth;
-        height = txPad->txHeight;
     }
     else
     {
-        ctx = antiAliased ? ctxNormalaa : ctxNormal;
-        width = glScene->getWidth();
-        height = glScene->getHeight();
         // gl::pushFlag(GL_CULL_FACE, false);
         glDisable(GL_CULL_FACE);
     }

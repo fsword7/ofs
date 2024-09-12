@@ -26,9 +26,9 @@
 
 void TaskBar::initPlanetInfo()
 {
-    ipad = gc->createSketchpad(nullptr);
-    titleFont = gc->createFont("Arial", 80, false, Font::Bold);
-    textFont = gc->createFont("Arial", 30, false);
+    // ipad = gc->createSketchpad(nullptr);
+    // titleFont = gc->createFont("Arial", 80, false, Font::Bold);
+    // textFont = gc->createFont("Arial", 30, false);
 }
 
 void TaskBar::cleanPlanetInfo()
@@ -62,7 +62,7 @@ void TaskBar::displayPlanetInfo(const Player &player)
     ipad->beginDraw();
     ipad->setFont(titleFont);
     ipad->setTextColor(col);
-    ipad->setTextPos(3, 3);
+    ipad->setTextPos(5, 3);
     
     const Celestial *focus = player.getReferenceObject();
     assert(focus != nullptr);
@@ -71,6 +71,7 @@ void TaskBar::displayPlanetInfo(const Player &player)
     ipad->setFont(textFont);
     ipad->print(fmt::format("Distance: {:.4f}", glm::length(player.getrPosition())));
     ipad->print(fmt::format("Radius: {}", focus->getRadius()));
+    ipad->print(fmt::format("Velocity: {:.3f} mph", ((glm::length(focus->getoVelocity()) * 3600) / 1.62)));
 
     glm::dvec3 lpos = focus->convertGlobalToLocal(player.getPosition());
     glm::dvec3 loc = focus->convertLocalToEquatorial(lpos);

@@ -70,6 +70,9 @@ public:
     color_t setTextColor(color_t color) override;
     color_t setBackgroundColor(color_t color) override;
 
+    inline int getWidth() const override    { return width; }
+    inline int getHeight() const override   { return height; }
+
     void beginDraw() override;
     void endDraw() override;
 

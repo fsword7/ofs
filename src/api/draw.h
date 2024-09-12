@@ -67,6 +67,9 @@ public:
 
     inline SurfaceHandle getSurface() const             { return surf; }
 
+    virtual inline int getWidth() const                 { return 0; }
+    virtual inline int getHeight() const                { return 0; }
+
     virtual Font *setFont(Font *font)                   { return nullptr; }
     virtual Pen *setPen(Pen *pen)                       { return nullptr; }
     virtual Brush *setBrush(Brush *brush)               { return nullptr; }

@@ -252,8 +252,8 @@ bool CoreApp::beginTimeStep(bool running)
     prevTime = now;
     td.beginStep(dt, running);
 
-    ofsLogger->info("Current MJD Time: {:f} Date: {}\n", td.getMJD1(),
-        astro::getMJDDateStr(td.getMJD1()));
+    // ofsLogger->info("Current MJD Time: {:f} Date: {}\n", td.getMJD1(),
+    //     astro::getMJDDateStr(td.getMJD1()));
 
     return true;
 }
@@ -685,6 +685,8 @@ void CoreApp::keyImmediateOnRunning()
         increaseTimeWarp();
     else if (stateKey[ofs::keyF3])
         decreaseTimeWarp();
+    else if (stateKey[ofs::keyF2])
+        setWarpFactor(1.0);
 }
 
 // ******** Mouse Controls ********

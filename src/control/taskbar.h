@@ -17,6 +17,8 @@ public:
     TaskBar(const Panel *panel);
     ~TaskBar();
 
+    void resize();
+
     void update(const Player &player, double simt);
     void render(const Player &player);
 
@@ -28,6 +30,7 @@ public:
 private:
     const Panel *panel = nullptr;
     GraphicsClient *gc = nullptr;
+    int height, width;
 
     Sketchpad *ipad = nullptr;
     Font *titleFont = nullptr;
