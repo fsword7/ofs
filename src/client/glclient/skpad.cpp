@@ -145,6 +145,8 @@ void glPad::endDraw()
     {
         // gl::popFlag();
         glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CW);
     }
     gl::sync();
 }
