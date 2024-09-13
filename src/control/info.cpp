@@ -69,9 +69,11 @@ void TaskBar::displayPlanetInfo(const Player &player)
     ipad->print(focus->getsName());
 
     ipad->setFont(textFont);
-    ipad->print(fmt::format("Distance: {:.4f}", glm::length(player.getrPosition())));
+    ipad->print(fmt::format("Distance: {:.3f} miles", glm::length(focus->getoPosition()) / 1.609));
+    ipad->print(fmt::format("Velocity: {:.3f} mph", ((glm::length(focus->getoVelocity()) * 3600) / 1.609)));
     ipad->print(fmt::format("Radius: {}", focus->getRadius()));
-    ipad->print(fmt::format("Velocity: {:.3f} mph", ((glm::length(focus->getoVelocity()) * 3600) / 1.62)));
+    ipad->print("-----------------");
+    ipad->print(fmt::format("Distance: {:.4f}", glm::length(player.getrPosition())));
 
     glm::dvec3 lpos = focus->convertGlobalToLocal(player.getPosition());
     glm::dvec3 loc = focus->convertLocalToEquatorial(lpos);
