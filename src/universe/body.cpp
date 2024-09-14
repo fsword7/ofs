@@ -16,7 +16,10 @@ CelestialPlanet::CelestialPlanet(cstr_t &name, celType type)
 CelestialPlanet::CelestialPlanet(YAML::Node &config, celType type)
 : CelestialBody(config, objCelestialBody, type)
 {
-    emgr = new ElevationManager(this);   
+    emgr = new ElevationManager(this);
+
+    // Initialize configurations from Yaml database.
+    setup(config);
 }
 
 CelestialPlanet::~CelestialPlanet()
@@ -27,6 +30,16 @@ CelestialPlanet::~CelestialPlanet()
 
 void CelestialPlanet::setup(YAML::Node &config)
 {
+    str_t atmName = yaml::getValueString<str_t>(config, "Atmosphere");
+    if (!atmName.empty())
+    {
+        Atmosphere *atmp = Atmosphere::create(atmName);
+        if (atmp != nullptr) {
+            atm = atmp;
+            atm->getAtmConstants(atmc);
+        } else
+            ofsLogger->error("OFS Error: Unknown atmosphere model: {}\n", atmName);
+    }
 
     // atmc.color0 = yaml::getValue<color_t>(config, "AtomsphereColor");
 

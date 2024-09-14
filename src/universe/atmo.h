@@ -40,10 +40,12 @@ struct atmprm_t
     double T;           // Temperature [K]
 };
 
-class Atomsphere
+class Atmosphere
 {
 public:
-    Atomsphere() = default;
+    Atmosphere() = default;
+
+    static Atmosphere *create(str_t &name);
 
     virtual void getAtmConstants(atmconst_t &atmc) = 0;
     virtual void getAtmParams(const iatmprm_t &in, atmprm_t &out) = 0;

@@ -4,12 +4,9 @@
 // Date:    Jul 9, 2022
 
 #include "main/core.h"
-// #include "ephem/earth/nrlmsise-00.h"
-#include "ephem/earth/nrlmsise00.hpp"
-#include "ephem/earth/nrlmsise00_p.hpp"
 #include "ephem/earth/atmo.h"
 
-AtomsphereEarthNRLMSISE00::AtomsphereEarthNRLMSISE00()
+AtmosphereEarthNRLMSISE00::AtmosphereEarthNRLMSISE00()
 : atm(swFlags)
 {
     // // Set default input values
@@ -29,7 +26,7 @@ AtomsphereEarthNRLMSISE00::AtomsphereEarthNRLMSISE00()
 
 }
 
-void AtomsphereEarthNRLMSISE00::getAtmConstants(atmconst_t &atmc)
+void AtmosphereEarthNRLMSISE00::getAtmConstants(atmconst_t &atmc)
 {
     // Assign atomspheric constants;
     atmc.altLimit = 2500;
@@ -39,7 +36,7 @@ void AtomsphereEarthNRLMSISE00::getAtmConstants(atmconst_t &atmc)
     atmc.gamma = 1.4;
 }
 
-void AtomsphereEarthNRLMSISE00::getAtmParams(const iatmprm_t &in, atmprm_t &out)
+void AtmosphereEarthNRLMSISE00::getAtmParams(const iatmprm_t &in, atmprm_t &out)
 {
     std::array<double, 7> ap = { 3.0 };
     std::array<double, 9> d = { 0 };

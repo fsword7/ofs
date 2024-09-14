@@ -5,12 +5,16 @@
 
 #pragma once
 
+// #include "ephem/earth/nrlmsise-00.h"
+#include "ephem/earth/nrlmsise00.hpp"
+#include "ephem/earth/nrlmsise00_p.hpp"
+
 #include "universe/atmo.h"
 
-class AtomsphereEarthNRLMSISE00 : public Atomsphere
+class AtmosphereEarthNRLMSISE00 : public Atmosphere
 {
 public:
-    AtomsphereEarthNRLMSISE00();
+    AtmosphereEarthNRLMSISE00();
 
     void getAtmConstants(atmconst_t &atmc);
     void getAtmParams(const iatmprm_t &in, atmprm_t &out) override;

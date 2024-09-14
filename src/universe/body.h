@@ -30,6 +30,6 @@ public:
 private:
     ElevationManager *emgr = nullptr;
 
-    Atomsphere *atm = nullptr;
+    Atmosphere *atm = nullptr;
     atmconst_t atmc;
 };

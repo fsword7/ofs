@@ -5,3 +5,12 @@
 
 #include "main/core.h"
 #include "universe/atmo.h"
+
+#include "ephem/earth/atmo.h"
+
+Atmosphere *Atmosphere::create(str_t &name)
+{
+    if (name == "msise00-earth")
+        return new AtmosphereEarthNRLMSISE00();
+    return nullptr;
+}
