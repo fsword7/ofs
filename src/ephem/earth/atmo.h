@@ -16,7 +16,8 @@ class AtmosphereEarthNRLMSISE00 : public Atmosphere
 public:
     AtmosphereEarthNRLMSISE00();
 
-    void getAtmConstants(atmconst_t &atmc);
+    str_t getsAtmName() const override;
+    void getAtmConstants(atmconst_t &atmc) const override;
     void getAtmParams(const iatmprm_t &in, atmprm_t &out) override;
 
 private:

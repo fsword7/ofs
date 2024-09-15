@@ -47,7 +47,8 @@ public:
 
     static Atmosphere *create(str_t &name);
 
-    virtual void getAtmConstants(atmconst_t &atmc) = 0;
+    virtual str_t getsAtmName() const = 0;
+    virtual void getAtmConstants(atmconst_t &atmc) const = 0;
     virtual void getAtmParams(const iatmprm_t &in, atmprm_t &out) = 0;
 
 protected:

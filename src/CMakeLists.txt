@@ -25,6 +25,8 @@ set(OFS_CPP_SRCS
     ephem/earth/nrlmsise00.cpp
     ephem/lunar/elp82.cpp
     ephem/lunar/lunar.cpp
+    ephem/mars/atmo.cpp
+    ephem/venus/atmo.cpp
     ephem/vsop87/earth.cpp
     ephem/vsop87/jupiter.cpp
     ephem/vsop87/mars.cpp
@@ -116,6 +118,8 @@ set(OFS_H_SRCS
     ephem/earth/nrlmsise00.hpp
     ephem/lunar/elp82.h
     ephem/lunar/lunar.h
+    ephem/mars/atmo.h
+    ephem/venus/atmo.h
     ephem/vsop87/earth.h
     ephem/vsop87/jupiter.h
     ephem/vsop87/mars.h

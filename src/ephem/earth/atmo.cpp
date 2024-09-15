@@ -26,7 +26,12 @@ AtmosphereEarthNRLMSISE00::AtmosphereEarthNRLMSISE00()
 
 }
 
-void AtmosphereEarthNRLMSISE00::getAtmConstants(atmconst_t &atmc)
+str_t AtmosphereEarthNRLMSISE00::getsAtmName() const
+{
+    return "Earth NRLMSISE-00 Edition Model";
+}
+
+void AtmosphereEarthNRLMSISE00::getAtmConstants(atmconst_t &atmc) const
 {
     // Assign atomspheric constants;
     atmc.altLimit = 2500;
