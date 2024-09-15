@@ -20,12 +20,13 @@ public:
 
     inline ElevationManager *getElevationManager() const    { return emgr; }
 
-    inline bool hasAtomsphere() const    { return atm != nullptr; }
+    inline bool hasAtmosphere() const           { return atm != nullptr; }
+    inline Atmosphere *getAtmosphere() const    { return atm; }
+
+    void getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const;
 
     inline double getSoundSpeed(double temp) const
         { return (atm != nullptr) ? sqrt(atmc.gamma * atmc.R * temp) : 0.0; }
-
-    void getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const;
 
 private:
     ElevationManager *emgr = nullptr;

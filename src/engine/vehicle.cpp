@@ -5,7 +5,7 @@
 
 #include "main/core.h"
 #include "api/draw.h"
-#include "control/hudpanel.h"
+#include "control/hud/panel.h"
 #include "ephem/elements.h"
 #include "engine/celestial.h"
 #include "engine/rigidbody.h"
@@ -72,7 +72,7 @@ void surface_t::setLanded(double _lng, double _lat, double _alt, double dir,
             -slat*slng, -clat*slng, clng };
     Q = R;
 
-    isInAtomsphere = (planet != nullptr) && (planet->hasAtomsphere());
+    isInAtomsphere = (planet != nullptr) && (planet->hasAtmosphere());
     if (isInAtomsphere)
     {
         atmprm_t prm;
@@ -190,7 +190,7 @@ void surface_t::update(const StateVectors &s, const StateVectors &os, const Cele
     airSpeed = glm::length(avglob);
 
     // Updating current atomsphere parameters
-    isInAtomsphere = (planet != nullptr) && (planet->hasAtomsphere());
+    isInAtomsphere = (planet != nullptr) && (planet->hasAtmosphere());
     if (isInAtomsphere)
     {
         atmprm_t prm;
