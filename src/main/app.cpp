@@ -417,8 +417,10 @@ void *CoreApp::findModuleProcAddress(ModuleHandle handle, cchar_t *funcName)
 
 // ******** Keyboard Controls ********
 
-void CoreApp::keyPress(char32_t code, int modifiers, bool down)
+void CoreApp::keyPress(char32_t code, int mods, bool down)
 {
+    static char32_t last = -1;
+
     if (code >= 512)
         return;
 
@@ -426,37 +428,34 @@ void CoreApp::keyPress(char32_t code, int modifiers, bool down)
 
     if (down == true)
     {
-        if (modifiers & ofs::keyButton::keyShift)
+        if (mods & ofs::keyButton::keyShift)
             shiftStateKey[code] = true;
-        else if (modifiers & ofs::keyButton::keyControl)
+        else if (mods & ofs::keyButton::keyControl)
             ctrlStateKey[code] = true;
         else
             stateKey[code] = true;
+
+        // Check a key code while it is pressed down.
+        if (last == code) // repeating - discard it.
+            return;
+        last = code;
+
+        // Process a buffered key code once
+        keyBufferedSystem(code, mods);
+        if (bRunning)
+            keyBufferedOnRunning(code, mods);
     }
     else
     {
         stateKey[code] = false;
         shiftStateKey[code] = false;
         ctrlStateKey[code] = false;
+        last = -1;
     }
 }
 
-void CoreApp::keyProcess(char32_t ch, int modifiers)
+void CoreApp::keyProcess(char32_t ch, int mods)
 {
-    // switch (ch)
-    // {
-    //     case L'j':  // Reset time warp scale
-    //         engine->setTimeWarp(1);
-    //         break;
-
-    //     case L'k':  // Increase time warp scale
-    //         engine->setTimeWarp(engine->getTimeWarp() * 2.0);
-    //         break;
-
-    //     case L'l':  // Decrease time warp scale
-    //         engine->setTimeWarp(engine->getTimeWarp() / 2.0);
-    //         break;
-    // }
 }
 
 void CoreApp::processUserInputs()
@@ -479,6 +478,14 @@ void CoreApp::keyBufferedOnRunning(char32_t key, int mods)
     //     increaseTimeWarp();
     // else if (stateKey[keyCode::keyF4])
     //     decreaseTimeWarp();
+
+    if (stateKey[ofs::keyF4])
+        increaseTimeWarp();
+    else if (stateKey[ofs::keyF3])
+        decreaseTimeWarp();
+    else if (stateKey[ofs::keyF2])
+        setWarpFactor(1.0);
+
 }
 
 void CoreApp::keyImmediateSystem()
@@ -681,12 +688,12 @@ void CoreApp::keyImmediateOnRunning()
 
     // }
 
-    if (stateKey[ofs::keyF4])
-        increaseTimeWarp();
-    else if (stateKey[ofs::keyF3])
-        decreaseTimeWarp();
-    else if (stateKey[ofs::keyF2])
-        setWarpFactor(1.0);
+    // if (stateKey[ofs::keyF4])
+    //     increaseTimeWarp();
+    // else if (stateKey[ofs::keyF3])
+    //     decreaseTimeWarp();
+    // else if (stateKey[ofs::keyF2])
+    //     setWarpFactor(1.0);
 }
 
 // ******** Mouse Controls ********
