@@ -9,13 +9,13 @@
 #include "scene.h"
 #include "surface.h"
 
-void SurfaceTile::fixLongtitudeBoundary(SurfaceTile *nbr)
+void SurfaceTile::fixLongtitudeBoundary(SurfaceTile *nbr, bool keep)
 {
     if (mesh == nullptr)
         return;
 }
 
-void SurfaceTile::fixLatitudeBoundary(SurfaceTile *nbr)
+void SurfaceTile::fixLatitudeBoundary(SurfaceTile *nbr, bool keep)
 {
     if (mesh == nullptr)
         return;
@@ -41,18 +41,52 @@ void SurfaceTile::fixCorner(SurfaceTile *nbr)
 
 void SurfaceTile::matchEdges()
 {
-
-    SurfaceTile *lng = mgr.findTile(lod, ilng + (ilng & 1) ? 1 : -1, ilat);
     SurfaceTile *lat = mgr.findTile(lod, ilng, ilat + (ilat & 1) ? 1 : -1);
+    SurfaceTile *lng = mgr.findTile(lod, ilng + (ilng & 1) ? 1 : -1, ilat);
     SurfaceTile *dia = mgr.findTile(lod, ilng + (ilng & 1) ? 1 : -1, (ilat & 1) ? 1 : -1);
 
-    if (lng != nullptr && (lng->type & TILE_VALID) == 0)
-        lng = nullptr;
     if (lat != nullptr && (lat->type & TILE_VALID) == 0)
         lat = nullptr;
+    if (lng != nullptr && (lng->type & TILE_VALID) == 0)
+        lng = nullptr;
     if (dia != nullptr && (dia->type & TILE_VALID) == 0)
         dia = nullptr;
 
+    int nlatlod = lat != nullptr ? lat->lod : lod;
+    int nlnglod = lng != nullptr ? lng->lod : lod;
+    int ndialod = dia != nullptr ? dia->lod : lod;
+
+    bool nbrUpdated = false;
+    if (nlatlod < lod)
+        lat->matchEdges(), nbrUpdated = true;
+    if (nlnglod < lod)
+        lng->matchEdges(), nbrUpdated = true;
+    if (!nbrUpdated && ndialod < lod)
+        dia->matchEdges();
+    
+    bool latChanged = (nlatlod != latlod);
+    bool lngChanged = (nlnglod != lnglod);
+    bool diaChanged = (ndialod != dialod);
+
+    if (latChanged || lngChanged || diaChanged)
+    {
+        if (ndialod < nlatlod && ndialod < nlnglod) {
+            fixCorner(dia);
+            fixLatitudeBoundary(lat, true);
+            fixLongtitudeBoundary(lng, true);
+        } else if (nlatlod < nlnglod) {
+            fixLatitudeBoundary(lat);
+            fixLongtitudeBoundary(lng, true);
+        } else {
+            fixLongtitudeBoundary(lng);
+            fixLatitudeBoundary(lat, true);
+        }
+
+        // Update current neigbor LOD levels
+        latlod = nlatlod;
+        lnglod = nlatlod;
+        dialod = ndialod;
+    }
 }
 
 double SurfaceTile::getMeanElevation(const int16_t *elev) const

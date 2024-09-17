@@ -57,13 +57,14 @@ struct tcRange
     double tvmin, tvmax;
 };
 
+#define TILE_ACTIVE     64
+#define TILE_VALID      128
+
 class Scene;
 class SurfaceHandler;
 class SurfaceManager;
 class ShaderProgram;
 
-#define TILE_ACTIVE     64
-#define TILE_VALID      128
 class SurfaceTile : public Tree<SurfaceTile, QTREE_NODES>
 {
     friend class SurfaceManager;
@@ -102,8 +103,8 @@ public:
     // Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
     //     int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
 
-    void fixLongtitudeBoundary(SurfaceTile *nbr);
-    void fixLatitudeBoundary(SurfaceTile *nbr);
+    void fixLongtitudeBoundary(SurfaceTile *nbr, bool keep = false);
+    void fixLatitudeBoundary(SurfaceTile *nbr, bool keep = false);
     void fixCorner(SurfaceTile *nbr);
     void matchEdges();
 
@@ -132,6 +133,10 @@ private:
     bool txOwn = false;
     Texture *txImage = nullptr;
     tcRange txRange;
+
+    // Edge Matching paramaters
+    bool     okEdge;
+    int      latlod, lnglod, dialod;
 
     // Elevation data parameters
     bool     elevEnable = true; // for debugging purposes
@@ -182,7 +187,7 @@ public:
     inline int getElevScale() const { return elevScale; }
     inline int getElevMode() const { return elevMode; }
 
-    SurfaceTile *findTile(int lod, int lat, int lng);
+    SurfaceTile *findTile(int lod, int ilat, int ilng);
 
     glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
 

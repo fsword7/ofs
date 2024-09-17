@@ -495,9 +495,31 @@ void SurfaceManager::gexit()
     }
 }
 
-SurfaceTile *SurfaceManager::findTile(int lod, int lat, int lng)
+SurfaceTile *SurfaceManager::findTile(int lod, int ilat, int ilng)
 {
-    return nullptr;
+    int nlng = 2 << lod;
+    if (ilng < 0)
+        ilng += nlng;
+    else if (ilng >= nlng)
+        ilng -= nlng;
+    
+    SurfaceTile *tile = tiles[(ilng >> lod) & 1];
+    for (int ilod = lod-1; ilod >= 0; ilod--)
+    {
+        int slat, slng, cidx;
+    
+        if (tile->type == SurfaceTile::tileInvisible)
+            return nullptr;
+        slat = (ilat >> ilod) & 1;
+        slng = (ilng >> ilod) & 1;
+        cidx = slat*2+slng;
+        SurfaceTile *child = tile->getChild(cidx);
+        if (child == nullptr || (child->type & TILE_ACTIVE) == 0)
+            break;
+        tile = child;
+    }
+
+    return tile;
 }
 
 glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
