@@ -35,6 +35,7 @@ class IndexBuffer
 
 public:
     IndexBuffer(indexType *data, size_t size, int mode = GL_STATIC_DRAW);
+    IndexBuffer(int nBuffers);
     ~IndexBuffer();
 
     inline uint32_t getCount() const { return count; }
@@ -49,15 +50,19 @@ private:
     GLuint id;
     int mode;
     uint32_t count = 0;
+    size_t szData = 0;
 };
 
 class VertexArray
 {
 public:
-    enum arrayType { VBO, EBO };
+    enum arrayType { VBO, IBO };
 
     VertexArray(int nBuffers = 1);
     ~VertexArray();
+
+    void addVertices(VertexBuffer *vbo) { vboList.push_back(vbo); }
+    void addIndices(IndexBuffer *ibo)   { iboList.push_back(ibo); }
 
     void *create(int nBuffers, arrayType type);
 
@@ -68,5 +73,5 @@ private:
     GLuint id;
 
     std::vector<VertexBuffer *> vboList;
-    std::vector<IndexBuffer *> eboList;
+    std::vector<IndexBuffer *> iboList;
 };

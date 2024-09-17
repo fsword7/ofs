@@ -1352,10 +1352,14 @@ Mesh *SurfaceManager::createIcosphere(int maxlod)
 
 void Mesh::upload()
 {
-    vao = new VertexArray();
+    if (vao == nullptr)
+        vao = new VertexArray();
     vao->bind();
 
+    if (vbo != nullptr)
+        delete vbo;
     vbo = new VertexBuffer(vtx, nvtx * sizeof(Vertex), GL_STATIC_DRAW);
+    vao->addVertices(vbo);
     vbo->bind();
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
@@ -1370,9 +1374,10 @@ void Mesh::upload()
     glEnableVertexAttribArray(2);
     checkErrors();
 
-    // vbo->unbind();
-
+    if (ibo != nullptr)
+        delete ibo;
     ibo = new IndexBuffer(idx, nidx);
+    vao->addIndices(ibo);
     ibo->bind();
 
     vao->unbind();

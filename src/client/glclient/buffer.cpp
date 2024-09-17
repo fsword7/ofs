@@ -10,7 +10,7 @@
 // ******** vertex buffer objects ********
 
 VertexBuffer::VertexBuffer(void *data, size_t size, int mode)
-: szData(size), mode(mode)
+: mode(mode), szData(size)
 {
     glGenBuffers(1, &id);
     glBindBuffer(GL_ARRAY_BUFFER, id);
@@ -67,12 +67,18 @@ void VertexBuffer::unbind() const
 // ******** index buffer objects ********
 
 IndexBuffer::IndexBuffer(indexType *data, size_t size, int mode)
-: mode(mode)
+: mode(mode), szData(size)
 {
     glGenBuffers(1, &id);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(indexType), data, mode);
     count = size;
+}
+
+IndexBuffer::IndexBuffer(int nBuffers)
+: szData(0)
+{
+    glGenBuffers(nBuffers, &id);
 }
 
 IndexBuffer::~IndexBuffer()
@@ -110,7 +116,7 @@ VertexArray::VertexArray(int nBuffers)
     glGenVertexArrays(nBuffers, &id);
 
     vboList.clear();
-    eboList.clear();
+    iboList.clear();
 }
 
 VertexArray::~VertexArray()
@@ -118,10 +124,10 @@ VertexArray::~VertexArray()
     // Clear all vertex/index buffer objects
     for(auto vbo : vboList)
         delete vbo;
-    for(auto ebo : eboList)
-        delete ebo;
+    for(auto ibo : iboList)
+        delete ibo;
     vboList.clear();
-    eboList.clear();
+    iboList.clear();
 
     // Delete VAO id.
     glDeleteVertexArrays(1, &id);
@@ -134,9 +140,8 @@ void *VertexArray::create(int nBuffers, arrayType type)
     {
     case VBO:
         return new VertexBuffer(nBuffers);
-
-    // case EBO:
-    //     return new IndexBuffer(nBuffers);
+    case IBO:
+        return new IndexBuffer(nBuffers);
     }
     return nullptr;
 }
