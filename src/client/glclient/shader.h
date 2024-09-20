@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "lights.h"
+
 class ShaderManager;
 
 enum ShaderType
@@ -23,14 +25,45 @@ enum ShaderStatus
     shrEmptyProgram
 };
 
-class intUniform
+class Uniform
 {
 public:
-    intUniform() = default;
-    intUniform(GLuint id, cstr_t &name)
+    Uniform() = default;
+    Uniform(GLuint id, cstr_t &name)
     {
         slot = glGetUniformLocation(id, name.c_str());
+        glLogger->debug("{}: {}\n", name,
+            slot != -1 ? fmt::format("slot {}", slot) : 
+            "not used/found");
     }
+
+protected:
+    GLuint slot = -1;
+};
+
+class boolUniform : public Uniform
+{
+public:
+    boolUniform() : Uniform() { }
+    boolUniform(GLuint id, cstr_t &name)
+    : Uniform(id, name)
+    { }
+
+    boolUniform &operator = (bool val)
+    {
+        if (slot != -1)
+            glUniform1i(slot, val);
+        return *this;
+    }
+};
+
+class intUniform : public Uniform
+{
+public:
+    intUniform() : Uniform() { }
+    intUniform(GLuint id, cstr_t &name)
+    : Uniform(id, name)
+    { }
 
     intUniform &operator = (int val)
     {
@@ -38,19 +71,15 @@ public:
             glUniform1i(slot, val);
         return *this;
     }
-
-private:
-    GLuint slot = -1;
 };
 
-class floatUniform
+class floatUniform : public Uniform
 {
 public:
-    floatUniform() = default;
+    floatUniform() : Uniform() { }
     floatUniform(GLuint id, cstr_t &name)
-    {
-        slot = glGetUniformLocation(id, name.c_str());
-    }
+    : Uniform(id, name)
+    { }
 
     floatUniform &operator = (float val)
     {
@@ -58,19 +87,15 @@ public:
             glUniform1f(slot, val);
         return *this;
     }
-
-private:
-    GLuint slot = -1;
 };
 
-class vec2Uniform
+class vec2Uniform : public Uniform
 {
 public:
-    vec2Uniform() = default;
+    vec2Uniform() : Uniform() { }
     vec2Uniform(GLuint id, cstr_t &name)
-    {
-        slot = glGetUniformLocation(id, name.c_str());
-    }
+    : Uniform(id, name)
+    { }
 
     vec2Uniform &operator = (const glm::vec2 &val)
     {
@@ -78,19 +103,15 @@ public:
             glUniform2fv(slot, 1, glm::value_ptr(val));
         return *this;
     }
-
-private:
-    GLuint slot = -1;
 };
 
-class vec3Uniform
+class vec3Uniform : public Uniform
 {
 public:
-    vec3Uniform() = default;
+    vec3Uniform() : Uniform() { }
     vec3Uniform(GLuint id, cstr_t &name)
-    {
-        slot = glGetUniformLocation(id, name.c_str());
-    }
+    : Uniform(id, name)
+    { }
 
     vec3Uniform &operator = (const glm::vec3 &val)
     {
@@ -98,19 +119,15 @@ public:
             glUniform3fv(slot, 1, glm::value_ptr(val));
         return *this;
     }
-
-private:
-    GLuint slot = -1;
 };
 
-class vec4Uniform
+class vec4Uniform : public Uniform
 {
 public:
-    vec4Uniform() = default;
+    vec4Uniform() : Uniform() { }
     vec4Uniform(GLuint id, cstr_t &name)
-    {
-        slot = glGetUniformLocation(id, name.c_str());
-    }
+    : Uniform(id, name)
+    { }
 
     vec4Uniform &operator = (const glm::vec4 &val)
     {
@@ -118,19 +135,15 @@ public:
             glUniform4fv(slot, 1, glm::value_ptr(val));
         return *this;
     }
-
-private:
-    GLuint slot = -1;
 };
 
-class mat3Uniform
+class mat3Uniform : public Uniform
 {
 public:
-    mat3Uniform() = default;
+    mat3Uniform() : Uniform() { }
     mat3Uniform(GLuint id, cstr_t &name)
-    {
-        slot = glGetUniformLocation(id, name.c_str());
-    }
+    : Uniform(id, name)
+    { }
 
     mat3Uniform &operator = (const glm::mat3 &val)
     {
@@ -138,19 +151,15 @@ public:
             glUniformMatrix3fv(slot, 1, GL_FALSE, glm::value_ptr(val));
         return *this;
     }
-
-private:
-    GLuint slot = -1;
 };
 
-class mat4Uniform
+class mat4Uniform : public Uniform
 {
 public:
-    mat4Uniform() = default;
+    mat4Uniform() : Uniform() { }
     mat4Uniform(GLuint id, cstr_t &name)
-    {
-        slot = glGetUniformLocation(id, name.c_str());
-    }
+    : Uniform(id, name)
+    { }
 
     mat4Uniform &operator = (const glm::mat4 &val)
     {
@@ -158,10 +167,8 @@ public:
             glUniformMatrix4fv(slot, 1, GL_FALSE, glm::value_ptr(val));
         return *this;
     }
-
-private:
-    GLuint slot = -1;
 };
+
 
 class ShaderSource
 {
@@ -201,6 +208,16 @@ private:
     bool isBlockComment = false;
 };
 
+struct glLight
+{
+    boolUniform enabled;
+
+    vec3Uniform position;
+
+    vec4Uniform diffuse;
+    vec4Uniform specular;
+};
+
 class ShaderProgram
 {
 public:
@@ -219,7 +236,7 @@ public:
     inline void use() const           { glUseProgram(id); }
     inline void release() const       { glUseProgram(0); }
 
-    // void initLightParameters();
+    void initLightParameters();
     // void setLightParameters(const LightState &ls,
     //     color_t materialDiffuse, color_t materialSpecular, color_t materialEmissive);
 
@@ -235,12 +252,17 @@ private:
     str_t pgmName;
     GLuint id = 0;
 
-    // struct
-    // {
-    //     vec3Uniform direction;
-    //     vec3Uniform diffuse;
-    //     vec3Uniform specular;
-    // } lights[MAX_LIGHTS];
+    struct
+    {
+        boolUniform enabled;
+    
+        vec3Uniform spos;
+        vec3Uniform diffuse;
+        vec3Uniform specular;
+    } lights[MAX_LIGHTS];
+
+    vec3Uniform ambient;
+    intUniform  nLights;
 
     // std::vector<ShaderSource &> shaders;
 };

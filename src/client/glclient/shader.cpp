@@ -296,6 +296,22 @@ ShaderStatus ShaderProgram::link()
     return shrSuccessful;
 }
 
+void ShaderProgram::initLightParameters()
+{
+    ambient = vec3Uniform(id, "uAmbient");
+    nLights = intUniform(id, "unLights");
+
+    for (int idx = 0; idx < MAX_LIGHTS; idx++)
+    {
+        lights[idx].enabled = boolUniform(id, strLightProperty(idx, "enabled"));
+
+        lights[idx].spos = vec3Uniform(id, strLightProperty(idx, "spos"));
+        lights[idx].diffuse = vec3Uniform(id, strLightProperty(idx, "diffuse"));
+        lights[idx].specular = vec3Uniform(id, strLightProperty(idx, "specular"));
+
+    }
+}
+
 // void ShaderProgram::initLightParameters()
 // {
 //     // for (int idx = 0; idx < MAX_LIGHTS; idx++)

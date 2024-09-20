@@ -5,7 +5,7 @@
 
 #pragma once
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 10
 
 // Directed llght list
 struct DirectLight
@@ -28,3 +28,12 @@ struct LightState
     uint32_t        nLights;
     DirectLight     lights[MAX_LIGHTS];
 };
+
+// Secondary Light Source (reflected from celestial bodies)
+// struct SecondaryLight
+// {
+//     const Celestial *body = nullptr;
+//     glm::dvec3 vpos;        // viewer relative position
+//     double radius;          // radius [Km]
+//     double reflected;       // total irradiance from direct sources
+// };

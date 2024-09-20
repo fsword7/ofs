@@ -444,6 +444,7 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 
         pgm->use();
 
+        pgm->initLightParameters();
         uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
         uView = mat4Uniform(pgm->getID(), "uView");
         uModel = mat4Uniform(pgm->getID(), "uModel");
