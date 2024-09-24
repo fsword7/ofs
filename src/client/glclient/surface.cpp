@@ -403,7 +403,7 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         pgm->use();
 
         uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
-        uView = mat4Uniform(pgm->getID(), "uView");
+        // uView = mat4Uniform(pgm->getID(), "uView");
         uModel = mat4Uniform(pgm->getID(), "uModel");
         uCamClip = vec2Uniform(pgm->getID(), "uCamClip");
 
@@ -446,7 +446,7 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 
         pgm->initLightParameters();
         uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
-        uView = mat4Uniform(pgm->getID(), "uView");
+        // uView = mat4Uniform(pgm->getID(), "uView");
         uModel = mat4Uniform(pgm->getID(), "uModel");
         uCamClip = vec2Uniform(pgm->getID(), "uCamClip");
 
@@ -762,7 +762,10 @@ void SurfaceManager::renderBody(const ObjectListEntry &ole)
 
     for (int idx = 0; idx < 2; idx++)
         process(tiles[idx]);
+
     pgm->use();
+    // Set light source parameters
+    pgm->setLightParameters(ole.lights);
     for (int idx = 0; idx < 2; idx++)
         render(tiles[idx]);
     pgm->release();
@@ -770,16 +773,10 @@ void SurfaceManager::renderBody(const ObjectListEntry &ole)
 
 void SurfaceManager::renderStar(const ObjectListEntry &ole)
 {
-    // if (meshStar == nullptr)
-    //     return;
     setRenderParams(ole);
-    // if (meshStar->vao == nullptr)
-    //     meshStar->upload();
 
     pgm->use();
-
-    // meshStar->vao->bind();
-
+    
     // Updating time for solar granules aninmation
     dTime += 0.0002;
 

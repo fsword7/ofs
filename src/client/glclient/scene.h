@@ -62,7 +62,7 @@ struct LightSource
 // Reflected object list
 struct SecondaryLight
 {
-    Object      *object;        // Reflected object
+    Celestial   *object;        // Reflected object
     glm::dvec3  vpos;           // View position
     double      radius;         // Object radius
     double      reflected;      // Reflected brightness
@@ -196,6 +196,7 @@ private:
     std::vector<const CelestialStar *> nearStars;
     std::vector<const CelestialStar *> visibleStars;
     std::vector<LightSource> lightSources;
+    std::vector<SecondaryLight> secondaryLights;
 
     std::vector<ObjectListEntry> renderList;
 };

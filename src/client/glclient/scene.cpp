@@ -119,6 +119,7 @@ void Scene::update(Player *player)
     visibleStars.clear();
     renderList.clear();
     lightSources.clear();
+    secondaryLights.clear();
 
     // universe->findCloseStars(camera->getGlobalPosition(), 1.0, nearStars);
     nearStars = universe->getNearStars();

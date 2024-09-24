@@ -32,12 +32,26 @@ public:
     Uniform(GLuint id, cstr_t &name)
     {
         slot = glGetUniformLocation(id, name.c_str());
+        uName = fmt::format("{}", name);
         glLogger->debug("{}: {}\n", name,
             slot != -1 ? fmt::format("slot {}", slot) : 
             "not used/found");
+        checkError();
+    }
+
+    bool isValid() const { return slot != -1; }
+
+protected:
+    void checkError()
+    {
+        int err;
+
+        if ((err = glGetError()) != GL_NO_ERROR)
+            glLogger->debug("{}: OpenGL Error: {}\n", uName, err);
     }
 
 protected:
+    str_t uName;
     GLuint slot = -1;
 };
 
@@ -52,7 +66,7 @@ public:
     boolUniform &operator = (bool val)
     {
         if (slot != -1)
-            glUniform1i(slot, val);
+            glUniform1i(slot, val), checkError();
         return *this;
     }
 };
@@ -68,7 +82,7 @@ public:
     intUniform &operator = (int val)
     {
         if (slot != -1)
-            glUniform1i(slot, val);
+            glUniform1i(slot, val), checkError();
         return *this;
     }
 };
@@ -84,7 +98,7 @@ public:
     floatUniform &operator = (float val)
     {
         if (slot != -1)
-            glUniform1f(slot, val);
+            glUniform1f(slot, val), checkError();
         return *this;
     }
 };
@@ -100,7 +114,7 @@ public:
     vec2Uniform &operator = (const glm::vec2 &val)
     {
         if (slot != -1)
-            glUniform2fv(slot, 1, glm::value_ptr(val));
+            glUniform2fv(slot, 1, glm::value_ptr(val)), checkError();
         return *this;
     }
 };
@@ -116,7 +130,7 @@ public:
     vec3Uniform &operator = (const glm::vec3 &val)
     {
         if (slot != -1)
-            glUniform3fv(slot, 1, glm::value_ptr(val));
+            glUniform3fv(slot, 1, glm::value_ptr(val)), checkError();
         return *this;
     }
 };
@@ -132,7 +146,7 @@ public:
     vec4Uniform &operator = (const glm::vec4 &val)
     {
         if (slot != -1)
-            glUniform4fv(slot, 1, glm::value_ptr(val));
+            glUniform4fv(slot, 1, glm::value_ptr(val)), checkError();
         return *this;
     }
 };
@@ -141,14 +155,14 @@ class mat3Uniform : public Uniform
 {
 public:
     mat3Uniform() : Uniform() { }
-    mat3Uniform(GLuint id, cstr_t &name)
+    mat3Uniform(GLuint id, cchar_t *name)
     : Uniform(id, name)
     { }
 
     mat3Uniform &operator = (const glm::mat3 &val)
     {
         if (slot != -1)
-            glUniformMatrix3fv(slot, 1, GL_FALSE, glm::value_ptr(val));
+            glUniformMatrix3fv(slot, 1, GL_FALSE, glm::value_ptr(val)), checkError();
         return *this;
     }
 };
@@ -157,14 +171,14 @@ class mat4Uniform : public Uniform
 {
 public:
     mat4Uniform() : Uniform() { }
-    mat4Uniform(GLuint id, cstr_t &name)
+    mat4Uniform(GLuint id, cchar_t *name)
     : Uniform(id, name)
     { }
 
     mat4Uniform &operator = (const glm::mat4 &val)
     {
         if (slot != -1)
-            glUniformMatrix4fv(slot, 1, GL_FALSE, glm::value_ptr(val));
+            glUniformMatrix4fv(slot, 1, GL_FALSE, glm::value_ptr(val)), checkError();
         return *this;
     }
 };
@@ -237,13 +251,13 @@ public:
     inline void release() const       { glUseProgram(0); }
 
     void initLightParameters();
-    // void setLightParameters(const LightState &ls,
-    //     color_t materialDiffuse, color_t materialSpecular, color_t materialEmissive);
+    void setLightParameters(const LightState &ls);
+    // color_t materialDiffuse, color_t materialSpecular, color_t materialEmissive);
 
     void listUniforms();
     
 protected:
-    std::string strLightProperty(int idx, cstr_t &name)
+    str_t strLightProperty(int idx, cstr_t &name)
     {
         return fmt::format("lights[{}].{}", idx, name);
     }
@@ -253,9 +267,7 @@ private:
     GLuint id = 0;
 
     struct
-    {
-        boolUniform enabled;
-    
+    {    
         vec3Uniform spos;
         vec3Uniform diffuse;
         vec3Uniform specular;

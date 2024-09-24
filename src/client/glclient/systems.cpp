@@ -96,6 +96,21 @@ void Scene::buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
             for (auto light : lightSources)
                 appMag = std::min(appMag, body->getApparentMagnitude(light.spos, light.luminosity, vpos));
 
+            // if (body->isSecondaryIlluminator())
+            // {
+
+            //     double rad = body->getRadius();
+            //     if ((rad / glm::length(vpos)) / pixelSize > 0)
+            //     {
+            //         SecondaryLight reflected;
+
+            //         reflected.object = body;
+            //         reflected.vpos = vpos;
+            //         reflected.radius = rad;
+            //         secondaryLights.push_back(reflected);
+            //     }
+            // }
+
             // if (pxSize > 1)
             // {
                 ObjectListEntry ole;

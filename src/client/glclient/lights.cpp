@@ -7,6 +7,7 @@
 #include "universe/astro.h"
 #include "universe/star.h"
 #include "client.h"
+#include "starcolors.h"
 #include "scene.h"
 #include "lights.h"
 // #include "universe/body.h"
@@ -21,7 +22,7 @@ void Scene::setupPrimaryLightSources(const std::vector<const CelestialStar *> ne
         ls.spos       = star->getoPosition() - obs;
         ls.luminosity = star->getLuminosity();
         ls.radius     = star->getRadius();
-        // ls.color     = starColors->lookup(star->getTemperature());
+        ls.color      = starColors->lookup(star->getTemperature());
 
         lightSources.push_back(ls);
     }
@@ -53,18 +54,38 @@ void Scene::setObjectLighting(std::vector<LightSource> &suns, const glm::dvec3 &
         ls.lights[idx].shadows    = true;
     }
 
-    if (nLights > 1)
-    {
-        // Calculating total irradiance from multi-star systems
-        double totalIrradiance = 0.0;
-        for (int idx = 0; idx < nLights; idx++)
-            totalIrradiance += ls.lights[idx].irradiance;
 
-        // Determine first brightest light sources
-        // sort(ls.lights, ls.lights + nLights, LightIrradiancePredicate());
-    }
+    // Sorting light sources by brightness
+    if (nLights > 1)
+        std::sort(ls.lights, ls.lights + nLights,
+            [](const auto &l0, const auto &l1)
+            { return l0.irradiance > l1.irradiance; }
+            );
+
+    // Calculating total irradiance from multi-star systems
+    double totalIrradiance = 0.0;
+    for (int idx = 0; idx < nLights; idx++)
+        totalIrradiance += ls.lights[idx].irradiance;
+
+    // float visibleFraction = 1.0f / 10000.0f;
+    // float displayable = 1.0f / 255.0f;
+    // float gamma = log(displayable) / log(visibleFraction);
+    // float visibleIrradiance = visibleFraction * totalIrradiance;
+
+    ls.nLights = nLights;
+    for (int idx = 0; idx < nLights; idx++)
+        ls.lights[idx].irradiance /= totalIrradiance;
+    ls.ambientColor = { 0, 0, 0 };
+
+    // for (int idx = 0; idx < nLights; idx++)
+    // {
+    //     // ls.lights[idx].irradiance = pow(ls.lights[idx].irradiance / totalIrradiance, gamma);
+    //     ls.lights[idx].irradiance /= totalIrradiance;
+    //     ls.nLights++;
+    // }
 
     // ls.eyePosObject = -opos * orot;
     // ls.eyeDirObject = (vec3d_t(0, 0, 0) - opos) * orot;
     // ls.ambientColor = vec3d_t(0, 0, 0);
+
 }

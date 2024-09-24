@@ -14,7 +14,8 @@ struct DirectLight
     glm::dvec3      dObject;        // Directed object
     glm::dvec3      dEye;           // Directed eye
     color_t         color;          // Spectrum
-    double          irradiance;     // Brightness
+    double          irradiance;     // Brightness from sun
+    double          brightness;     // Adjusted irradiance 
     double          asize;          // Apparent size
     bool            shadows;        // Casting shadow enable
 };

@@ -5,7 +5,7 @@ layout (location = 1) in vec3 vNormal;
 layout (location = 2) in vec2 vTexCoord;
 
 uniform mat4 uViewProj;
-uniform mat4 uView;
+// uniform mat4 uView;
 uniform mat4 uModel;
 uniform float uTime;
 
