@@ -323,7 +323,7 @@ void ShaderProgram::setLightParameters(const LightState &ls)
     assert (ls.nLights < MAX_LIGHTS);
     int idx;
 
-    glLogger->debug("Set {} lights\n", ls.nLights);
+    // glLogger->debug("Set {} lights\n", ls.nLights);
     nLights = ls.nLights;
     ambient = ls.ambientColor;
     for (idx = 0; idx < ls.nLights; idx++)
@@ -332,9 +332,9 @@ void ShaderProgram::setLightParameters(const LightState &ls)
         lights[idx].diffuse = ls.lights[idx].color.vec3() * ls.lights[idx].irradiance;
         lights[idx].specular = { 0, 0, 0 };
 
-        glLogger->debug("{}: Color ({}, {}, {}) Irradiance {}\n", idx, ls.lights[idx].color.getRed(),
-            ls.lights[idx].color.getGreen(), ls.lights[idx].color.getBlue(),
-            ls.lights[idx].irradiance);
+        // glLogger->debug("{}: Color ({}, {}, {}) Irradiance {}\n", idx, ls.lights[idx].color.getRed(),
+        //     ls.lights[idx].color.getGreen(), ls.lights[idx].color.getBlue(),
+        //     ls.lights[idx].irradiance);
     }
 }
 
