@@ -38,7 +38,7 @@ void addLight(in lightSource light, in vec3 normal, in vec3 fragPos, in vec3 vie
 {
     vec3 lightDir = normalize(light.spos - fragPos);
 
-    float diff = clamp(dot(-normal, lightDir), 0.0, 1.0);
+    float diff = clamp(dot(normal, lightDir), 0.0, 1.0);
     float spec = 0.0;
 
     // vec3 reflectDir = reflect(-lightDir, normal);
@@ -58,7 +58,7 @@ void main()
 
     vec3 diff = uAmbient;
     vec3 spec = vec3(0.0);
-    vec3 norm = normalize(normal);
+    vec3 norm = normalize(-normal);
     vec3 vdir = normalize(-fragPos);
 
     for (int idx = 0; idx < unLights; idx++)
