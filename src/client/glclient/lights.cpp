@@ -137,7 +137,9 @@ void Scene::setObjectLighting(std::vector<LightSource> &suns, const glm::dvec3 &
     ls.nLights = nLights;
     for (int idx = 0; idx < nLights; idx++)
         ls.lights[idx].irradiance /= totalIrradiance;
-    ls.ambientColor = { 0, 0, 0 };
+
+    // Set { 0.1, 0.1, 0.1 } so that can see dark side.
+    ls.ambientColor = { 0.1, 0.1, 0.1 };
 
     // for (int idx = 0; idx < nLights; idx++)
     // {
