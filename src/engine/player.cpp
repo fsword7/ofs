@@ -76,8 +76,8 @@ double Camera::getFieldCorrection() const
 
 // ******** Player ********
 
-Player::Player(TimeDate *td)
-: cam(SCR_WIDTH, SCR_HEIGHT), td(td)
+Player::Player(TimeDate *td, int width, int height)
+: cam(width, height), td(td)
 {
     updateCamera();
 

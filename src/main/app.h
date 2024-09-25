@@ -115,8 +115,6 @@ protected:
     Vehicle *focVehicle = nullptr;
     Vehicle *pfocVehicle = nullptr;
 
-    int width, height;
-
     double currentTime = 0.0;
     std::chrono::time_point<std::chrono::system_clock> prevTime, suspendTime;
 

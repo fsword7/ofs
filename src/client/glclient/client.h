@@ -33,7 +33,7 @@ public:
 
     inline Sketchpad *getSketchpad() const override { return skpad; }
 
-    GLFWwindow *cbCreateRenderingWindow() override;
+    GLFWwindow *createRenderingWindow() override;
     bool cbDisplayFrame() override;
     void cbSetWindowTitle(cstr_t &title) override;
 

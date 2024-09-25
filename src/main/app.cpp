@@ -26,7 +26,6 @@ Logger *ofsLogger = nullptr;
 TimeDate *ofsDate = nullptr;
 
 CoreApp::CoreApp()
-: width(SCR_WIDTH), height(SCR_HEIGHT)
 {
     // Initialize state keys
     for (int idx = 0; idx < 512; idx++)
@@ -97,9 +96,10 @@ void CoreApp::openSession()
     td.jumpTo(astro::MJD(nowTime.count()));
     prevTime = now;
 
-    player = new Player(&td);
+    VideoData *video = gclient->getVideoData();
 
-    panel = new Panel(gclient, width, height, 8);
+    player = new Player(&td, video->width, video->height);
+    panel = new Panel(gclient, video->width, video->height, 8);
 
     if (gclient != nullptr)
     {

@@ -15,6 +15,13 @@ public:
     GUIManager(GraphicsClient *gclient);
     ~GUIManager();
 
+    inline int getWidth() const             { return video->width; }
+    inline int getHeight() const            { return video->height; }
+    inline int getScreenWidth() const       { return sWidth; }
+    inline int getScreenHeight() const      { return sHeight; }
+    inline int getPhysicalWidth() const     { return mmWidth; }
+    inline int getPhysicalHeight() const    { return mmHeight; }
+
     void resetKeys();
 
     void toggleFullScreen();
@@ -32,9 +39,15 @@ public:
     void processMouseButton(GLFWwindow *window, int button, int action, int mods);
     void processKey(GLFWwindow *window, int gkey, int scancode, int action, int mods);
 
+    void setupPrimaryMonitorSize();
+
 private:
     GraphicsClient *gclient = nullptr;
     GLFWwindow *window = nullptr;
+    VideoData *video = nullptr;
+
+    int sWidth, sHeight;        // width/height screen
+    int mmWidth, mmHeight;      // width/height [mm]
 
     // Save previous callback functions 
     void (*pcbProcessMouseWheel)(GLFWwindow *window, double xoff, double yoff);

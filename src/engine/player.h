@@ -101,7 +101,7 @@ private:
 class OFSAPI Player
 {
 public:
-    Player(TimeDate *td);
+    Player(TimeDate *td, int width, int height);
     ~Player();
 
     inline bool isExternal() const              { return modeExternal; }

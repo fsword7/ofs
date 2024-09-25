@@ -26,7 +26,15 @@ GUIManager::GUIManager(GraphicsClient *gclient)
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
 
-    window = gclient->cbCreateRenderingWindow();
+    // Determine primary monitor size
+    setupPrimaryMonitorSize();
+
+    video = gclient->getVideoData();
+    video->mode = 0; // windowed mode (default)
+    video->width = (sWidth * 3) / 4;
+    video->height = (sHeight * 3) / 4;
+
+    window = gclient->createRenderingWindow();
     if (window == nullptr)
         exit(EXIT_FAILURE);
 
@@ -426,4 +434,12 @@ void GUIManager::processKey(GLFWwindow *window, int gkey, int scancode, int acti
 
     // char32_t ch = keys[gkey];
     // ofsAppCore->keyEntered(key, 0);
+}
+
+void GUIManager::setupPrimaryMonitorSize()
+{
+    GLFWmonitor *primary = glfwGetPrimaryMonitor();
+
+    glfwGetMonitorWorkarea(primary, nullptr, nullptr, &sWidth, &sHeight);
+    glfwGetMonitorPhysicalSize(primary, &mmWidth, &mmHeight);
 }

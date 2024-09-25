@@ -81,8 +81,8 @@ void cbPrintError(int, cchar_t *errMessage)
 
 bool glClient::cbInitialize()
 {
-    width  = SCR_WIDTH;
-    height = SCR_HEIGHT;
+    // width  = SCR_WIDTH;
+    // height = SCR_HEIGHT;
 
     glfwSetErrorCallback(cbPrintError);
 
@@ -106,7 +106,7 @@ void glClient::cbCleanup()
     glfwTerminate();
 }
 
-GLFWwindow *glClient::cbCreateRenderingWindow()
+GLFWwindow *glClient::createRenderingWindow()
 {
     // Set OpenGL core profile request
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -116,12 +116,33 @@ GLFWwindow *glClient::cbCreateRenderingWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
-    window = glfwCreateWindow(width, height, "OFS", NULL, NULL);
+    switch (videoData.mode)
+    {
+    case 0: // Windowed mode
+        width = videoData.width;
+        height = videoData.height;
+        window = glfwCreateWindow(width, height, "OFS", NULL, NULL);
+        break;
+
+    case 1: // Fullscreen mode
+        width = videoData.videoMode->width;
+        height = videoData.videoMode->height;
+        glfwWindowHint(GLFW_RED_BITS, videoData.videoMode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, videoData.videoMode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, videoData.videoMode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, videoData.videoMode->refreshRate);
+        window = glfwCreateWindow(width, height, "OFS", videoData.monitor, nullptr);
+        break;    
+    }
+
     if (window == nullptr)
     {
-        printf("GLFW Window can't be created");
+        glLogger->fatal("Fatal: Can't create GLFW {} - aborted.\n",
+            videoData.mode == 0 ? "window" : "fullscreen");
+        glfwTerminate();
         abort();
     }
+
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
@@ -193,6 +214,8 @@ void glClient::setViewportSize(int w, int h)
     // Update resolution
     width = w;
     height = h;
+    videoData.width = w;
+    videoData.height = h;
 
     if (glScene != nullptr)
         glScene->resize(width, height);

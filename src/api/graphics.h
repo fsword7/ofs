@@ -19,16 +19,29 @@ class Font;
 class Pen;
 class Brush;
 
+struct VideoData
+{
+    int mode = 0;
+    int width, height;
+    str_t descMonitor;
+    str_t descMode;
+
+    GLFWmonitor *monitor = nullptr;
+    const GLFWvidmode *videoMode = nullptr;
+};
+
 class OFSAPI GraphicsClient
 {
 public:
     GraphicsClient(ModuleHandle handle);
     virtual ~GraphicsClient();
 
+    inline VideoData *getVideoData()        { return &videoData; }
+
     virtual bool cbInitialize() { return false; }
     virtual void cbCleanup() { }
 
-    virtual GLFWwindow *cbCreateRenderingWindow() = 0;
+    virtual GLFWwindow *createRenderingWindow() = 0;
     virtual bool cbDisplayFrame() = 0;
     virtual void cbSetWindowTitle(cstr_t &title) = 0;
     virtual void cbStart(Universe *universe) = 0;
@@ -58,6 +71,9 @@ public:
     virtual void releaseFont(Font *font) = 0;
     virtual void releasePen(Pen *pen) = 0;
     virtual void releaseBrush(Brush *brush) = 0;
+
+protected:
+    VideoData videoData;
 };
 
 OFSAPI bool ofsRegisterGraphicsClient(GraphicsClient *gc);
