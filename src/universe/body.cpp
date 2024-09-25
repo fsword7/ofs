@@ -43,6 +43,7 @@ void CelestialPlanet::setup(YAML::Node &config)
 
     // atmc.color0 = yaml::getValue<color_t>(config, "AtomsphereColor");
 
+    enableSecondaryIlluminator(true);
 }
 
 void CelestialPlanet::getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const

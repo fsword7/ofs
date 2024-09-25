@@ -35,6 +35,8 @@ SurfaceTile::~SurfaceTile()
         delete mesh;
     if (txOwn == true && txImage != nullptr)
         delete txImage;
+    if (txOwn == true && spImage != nullptr)
+        delete spImage;
     if (elevOwn == true && elev != nullptr)
         delete elev;
 }
@@ -109,6 +111,7 @@ void SurfaceTile::load()
 
     if (mgr.zTrees[0] != nullptr)
     {
+        // Loading terrain texture from database
         szImage = mgr.zTrees[0]->read(lod+4, ilat, ilng, &ddsImage);
         if (szImage > 0 && ddsImage != nullptr)
             mgr.tmgr.loadDDSTextureFromMemory(&txImage, ddsImage, szImage, 0);
@@ -116,27 +119,43 @@ void SurfaceTile::load()
         //     logger->info("Loaded texture (ID {}: ({}, {}))\n",
         //         txImage->id, txImage->txWidth, txImage->txHeight);
         delete ddsImage;
-    }
 
-    if (txImage != nullptr)
-        txOwn = true;
-    else
-    {
-        // Non-existent tile. Get lower LOD tile from
-        // ancestor and set subregion range of that.
-        SurfaceTile *pTile = dynamic_cast<SurfaceTile *>(getParent());
-        if (pTile != nullptr)
-        {
-            txImage = pTile->getTexture();
-            txOwn = false;
-            setSubregionRange(pTile->txRange);
+        if (txImage != nullptr)
+            txOwn = true;
+        else {
+            // Non-existent tile. Get lower LOD tile from
+            // ancestor and set subregion range of that.
+            SurfaceTile *pTile = dynamic_cast<SurfaceTile *>(getParent());
+            if (pTile != nullptr)
+            {
+                txImage = pTile->getTexture();
+                txOwn = false;
+                setSubregionRange(pTile->txRange);
 
-            // Get parent tile with last own texture image.
-            parentTile = pTile->txOwn ? pTile : pTile->parentTile;
+                // Get parent tile with last own texture image.
+                parentTile = pTile->txOwn ? pTile : pTile->parentTile;
+            }
         }
     }
 
-    // Load (nightlight/water) mask texture if applicance
+    // // Load (nightlight/water) mask texture if applicance
+    // if (mgr.zTrees[1] != nullptr)
+    // {
+    //     if (txOwn == true) {
+    //         // Loading specular texture from database
+    //         szImage = mgr.zTrees[1]->read(lod+4, ilat, ilng, &ddsImage);
+    //         if (szImage > 0 && ddsImage != nullptr)
+    //             mgr.tmgr.loadDDSTextureFromMemory(&spImage, ddsImage, szImage, 0);
+    //         // if (txImage != nullptr)
+    //         //     logger->info("Loaded texture (ID {}: ({}, {}))\n",
+    //         //         txImage->id, txImage->txWidth, txImage->txHeight);
+    //         delete ddsImage;
+    //     } else {
+    //         SurfaceTile *pTile = dynamic_cast<SurfaceTile *>(getParent());
+    //         if (pTile != nullptr)
+    //             spImage = pTile->spImage;
+    //     }
+    // }
 
     // Load elevation data
     int16_t *elev = elevEnable ? getElevationData() : nullptr;
@@ -465,8 +484,7 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         emgr->setup(folder);
 
         zTrees[0] = zTreeManager::create(folder, "surf");
-        // zTrees[2] = zTreeManager::create(folder, "elev");
-        // zTrees[3] = zTreeManager::create(folder, "elev_mod");
+        // zTrees[1] = zTreeManager::create(folder, "mask");
 
         for (int idx = 0; idx < 2; idx++)
         {

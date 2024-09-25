@@ -179,5 +179,8 @@ void Scene::render(Player *player)
         buildSystems(sun->getSecondaries(), apos, vpn);
     }
 
+    // Set light sources for planetshines
+    setupSecondaryLightSources(lightSources, secondaryLights);
+
     renderSystemObjects();
 }

@@ -138,9 +138,12 @@ protected:
     void renderCelestialBody(ObjectListEntry &ole);
     void renderOrbitPath(ObjectListEntry &ole);
 
+    float estimateReflectedLightFraction(const glm::dvec3 &spos,
+        const glm::dvec3 &opos, float radius);
     void setupPrimaryLightSources(const std::vector<const CelestialStar *> nearStars,
         const glm::dvec3 &obs, std::vector<LightSource> &ls);
-    void setupSecondaryLightSources();
+    void setupSecondaryLightSources(const std::vector<LightSource> &ls,
+        std::vector<SecondaryLight> illums);
     void setObjectLighting(std::vector<LightSource> &suns, const glm::dvec3 &opos,
         const glm::dquat &orot, LightState &ls);
 

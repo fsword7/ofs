@@ -28,8 +28,31 @@ void Scene::setupPrimaryLightSources(const std::vector<const CelestialStar *> ne
     }
 }
 
-void Scene::setupSecondaryLightSources()
+void Scene::setupSecondaryLightSources(const std::vector<LightSource> &lights, std::vector<SecondaryLight> illuminators)
 {
+    constexpr double au2 = square(1.0 / KM_PER_AU);
+
+    for (auto &illum : illuminators)
+    {
+        illum.reflected = 0.0;
+        for (const auto &ls : lights)
+            illum.reflected += ls.luminosity / glm::length2(illum.vpos - ls.spos) * au2;
+        illum.reflected *= illum.object->getReflectivity();
+    }
+}
+
+float Scene::estimateReflectedLightFraction(const glm::dvec3 &spos, const glm::dvec3 &opos, float radius)
+{
+    double odist = glm::length(opos);
+    double sdist = glm::length(spos);
+    double cosTheta = radius / odist;
+    double cosPhi = glm::dot(spos, opos) / (sdist * odist);
+
+    double s = sqrt((1.0 - cosPhi * cosPhi) * (1.0 - cosTheta * cosTheta));
+    double cosPhi1 = cosPhi * cosTheta - s;
+    double cosPhi2 = cosPhi * cosTheta + s;
+
+    return (2.0 * std::max(cosPhi, 0.0) + std::max(cosPhi1, 0.0) + std::max(cosPhi2, 0.0)) * 0.25;
 }
 
 void Scene::setObjectLighting(std::vector<LightSource> &suns, const glm::dvec3 &opos,
@@ -54,6 +77,45 @@ void Scene::setObjectLighting(std::vector<LightSource> &suns, const glm::dvec3 &
         ls.lights[idx].shadows    = true;
     }
 
+    // Adding secondary lights like planetshine and others
+    if (!secondaryLights.empty() && nLights < MAX_LIGHTS-1)
+    {
+        float mirr = 0.0f;
+        int mirridx = 0, sidx = 0;
+
+        for (auto illum : secondaryLights)
+        {
+            glm::dvec3 ipos = illum.vpos - opos;
+            float sqdist = glm::length2(ipos) / square(illum.radius);
+
+            if (sqdist > 0.1)
+            {
+                float irr = illum.reflected / sqdist;
+                if (irr > mirr)
+                {
+                    glm::dvec3 spos = opos - suns[0].spos;
+                    irr *= estimateReflectedLightFraction(ipos, spos, illum.radius);
+                    if (irr > mirr)
+                        mirr = irr, mirridx = sidx;
+                }
+            }
+            sidx++;
+        }
+
+        // glLogger->debug("{}: Relfected irradiance {}\n", secondaryLights[mirridx].object->getsName(),
+        //     secondaryLights[mirridx].reflected);
+
+        if (mirr > 0.0f)
+        {
+            glm::dvec3 ipos = secondaryLights[mirridx].vpos - opos;
+
+            ls.lights[nLights].irradiance = mirr;
+            ls.lights[nLights].color = secondaryLights[mirridx].object->getColor();
+            ls.lights[nLights].asize = 0.0f;
+            ls.lights[nLights].shadows = false;
+            nLights++;
+        }
+    }
 
     // Sorting light sources by brightness
     if (nLights > 1)

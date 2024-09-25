@@ -54,6 +54,8 @@ void Celestial::setup(YAML::Node &config)
         else
             ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
     }
+
+    reflectivity = yaml::getValue<double>(config, "GeomAlbedo");
 }
 
 void Celestial::setupRotation()

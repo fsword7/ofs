@@ -68,6 +68,8 @@ void Scene::renderSystemObjects()
     {
         glLogger->debug("Rendering {}...\n", ole.object->getName());
 
+        setObjectLighting(lightSources, ole.vpos, ole.orot, ole.lights);
+
         ole.camClip = camera->getClip();
         ole.visual->render(ole);
     }
@@ -96,26 +98,26 @@ void Scene::buildSystems(secondaries_t &bodies, const glm::dvec3 &obs,
             for (auto light : lightSources)
                 appMag = std::min(appMag, body->getApparentMagnitude(light.spos, light.luminosity, vpos));
 
-            // if (body->isSecondaryIlluminator())
-            // {
+            if (body->isSecondaryIlluminator())
+            {
 
-            //     double rad = body->getRadius();
-            //     if ((rad / glm::length(vpos)) / pixelSize > 0)
-            //     {
-            //         SecondaryLight reflected;
+                double rad = body->getRadius();
+                if ((rad / glm::length(vpos)) / pixelSize > 1.0)
+                {
+                    SecondaryLight reflected;
 
-            //         reflected.object = body;
-            //         reflected.vpos = vpos;
-            //         reflected.radius = rad;
-            //         secondaryLights.push_back(reflected);
-            //     }
-            // }
+                    reflected.object = body;
+                    reflected.vpos = vpos;
+                    reflected.radius = rad;
+                    secondaryLights.push_back(reflected);
+                }
+            }
 
             // if (pxSize > 1)
             // {
                 ObjectListEntry ole;
 
-                setObjectLighting(lightSources, vpos, orot, ole.lights);
+                // setObjectLighting(lightSources, vpos, orot, ole.lights);
 
                 ole.object  = body;
                 ole.visual  = getVisualObject(ole.object, true);

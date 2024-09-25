@@ -66,6 +66,12 @@ public:
     
     inline double getRotationPeriod() const             { return rotT; }
 
+    inline bool isSecondaryIlluminator() const          { return bIlluminator; }
+    inline double getReflectivity() const               { return reflectivity; }
+
+    void enableSecondaryIlluminator(bool enable)        { bIlluminator = enable; }
+    void setReflectivity(double reflected)              { reflectivity = reflected; }
+
     void attach(Celestial *parent, frameType type = rfUniversal);
 
     StateVectors interpolateState(double step);
@@ -123,6 +129,9 @@ protected:
 
     OrbitalElements oel;
     bool orbitValid = false;
+
+    bool bIlluminator = false;
+    double reflectivity = 0.5;
 
     OrbitEphemeris *ephemeris = nullptr;
 

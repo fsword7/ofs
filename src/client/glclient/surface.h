@@ -132,6 +132,7 @@ private:
     // Surface data parameters
     bool txOwn = false;
     Texture *txImage = nullptr;
+    Texture *spImage = nullptr;
     tcRange txRange;
 
     // Edge Matching paramaters
