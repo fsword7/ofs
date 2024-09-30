@@ -70,9 +70,9 @@ public:
 
     // bool load(json &cfg);
 
-    inline void setStar(CelestialStar *star)            { cstar = star; }
-    inline CelestialStar *getStar() const               { return cstar; }
-    inline CelestialBody *getParent() const             { return cbody; }
+    // inline void setStar(CelestialStar *star)            { cstar = star; }
+    // inline CelestialStar *getStar() const               { return cstar; }
+    // inline CelestialBody *getParent() const             { return cbody; }
 
     // inline double getRotationPeriod() const             { return rotT; }
 
@@ -159,8 +159,8 @@ protected:
     // pSystem *system = nullptr;
     // OrbitEphemeris *ephemeris = nullptr;
 
-    CelestialStar *cstar = nullptr;
-    CelestialBody *cbody = nullptr;             // Reference frame for orbits
+    // CelestialStar *cstar = nullptr;
+    // CelestialBody *cbody = nullptr;             // Reference frame for orbits
     // std::vector<CelestialBody *> secondaries;   // children of celstial body
 
     // mutable vObject *visualObject = nullptr;

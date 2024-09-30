@@ -169,9 +169,9 @@ void Scene::render(Player *player)
     {
         glLogger->info("Sun: {}\n", sun->getsName());
 
-        if (!sun->haspSystem())
+        if (!sun->hasSystem())
             continue;
-        pSystem *psys = sun->getpSystem();
+        pSystem *psys = sun->getSystem();
 
         glm::dvec3 apos = obs - sun->getbPosition();
         glm::dvec3 vpn = obs * glm::dvec3(0, 0, -1);

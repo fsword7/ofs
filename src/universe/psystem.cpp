@@ -19,20 +19,20 @@ pSystem::pSystem(str_t &name)
 {
 }
 
-pSystem::pSystem(CelestialStar *star)
+pSystem::pSystem(Celestial *star)
 : sysName(star->getsName()), primaryStar(star)
 {
-    star->setpSystem(this);
+    star->setSystem(this);
     stars.push_back(star);
     bodies.push_back(star);
 }
 
-void pSystem::addStar(CelestialStar *star)
+void pSystem::addStar(Celestial *star)
 {
     if (primaryStar == nullptr)
         primaryStar = star;
-    if (!star->haspSystem())
-        star->setpSystem(this);
+    if (!star->hasSystem())
+        star->setSystem(this);
     stars.push_back(star);
     // bodies.push_back(star);
     addBody(star);
@@ -70,7 +70,7 @@ void pSystem::addPlanet(CelestialBody *planet, CelestialBody *parent)
     addBody(planet);
     addCelestial(planet);
     planet->setStar(primaryStar);
-    planet->setPlanetarySystem(this);
+    planet->setSystem(this);
     planet->attach(parent);
 }
 

@@ -16,6 +16,7 @@
 #include "universe/astro.h"
 // #include "render/scene.h"
 #include "control/panel.h"
+#include "engine/dlgcam.h"
 #include "main/guimgr.h"
 #include "main/app.h"
 #include "main/keys.h"
@@ -100,6 +101,7 @@ void CoreApp::openSession()
 
     player = new Player(&td, video->width, video->height);
     panel = new Panel(gclient, video->width, video->height, 8);
+    guimgr->setPlayer(player);
 
     if (gclient != nullptr)
     {
@@ -168,6 +170,11 @@ void CoreApp::createSceneWindow()
 
     // Initialize callbacks for window events
     guimgr->setupCallbacks();
+
+    dlgCamera = new DialogCamera("Camera");
+
+    guimgr->registerControl(dlgCamera);
+
 }
 
 void CoreApp::renderScene()
@@ -468,7 +475,7 @@ void CoreApp::processUserInputs()
 
 void CoreApp::keyBufferedSystem(char32_t key, int mods)
 {
-
+    if (stateKey[ofs::keyF5]) guimgr->showControl<DialogCamera>();
 }
 
 void CoreApp::keyBufferedOnRunning(char32_t key, int mods)

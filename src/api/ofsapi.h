@@ -33,6 +33,7 @@ class ofsHandler2;
 class Constellations;
 class StarDatabase;
 class System;
+class GUIManager;
 
 enum ObjectType
 {
@@ -48,6 +49,28 @@ enum ObjectType
 #define SURF_NOMIPMAPS      0x0002
 #define SURF_ALPHA          0x0004
 #define SURF_NOALPHA        0x0008
+
+class OFSAPI GUIElement
+{
+    friend class GUIManager;
+
+public:
+    GUIElement(cstr_t &name, const std::type_info &id)
+    : name(name), idType(id)
+    { }
+    virtual ~GUIElement() = default;
+
+    inline cstr_t getsName() const  { return name; }
+    inline bool isVisible() const   { return bEnabled; }
+    inline void enable(bool set)    { bEnabled = set; }
+
+    virtual void show() = 0;
+
+protected:
+    cstr_t name;
+    const std::type_info &idType;
+    bool bEnabled = false;
+};
 
 // OFSAPI int ofsGetCameraHeight();
 // OFSAPI int ofsGetCameraWidth();

@@ -7,6 +7,7 @@
 
 #include "main/core.h"
 #include "engine/player.h"
+#include "engine/celestial.h"
 #include "engine/vehicle.h"
 #include "ephem/orbit.h"
 #include "ephem/vsop87/vsop87.h"
@@ -15,7 +16,6 @@
 #include "universe/universe.h"
 #include "universe/star.h"
 #include "universe/body.h"
-// #include "universe/system.h"
 #include "universe/psystem.h"
 #include "universe/astro.h"
 
@@ -40,7 +40,7 @@ void Universe::start(const TimeDate &td)
     Player *player = ofsAppCore->getPlayer();
 
     CelestialStar *sun = dynamic_cast<CelestialStar *>(stardb.find("Sol"));
-    pSystem *psys = sun->getpSystem();
+    pSystem *psys = sun->getSystem();
     Celestial *earth = dynamic_cast<Celestial *>(psys->find("Earth"));
     Celestial *lunar = dynamic_cast<Celestial *>(psys->find("Lunar"));
     Celestial *mars = dynamic_cast<Celestial *>(psys->find("Mars"));
@@ -90,12 +90,13 @@ void Universe::start(const TimeDate &td)
 
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
     // player->setGroundObserver(earth, { 28.632307, -80.705774, 1}, 150);
+    // player->setGroundObserver(earth, { 28.632307, -80.705774, .003}, 150);
 
     // vehicle->initLanded(earth, { 28.632307, -80.705774, 0}, 150);
     // player->attach(vehicle);
 
     // Observe Rocky Mountains in Denver metro area
-    // player->setGroundObserver(earth, { 39.7309918, -104.7046216, 5}, 270);
+    // player->setGroundObserver(earth, { 39.7309918, -104.7046216, 2}, 270);
 
     // Observe Grand Canyon in Arizona
     // player->setGroundObserver(earth, { 36.018679, -112.121223, 5}, 0);
@@ -118,6 +119,7 @@ void Universe::start(const TimeDate &td)
     // Ground observer on Lunar
     // player->setGroundObserver(lunar, { 0, 0, 3 }, 0);
 
+    player->setSystem(psys);
     player->update(td);
 }
 
@@ -134,11 +136,11 @@ void Universe::update(Player *player, const TimeDate &td)
         //     continue;
         // System *system = sun->getSolarSystem();
 
-        if (!sun->haspSystem())
+        if (!sun->hasSystem())
             continue;
 
         // Logger::getLogger()->info("{}: Solar System List\n", sun->getsName());
-        pSystem *psys = sun->getpSystem();
+        pSystem *psys = sun->getSystem();
         if (psys != nullptr)
             psys->update(true);
 
@@ -149,9 +151,9 @@ void Universe::finalizeUpdate()
 {
     for (auto sun : nearStars)
     {
-        if (!sun->haspSystem())
+        if (!sun->hasSystem())
             continue;
-        pSystem *psys = sun->getpSystem();
+        pSystem *psys = sun->getSystem();
         if (psys != nullptr)
             psys->finalizeUpdate();
     }
@@ -257,21 +259,34 @@ void Universe::findVisibleStars(ofsHandler &handler,
     stardb.findVisibleStars(handler, obs, rot, fov, aspect, faintest);
 }
 
-Object *Universe::pickPlanet(pSystem *system, const glm::dvec3 &obs, const glm::dvec3 &dir, double when)
+bool Universe::pickSystem(secondaries_t &cbodies)
+{
+    for (auto cbody : cbodies) {
+
+
+        secondaries_t &secondaries = cbody->getSecondaries();
+        if (secondaries.size() > 0)
+            pickSystem(secondaries);
+    }
+
+    return false;
+}
+
+Celestial *Universe::pickPlanet(pSystem *system, const glm::dvec3 &obs, const glm::dvec3 &dir, double when)
 {
 
     return nullptr;
 }
 
-Object *Universe::pick(const glm::dvec3 &obs, const glm::dvec3 &dir, double when)
+Celestial *Universe::pick(const glm::dvec3 &obs, const glm::dvec3 &dir, double when)
 {
-    Object *picked = nullptr;
+    Celestial *picked = nullptr;
 
     for (auto sun : nearStars)
     {
-        if (!sun->haspSystem())
+        if (!sun->hasSystem())
             continue;
-        picked = pickPlanet(sun->getpSystem(), obs, dir, when);
+        picked = pickPlanet(sun->getSystem(), obs, dir, when);
     }
 
     return picked;

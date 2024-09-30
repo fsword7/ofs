@@ -13,6 +13,7 @@
 
 class Player;
 class Vehicle;
+class Celestial;
 class CelestialPlanet;
 
 class OFSAPI Universe
@@ -49,8 +50,9 @@ public:
         const double fov, const double aspect,
         const double faintest);
 
-    Object *pickPlanet(pSystem *system, const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
-    Object *pick(const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
+    bool pickSystem(secondaries_t &cbodies);
+    Celestial *pickPlanet(pSystem *system, const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
+    Celestial *pick(const glm::dvec3 &obs, const glm::dvec3 &dir, double when);
 
 private:
     StarDatabase stardb;

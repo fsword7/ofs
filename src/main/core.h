@@ -21,6 +21,7 @@
 #include <thread>
 #include <mutex>
 #include <algorithm>
+#include <typeinfo>
 
 #define YAML_CPP_API
 #include "yaml-cpp/yaml.h"

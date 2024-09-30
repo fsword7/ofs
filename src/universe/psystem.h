@@ -16,15 +16,18 @@ class pSystem
 public:
     pSystem() = default;
     pSystem(str_t &name);
-    pSystem(CelestialStar *star);
+    pSystem(Celestial *star);
     ~pSystem() = default;
 
-    void addStar(CelestialStar *cbody);
+    void addStar(Celestial *cbody);
     void addBody(Celestial *cbody);
     void addPlanet(CelestialBody *planet, CelestialBody *cbody);
     void addVehicle(Vehicle *vehicle);
     void addCelestial(Celestial *cel);
     void sortCelestials();
+
+    int getStarsSize() const                { return stars.size(); }
+    Celestial *getStar(int idx) const       { return idx < stars.size() ? stars[idx] : nullptr; }
 
     Celestial *find(cstr_t &name) const;
 
@@ -51,9 +54,9 @@ public:
 private:
     str_t sysName;
 
-    CelestialStar *primaryStar = nullptr;
+    Celestial *primaryStar = nullptr;
 
-    std::vector<CelestialStar *> stars;
+    std::vector<Celestial *> stars;
     std::vector<Celestial *> bodies;
     std::vector<Celestial *> planets;
     std::vector<Vehicle *> vehicles;

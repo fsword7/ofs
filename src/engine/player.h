@@ -11,6 +11,7 @@ class Celestial;
 class CelestialPlanet;
 class ElevationTile;
 class Player;
+class pSystem;
 
 enum cameraMode {
     camGlobalFrame,
@@ -70,7 +71,8 @@ public:
     inline glm::dmat4 getViewMatrix() { return view; }
 
     double getPixelSize() const;
-    glm::dvec3 getPickRay(double x, double y);
+    void mapMouse(float wx, float wy, float &vx, float &vy) const;
+    glm::dvec3 getPickRay(double x, double y) const;
     double getFieldCorrection() const;
 
     void resize(int width, int height);
@@ -81,6 +83,7 @@ public:
 
 private:
     int    width, height;
+    int    wx = 0, wy = 0;
     double aspect;
     double fov;
     double zNear, zFar;
@@ -133,6 +136,9 @@ public:
     inline void setGroundAngularControl(glm::dvec3 av)  { go.av = av; }
     inline void setGroundTravelControl(glm::dvec3 tv)   { go.tv = tv; }
 
+    inline pSystem *getSystem() const                   { return system; }
+    inline void setSystem(pSystem *sys)                 { system = sys; }
+
     double computeCoarseness(double maxCoarseness);
 
     void attach(Celestial *object, cameraMode mode = camGlobalFrame, Celestial *sobject = nullptr);
@@ -167,6 +173,7 @@ private:
     Camera cam;
     // PlayerFrame *frame = nullptr;
 
+    pSystem   *system = nullptr;
     Celestial *tgtObject = nullptr;
     Celestial *syncObject = nullptr;
 

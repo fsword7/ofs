@@ -63,7 +63,17 @@ double Camera::getPixelSize() const
     return 2.0 * tan(fov / 2.0) / height;
 }
 
-glm::dvec3 Camera::getPickRay(double x, double y)
+void Camera::mapMouse(float mx, float my, float &vx, float &vy) const
+{
+    float w = width;
+    float h = height;
+
+    // Convert to [-1:1]
+    vx = ((mx - wx) / w) - 0.5;
+    vy = ((h - (my - wy)) / h) - 0.5;
+}
+
+glm::dvec3 Camera::getPickRay(double x, double y) const
 {
     double s = 2.0 * tan(fov / 2.0);
     return glm::normalize(glm::dvec3(x*s, y*s, -1.0));

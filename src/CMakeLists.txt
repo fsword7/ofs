@@ -8,6 +8,7 @@ set(OFS_CPP_SRCS
     control/panel.cpp
     control/taskbar.cpp
     engine/celestial.cpp
+    engine/dlgcam.cpp
     engine/engine.cpp
     # engine/frame.cpp
     engine/mesh.cpp
@@ -102,6 +103,7 @@ set(OFS_H_SRCS
     control/panel.h
     control/taskbar.h
     engine/celestial.h
+    engine/dlgcam.h
     engine/engine.h
     # engine/frame.h
     engine/mesh.h

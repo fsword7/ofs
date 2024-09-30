@@ -30,9 +30,9 @@ class Uniform
 public:
     Uniform() = default;
     Uniform(GLuint id, cstr_t &name)
+    : uName(name)
     {
         slot = glGetUniformLocation(id, name.c_str());
-        uName = fmt::format("{}", name);
         glLogger->debug("{}: {}\n", name,
             slot != -1 ? fmt::format("slot {}", slot) : 
             "not used/found");

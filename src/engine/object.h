@@ -39,6 +39,8 @@ public:
     inline void setsName(str_t name)            { objNames[0] = name; }    
     inline str_t getName() const                { return objNames[0]; }
     inline str_t getsName() const               { return objNames[0]; }
+    inline cchar_t *getcName() const            { return objNames[0].c_str(); }
+
     inline ObjectType getType() const           { return objType; }
     inline double getRadius() const             { return radius; }
     inline double getBoundingRadius() const     { return radius * std::numbers::sqrt3; }

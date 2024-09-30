@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "api/graphics.h"
+#include "engine/player.h"
 #include "main/keys.h"
 #include "main/app.h"
 #include "main/guimgr.h"
@@ -163,6 +164,58 @@ void GUIManager::resetKeys()
 
 }
 
+
+void GUIManager::registerControl(GUIElement *ctrl)
+{
+    for (auto &e : guiControls)
+        if (ctrl == e)
+            return;
+    guiControls.push_back(ctrl);
+}
+
+void GUIManager::unregisterControl(GUIElement *ctrl)
+{
+    for (auto it = guiControls.begin(); it != guiControls.end(); it++)
+        if (ctrl == *it) {
+            it = guiControls.erase(it);
+            return;
+        }
+}
+
+// template <class T>
+// T *GUIManager::getControl()
+// {
+//     for (auto &e : guiControls)
+//         if (e->type == T::etype)
+//             return (T *)e;
+//     return nullptr;
+// }
+
+// template <class T>
+// void GUIManager::showControl()
+// {
+//     auto e = getControl<T>();
+//     if (e != nullptr)
+//         e->enable(true);
+// }
+
+// template <class T>
+// void GUIManager::hideControl()
+// {
+//     auto e = getControl<T>();
+//     if (e != nullptr)
+//         e->enable(false);
+// }
+
+// template <class T>
+// void GUIManager::toggleControl()
+// {
+//     auto e = getControl<T>();
+//     if (e != nullptr)
+//         e->enable(!e->isVisible());
+// }
+
+
 void GUIManager::toggleFullScreen()
 {
 
@@ -175,6 +228,9 @@ void GUIManager::render()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    for (auto &ctrl : guiControls)
+        if (ctrl->isVisible())
+            ctrl->show();
 
     ImGui::Render();
     gclient->renderImGuiDrawData();
@@ -390,8 +446,22 @@ void GUIManager::processMousePosition(GLFWwindow *window, double xpos, double yp
     //     (state & mouseShiftButton   ? 'S' : '-'));
     // setWindowTitle(title);
 
-    title = fmt::format("{} X: {} Y: {}\n", APP_SHORT, xpos, ypos);
+    float vx = 0.0, vy = 0.0;
+    Camera *cam = player->getCamera();
+    if (cam != nullptr)
+        cam->mapMouse(xpos, ypos, vx, vy);
+    // Adjust for aspect ratio
+    vx *= cam->getAspect();
+
+    title = fmt::format("{} X: {} Y: {} ({},{})\n", 
+        APP_SHORT, xpos, ypos, vx, vy);
     glfwSetWindowTitle(window, title.c_str());
+
+    glm::dvec3 pickRay = cam->getPickRay(vx, vy);
+
+    // glm::dvec3 obs = player->getPosition();
+    // glm::dmat3 rot = player->getRotation();
+    // pickObject(obs, rot * pickRay);
 }
 
 void GUIManager::processMouseButton(GLFWwindow *window, int button, int action, int mods)

@@ -18,6 +18,8 @@ class GraphicsClient;
 class GUIManager;
 class Celestial;
 class Vehicle;
+class DialogCamera;
+
 
 struct ModuleEntry
 {
@@ -106,6 +108,8 @@ protected:
     // Camerax  *camerax = nullptr;
 
     GUIManager *guimgr = nullptr;
+    DialogCamera *dlgCamera = nullptr;
+
     Panel    *panel = nullptr;
 
     GraphicsClient *gclient = nullptr;

@@ -53,10 +53,21 @@ public:
 
     inline void setPlanetarySystem(pSystem *sys)        { system = sys; }
     inline pSystem *getPlanetarySystem() const          { return system; }
-    inline void setEphemeris(OrbitEphemeris *ephem)     { ephemeris = ephem; }
+    inline void setSystem(pSystem *sys)                 { system = sys; }
+    inline pSystem *getSystem() const                   { return system; }
+    inline bool hasSystem() const                       { return system != nullptr; }
 
+    inline void setEphemeris(OrbitEphemeris *ephem)     { ephemeris = ephem; }
+    inline void setStar(Celestial *star)                { cstar = star; }
+
+    inline bool hasSecondaries() const                  { return !secondaries.empty(); }
+    inline int getSecondarySize() const                 { return secondaries.size(); }
     inline void addSecondary(Celestial *body)           { secondaries.push_back(body); }
+    inline Celestial *getSecondary(int idx) const       { return idx < secondaries.size() ? secondaries[idx] : nullptr; }
     inline secondaries_t &getSecondaries() const        { return secondaries; }
+
+    inline Celestial *getStar() const                   { return cstar; }
+    inline Celestial *getParent() const                 { return cbody; }
 
     inline void setVisualObject(vObject *vobj) const    { visualObject = vobj; }
     inline vObject *getVisualObject() const             { return visualObject; }
@@ -123,8 +134,9 @@ private:
 
 protected:
     pSystem *system = nullptr;
+    Celestial *cstar = nullptr;
     Celestial *cbody = nullptr;    // orbit reference body
-    
+
     mutable vObject   *visualObject = nullptr;
 
     OrbitalElements oel;

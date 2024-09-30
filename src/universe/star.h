@@ -37,19 +37,11 @@ enum SpectralClass
     spectralDX = 23 
 };
 
-class System;
-class pSystem;
-
 class CelestialStar : public CelestialBody
 {
 public:
     CelestialStar(cstr_t &name);
     ~CelestialStar() = default;
-
-    // Solar/Planetary system
-    inline void setpSystem(pSystem *psys)       { systemx = psys; }
-    inline bool haspSystem() const              { return systemx != nullptr; }
-    inline pSystem *getpSystem() const          { return systemx; }
 
     inline glm::dvec3 getStarPosition() const   { return spos; }
     inline double  getAbsMag() const            { return absMag; }
@@ -58,10 +50,6 @@ public:
     
     inline void setHIPnumber(int val)           { hip = val; }
     inline uint32_t getHIPnumber() const        { return hip; }
-
-    inline bool hasSolarSystem() const          { return system != nullptr; }
-    inline System *getSolarSystem() const       { return system; }
-    inline void setSolarSystem(System *sys)     { system = sys; }
 
     static CelestialStar *createTheSun();
     static CelestialStar *create(double ra, double de, double pc,
@@ -86,7 +74,4 @@ private:
     double  bMag, vMag;     // Blue/visual magnitude
     double  ci, lum;        // Color index, luminosity
     int     temp;           // Surface temperature
-
-    pSystem *systemx = nullptr;
-    System *system = nullptr;
 };
