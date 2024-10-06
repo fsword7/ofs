@@ -34,6 +34,18 @@ public:
     inline glm::dvec3  dvec3() const  { return glm::dvec3(red, green, blue); }
     inline glm::dvec4  dvec4() const  { return glm::dvec4(red, green, blue, alpha); }
 
+    inline float &operator [] (int idx)
+    {
+        switch (idx)
+        {
+        case 0: return red;
+        case 1: return green;
+        case 2: return blue;
+        case 3: return alpha;
+        }
+        throw std::out_of_range("Invalid color index");
+    }
+
     // inline void operator = (const glm::fvec3 &vec) { red = vec.x, green = vec.y, blue = vec.z; }
     // inline void operator = (const glm::fvec4 &vec) { red = vec.x, green = vec.y, blue = vec.z, alpha = vec.w; }
     // inline void operator = (const glm::dvec3 &vec) { red = vec.x, green = vec.y, blue = vec.z; }

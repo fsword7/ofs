@@ -41,7 +41,33 @@ void CelestialPlanet::setup(YAML::Node &config)
             ofsLogger->error("OFS Error: Unknown atmosphere model: {}\n", atmName);
     }
 
-    // atmc.color0 = yaml::getValue<color_t>(config, "AtomsphereColor");
+    atmc.color0 = yaml::getArray<color_t, float>(config, "AtmColor", {0, 0, 0});
+
+    if (config["GroundObservers"].IsSequence())
+    {
+        const YAML::Node &poiList = config["GroundObservers"];
+        str_t poiName;
+        glm::dvec3 gloc;
+        double gdir;
+        ofsLogger->info("Ground Observers: ({} records)\n", poiList.size());
+        for (int idx = 0; idx < poiList.size(); idx++) {
+            const YAML::Node &poi = poiList[idx];
+            if (poi.IsSequence())
+            {
+                poiName = poi[0].as<str_t>();
+                if (poi[1].IsSequence() && poi[1].size() == 3) {
+                    gloc.x = poi[1][0].as<double>();
+                    gloc.y = poi[1][1].as<double>();
+                    gloc.z = poi[1][2].as<double>();
+                }
+                gdir = poi[2].as<double>();
+
+                addGroundPOI(poiName, gloc, gdir);
+                ofsLogger->info("POI: {}, ({}, {}, {}) heading {}\n",
+                    poiName, gloc.x, gloc.y, gloc.z, gdir);
+            }
+        }
+    }
 
     enableSecondaryIlluminator(true);
 }
@@ -61,4 +87,12 @@ void CelestialPlanet::getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const
     
         atm->getAtmParams(in, *prm);
     }
+}
+
+void CelestialPlanet::addGroundPOI(cstr_t &name, glm::dvec3 &loc, double dir)
+{
+    // Adding site ground observer/point of interest
+    GroundPOI *poi = new GroundPOI(name, loc, dir);
+
+    poiList.push_back(poi);
 }

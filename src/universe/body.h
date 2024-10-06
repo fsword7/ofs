@@ -9,6 +9,17 @@
 #include "universe/elevmgr.h"
 #include "universe/atmo.h"
 
+struct GroundPOI
+{
+    GroundPOI(cstr_t &name, glm::dvec3 loc, double dir)
+    : name(name), loc(loc), dir(dir)
+    { }
+
+    cstr_t name;
+    glm::dvec3 loc;
+    double dir;
+};
+
 class CelestialPlanet : public CelestialBody
 {
 public:
@@ -28,9 +39,13 @@ public:
     inline double getSoundSpeed(double temp) const
         { return (atm != nullptr) ? sqrt(atmc.gamma * atmc.R * temp) : 0.0; }
 
+    void addGroundPOI(cstr_t &name, glm::dvec3 &loc, double dir);
+
 private:
     ElevationManager *emgr = nullptr;
 
     Atmosphere *atm = nullptr;
     atmconst_t atmc;
+
+    std::vector<GroundPOI *> poiList;
 };
