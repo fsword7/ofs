@@ -57,11 +57,7 @@ void Celestial::setup(YAML::Node &config)
 
     reflectivity = yaml::getValue<double>(config, "GeomAlbedo");
 
-    // glm::dvec3 color = yaml::getArray<glm::dvec3>(config, "Color", glm::dvec3(0, 0, 0));
-    // if (config["Color"].IsSequence())
-    //     ofsLogger->info("Color: IsSequence - yes\n");
-    // if (config["Color"].IsScalar())
-    //     ofsLogger->info("Color: IsScalar - yes\n");
+    geomColor = yaml::getArray<color_t, float>(config, "Color", { 0.5, 0.5, 0.5, 1.0 });
 }
 
 void Celestial::setupRotation()

@@ -20,6 +20,8 @@ struct GroundPOI
     double dir;
 };
 
+using poiList_t = std::vector<GroundPOI *>;
+
 class CelestialPlanet : public CelestialBody
 {
 public:
@@ -41,11 +43,13 @@ public:
 
     void addGroundPOI(cstr_t &name, glm::dvec3 &loc, double dir);
 
+    inline poiList_t &getGroundPOI()            { return poiList; }
+
 private:
     ElevationManager *emgr = nullptr;
 
     Atmosphere *atm = nullptr;
     atmconst_t atmc;
 
-    std::vector<GroundPOI *> poiList;
+    poiList_t poiList;
 };

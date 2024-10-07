@@ -130,6 +130,7 @@ public:
 
     inline Celestial *getReferenceObject()              { return tgtObject; }
     inline const Celestial *getReferenceObject() const  { return tgtObject; }
+    inline Celestial *getSyncObject()                   { return syncObject; }
 
     inline void setAngularControl(glm::dvec3 _av)       { av = _av; }
     inline void setTravelControl(glm::dvec3 _tv)        { tv = _tv; }
