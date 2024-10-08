@@ -821,7 +821,7 @@ void SurfaceManager::renderStar(const ObjectListEntry &ole)
 }
 
 Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
-    int16_t *elev, double selev, double gelev)
+    int16_t *elev, double escale, double gelev)
 {
     int nlat = 1 << lod;
     int nlng = 2 << lod;
@@ -872,7 +872,7 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
             erad = radius + gelev;
 
             if (elev != nullptr)
-                erad += (double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * selev) / 1000.0;
+                erad += (double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * escale) / 1000.0;
             nml = glm::dvec3(clat*clng, slat, clat*-slng);
             pos = nml * erad;
 
@@ -970,7 +970,7 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
         {
             lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
             slat = sin(lat), clat = cos(lat);
-            dz = radius * (pi*2.0)*cos(lat) / (nlng * grid);
+            dz = radius * pi2*cos(lat) / (nlng * grid);
             dydz = dy*dz;
 
             for (int x = 0; x <= grid; x++)
@@ -980,15 +980,15 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
                 en = (y+1)*ELEV_STRIDE + (x+1);
 
                 nml = glm::dvec3(2.0*dydz,
-                    dz*selev*(elev[en-ELEV_STRIDE]-elev[en+ELEV_STRIDE]),
-                    dy*selev*(elev[en-1]-elev[en+1]));
+                    dz*escale*(elev[en-ELEV_STRIDE]-elev[en+ELEV_STRIDE]),
+                    dy*escale*(elev[en-1]-elev[en+1]));
                 nml = glm::normalize(nml);
 
                 nx1 = nml.x*clat - nml.y*slat;
-                ny1 = nml.x*slat - nml.y*clat;
+                ny1 = nml.x*slat + nml.y*clat;
                 nz1 = nml.z;
 
-                vtx[n].nx = nx1*clng - nz1*slng;
+                vtx[n].nx = nx1*clng - nz1*-slng;
                 vtx[n].ny = ny1;
                 vtx[n].nz = nx1*slng + nz1*clng;
                 n++;
