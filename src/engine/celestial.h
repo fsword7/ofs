@@ -18,6 +18,7 @@ enum celType
     cbUnknown = 0,
     cbObserver,
     cbVehicle,
+    cbSurfBase,
     cbStar,
     cbPlanet,
     cbDwarfPlanet,
@@ -30,6 +31,7 @@ enum celType
 enum frameType
 {
     rfUniversal = 0,
+    rfRelative,
     rfBodyFixed
 };
 

@@ -4,6 +4,7 @@
 //  Date:   Sep 17, 2023
 
 #include "main/core.h"
+#include "engine/base.h"
 #include "universe/body.h"
 #include "utils/yaml.h"
 
@@ -95,4 +96,22 @@ void CelestialPlanet::addGroundPOI(cstr_t &name, glm::dvec3 &loc, double dir)
     GroundPOI *poi = new GroundPOI(name, loc, dir);
 
     poiList.push_back(poi);
+}
+
+bool CelestialPlanet::addBase(Base *base)
+{
+    if (getBase(base->getsName()))
+        return false;
+    base->attach(this);
+    baseList.push_back(base);
+
+    return true;
+}
+
+Base *CelestialPlanet::getBase(cstr_t &name)
+{
+    for (auto &base : baseList)
+        if (name == base->getsName())
+            return base;
+    return nullptr;
 }

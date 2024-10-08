@@ -9,6 +9,8 @@
 #include "universe/elevmgr.h"
 #include "universe/atmo.h"
 
+class Base;
+
 struct GroundPOI
 {
     GroundPOI(cstr_t &name, glm::dvec3 loc, double dir)
@@ -45,11 +47,18 @@ public:
 
     inline poiList_t &getGroundPOI()            { return poiList; }
 
+    bool addBase(Base *base);
+    Base *getBase(cstr_t &name);
+
+    inline Base *getBase(int idx) const         { return idx < baseList.size() ? baseList[idx] : nullptr; }
+    inline int getBaseSize() const              { return baseList.size(); }
+
 private:
     ElevationManager *emgr = nullptr;
 
     Atmosphere *atm = nullptr;
     atmconst_t atmc;
 
+    std::vector<Base *> baseList;
     poiList_t poiList;
 };
