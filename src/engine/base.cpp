@@ -30,7 +30,7 @@ void Base::setup()
     elev = emgr->getElevationData({lat, lng, rad});
     if (elev != 0.0)
         rad += elev;
-    // rpos = cbody->convertEquatorialToLocal({ lat, lng, rad});
+    rpos = cbody->convertEquatorialToLocal(lat, lng, rad);
 }
 
 void Base::attach(CelestialPlanet *planet)

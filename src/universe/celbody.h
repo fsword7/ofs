@@ -130,24 +130,24 @@ public:
     //     lng = atan2(-w.z, w.x);
     // }
 
-    inline void convertGlobalToEquatorial(const glm::dvec3 &gpos, double &lat, double &lng, double &rad)
-    {
-         return convertLocalToEquatorial(convertGlobalToLocal(gpos), lat, lng, rad);
-    }
+    // inline void convertGlobalToEquatorial(const glm::dvec3 &gpos, double &lat, double &lng, double &rad)
+    // {
+    //      return convertLocalToEquatorial(convertGlobalToLocal(gpos), lat, lng, rad);
+    // }
 
-    inline glm::dvec3 convertEquatorialToLocal(double lat, double lng, double rad)
-    {
-        double slat = sin(lat), clat = cos(lat);
-        double slng = sin(lng), clng = cos(lng);
-        double xz = rad * clat;
+    // inline glm::dvec3 convertEquatorialToLocal(double lat, double lng, double rad)
+    // {
+    //     double slat = sin(lat), clat = cos(lat);
+    //     double slng = sin(lng), clng = cos(lng);
+    //     double xz = rad * clat;
 
-        return { xz*clng, rad*slat, xz*-slng };
-    }
+    //     return { xz*clng, rad*slat, xz*-slng };
+    // }
 
-    inline glm::dvec3 convertEquatorialToGlobal(double lat, double lng, double rad)
-    {
-        return convertLocalToGlobal(convertEquatorialToLocal(lat, lng, rad));
-    }
+    // inline glm::dvec3 convertEquatorialToGlobal(double lat, double lng, double rad)
+    // {
+    //     return convertLocalToGlobal(convertEquatorialToLocal(lat, lng, rad));
+    // }
 
 // private:
 //     celType cbType = cbUnknown;

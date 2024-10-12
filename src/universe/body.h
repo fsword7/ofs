@@ -31,7 +31,7 @@ public:
     CelestialPlanet(YAML::Node &config, celType type);
     ~CelestialPlanet();
 
-    void setup(YAML::Node &config);
+    void setup();
 
     inline ElevationManager *getElevationManager() const    { return emgr; }
 

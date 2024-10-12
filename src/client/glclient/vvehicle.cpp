@@ -11,7 +11,7 @@
 #include "scene.h"
 #include "vmesh.h"
 #include "vobject.h"
-#include "vVehicle.h"
+#include "vvehicle.h"
 
 vVehicle::vVehicle(const Object *object, Scene &scene)
 : vObject(object, scene)

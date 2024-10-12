@@ -17,20 +17,6 @@ CelestialPlanet::CelestialPlanet(cstr_t &name, celType type)
 CelestialPlanet::CelestialPlanet(YAML::Node &config, celType type)
 : CelestialBody(config, objCelestialBody, type)
 {
-    emgr = new ElevationManager(this);
-
-    // Initialize configurations from Yaml database.
-    setup(config);
-}
-
-CelestialPlanet::~CelestialPlanet()
-{
-    if (emgr != nullptr)
-        delete emgr;
-}
-
-void CelestialPlanet::setup(YAML::Node &config)
-{
     str_t atmName = yaml::getValueString<str_t>(config, "Atmosphere");
     if (!atmName.empty())
     {
@@ -71,6 +57,28 @@ void CelestialPlanet::setup(YAML::Node &config)
     }
 
     enableSecondaryIlluminator(true);
+
+    // Initialize configurations from Yaml database.
+    setup();
+}
+
+CelestialPlanet::~CelestialPlanet()
+{
+    if (emgr != nullptr)
+        delete emgr;
+
+    for (auto &base : baseList)
+        delete base;
+    baseList.clear();
+}
+
+void CelestialPlanet::setup()
+{
+
+    // Initialize surface bases. 
+    emgr = new ElevationManager(this);
+    for (auto &base : baseList)
+        base->setup();
 }
 
 void CelestialPlanet::getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const
