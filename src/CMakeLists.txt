@@ -13,10 +13,10 @@ set(OFS_CPP_SRCS
     engine/engine.cpp
     # engine/frame.cpp
     engine/mesh.cpp
-    engine/navigation.cpp
     engine/object.cpp
     # engine/observer.cpp
     engine/player.cpp
+    engine/radio.cpp
     engine/rigidbody.cpp
     engine/supervehicle.cpp
     engine/vehicle.cpp
@@ -110,10 +110,10 @@ set(OFS_H_SRCS
     engine/engine.h
     # engine/frame.h
     engine/mesh.h
-    engine/navigation.h
     engine/object.h
     # engine/observer.h
     engine/player.h
+    engine/radio.h
     engine/rigidbody.h
     engine/supervehicle.h
     engine/vehicle.h

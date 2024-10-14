@@ -1,4 +1,4 @@
-// navigation.h - Navigation signal transmitter
+// radio.h - Radio Navigation signal transmitter
 //
 // Author:  Tim Stark
 // Date:    Oct 8, 2024

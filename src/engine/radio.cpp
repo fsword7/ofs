@@ -1,10 +1,10 @@
-// navigation.cpp - Navigation signal transmitter
+// radio.cpp - Radio Navigation signal transmitter
 //
 // Author:  Tim Stark
 // Date:    Oct 8, 2024
 
 #include "main/core.h"
-#include "engine/navigation.h"
+#include "engine/radio.h"
 
 RadioNavigation::RadioNavigation(float freq, float range)
 : freq(freq), range(range)
