@@ -7,7 +7,7 @@
 #include "main/app.h"
 #include "api/graphics.h"
 #include "api/draw.h"
-#include "engine/vehicle.h"
+#include "engine/vehicle/vehicle.h"
 #include "control/panel.h"
 #include "control/mfd/panel.h"
 

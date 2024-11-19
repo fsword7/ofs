@@ -8,7 +8,7 @@
 #include "main/core.h"
 #include "engine/player.h"
 #include "engine/celestial.h"
-#include "engine/vehicle.h"
+#include "engine/vehicle/vehicle.h"
 #include "ephem/orbit.h"
 #include "ephem/vsop87/vsop87.h"
 #include "ephem/lunar/elp82.h"

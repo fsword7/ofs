@@ -9,7 +9,7 @@
 #include "api/ofsapi.h"
 #include "main/timedate.h"
 // #include "engine/frame.h"
-#include "engine/vehicle.h"
+#include "engine/vehicle/vehicle.h"
 #include "universe/celbody.h"
 #include "universe/body.h"
 #include "engine/player.h"

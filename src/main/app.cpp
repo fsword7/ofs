@@ -9,7 +9,7 @@
 #include "api/graphics.h"
 #include "api/logger.h"
 #include "engine/engine.h"
-#include "engine/vehicle.h"
+#include "engine/vehicle/vehicle.h"
 #include "engine/player.h"
 #include "engine/view.h"
 #include "universe/universe.h"

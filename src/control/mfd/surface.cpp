@@ -9,7 +9,7 @@
 #include "api/draw.h"
 #include "ephem/elements.h"
 #include "engine/object.h"
-#include "engine/vehicle.h"
+#include "engine/vehicle/vehicle.h"
 #include "universe/celbody.h"
 #include "control/panel.h"
 #include "control/mfd/panel.h"

@@ -9,7 +9,7 @@
 #include "universe/astro.h"
 #include "universe/body.h"
 #include "universe/star.h"
-#include "engine/vehicle.h"
+#include "engine/vehicle/vehicle.h"
 #include "universe/psystem.h"
 
 #include "yaml-cpp/yaml.h"
