@@ -7,9 +7,9 @@
 
 struct MeshVertex
 {
-    double x, y, z;
-    double nx, ny, nz;
-    double tu, tv;
+    glm::vec3 vtx;
+    glm::vec3 nml;
+    glm::vec2 tc;
 };
 
 struct MeshGroup
@@ -34,8 +34,12 @@ struct MeshMaterial
     float       power;
 };
 
+class Texture;
+
 class Mesh
 {
+    friend std::istream &operator >> (std::istream &is, Mesh &mesh);
+
 public:
     Mesh() = default;
     ~Mesh();
@@ -44,13 +48,30 @@ public:
     void clear();
 
     void addGroup(MeshGroup *group);
+    void addMaterial(MeshMaterial *mtrl);
 
     void calculateNormals(MeshGroup *group, bool missing);
+
+    void load(YAML::Node &config, Mesh &mesh);
 
     friend std::istream &operator >> (std::istream &is, Mesh &mesh);
 
 private:
     std::vector<MeshGroup *> groups;
     std::vector<MeshMaterial *> materials;
+    std::vector<Texture *> txImages;
+};
 
+class MeshManager
+{
+public:
+    MeshManager() = default;
+    ~MeshManager();
+
+    void cleanup();
+
+    const Mesh *loadMesh(cstr_t &fname);
+
+private:
+    std::vector<Mesh *> meshList;
 };
