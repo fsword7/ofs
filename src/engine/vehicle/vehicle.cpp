@@ -9,7 +9,8 @@
 #include "ephem/elements.h"
 #include "engine/celestial.h"
 #include "engine/rigidbody.h"
-#include "engine/vehicle.h"
+#include "engine/mesh.h"
+#include "engine/vehicle/vehicle.h"
 #include "universe/astro.h"
 #include "universe/body.h"
 
@@ -316,6 +317,11 @@ bool Vehicle::loadModule(cstr_t &name)
 
 void Vehicle::setGenericDefaults()
 {
+    cs = { 20, 20, 20 };
+
+    mulat = 0.5;    // default lateral friction
+    mulng = 0.1;    // default longitudinal friction
+
     // Object stands above 2 meters with 3 legs
     tdVertex_t tdvtx[3];
     tdvtx[0].pos = {  0, -2,  2 }; // forward leg
@@ -323,8 +329,10 @@ void Vehicle::setGenericDefaults()
     tdvtx[2].pos = {  2, -2, -2 }; // right back leg
     for (int idx = 0; idx < sizeof(tdvtx); idx++)
     {
-        tdvtx[idx].stiffness = 0;
-        tdvtx[idx].damping = 0;
+        tdvtx[idx].stiffness = 1e6;
+        tdvtx[idx].damping = 1e5;
+        tdvtx[idx].mulat = mulat;
+        tdvtx[idx].mulng = mulng;
     }
 
     setTouchdownPoints(tdvtx, sizeof(tdvtx));
@@ -364,6 +372,16 @@ void Vehicle::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
 
 }
 
+void Vehicle::setSurfaceFriction(double lat, double lng)
+{
+    mulat = lat;
+    mulng = lng;
+    for (auto &tp : tpVertices) {
+        tp.mulat = mulat;
+        tp.mulng = mulng;
+    }
+}
+
 void Vehicle::initLanded(Object *object, double lat, double lng, double dir)
 {
 
@@ -373,7 +391,7 @@ void Vehicle::initLanded(Object *object, double lat, double lng, double dir)
     //                  clat*clng, slat,  clat*slng,
     //                 -slat*clng, clat, -slat*slng };
 
-    surface_t *sp = &surfParam;
+    surface_t &sp = surfParam;
 
     {
         double sdir = sin(dir), cdir = cos(dir);
@@ -411,9 +429,9 @@ void Vehicle::initLanded(Celestial *object, const glm::dvec3 &loc, double dir)
 
     ElevationManager *emgr = planet->getElevationManager();
 
-    surface_t *sp = &surfParam;
+    surface_t &sp = surfParam;
 
-    sp->setLanded(loc, dir, object);
+    sp.setLanded(loc, dir, object);
 
     fsType = fsLanded;
 }
@@ -468,7 +486,7 @@ bool Vehicle::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVecto
     //     return false;
     
 
-    surface_t sp;
+    surface_t &sp = surfParam;
     StateVectors ps;
     sp.update(s, ps, cbody, &etile);
     double alt = sp.alt;
@@ -513,9 +531,14 @@ void Vehicle::updateMass()
     mass = emass + fmass;
 }
 
+void Vehicle::updateRadiationForces()
+{
+
+}
+
 void Vehicle::update(bool force)
 {
-    surface_t *sp = &surfParam;
+    surface_t &sp = surfParam;
 
     if (fsType == fsFlight)
     {
@@ -524,9 +547,9 @@ void Vehicle::update(bool force)
     else if (fsType == fsLanded)
     {
         double period = cbody->getRotationPeriod();
-        double velg = (period != 0.0) ? (cbody->getRadius() * sp->clat * pi2) / period : 0.0;
-        s1.vel = { -velg * sp->slng, 0.0, velg * sp->clng};
-        s1.R = sp->R;
+        double velg = (period != 0.0) ? (cbody->getRadius() * sp.clat * pi2) / period : 0.0;
+        s1.vel = { -velg * sp.slng, 0.0, velg * sp.clng};
+        s1.R = sp.R;
 
         // {
         //     // Whenever the user engages engine,
@@ -557,273 +580,15 @@ void Vehicle::update(bool force)
 
 void Vehicle::updateBodyForces()
 {
-    // updateAerodynamicForces();
+    surface_t &sp = surfParam;
+
     updateThrustForces();
-}
-
-void Vehicle::updateAerodynamicForces()
-{
-
-}
-
-void Vehicle::updateThrustForces()
-{
-
-    glm::dvec3 thrust = { 0, 0, 0 };
-    glm::dvec3 F;
-
-    for (auto th : thrustList)
-    {
-        th->level = std::max(0.0, std::min(1.0, th->lvperm + th->lvover));
-        if (th->level > 0.0)
-        {   
-            tank_t *tank = th->tank;
-
-            double th0 = th->level * th->maxth;
-            F = th->dir * th0;
-            thrust += F;
-            camom += glm::cross(F, th->pos);
-        }
-        th->lvover = 0.0;
+    if (sp.isInAtomsphere) {
+        // updateAerodynamicForces();
     }
-
-    cflin += thrust;
 }
 
 void Vehicle::drawHUD(HUDPanel *hud, Sketchpad *pad)
 {
     hud->drawDefault(pad);
-}
-
-// Thruster 
-
-thrust_t *Vehicle::createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank)
-{
-    thrust_t *th = new thrust_t();
-
-    th->pos = pos;
-    th->dir = dir;
-    th->maxth = maxth;
-    th->tank = tank;
-
-    thrustList.push_back(th);
-
-    return th;
-}
-
-bool Vehicle::deleteThruster(thrust_t *th)
-{
-    
-    for (auto it = thrustList.begin(); it != thrustList.end(); it++)
-    {
-        if (*it == th)
-        {
-            it = thrustList.erase(it);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-// void Vehicle::setThrustLevel(thrust_t *th, double level)
-// {
-//     double dlevel = level - th->lvperm;
-//     th->lvperm = level;
-//     if (th->tank != nullptr && th->tank->mass > 0)
-//         th->level = std::max(0.0, std::min(1.0, th->level + dlevel));
-// }
-
-// void Vehicle::adjustThrustLevel(thrust_t *th, double dlevel)
-// {
-//     th->lvperm += dlevel;
-//     if (th->tank != nullptr && th->tank->mass > 0)
-//         th->level = std::max(0.0, std::min(1.0, th->level + dlevel));
-// }
-
-// void Vehicle::setThrustOverride(thrust_t *th, double level)
-// {
-//     th->lvover = level;
-// }
-
-// void Vehicle::adjustThrustOverride(thrust_t *th, double dlevel)
-// {
-//     th->lvover += dlevel;
-// }
-
-// Thruster Group
-
-void Vehicle::createThrusterGroup(thrust_t **th, int nThrusts, thrustType_t type)
-{
-    thrustgrp_t *tg = new thrustgrp_t();
-
-    for (int idx = 0; idx < nThrusts; idx++)
-        tg->thrusters.push_back(th[idx]);
-
-    thgrpList.push_back(tg);
-}
-
-
-void Vehicle::setThrustGroupLevel(thrustgrp_t *tg, double level)
-{
-    for (auto th : tg->thrusters)
-        th->setThrustLevel(level);
-}
-
-void Vehicle::adjustThrustGroupLevel(thrustgrp_t *tg, double dlevel)
-{
-    for (auto th : tg->thrusters)
-        th->adjustThrustLevel(dlevel);
-}
-
-void Vehicle::setThrustGroupOverride(thrustgrp_t *tg, double level)
-{
-    for (auto th : tg->thrusters)
-        th->setThrustOverride(level);
-}
-
-void Vehicle::adjustThrustGroupOverride(thrustgrp_t *tg, double dlevel)
-{
-    for (auto th : tg->thrusters)
-        th->adjustThrustOverride(dlevel);
-}
-
-
-void Vehicle::setThrustGroupLevel(thrustType_t type, double level)
-{
-    setThrustGroupLevel(thgrpList[type], level);
-}
-
-void Vehicle::adjustThrustGroupLevel(thrustType_t type, double dlevel)
-{
-    adjustThrustGroupLevel(thgrpList[type], dlevel);
-}
-
-void Vehicle::setThrustGroupOverride(thrustType_t type, double level)
-{
-    setThrustGroupOverride(thgrpList[type], level);
-}
-
-void Vehicle::adjustThrustGroupOverride(thrustType_t type, double dlevel)
-{
-    setThrustGroupOverride(thgrpList[type], dlevel);
-}
-
-
-double Vehicle::getThrustGroupLevel(thrustgrp_t *tg)
-{
-    double level = 0.0;
-    for (auto th : tg->thrusters)
-        level += th->level;
-    return tg->thrusters.size() > 0 ? level / tg->thrusters.size() : 0.0;
-}
-
-void Vehicle::createDefaultEngine(thrustType_t type, double power)
-{
-    switch (type)
-    {
-    case thgMain:
-        break;
-    case thgRetro:
-        break;
-    case thgHover:
-        break;
-    }
-}
-
-void Vehicle::createDefaultAttitudeSet(double maxth)
-{
-    tank_t *tank = /* tanksList.size() > 0 ? tanksList[0] : */ nullptr;
-    thrust_t *thlin, *throt[2];
-
-    thlin = createThruster(glm::dvec3(0,0,0), glm::dvec3( 0, 1, 0), maxth);
-    createThrusterGroup(&thlin, 1, thgLinMoveUp);
-    
-    thlin = createThruster(glm::dvec3(0,0,0), glm::dvec3( 0,-1, 0), maxth);
-    createThrusterGroup(&thlin, 1, thgLinMoveDown);
-    
-    thlin = createThruster(glm::dvec3(0,0,0), glm::dvec3(-1, 0, 0), maxth);
-    createThrusterGroup(&thlin, 1, thgLinMoveLeft);
-    
-    thlin = createThruster(glm::dvec3(0,0,0), glm::dvec3( 1, 0, 0), maxth);
-    createThrusterGroup(&thlin, 1, thgLinMoveRight);
-    
-    thlin = createThruster(glm::dvec3(0,0,0), glm::dvec3( 0, 0,-1), maxth);
-    createThrusterGroup(&thlin, 1, thgLinMoveForward);
-    
-    thlin = createThruster(glm::dvec3(0,0,0), glm::dvec3( 0, 0, 1), maxth);
-    createThrusterGroup(&thlin, 1, thgLinMoveBackward);
-
-    double size = maxth * 0.5;
-
-    throt[0] = createThruster(glm::dvec3(0,0,-size), glm::dvec3( 0, 1, 0), maxth);
-    throt[1] = createThruster(glm::dvec3(0,0, size), glm::dvec3( 0,-1, 0), maxth);
-    createThrusterGroup(throt, 2, thgRotPitchUp);
-
-    throt[0] = createThruster(glm::dvec3(0,0,-size), glm::dvec3( 0,-1, 0), maxth);
-    throt[1] = createThruster(glm::dvec3(0,0, size), glm::dvec3( 0, 1, 0), maxth);
-    createThrusterGroup(throt, 2, thgRotPitchDown);
-    
-    throt[0] = createThruster(glm::dvec3( size,0,0), glm::dvec3( 0, 0,-1), maxth);
-    throt[1] = createThruster(glm::dvec3(-size,0,0), glm::dvec3( 0, 0, 1), maxth);
-    createThrusterGroup(throt, 2, thgRotYawLeft);
-    
-    throt[0] = createThruster(glm::dvec3( size,0,0), glm::dvec3( 0, 0, 1), maxth);
-    throt[1] = createThruster(glm::dvec3(-size,0,0), glm::dvec3( 0, 0,-1), maxth);
-    createThrusterGroup(throt, 2, thgRotYawRight);
-    
-    throt[0] = createThruster(glm::dvec3( size,0,0), glm::dvec3( 0, 1, 0), maxth);
-    throt[1] = createThruster(glm::dvec3(-size,0,0), glm::dvec3( 0,-1, 0), maxth);
-    createThrusterGroup(throt, 2, thgRotBankLeft);  
-    
-    throt[0] = createThruster(glm::dvec3( size,0,0), glm::dvec3( 0,-1, 0), maxth);
-    throt[1] = createThruster(glm::dvec3(-size,0,0), glm::dvec3( 0, 1, 0), maxth);
-    createThrusterGroup(throt, 2, thgRotBankRight);
-
-}
-
-void Vehicle::updateUserAttitudeControls(int *ctrlKeyboard)
-{
-
-    // Main engine controls
-    adjustThrustGroupOverride(thgMain,   0.001 * ctrlKeyboard[thgMain]);
-    adjustThrustGroupOverride(thgRetro,  0.001 * ctrlKeyboard[thgRetro]);
-    adjustThrustGroupOverride(thgHover,  0.001 * ctrlKeyboard[thgHover]);
- 
-    if (rcsMode & 1)
-    {
-        // RCS Attitude rotational controls
-        adjustThrustGroupOverride(thgRotPitchUp,      0.001 * ctrlKeyboard[thgRotPitchUp]);
-        adjustThrustGroupOverride(thgRotPitchDown,    0.001 * ctrlKeyboard[thgRotPitchDown]);
-        adjustThrustGroupOverride(thgRotYawLeft,      0.001 * ctrlKeyboard[thgRotYawLeft]);
-        adjustThrustGroupOverride(thgRotYawRight,     0.001 * ctrlKeyboard[thgRotYawRight]);
-        adjustThrustGroupOverride(thgRotBankLeft,     0.001 * ctrlKeyboard[thgRotBankLeft]);
-        adjustThrustGroupOverride(thgRotBankRight,    0.001 * ctrlKeyboard[thgRotBankRight]);
-    }
-
-    if (rcsMode & 2) 
-    {
-        // RCS Attitude linear controls
-        adjustThrustGroupOverride(thgLinMoveUp,       0.001 * ctrlKeyboard[thgLinMoveUp]);
-        adjustThrustGroupOverride(thgLinMoveDown,     0.001 * ctrlKeyboard[thgLinMoveDown]);
-        adjustThrustGroupOverride(thgLinMoveLeft,     0.001 * ctrlKeyboard[thgLinMoveLeft]);
-        adjustThrustGroupOverride(thgLinMoveRight,    0.001 * ctrlKeyboard[thgLinMoveRight]);
-        adjustThrustGroupOverride(thgLinMoveForward,  0.001 * ctrlKeyboard[thgLinMoveForward]);
-        adjustThrustGroupOverride(thgLinMoveBackward, 0.001 * ctrlKeyboard[thgLinMoveBackward]);
-    }
-}
-
-airfoil_t *Vehicle::createAirfoil(airfoilType_t align, const glm::dvec3 &ref, double c, double S, double A)
-{
-    airfoil_t *wing = new airfoil_t();
-
-    wing->align = align;
-    wing->ref = ref;
-    wing->c = c;
-    wing->A = A;
-    wing->S = S;
-
-    airfoilList.push_back(wing);
-
-    return wing;
 }

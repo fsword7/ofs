@@ -86,19 +86,35 @@ using csurface_t = const surface_t;
 
 enum airfoilType_t
 {
-    liftVertical,           // lift is vetical (elevator, aileron, etc)
-    liftHorizontal          // lift is horizationtal (rudder, etc)
+    afVertical,           // lift is vetical (elevator, aileron, etc)
+    afHorizontal          // lift is horizationtal (rudder, etc)
 };
+
+#define AIRCTRL_AILERON     0   // Aileron control (bank)
+#define AIRCTRL_FLAP        1   // Flap control (lift)
+#define AIRCTRL_ELEVATOR    2   // Elevator control (pitch)
+#define AIRCTRL_ELEVTRIM    3   // Elevator trim control
+#define AIRCTRL_RUDDER      4   // Rudder control
+#define AIRCTRL_RUDTRIM     5   // Rudder trim control
+#define AIRCTRL_NLEVEL      6   // Maxinum number of levels
 
 enum ControlType_t
 {
-    aircAileron,            // Aileron control (bank control)
+    aircAileron = 0,        // Aileron control (bank control)
     aircFlaps,              // Flaps control (lift control)
     aircElevator,           // Elevator control (pitch)
-    aircRudder,             // Rudder control 
     aircElevatorTrim,       // Elevtor trim control
+    aircRudder,             // Rudder control 
     aircRudderTrim          // Rudder trim control
 };
+
+typedef void (*affunc_t)(
+    double aoa, double M, double Re,
+    double &cl, double &cm, double &cd);
+
+typedef void (*affuncx_t)(Vehicle *vehicle,
+    double aoa, double M, double Re, void *ctx,
+    double &cl, double &cm, double &cd);
 
 struct airfoil_t
 {
@@ -107,6 +123,28 @@ struct airfoil_t
     double c;               // airfoil chord length;
     double S;               // reference area (wing)
     double A;               // aspect ratio (b^2/S with wingspan b)
+
+    affunc_t  cf = nullptr;
+    affuncx_t cfx = nullptr;
+    void *ctx = nullptr;
+};
+
+struct afctrl_t
+{
+    ControlType_t type;     // airfoil control type
+    glm::dvec3 ref;         // lift/drag attack point
+    int axis;               // axis orientation
+    double area;            // surface area
+    double dcl;             // lift coeff differential
+    uint32_t anim;            // aninmation reference
+};
+
+struct afctrlLevel_t
+{
+    double tgtt;
+    double tgtp;
+    double curr;
+    double delay;
 };
 
 struct tank_t
@@ -201,6 +239,8 @@ struct tdVertex_t
     double  damping;        // suspension - damping
     double  compression;    // suspension - compression factor
 
+    double mulat, mulng;    // Lateral/Longitudinal friction
+    
     // surface force parameters
     double tdy;
     double fn, flat, flng;
@@ -217,13 +257,29 @@ struct port_t
 typedef VehicleModule *(*ovcInit_t)(Vehicle *);
 typedef void (*ovcExit_t)(VehicleModule *);
 
+struct ancomp_t
+{
+    double state0, state1;
+
+    ancomp_t *parent = nullptr;
+    std::vector<ancomp_t *> child;
+};
+
+struct anim_t
+{
+    double state;   // current state
+    double dstate;  // default state
+    std::vector<ancomp_t *> compList;
+};
+
 struct MeshEntry
 {
     str_t meshName;
-    glm::dvec3 meshOffset;
-    bool isVisible;
+    glm::dvec3 meshofs;     // offset [vessel frame]
+    int visualMode;         // Vusual mode (0 = invisible, 1 = External only, 2 = Interneal only, 3 = both)
     Mesh *mesh;
 };
+
 class VehicleBase : public RigidBody
 {
 public:
@@ -292,6 +348,9 @@ public:
     
     void setGenericDefaults();
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
+    void setSurfaceFriction(double lat, double lng);
+
+    inline void addForce(const glm::dvec3 &F, const glm::dvec3 &r)   { flin += F, amom += glm::cross(F, r); }
 
     void updateUserAttitudeControls(int *ctrlKeyboard);
 
@@ -299,6 +358,7 @@ public:
     virtual void update(bool force);
 
     void updateBodyForces();
+    void updateRadiationForces();
     void updateAerodynamicForces();
     void updateThrustForces();
 
@@ -329,11 +389,27 @@ public:
     void createDefaultEngine(thrustType_t type, double power);
     void createDefaultAttitudeSet(double maxth);
 
-    // Aerodynamics parameters
+    // Aerodynamics function calls
 
-    airfoil_t *createAirfoil(airfoilType_t align, const glm::dvec3 &pos, 
-        double c, double S, double A);
+    airfoil_t *createAirfoil(airfoilType_t align, const glm::dvec3 &pos,
+        affuncx_t cf, void *ctx, double c, double S, double A);
+    afctrl_t *createControlSurface(ControlType_t type, glm::dvec3 &ref,
+        double area, double dcl, double axis, double delay, unsigned int anim);
+    void setControlSurfaceLevel(ControlType_t ctrl, double level, bool transient, bool direct);
+    void updateControlSurfaceLevels();
 
+    // Mesh function calls
+
+    void createMesh(Mesh *mesh, const glm::dvec3 &ofs = {});
+    void createMesh(cstr_t &name, const glm::dvec3 &ofs = {});
+
+    // Animation function calls
+
+    anim_t *createAnimation(int state);
+    bool setAnimationState(int an, int state);
+
+    ancomp_t *addAnimationComponent(int an, double state0, double state1, ancomp_t *parent);
+    
 private:
     SuperVehicle *superVehicle = nullptr;
 
@@ -368,13 +444,24 @@ private:
     glm::dvec3 tpCGravity;                 // center of gravity projection
     double  cogElev;
 
-    std::vector<port_t *> ports;        // docking port list
+    double mulat, mulng;
+    glm::dvec3 cs;
 
-    std::vector<MeshEntry *> meshList;
+    std::vector<port_t *> ports;        // docking port list
 
     std::vector<thrust_t *> thrustList;         // Individual thruster list
     std::vector<thrustgrp_t *> thgrpList;       // Main thruster group list
     std::vector<thrustgrp_t *> thgrpUserList;   // User thruster group list
 
-    std::vector<airfoil_t *> airfoilList;       // airfoil wing list
+    // Aerodynamics parameters for planes
+    std::vector<airfoil_t *> airfoilList;           // airfoil wing list
+    std::vector<afctrl_t *>  afctrlList;            // airfoil control list
+    afctrlLevel_t afctrlLevels[AIRCTRL_NLEVEL];     // control surface levels
+
+    // Mesh parameters
+    std::vector<MeshEntry *> meshList;
+
+    // Animation parameters
+    std::vector<ancomp_t *> animCompList;         // animation component list
+    std::vector<anim_t *> animList;                 // animation list
 };

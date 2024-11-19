@@ -1,4 +1,4 @@
-// supervehicle.h - Super Vehicle package
+// svehicle.h - Super Vehicle package
 //
 // Author:  Tim Stark
 // Date:    Apr 25, 2022

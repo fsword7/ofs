@@ -7,6 +7,12 @@ set(OFS_CPP_SRCS
     control/info.cpp
     control/panel.cpp
     control/taskbar.cpp
+    engine/vehicle/animation.cpp
+    engine/vehicle/mesh.cpp
+    engine/vehicle/svehicle.cpp
+    engine/vehicle/thruster.cpp
+    engine/vehicle/vehicle.cpp
+    engine/vehicle/wingctrl.cpp
     engine/base.cpp
     engine/celestial.cpp
     engine/dlgcam.cpp
@@ -18,8 +24,6 @@ set(OFS_CPP_SRCS
     engine/player.cpp
     engine/radio.cpp
     engine/rigidbody.cpp
-    engine/supervehicle.cpp
-    engine/vehicle.cpp
     engine/view.cpp
     ephem/earth/atmo.cpp
     ephem/earth/nrlmsise00_data.cpp
@@ -104,6 +108,8 @@ set(OFS_H_SRCS
     control/mfd/surface.h
     control/panel.h
     control/taskbar.h
+    engine/vehicle/svehicle.h
+    engine/vehicle/vehicle.h
     engine/base.h
     engine/celestial.h
     engine/dlgcam.h
@@ -115,8 +121,6 @@ set(OFS_H_SRCS
     engine/player.h
     engine/radio.h
     engine/rigidbody.h
-    engine/supervehicle.h
-    engine/vehicle.h
     engine/view.h
     ephem/earth/atmo.h
     ephem/earth/nrlmsise00_math.hpp

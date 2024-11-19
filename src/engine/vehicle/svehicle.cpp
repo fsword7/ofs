@@ -1,4 +1,4 @@
-// supervehicle.cpp - Super Vehicle package
+// svehicle.cpp - Super Vehicle package
 //
 // Author:  Tim Stark
 // Date:    Apr 25, 2022
@@ -7,8 +7,8 @@
 #include "ephem/elements.h"
 #include "engine/celestial.h"
 #include "engine/rigidbody.h"
-#include "engine/vehicle.h"
-#include "engine/supervehicle.h"
+#include "engine/vehicle/vehicle.h"
+#include "engine/vehicle/svehicle.h"
 
 SuperVehicle::SuperVehicle(YAML::Node &config)
 : RigidBody(config, objVehicle, cbVehicle)
