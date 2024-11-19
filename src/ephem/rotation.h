@@ -1,134 +1,69 @@
-// rotation.h - Rotation Model package
+// rotation.h - Planet Precession/Rotation Package
 //
 // Author:  Tim Stark
-// Date:    Apr 23, 2022
+// Date:    Apr 15, 2024
 
 #pragma once
 
 class Rotation
 {
 public:
+    Rotation() = default;
     virtual ~Rotation() = default;
 
-    glm::dmat3 getRotation(double tjd) const;
+    static Rotation *create(YAML::Node &config);
 
-    virtual glm::dmat3 spin(double tjd) const = 0;
-    virtual glm::dvec3 getAngularVelocity(double tjd) const;
-    virtual glm::dmat3 getEquatorRotation(double) const;
-
-    virtual double getPeriod() const { return 0.0; }
-    virtual bool isPeriodic() const  { return false; }
-
-    static Rotation *create(cstr_t &name);
+    virtual void update(double mjd) = 0;
 };
 
-class UniformRotation : public Rotation
+class RotationFixed : public Rotation
 {
 public:
-    UniformRotation(double epoch, double offset,
-        double inclination, double ascendingNode,
-        double period)
-    : epoch(epoch), offset(offset), inclination(inclination),
-        ascendingNode(ascendingNode), period(period)
-    { }
+    RotationFixed() = default;
+    virtual ~RotationFixed() = default;
 
-    glm::dmat3 spin(double tjd) const;
-    glm::dmat3 getEquatorOrientation(double tjd) const;
-    glm::dvec3 getAngularVelocity(double tjd) const;
-
-    virtual double getPeriod() const override  { return period; }
-    virtual bool   isPeriodic() const override { return true; }
-
-protected:
-    double epoch = 0.0;
-    double offset = 0.0;
-    double inclination = 0.0;
-    double ascendingNode = 0.0;
-    double period = 0.0;
 };
 
-class CachingRotation : public Rotation
+class RotationUniform : public Rotation
 {
 public:
-    CachingRotation() = default;
-    virtual ~CachingRotation() = default;
+    RotationUniform() = default;
+    RotationUniform(YAML::Node &config);
+    virtual ~RotationUniform() = default;
 
-    glm::dmat3 spin(double tjd) const;
-    glm::dmat3 getEquatorRotation(double tjd) const;
-    glm::dvec3 getAngularVelocity(double tjd) const;
+    void configure(YAML::Node &config);
 
-    virtual glm::dmat3 computeSpin(double tjd) const = 0;
-    virtual glm::dmat3 computeEquatorRotation(double tjd) const = 0;
-    virtual glm::dvec3 computeAngularVelocity(double tjd) const;
-    virtual double  getPeriod() const = 0;
-    virtual bool    isPeriodic() const = 0;
-
+    void update(double mjd) override;
+    double spin(double mjd);
+    
 private:
-    mutable glm::dmat3 lastSpin = glm::dmat3(1.0);
-    mutable glm::dmat3 lastEquator = glm::dmat3(1.0);
-    mutable glm::dvec3 lastVelocity = { 0, 0, 0 };
+    double crot    = 0.0;
+    double crotofs = 0.0;
 
-    mutable double lastTime = 0;
-    mutable bool   validSpin = false;
-    mutable bool   validEquator = false;
-    mutable bool   validVelocity = false;
-};
+    // Precission/rotation perameters
+    double      eps_ref;            // precession reference axis - obliquity against ecluptic normal
+    double      lan_ref;            // precession reference axis - longitude of ascending node in ecliptic
+    glm::dmat3  R_ref;              // rotation matrix - ecliptic normal
 
-class EarthRotation : public CachingRotation
-{
-public:
-    EarthRotation() = default;
+    double      eps_ecl;            // obliquity of axis
+    double      lan_ecl;            // longitude of ascending node
 
-    glm::dmat3 computeSpin(double tjd) const override;
-    glm::dmat3 computeEquatorRotation(double tjd) const override;
+    double      eps_rel;            // obliquioty relavtive to reference axis
+    double      cos_eps, sin_eps;   // sine/cosine of eps_rel
 
-    double getPeriod() const override   { return 23.9344694 / 24.0; }
-    bool isPeriodic() const override    { return true; }
-};
+    double      mjd_rel;            // MJD epoch
+    double      Lrel;               // longitude of ascending node relative to reference axis at current time
+    double      Lrel0;              // longitude of ascending node relative to reference axis at MJD epoch
+    double      precT;              // precission period (days) or 0 if infinite
+    double      precOmega;          // precission angular velocity [rad/day]
 
-class IAURotation : public CachingRotation
-{
-public:
-    IAURotation(double period) : period(period)
-    { }
-    ~IAURotation() = default;
+    double      Dphi = 0.0;         // Rotation offset at t=0.
+    double      rotT = 0.0;         // sideral rotation - Time
+    double      rotOmega = 0.0;     // sideral rotation - Angular velocity
+    double      rotOffset = 0.0;    // 
+    glm::dvec3  Raxis;              // rotation axis (north pole) in global frame
 
-    virtual glm::dmat3 computeSpin(double tjd) const override;
-    virtual glm::dmat3 computeEquatorRotation(double tjd) const override;
-    // virtual glm::dvec3 computeAngularVelocity(double tjd) const override;
-
-    virtual double getPeriod() const override { return period; }
-    virtual bool isPeriodic() const override  { return true; }
-
-    virtual glm::dvec2 computePole(double tjd) const = 0;
-    virtual double computeMeridian(double tjd) const = 0;
-
-protected:
-    double period = 0.0;
-    bool   reversal = false;
-};
-
-class IAUPrecissionRotation : public IAURotation
-{
-public:
-    IAUPrecissionRotation(double poleRA, double poleRARate,
-        double poleDec, double poleDecRate,
-        double meridian, double rate)
-    : IAURotation(abs(360.0 / rate)),
-        poleRA(poleRA), poleRARate(poleRARate),
-        poleDec(poleDec), poleDecRate(poleDecRate),
-        meridianAtEpoch(meridian), rotationRate(rate)
-    {
-        if (rate < 0.0)
-            reversal = true;
-    }
-
-    glm::dvec2 computePole(double tjd) const override;
-    double computeMeridian(double tjd) const override;
-
-private:
-    double poleRA, poleRARate;
-    double poleDec, poleDecRate;
-    double meridianAtEpoch;
-    double rotationRate;
+    glm::dmat3 R_ref_rel;   // rotation matrix
+    glm::dmat3 Recl;    // Precession matrix
+    glm::dquat Qecl;    // Precession quaternion
 };
