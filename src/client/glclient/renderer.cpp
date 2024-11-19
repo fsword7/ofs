@@ -6,9 +6,9 @@
 #include "main/core.h"
 #include "engine/player.h"
 #include "universe/universe.h"
-#include "renderer.h"
 #include "client.h"
 #include "texmgr.h"
+#include "renderer.h"
 #include "skpad.h"
 #include "scene.h"
 #include "surface.h"
@@ -32,11 +32,11 @@ void checkError(cchar_t *str)
 }
 #endif
 
-void gl::sync()
+void glRenderer::sync()
 {
 }
 
-void gl::pushRenderTarget(Texture *tex)
+void glRenderer::pushRenderTarget(glTexture *tex)
 {
     assert(tex != nullptr);
 
@@ -57,7 +57,6 @@ void gl::pushRenderTarget(Texture *tex)
         glGenFramebuffers(1, &tex->fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, tex->fbo);
         glBindTexture(GL_TEXTURE_2D, tex->id);
-
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex->id, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -77,10 +76,10 @@ void gl::pushRenderTarget(Texture *tex)
         }
     }
 
-    glViewport(0, 0, tex->txWidth, tex->txHeight);
+    glViewport(0, 0, tex->getWidth(), tex->getHeight());
 }
 
-void gl::popRenderTarget()
+void glRenderer::popRenderTarget()
 {
     fbSaveParam save = lastFBParams.back();
     lastFBParams.pop_back();
@@ -90,10 +89,10 @@ void gl::popRenderTarget()
     glViewport(save.viewport[0], save.viewport[1], save.viewport[2], save.viewport[3]);
 }
 
-void gl::pushFlag(int flag, bool val)
+void glRenderer::pushFlag(int flag, bool val)
 {
 }
 
-void gl::popFlag()
+void glRenderer::popFlag()
 {
 }

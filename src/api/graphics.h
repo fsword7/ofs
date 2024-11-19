@@ -30,6 +30,24 @@ struct VideoData
     const GLFWvidmode *videoMode = nullptr;
 };
 
+class OFSAPI Texture
+{
+public:
+    Texture() = default;
+    Texture(int w, int h) 
+    : txWidth(w), txHeight(h)
+    { }
+
+    virtual ~Texture() = default;
+
+    inline int getWidth() const     { return txWidth; }
+    inline int getHeight() const    { return txHeight; }
+
+protected:
+    int txWidth;
+    int txHeight;
+};
+
 class OFSAPI GraphicsClient
 {
 public:
@@ -46,6 +64,9 @@ public:
     virtual void cbSetWindowTitle(cstr_t &title) = 0;
     virtual void cbStart(Universe *universe) = 0;
     virtual void cbRenderScene(Player *player) = 0;
+
+    virtual Texture *createTexture(int w, int h)                { return nullptr; }
+    virtual Texture *loadTexture(cstr_t &fname, int flags = 0)  { return nullptr; }
 
     virtual Sketchpad *createSketchpad(Texture *tex, bool antialiased = false) { return nullptr; }
     virtual Sketchpad *getSketchpad() const = 0;

@@ -15,6 +15,7 @@ set(OGL_CPP_SRCS
     glad.cpp
     loader.cpp
     lights.cpp
+    mesh.cpp
     overlay.cpp
     renderer.cpp
     ringmgr.cpp
@@ -42,6 +43,7 @@ set(OGL_H_SRCS
     client.h
     fonts.h
     lights.h
+    mesh.cpp
     overlay.h
     renderer.h
     ringmgr.h

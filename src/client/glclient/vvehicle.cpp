@@ -5,7 +5,7 @@
 
 #include "main/core.h"
 #include "engine/object.h"
-#include "engine/vehicle.h"
+#include "engine/vehicle/vehicle.h"
 
 #include "client.h"
 #include "scene.h"

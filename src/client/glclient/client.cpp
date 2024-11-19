@@ -289,6 +289,15 @@ void glClient::releaseBrush(Brush *brush)
     delete (glBrush *)brush;
 }
 
+Texture *glClient::loadTexture(cstr_t &fname, int flags)
+{
+    if (texmgr == nullptr)
+        return nullptr;
+    if (flags & 8)
+        return texmgr->getTexture(fname, flags);
+    return texmgr->loadTexture(fname, flags);
+}
+
 // ******** Surface ********
 
 void glClient::initSurface()
@@ -327,7 +336,7 @@ void glClient::clearSurface(Texture *surf, const color_t &color)
     assert(fbo == 0);
 
     // Clear entire surface with specific color
-    glBindFramebuffer(GL_FRAMEBUFFER, surf->fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, dynamic_cast<glTexture *>(surf)->getFBO());
     glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     glClear(GL_COLOR_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -354,8 +363,9 @@ void glClient::fillSurface(Texture *surf, const color_t &color, int tx, int ty, 
 
     if (surf != nullptr)
     {
-        gl::pushRenderTarget(surf);
-        proj = glm::ortho(0.0f, (float)surf->txWidth, 0.0f, (float)surf->txHeight);
+        glTexture *gsurf = dynamic_cast<glTexture *>(surf);
+        glRenderer::pushRenderTarget(gsurf);
+        proj = glm::ortho(0.0f, (float)surf->getWidth(), 0.0f, (float)surf->getHeight());
     }
 
     // Set up vertex buffer
@@ -372,17 +382,17 @@ void glClient::fillSurface(Texture *surf, const color_t &color, int tx, int ty, 
     glBindVertexArray(0);
 
     if (surf != nullptr)
-        gl::popRenderTarget();
+        glRenderer::popRenderTarget();
 }
 
 void glClient::blitSurface(Texture *surf, float tx, float ty, Texture *src, int flags)
 {
-    gl::pushRenderTarget(surf);
+    glRenderer::pushRenderTarget(dynamic_cast<glTexture *>(surf));
 
-    float tw = surf->txWidth;
-    float th = surf->txHeight;
-    float sw = src->txWidth;
-    float sh = src->txHeight;
+    float tw = surf->getWidth();
+    float th = surf->getHeight();
+    float sw = src->getWidth();
+    float sh = src->getHeight();
 
     float s0 = 0, s1 = 1;
     float t0 = 0, t1 = 1;
@@ -411,24 +421,24 @@ void glClient::blitSurface(Texture *surf, float tx, float ty, Texture *src, int 
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     
-    gl::popRenderTarget();
+    glRenderer::popRenderTarget();
 }
 
 void glClient::blitSurface(Texture *surf, float tx, float ty,
                            Texture *src, float sx, float sy,
                            float w, float h, int flags)
 {
-    gl::pushRenderTarget(surf);
+    glRenderer::pushRenderTarget(dynamic_cast<glTexture *>(surf));
 
-    float tw = surf->txWidth;
-    float th = surf->txHeight;
-    float sw = src->txWidth;
-    float sh = src->txHeight;
+    float tw = surf->getWidth();
+    float th = surf->getHeight();
+    float sw = src->getWidth();
+    float sh = src->getHeight();
 
-    float s0 = sx / (float)src->txWidth;
-    float s1 = (sx + w) / (float)src->txWidth;
-    float t0 = sy / (float)src->txHeight;
-    float t1 = (sy + h) / (float)src->txHeight;
+    float s0 = sx / (float)src->getWidth();
+    float s1 = (sx + w) / (float)src->getWidth();
+    float t0 = sy / (float)src->getHeight();
+    float t1 = (sy + h) / (float)src->getHeight();
 
     const GLfloat vertices[] = {
         s1, t1, tx+sw, ty+sh,
@@ -454,19 +464,19 @@ void glClient::blitSurface(Texture *surf, float tx, float ty,
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     
-    gl::popRenderTarget();
+    glRenderer::popRenderTarget();
 }
 
 void glClient::blitSurface( Texture *surf, float tx, float ty, float tw, float th,
                             Texture *src, float sx, float sy, float sw, float sh, 
                             int flags)
 {
-    gl::pushRenderTarget(surf);
+    glRenderer::pushRenderTarget(dynamic_cast<glTexture *>(surf));
 
-    float s0 = sx / (float)src->txWidth;
-    float s1 = (sx + sw) / (float)src->txWidth;
-    float t0 = sy / (float)src->txHeight;
-    float t1 = (sy + sh) / (float)src->txHeight;
+    float s0 = sx / (float)src->getWidth();
+    float s1 = (sx + sw) / (float)src->getWidth();
+    float t0 = sy / (float)src->getHeight();
+    float t1 = (sy + sh) / (float)src->getHeight();
 
     const GLfloat vertices[] = {
         s1, t1, tx+sw, ty+sh,
@@ -492,5 +502,5 @@ void glClient::blitSurface( Texture *surf, float tx, float ty, float tw, float t
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     
-    gl::popRenderTarget();
+    glRenderer::popRenderTarget();
 }

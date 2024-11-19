@@ -87,7 +87,7 @@ public:
 
     inline glm::dvec3 getCenter() const     { return center; }
     inline glm::dvec3 getWorld() const      { return wpos; }
-    inline Texture *getTexture() const      { return txImage; }
+    inline glTexture *getTexture() const    { return txImage; }
 
     bool isInView(const glm::dmat4 &transform);
 
@@ -131,8 +131,8 @@ private:
 
     // Surface data parameters
     bool txOwn = false;
-    Texture *txImage = nullptr;
-    Texture *spImage = nullptr;
+    glTexture *txImage = nullptr;
+    glTexture *spImage = nullptr;
     tcRange txRange;
 
     // Edge Matching paramaters

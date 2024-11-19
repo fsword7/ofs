@@ -76,14 +76,15 @@ glFont::glFont(cchar_t *face, int height, bool fixed, Style style, float orienta
 }
 
 glPad::glPad(Texture *tex, bool antialiased)
-: Sketchpad(), txPad(tex), antiAliased(antialiased)
+: Sketchpad(), antiAliased(antialiased)
 {
     textAlign = (NVGalign)(NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
     textBkgMode = TRANSPARENT;
+    txPad = dynamic_cast<glTexture *>(tex);
 
     if (txPad != nullptr) {
-        width = txPad->txWidth;
-        height = txPad->txHeight;
+        width = txPad->getWidth();
+        height = txPad->getHeight();
         ctx = antiAliased ? ctxFlippedaa : ctxFlipped;
     } else {
         width = glScene->getWidth();
@@ -124,7 +125,7 @@ void glPad::beginDraw()
 {   
     if (txPad != nullptr)
     {
-        gl::pushRenderTarget(txPad);
+        glRenderer::pushRenderTarget(txPad);
     }
     else
     {
@@ -141,7 +142,7 @@ void glPad::endDraw()
     nvgEndFrame(ctx);
     if (txPad != nullptr)
     {
-        gl::popRenderTarget();
+        glRenderer::popRenderTarget();
         txPad->bind();
         glGenerateMipmap(GL_TEXTURE_2D);
     }
@@ -152,7 +153,7 @@ void glPad::endDraw()
         glCullFace(GL_BACK);
         glFrontFace(GL_CW);
     }
-    gl::sync();
+    glRenderer::sync();
 }
 
 Font *glPad::setFont(Font *font)

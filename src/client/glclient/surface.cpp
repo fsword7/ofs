@@ -114,7 +114,7 @@ void SurfaceTile::load()
         // Loading terrain texture from database
         szImage = mgr.zTrees[0]->read(lod+4, ilat, ilng, &ddsImage);
         if (szImage > 0 && ddsImage != nullptr)
-            mgr.tmgr.loadDDSTextureFromMemory(&txImage, ddsImage, szImage, 0);
+            txImage = mgr.tmgr.loadDDSTextureFromMemory(ddsImage, szImage, 0);
         // if (txImage != nullptr)
         //     logger->info("Loaded texture (ID {}: ({}, {}))\n",
         //         txImage->id, txImage->txWidth, txImage->txHeight);
@@ -984,13 +984,13 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
                     dy*escale*(elev[en-1]-elev[en+1]));
                 nml = glm::normalize(nml);
 
-                nx1 = nml.x*clat - nml.y*slat;
+                nx1 = nml.x*clat - nml.y*-slat;
                 ny1 = nml.x*slat + nml.y*clat;
                 nz1 = nml.z;
 
-                vtx[n].nx = nx1*clng - nz1*-slng;
+                vtx[n].nx = nx1*clng - nz1*slng;
                 vtx[n].ny = ny1;
-                vtx[n].nz = nx1*slng + nz1*clng;
+                vtx[n].nz = nx1*-slng + nz1*clng;
                 n++;
             }
         }

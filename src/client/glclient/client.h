@@ -39,7 +39,9 @@ public:
 
     Sketchpad *createSketchpad(Texture *tex, bool antialiased) override;
     void loadTextureFont();
- 
+
+    Texture *loadTexture(cstr_t &fname, int flags = 0) override;
+
     void cbStart(Universe *universe) override;
     void cbRenderScene(Player *player) override;
 

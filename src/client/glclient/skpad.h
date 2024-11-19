@@ -105,7 +105,7 @@ protected:
 
 private:
     NVGcontext *ctx = nullptr;
-    Texture *txPad = nullptr;
+    glTexture *txPad = nullptr;
     int width;
     int height;
 

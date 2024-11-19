@@ -5,23 +5,23 @@
 
 #pragma once
 
-#include "glad/gl.h"
+//#include "glad/gl.h"
 
-class Texture;
+class glTexture;
 
-namespace gl
+class glRenderer
 {
-
+public:
 #ifdef DEBUG
     void checkError(cchar_t *str);
 #else
     inline void checkError(cchar_t *str) {}
 #endif
-    void sync();
+    static void sync();
 
-    void pushRenderTarget(Texture *tex);
-    void popRenderTarget();
+    static void pushRenderTarget(glTexture *tex);
+    static void popRenderTarget();
 
-    void pushFlag(int flag, bool val);
-    void popFlag();
+    static void pushFlag(int flag, bool val);
+    static void popFlag();
 };
