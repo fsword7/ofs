@@ -50,6 +50,9 @@ public:
     void addGroup(MeshGroup *group);
     void addMaterial(MeshMaterial *mtrl);
 
+    inline int getGroupSize() const             { return groups.size(); }
+    inline MeshGroup *getGroup(int idx)         { return idx < groups.size() ? groups[idx] : nullptr; }
+
     void calculateNormals(MeshGroup *group, bool missing);
 
     void load(YAML::Node &config, Mesh &mesh);
