@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <yaml.h>
+#include <yaml-cpp/yaml.h>
 
 namespace yaml
 {
