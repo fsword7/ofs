@@ -218,8 +218,12 @@ target_link_libraries(ofs
     imgui
     glfw
     OpenGL::GL
+)
+if (MINGW)
+target_link_libraries(ofs
     libdl.a
 )
+endif ()
 
 target_include_directories(ofs PUBLIC
     ${IMGUI_INCLUDE_DIR}
@@ -235,6 +239,8 @@ install(TARGETS ofs
     DESTINATION ${OFS_INSTALL_ROOT_DIR}
 )
 
+if (MINGW)
 install(FILES $<TARGET_LINKER_FILE:ofs>
     DESTINATION ${OFS_INSTALL_ROOT_DIR}/lib
 )
+endif ()
