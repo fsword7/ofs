@@ -4,7 +4,7 @@
 // Date:    Sep 15, 2024
 
 #include "main/core.h"
-#include "ephem/venus/atmo.h"
+#include "ephem/sol/venus/atmo.h"
 
 str_t AtmosphereVenus2006::getsAtmName() const
 {

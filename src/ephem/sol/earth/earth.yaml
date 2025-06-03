@@ -1,0 +1,45 @@
+Name:       "Earth"
+System:     "Sol"
+Type:       planet
+
+Surface:    "Orbiter"
+Activate:   on
+
+Mass:       5.973698968e+24
+Radius:     6378.140
+
+Albedo:     [ 0.7, 0.85, 1.0 ]
+Color:      [ 0.87572, 0.91517, 1.0 ]
+GeomAlbedo: 0.449576
+
+MaxLOD: 12
+
+Orbit: "vsop87b-earth"
+
+# Atomsphere parameters
+Atmosphere: "msise00-earth"
+AtmColor:   [ 0.0, 0.0, 0.0 ]
+
+# Rotation and precession parameters
+Rotation:             Uniform
+PrecessionLAN:        0
+PrecessionObliquity:  0
+PrecessionPeriod:     -9413040.4
+LAN:                  0
+LAN_MJD:              51544.5
+Obliquity:            0.4090928023
+SidRotOffset:         4.88948754
+SidRotPeriod:         86164.10132
+
+# SidRotPeriod (days):          0.99726968
+# SidRotPeriod (SI seconds):    86164.092
+# Pecession Period (years):     -25771.5
+# Obliquity (degrees):          23.439291
+# Ecliptic Obliquity (degrees): 23.439291
+
+GroundObservers:
+  - ["KSC Runway 15", [ 28.632307, -80.705774, 1 ],  150 ]
+  - ["KSC Runway 15 Ground", [ 28.632307, -80.705774, 0.002 ],  150 ]
+  - ["Rocky Mountains", [ 39.7309918, -104.7046216, 2 ], 270 ]
+  - ["Grand Canyon", [ 36.018679, -112.121223, 5 ], 0 ]
+  - ["Hawaiian Islands", [21.059613, -157.957629, 3 ], 0 ]

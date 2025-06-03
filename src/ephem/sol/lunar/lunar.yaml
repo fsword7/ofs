@@ -1,0 +1,39 @@
+Name: "Lunar"
+System: "Earth"
+Type: moon
+
+Surface: "Orbiter"
+Activate: on
+
+Mass: 7.347664e+22
+Radius: 1738.14
+
+Albedo: [ 0.7, 0.85, 1.0 ]
+Color: [ 1.0, 0.94582, 0.865 ]
+GeomAlbedo: 0.136
+
+MaxLOD: 12
+ElevRes: 0.5
+
+Orbit: "elp82b-lunar"
+
+# Rotation and precession parameters
+Rotation: Uniform
+PrecessionLAN: 0.4643456618
+PrecessionObliquity: 7.259562816e-005
+PrecessionPeriod: -6793.219721
+LAN: 1.71817749
+LAN_MJD: 51544.5
+Obliquity: 0.02692416821
+SidRotOffset: 4.769465382
+SidRotPeriod: 2360588.15
+
+# SidRotPeriod (days): 27.3216221
+# SidRotPeriod (SI seconds): 27.21221707
+# Pecession Period (years): -18.59882196
+# Obliquity (degrees): 1.542641205
+# Ecliptic LAN (rad): 2.179855677
+# Ecliptic Obliquity (rad): 0.02691360345
+# Ecliptic SidRotOffset (rad): 4.71399578
+# Axis RMS Error (deg): 0.5398940276
+# Lat/Lon RMS Error (deg): 0.03098881956

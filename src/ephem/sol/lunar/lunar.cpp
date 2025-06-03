@@ -6,8 +6,8 @@
 #include "main/core.h"
 #include "api/celbody.h"
 #include "ephem/ephemeris.h"
-#include "ephem/lunar/elp82.h"
-#include "ephem/lunar/lunar.h"
+#include "ephem/sol/lunar/elp82.h"
+#include "ephem/sol/lunar/lunar.h"
 
 OrbitELP82Lunar::OrbitELP82Lunar(Celestial &cbody)
 : OrbitELP82(cbody)

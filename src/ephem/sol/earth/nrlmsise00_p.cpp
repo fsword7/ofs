@@ -1,6 +1,6 @@
-#include "ephem/earth/nrlmsise00_p.hpp"
-#include "ephem/earth/nrlmsise00_math.hpp"
-#include "ephem/earth/nrlmsise00_data.cpp"
+#include "ephem/sol/earth/nrlmsise00_p.hpp"
+#include "ephem/sol/earth/nrlmsise00_math.hpp"
+#include "ephem/sol/earth/nrlmsise00_data.cpp"
 #include <iostream>
 
 // Implementation

@@ -9,7 +9,7 @@
 #include "ephem/elements.h"
 #include "engine/rigidbody.h"
 #include "ephem/vsop87/vsop87.h"
-#include "ephem/lunar/elp82.h"
+#include "ephem/sol/lunar/elp82.h"
 #include "ephem/rotation.h"
 // #include "ephem/elements.h"
 #include "universe/elevmgr.h"

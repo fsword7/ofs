@@ -1,0 +1,17 @@
+# Sol solar system
+system: Sol
+
+# folders list
+stars: 
+- sol
+
+planets:
+- mercury
+- venus
+- earth
+- lunar
+- mars
+- jupiter
+- saturn
+- uranus
+- neptune

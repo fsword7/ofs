@@ -4,7 +4,7 @@
 // Date:    Sep 15, 2024
 
 #include "main/core.h"
-#include "ephem/mars/atmo.h"
+#include "ephem/sol/mars/atmo.h"
 
 str_t AtmosphereMars2006::getsAtmName() const
 {

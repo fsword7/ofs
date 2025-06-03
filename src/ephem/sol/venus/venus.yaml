@@ -1,0 +1,29 @@
+Name: "Venus"
+System: "Sol"
+Type: planet
+
+Activate: off
+
+Mass: 4.86855374e+24
+Radius: 6051.84
+
+Albedo: [  1.76, 1.58, 1.32 ]
+Color: [ 0.98965, 1.0, 0.98452 ]
+GeomAlbedo: 0.672604
+
+MaxLOD: 4
+
+Orbit: "vsop87b-venus"
+
+# Rotation and precession parameters
+Rotation: Uniform
+LAN: 5.2392469
+LAN_MJD: 51544.5
+Obliquity: 0.021624781
+SidRotOffset: 3.88425353
+SidRotPeriod: -20996797.02
+
+# SidRotPeriod (days): -243.01848
+# SidRotPeriod (SI seconds): -243.01848
+# Pecession Period (years): N/A
+# Obliquity (degrees): 1.2390087

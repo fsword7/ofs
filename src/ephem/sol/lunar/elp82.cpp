@@ -7,10 +7,10 @@
 #include "api/ofsapi.h"
 #include "api/celbody.h"
 #include "ephem/ephemeris.h"
-#include "ephem/lunar/elp82.h"
-#include "ephem/lunar/lunar.h"
+#include "ephem/sol/lunar/elp82.h"
+#include "ephem/sol/lunar/lunar.h"
 
-#include "ephem/lunar/elp82dat.cpp"
+#include "ephem/sol/lunar/elp82dat.cpp"
 
 OrbitELP82::OrbitELP82(Celestial &cbody)
 : OrbitEphemeris(cbody)

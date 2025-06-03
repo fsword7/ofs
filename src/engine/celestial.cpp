@@ -7,7 +7,7 @@
 #include "api/celbody.h"
 #include "ephem/elements.h"
 #include "ephem/vsop87/vsop87.h"
-#include "ephem/lunar/elp82.h"
+#include "ephem/sol/lunar/elp82.h"
 #include "engine/celestial.h"
 #include "universe/astro.h"
 #include "utils/yaml.h"

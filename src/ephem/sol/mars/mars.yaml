@@ -1,0 +1,36 @@
+Name: "Mars"
+System: "Sol"
+Type: planet
+
+Surface: "Orbiter"
+Activate: on
+
+Mass: 6.418542e+23
+Radius: 3390.0
+
+Albedo: [ 0.52, 0.40, 0.16 ]
+Color: [ 1.0, 0.79855, 0.56429 ]
+GeomAlbedo: 0.174821
+
+MaxLOD: 12
+
+Orbit: "vsop87b-mars"
+
+# Rotation and precession parameters
+Rotation: Uniform
+PrecessionLAN: 4.005081124
+PrecessionObliquity:  0.03224369545
+PrecessionPeriod: -63346652.48
+LAN: 0.6210531483
+LAN_MJD: 51544.5
+Obliquity: 0.4397415938
+SidRotOffset: 5.469523488
+SidRotPeriod: 88642.66435
+
+# SidRotPeriod (days): 1.025956763
+# SidRotPeriod (SI seconds): 1.025956748
+# Pecession Period (years): -173433.6824
+# Obliquity (degrees): 25.1953374
+# Ecliptic Obliquity (rad): 5.040408866
+# Axis RMS Error (deg): 3.596520014e-006
+# Lat/Lon RMS Error (deg): 0.000228792323

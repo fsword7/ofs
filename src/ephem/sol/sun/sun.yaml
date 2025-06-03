@@ -1,0 +1,10 @@
+Name: "Sun"
+System: "Sol"
+Type: star
+
+Activate: true
+
+Mass: 1.9889194444e+30
+Radius: 696000.0
+
+Orbit: "vsop87e-sol"

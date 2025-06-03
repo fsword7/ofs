@@ -6,9 +6,9 @@
 #include "main/core.h"
 #include "universe/atmo.h"
 
-#include "ephem/earth/atmo.h"
-#include "ephem/mars/atmo.h"
-#include "ephem/venus/atmo.h"
+#include "ephem/sol/earth/atmo.h"
+#include "ephem/sol/mars/atmo.h"
+#include "ephem/sol/venus/atmo.h"
 
 Atmosphere *Atmosphere::create(str_t &name)
 {

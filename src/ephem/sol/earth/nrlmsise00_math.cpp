@@ -1,4 +1,4 @@
-#include "ephem/earth/nrlmsise00_math.hpp"
+#include "ephem/sol/earth/nrlmsise00_math.hpp"
 #include <stdexcept>
 
 namespace atmos

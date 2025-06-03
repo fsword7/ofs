@@ -1,5 +1,5 @@
-#include "ephem/earth/nrlmsise00.hpp"
-#include "ephem/earth/nrlmsise00_p.hpp"
+#include "ephem/sol/earth/nrlmsise00.hpp"
+#include "ephem/sol/earth/nrlmsise00_p.hpp"
 
 namespace atmos
 {

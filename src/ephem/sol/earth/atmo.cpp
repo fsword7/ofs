@@ -4,7 +4,7 @@
 // Date:    Jul 9, 2022
 
 #include "main/core.h"
-#include "ephem/earth/atmo.h"
+#include "ephem/sol/earth/atmo.h"
 
 AtmosphereEarthNRLMSISE00::AtmosphereEarthNRLMSISE00()
 : atm(swFlags)

@@ -11,7 +11,7 @@
 #include "engine/vehicle/vehicle.h"
 #include "ephem/orbit.h"
 #include "ephem/vsop87/vsop87.h"
-#include "ephem/lunar/elp82.h"
+#include "ephem/sol/lunar/elp82.h"
 #include "ephem/rotation.h"
 #include "universe/universe.h"
 #include "universe/star.h"

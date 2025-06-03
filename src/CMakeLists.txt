@@ -25,15 +25,15 @@ set(OFS_CPP_SRCS
     engine/radio.cpp
     engine/rigidbody.cpp
     engine/view.cpp
-    ephem/earth/atmo.cpp
-    ephem/earth/nrlmsise00_data.cpp
-    ephem/earth/nrlmsise00_math.cpp
-    ephem/earth/nrlmsise00_p.cpp
-    ephem/earth/nrlmsise00.cpp
-    ephem/lunar/elp82.cpp
-    ephem/lunar/lunar.cpp
-    ephem/mars/atmo.cpp
-    ephem/venus/atmo.cpp
+    ephem/sol/earth/atmo.cpp
+    ephem/sol/earth/nrlmsise00_data.cpp
+    ephem/sol/earth/nrlmsise00_math.cpp
+    ephem/sol/earth/nrlmsise00_p.cpp
+    ephem/sol/earth/nrlmsise00.cpp
+    ephem/sol/lunar/elp82.cpp
+    ephem/sol/lunar/lunar.cpp
+    ephem/sol/mars/atmo.cpp
+    ephem/sol/venus/atmo.cpp
     ephem/vsop87/earth.cpp
     ephem/vsop87/jupiter.cpp
     ephem/vsop87/mars.cpp
@@ -122,14 +122,14 @@ set(OFS_H_SRCS
     engine/radio.h
     engine/rigidbody.h
     engine/view.h
-    ephem/earth/atmo.h
-    ephem/earth/nrlmsise00_math.hpp
-    ephem/earth/nrlmsise00_p.hpp
-    ephem/earth/nrlmsise00.hpp
-    ephem/lunar/elp82.h
-    ephem/lunar/lunar.h
-    ephem/mars/atmo.h
-    ephem/venus/atmo.h
+    ephem/sol/earth/atmo.h
+    ephem/sol/earth/nrlmsise00_math.hpp
+    ephem/sol/earth/nrlmsise00_p.hpp
+    ephem/sol/earth/nrlmsise00.hpp
+    ephem/sol/lunar/elp82.h
+    ephem/sol/lunar/lunar.h
+    ephem/sol/mars/atmo.h
+    ephem/sol/venus/atmo.h
     ephem/vsop87/earth.h
     ephem/vsop87/jupiter.h
     ephem/vsop87/mars.h
@@ -238,6 +238,9 @@ set_target_properties(ofs
     PROPERTIES
     ENABLE_EXPORTS 1
 )
+
+# installing Sol system files
+add_subdirectory(ephem/sol)
 
 if (UNIX)
     install(TARGETS ofs

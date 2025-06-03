@@ -5,9 +5,9 @@
 
 #pragma once
 
-// #include "ephem/earth/nrlmsise-00.h"
-#include "ephem/earth/nrlmsise00.hpp"
-#include "ephem/earth/nrlmsise00_p.hpp"
+// #include "ephem/sol/earth/nrlmsise-00.h"
+#include "ephem/sol/earth/nrlmsise00.hpp"
+#include "ephem/sol/earth/nrlmsise00_p.hpp"
 
 #include "universe/atmo.h"
 
