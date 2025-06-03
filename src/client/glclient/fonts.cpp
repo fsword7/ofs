@@ -11,7 +11,7 @@
 
 FT_Library TextureFont::font = nullptr;
 
-TextureFont::TextureFont(Scene &scene)\
+TextureFont::TextureFont(Scene &scene)
 : scene(scene)
 {
 }

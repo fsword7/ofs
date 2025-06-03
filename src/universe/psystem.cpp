@@ -279,7 +279,8 @@ bool pSystem::loadSystems(Universe *universe, cstr_t &sysName)
 {
     ofsLogger->info("Loading {} system...\n", sysName);
 
-    str_t sysFolder = "data/systems/" + sysName + "/";
+    str_t homePath = OFS_HOME_DIR;
+    str_t sysFolder = homePath + "/data/systems/" + sysName + "/";
     str_t fileName = sysName + ".yaml";
 
     YAML::Node config;

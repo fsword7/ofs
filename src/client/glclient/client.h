@@ -88,6 +88,7 @@ private:
 
 extern Logger *glLogger;
 extern Scene *glScene;
+extern fs::path ofsPath;
 
 inline void checkErrors()
 {

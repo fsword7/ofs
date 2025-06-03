@@ -222,7 +222,7 @@ void StarRenderer::process(CelestialStar &star, double dist, double appMag) cons
 void Scene::initStarRenderer()
 {
     starColors = new StarColors();
-    starColors->load("data/stars/bbr_color_D58.txt");
+    starColors->load(ofsPath / "data/stars/bbr_color_D58.txt");
 
     pgmStar = shmgr.createShader("point");
 

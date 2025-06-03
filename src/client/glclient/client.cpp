@@ -21,6 +21,7 @@ glClient *gclient = nullptr;
 ModuleHandle myHandle = nullptr;
 Logger *glLogger = nullptr;
 Scene *glScene = nullptr;
+fs::path ofsPath;
 
 LIBCALL void initModule(ModuleHandle handle)
 {
@@ -158,6 +159,7 @@ GLFWwindow *glClient::createRenderingWindow()
         GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     // Initialize scene package
+    ofsPath = OFS_HOME_DIR;
     glScene = new Scene(width, height);
     // scene->init();
 

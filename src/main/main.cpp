@@ -10,6 +10,10 @@ class CoreApp;
 
 int main(int argc, char **argv)
 {
+#ifdef OFS_HOME_DIR
+    std::cout << "Home directory: " << OFS_HOME_DIR << std::endl;
+    std::cout << "Library directory: " << OFS_LIBRARY_DIR << std::endl;
+#endif // OFS_HOME_DIR
     std::cout << "Working directory: " << fs::current_path() << std::endl;
 
     ofsAppCore = new CoreApp();

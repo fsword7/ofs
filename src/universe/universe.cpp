@@ -24,8 +24,9 @@
 
 void Universe::init()
 {
-    stardb.loadXHIPData("data/xhip");
-    constellations.load("data/constellations/western/constellationship.fab");
+    fs::path homePath = OFS_HOME_DIR;
+    stardb.loadXHIPData(homePath / "data/xhip");
+    constellations.load(homePath / "data/constellations/western/constellationship.fab");
     // constellations.load("constellations/western_rey/constellationship.fab");
 
     if (!pSystem::loadSystems(this, "Sol"))

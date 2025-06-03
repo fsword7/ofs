@@ -57,7 +57,12 @@ void CoreApp::init()
     loadStartupModules();
 
     // Loading plugin modules
+#ifdef OFS_LIBRARY_DIR
+    str_t libpath = OFS_LIBRARY_DIR;
+    loadModule(libpath + "/plugin", "glclient");
+#else
     loadModule("modules/plugin", "glclient");
+#endif
 
     // Initialize graphics client module
     if (gclient != nullptr)
@@ -333,7 +338,12 @@ void CoreApp::resume()
 
 void CoreApp::loadStartupModules()
 {
-    fs::path path = "modules/startup";
+#ifdef OFS_LIBRARY_DIR
+    fs::path libpath = OFS_LIBRARY_DIR;
+    libpath += "/startup";
+#else
+    fs::path libpath = "modules/startup";
+#endif
 
 }
 

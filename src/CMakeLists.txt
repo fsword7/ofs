@@ -224,6 +224,11 @@ target_link_libraries(ofs
     libdl.a
 )
 endif ()
+target_compile_definitions(ofs 
+    PUBLIC GIT_COMMIT_ID="${GIT_COMMIT_ID}"
+    PUBLIC OFS_HOME_DIR="${OFS_HOME_DIR}"
+    PUBLIC OFS_LIBRARY_DIR="${OFS_LIBRARY_DIR}"
+)
 
 target_include_directories(ofs PUBLIC
     ${IMGUI_INCLUDE_DIR}
@@ -234,13 +239,17 @@ set_target_properties(ofs
     ENABLE_EXPORTS 1
 )
 
-install(TARGETS ofs
-    RUNTIME
-    DESTINATION ${OFS_INSTALL_ROOT_DIR}
-)
+if (UNIX)
+    install(TARGETS ofs
+        RUNTIME DESTINATION ${OFS_INSTALL_BIN_DIR}
+    )
+endif (UNIX)
 
 if (MINGW)
-install(FILES $<TARGET_LINKER_FILE:ofs>
-    DESTINATION ${OFS_INSTALL_ROOT_DIR}/lib
-)
+    install(TARGETS ofs
+        RUNTIME DESTINATION ${OFS_INSTALL_ROOT_DIR}
+    )
+    install(FILES $<TARGET_LINKER_FILE:ofs>
+        DESTINATION ${OFS_INSTALL_ROOT_DIR}/lib
+    )
 endif ()
