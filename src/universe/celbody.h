@@ -92,6 +92,11 @@ public:
     inline void setColor(color_t nColor)            { color = nColor; }
     inline color_t getColor() const                 { return color; }
 
+    inline void setPath(cstr_t &path)               { cbPath = path; }
+    inline void setFolder(cstr_t &folder)           { cbFolder = folder; }
+    inline str_t getPath() const                    { return cbPath; }
+    inline str_t getFolder() const                  { return cbFolder; }
+
     // PlanetarySystem *createPlanetarySystem();
     
     glm::dmat3 getEquatorial(double tjd) const;
@@ -155,6 +160,9 @@ public:
 protected:
     color_t color = color_t(0.7f, 0.7f, 0.7f, 1.0f);
     uint32_t knownFlags = 0;
+
+    str_t cbPath;
+    str_t cbFolder;
 
     // pSystem *system = nullptr;
     // OrbitEphemeris *ephemeris = nullptr;

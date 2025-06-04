@@ -53,6 +53,8 @@ public:
 
 private:
     str_t sysName;
+    str_t sysPath;
+    str_t sysFolder;
 
     Celestial *primaryStar = nullptr;
 

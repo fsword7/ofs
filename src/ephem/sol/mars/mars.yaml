@@ -2,7 +2,7 @@ Name: "Mars"
 System: "Sol"
 Type: planet
 
-Surface: "Orbiter"
+Surface: "orbiter"
 Activate: on
 
 Mass: 6.418542e+23

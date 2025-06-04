@@ -2,7 +2,7 @@ Name: "Lunar"
 System: "Earth"
 Type: moon
 
-Surface: "Orbiter"
+Surface: "orbiter"
 Activate: on
 
 Mass: 7.347664e+22

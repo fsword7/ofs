@@ -2,7 +2,7 @@ Name: "Jupiter"
 System: "Sol"
 Type: planet
 
-Surface: "Orbiter"
+Surface: "orbiter"
 Activate: on
 
 Mass: 1.8986111e+27

@@ -163,13 +163,13 @@ struct {
     { "moon", cbMoon }
 };
 
-bool pSystem::loadStar(const cstr_t &cbName, Universe *universe, pSystem *psys, cstr_t &cbFolder)
+bool pSystem::loadStar(const cstr_t &cbName, Universe *universe, pSystem *psys, cstr_t &cbPath)
 {
     ofsLogger->info("Loading {}...\n", cbName);
     str_t fileName = cbName + ".yaml";
 
     YAML::Node config;
-    config = YAML::LoadFile(cbFolder + fileName);
+    config = YAML::LoadFile(cbPath + fileName);
 
     if (config["Activate"].IsScalar())
     {
@@ -181,11 +181,22 @@ bool pSystem::loadStar(const cstr_t &cbName, Universe *universe, pSystem *psys, 
         }
     }
 
+    str_t sysName;
+    if (config["System"].IsScalar())
+    {
+        sysName = config["System"].as<std::string>();
+        if (sysName.empty())
+        {
+            ofsLogger->info("OFS: system name not found in {} - aborted", fileName);
+            return false;
+        }
+    }
+
     StarDatabase &stardb = universe->getStarDatabase();
-    CelestialStar *star = stardb.find(cbName);
+    CelestialStar *star = stardb.find(sysName);
     if (star == nullptr)
     {
-        ofsLogger->info("OFS: star {} not found\n", cbName);
+        ofsLogger->info("OFS: {} system not found\n", sysName);
         return false;
     }
 
@@ -218,18 +229,20 @@ bool pSystem::loadStar(const cstr_t &cbName, Universe *universe, pSystem *psys, 
     // }
 
     star->configure(config);
+    star->setPath(cbPath);
+    // star->setFolder(cbFolder);
     psys->addStar(star);
 
     return true;
 }
 
-bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbFolder)
+bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbPath)
 {
     ofsLogger->info("Loading {}...\n", cbName);
     str_t fileName = cbName + ".yaml";
 
     YAML::Node config;
-    config = YAML::LoadFile(cbFolder + fileName);
+    config = YAML::LoadFile(cbPath + fileName);
 
     if (config["Activate"].IsScalar())
     {
@@ -270,6 +283,8 @@ bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbFolder)
 
     CelestialPlanet *cbody = new CelestialPlanet(config, type);
 
+    cbody->setPath(cbPath);
+    // cbody->setFolder(cbFolder);
     psys->addPlanet(cbody, parent);
 
     return true;
@@ -279,14 +294,15 @@ bool pSystem::loadSystems(Universe *universe, cstr_t &sysName)
 {
     ofsLogger->info("Loading {} system...\n", sysName);
 
-    str_t homePath = OFS_HOME_DIR;
-    str_t sysFolder = homePath + "/data/systems/" + sysName + "/";
-    str_t fileName = sysName + ".yaml";
+    str_t sysPath = OFS_HOME_DIR;
+    sysPath += "/systems/" + sysName + "/";
+    str_t sysFolder = sysName;
+    str_t fileName = "system.yaml";
 
     YAML::Node config;
 
     try {
-        config = YAML::LoadFile(sysFolder + fileName);
+        config = YAML::LoadFile(sysPath + fileName);
     }
     catch (YAML::Exception &e)
     {
@@ -333,6 +349,8 @@ bool pSystem::loadSystems(Universe *universe, cstr_t &sysName)
     //     return false;
     // }
     pSystem *psys = new pSystem(name);
+    psys->sysPath = sysPath;
+    psys->sysFolder = sysFolder;
     // pSystem *psys = new pSystem(sun);
     ofsLogger->info("Creating {} planetary system...\n", name);
 
@@ -340,16 +358,18 @@ bool pSystem::loadSystems(Universe *universe, cstr_t &sysName)
     {
         // ofsLogger->info("Star: {}\n", planet.as<std::string>());
         str_t cbName = body.as<std::string>();
-        str_t cbFolder = sysFolder + cbName + "/";
-        loadStar(cbName, universe, psys, cbFolder);
+        str_t cbPath = sysPath + cbName + "/";
+        str_t cbFolder = sysFolder + "/" + cbName;
+        loadStar(cbName, universe, psys, cbPath);
     }
 
     for (auto body : config["planets"])
     {
         // ofsLogger->info("Planet: {}\n", planet.as<std::string>());
         str_t cbName = body.as<std::string>();
-        str_t cbFolder = sysFolder + cbName + "/";
-        loadPlanet(cbName, psys, cbFolder);
+        str_t cbPath = sysPath + cbName + "/";
+        str_t cbFolder = sysFolder + "/" + cbName;
+        loadPlanet(cbName, psys, cbPath);
     }
 
     return true;

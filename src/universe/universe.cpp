@@ -29,7 +29,7 @@ void Universe::init()
     constellations.load(homePath / "data/constellations/western/constellationship.fab");
     // constellations.load("constellations/western_rey/constellationship.fab");
 
-    if (!pSystem::loadSystems(this, "Sol"))
+    if (!pSystem::loadSystems(this, "sol"))
         exit(1);
 
 

@@ -2,7 +2,7 @@
     System: "Sol"
     Type: planet
     
-    Surface: "Orbiter"
+    Surface: "orbiter"
     Activate: on
 
     Mass: 3.301880e+23

@@ -478,8 +478,9 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         str_t starName = body->getStar()->getsName();
         str_t bodyName = body->getsName();
 
-        fs::path folder = fmt::format("{}/data/systems/{}/{}/Orbiter", ofsPath.c_str(), starName, bodyName);
-
+        // fs::path folder = fmt::format("{}orbiter", body->getPath());
+        fs::path folder = body->getPath() + "orbiter";
+    
         emgr = body->getElevationManager();
         emgr->setup(folder);
 
