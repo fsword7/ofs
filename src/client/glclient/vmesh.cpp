@@ -1,73 +1,69 @@
-// vmesh.cpp - Visual Mesh Package for Vessels and others.
+// vmesh.cpp - Visual mesh package for vehicles and others
 //
 // Author:  Tim Stark
-// Date:    Nov 4, 2023
+// Date:    Nov 13, 2024
 
 #include "main/core.h"
-
+#include "engine/mesh.h"
 #include "client.h"
+#include "renderer.h"
 #include "vmesh.h"
+
+
+vMesh::vMesh(Mesh *mesh)
+{
+
+    int ngrps = mesh->getGroupSize();
+    groups.reserve(ngrps);
+    for (int idx = 0; idx < ngrps; idx++)
+        copyGroup(groups[idx], mesh->getGroup(idx));
+
+}
 
 vMesh::~vMesh()
 {
-    deleteGroups();
+
 }
 
-int vMesh::addGroup(vGroupMesh *group, bool deepCopy)
-{
-    // if (deepCopy)
-    //     copyGroup(group);
-    // else
-        groups.push_back(group);
-
-    return 0;
-}
-
-// void vMesh::copyGroup(GroupMesh *group)
-// {
-    
-// }|
-
-void vMesh::deleteGroup(vGroupMesh *group)
-{
-    if (group->vtx != nullptr)
-        delete [] group->vtx;
-    if (group->idx != nullptr)
-        delete [] group->idx;
-    delete group;
-}
-
-void vMesh::deleteGroups()
-{
-    for (auto group : groups)
-        deleteGroup(group);
-    groups.clear();
-}
-
-void vMesh::renderGroup(const vGroupMesh &group)
-{
-    if (group.nvtx == 0 || group.nidx == 0)
-        return;
-    group.vao.bind();
-    glDrawElements(GL_TRIANGLES, group.ibo.getCount(), GL_UNSIGNED_SHORT, 0);
-    group.vao.unbind();
-}
-
-void vMesh::render()
+void vMesh::copyGroup(vMeshGroup *dst, MeshGroup *src)
 {
 
-    bool bSkipped = false;
-
-    for (auto group : groups)
+    // dstv->vertices.reserve(src->nvtx);
+    for (int vidx = 0; vidx < src->nvtx; vidx++)
     {
-        if (group->userFlag & 2)
-        {
-            bSkipped = true;
-            continue;
-        }
+        MeshVertex  &srcv = src->vtx[vidx];
+        vMeshVertex &dstv = dst->vertices[vidx];
 
-        renderGroup(*group);
+        dstv.vtx = srcv.vtx;
+        dstv.nml = srcv.nml;
+        dstv.tc  = srcv.tc;
+    }
 
-        bSkipped = false;
+    dst->indices.reserve(src->nidx);
+    for (int iidx = 0; iidx < src->nidx; iidx++)
+        dst->indices[iidx] = src->idx[iidx];
+
+}
+
+void vMesh::computeTangets()
+{
+    
+}
+
+void vMesh::renderGroup(const vMeshGroup &grp)
+{
+    if (grp.ibo.getCount() == 0 || grp.vbo.getCount() == 0)
+        return;
+    grp.vao.bind();
+    glDrawElements(GL_TRIANGLES, grp.ibo.getCount(), GL_UNSIGNED_SHORT, 0);
+    grp.vao.unbind();
+}
+
+void vMesh::render(const glm::mat4 &model)
+{
+
+    for (auto &grp : groups) {
+
+        renderGroup(*grp);
     }
 }

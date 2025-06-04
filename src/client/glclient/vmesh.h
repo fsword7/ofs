@@ -1,52 +1,62 @@
-// vmesh.h - Visual Mesh Package for Vessels and others.
+// vmesh.h - Visual mesh package for vehicles and others
 //
 // Author:  Tim Stark
-// Date:    Nov 4, 2023
+// Date:    Nov 13, 2024
 
 #pragma once
 
 #include "buffer.h"
 
-struct vVertexMesh
+class Mesh;
+struct MeshGroup;
+
+struct vMeshVertex
 {
-    float x, y, z;      // XYZ position
-    float nx, ny, nz;   // XYZ normal
-    float tx, ty, tz;   // XYZ tangent
-    float tu, tv;       // UV texture coordinate
+    // float vx, vy, vz;   // Vertices
+    // float nx, ny, nz;   // Normals
+    // float tx, ty, tz;   // Tangets
+    // float tu, tv;       // Texture Coordinates
+
+    glm::vec3 vtx;
+    glm::vec3 nml;
+    glm::vec3 tgt;
+    glm::vec2 tc;
 };
 
-struct vGroupMesh
+using mvtx_t = vMeshVertex;
+
+struct vMeshGroup
 {
-    int nvtx;
-    int nidx;
+    std::vector<mvtx_t> vertices;
+    std::vector<uint16_t> indices;
 
-    vVertexMesh *vtx = nullptr;
-    uint16_t  *idx = nullptr;
-
-    uint32_t userFlag;
-
-    VertexArray vao;
+    VertexArray  vao;
     VertexBuffer vbo;
-    IndexBuffer ibo;
+    IndexBuffer  ibo;
 };
 
 class vMesh
 {
 public:
-    vMesh() = default;
+    vMesh(Mesh *mesh);
     ~vMesh();
 
-    int addGroup(vGroupMesh *group, bool deepCopy = true);
-    // void copyGroup(GroupMesh *group);
-    void deleteGroup(vGroupMesh *group);
-    void deleteGroups();
+    void copyGroup(vMeshGroup *glgrp, MeshGroup *mgrp);
 
-    vGroupMesh *getGroup(int idx)        { return idx < groups.size() ? groups[idx] : nullptr; }
+    void computeTangets();
 
-    void renderGroup(const vGroupMesh &group);
-    void render();
+    void renderGroup(const vMeshGroup &grp);
+    void render(const glm::mat4 &model);
 
 private:
-    std::vector<vGroupMesh *> groups;
+    std::vector<vMeshGroup *> groups;
 
+};
+
+class vMeshManager
+{
+public:
+
+private:
+    std::vector<vMesh *> meshList;
 };

@@ -7,6 +7,8 @@
 
 class vMesh;
 class Vehicle;
+struct MeshGroup;
+struct anim_t;
 
 struct vMeshEntry
 {
@@ -21,11 +23,19 @@ public:
     ~vVehicle();
 
     void loadMeshes();
+    void initAnimations();
+    void clearMeshes();
+    void clearAnimations();
 
+    void updateAnimations();
+
+    void animate(anim_t *an, double state, int midx);
+    void update(int now);
     void render(const ObjectListEntry &ole) override;
 
 private:
     const Vehicle *vehicle = nullptr;
     std::vector<vMeshEntry> meshList;
 
+    std::vector<double> animpState;
 };

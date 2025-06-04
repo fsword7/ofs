@@ -257,9 +257,30 @@ struct port_t
 typedef VehicleModule *(*ovcInit_t)(Vehicle *);
 typedef void (*ovcExit_t)(VehicleModule *);
 
+struct antrans_t
+{
+    enum { rotate, translate, scale } type;
+    int midx, gidx;
+    union
+    {
+        struct { // rotation
+            glm::vec3 ref;  // reference frame
+            glm::vec3 axis; // axis direction
+            float angle;    // angle [rad]
+        } rp;
+        struct { // translation
+            glm::vec3 shift; // tanslation vector
+        } tp;
+        struct { // scale
+            glm::vec3 scale; // scale factor
+        } sp;
+    } param;
+};
+
 struct ancomp_t
 {
     double state0, state1;
+    antrans_t trans;
 
     ancomp_t *parent = nullptr;
     std::vector<ancomp_t *> child;
@@ -271,6 +292,9 @@ struct anim_t
     double dstate;  // default state
     std::vector<ancomp_t *> compList;
 };
+
+using anlist_t = std::vector<anim_t *>;
+using canlist_t = const std::vector<anim_t *>;
 
 struct MeshEntry
 {
@@ -402,14 +426,18 @@ public:
 
     void createMesh(Mesh *mesh, const glm::dvec3 &ofs = {});
     void createMesh(cstr_t &name, const glm::dvec3 &ofs = {});
+    int getMeshCount() const        { return meshList.size(); }
+    MeshEntry *getMesh(int idx)     { return idx < meshList.size() ? meshList[idx] : nullptr; }
 
     // Animation function calls
 
     anim_t *createAnimation(int state);
     bool setAnimationState(int an, int state);
-
     ancomp_t *addAnimationComponent(int an, double state0, double state1, ancomp_t *parent);
     
+    anlist_t &getAnimationList()            { return animList; }
+    canlist_t &getAnimationList() const     { return animList; }
+
 private:
     SuperVehicle *superVehicle = nullptr;
 
