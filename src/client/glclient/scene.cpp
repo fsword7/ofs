@@ -16,7 +16,7 @@
 #include "vobject.h"
 
 Scene::Scene(int width, int height)
-: shmgr(ofsPath / "shaders/gl")
+: shmgr(ofsPath.generic_string() + "/shaders/gl")
 {
     resize(width, height);
 }

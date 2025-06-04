@@ -242,17 +242,12 @@ set_target_properties(ofs
 # installing Sol system files
 add_subdirectory(ephem/sol)
 
-if (UNIX)
-    install(TARGETS ofs
-        RUNTIME DESTINATION ${OFS_INSTALL_BIN_DIR}
-    )
-endif (UNIX)
 
+install(TARGETS ofs
+    RUNTIME DESTINATION ${OFS_INSTALL_BIN_DIR}
+)
 if (MINGW)
-    install(TARGETS ofs
-        RUNTIME DESTINATION ${OFS_INSTALL_ROOT_DIR}
-    )
     install(FILES $<TARGET_LINKER_FILE:ofs>
-        DESTINATION ${OFS_INSTALL_ROOT_DIR}/lib
+        DESTINATION ${OFS_INSTALL_LIB_DIR}
     )
 endif ()

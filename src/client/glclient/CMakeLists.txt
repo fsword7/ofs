@@ -130,7 +130,7 @@ install(TARGETS glclient
 )
 
 install(FILES ${OGL_SHADERS}
-    DESTINATION ${OFS_INSTALL_ROOT_DIR}/shaders/gl
+    DESTINATION ${OFS_INSTALL_HOME_DIR}/shaders/gl
 )
 
 # install(FILES ${OGL_SHADERS}

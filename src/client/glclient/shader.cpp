@@ -174,7 +174,7 @@ ShaderStatus ShaderSource::compile(const std::vector<str_t> &source)
         return shrEmptyProgram;
 
     const char **src = new const char *[source.size()];
- 
+
     for (int idx = 0; idx < source.size(); idx++)
     {
         ssrc[idx] = source[idx];
@@ -200,11 +200,11 @@ ShaderStatus ShaderSource::compile(const std::vector<str_t> &source)
 
             dsrc[idx] += ch;
         }
-        // logger->verbose("After include parser: \n");
+        // glLogger->verbose("After include parser: \n");
         // dump(dsrc[idx]);
         src[idx] = dsrc[idx].c_str();
     }
- 
+
     glShaderSource(id, source.size(), src, nullptr);
     delete [] src;
 
@@ -386,7 +386,7 @@ ShaderStatus ShaderManager::createProgram(cstr_t &vsSource, cstr_t &fsSource, Sh
 
     st = ShaderSource::create(this, shrVertexProcessor, vsSourcev, &vsShader);
     st = ShaderSource::create(this, shrFragmentProcessor, fsSourcev, &fsShader);
-   
+
     ShaderProgram *npgm = new ShaderProgram();
     if (vsShader != nullptr)
         npgm->attach(*vsShader);
@@ -423,8 +423,8 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name)
     auto vsName = fmt::format("{}/{}.vs", shaderFolder, name);
     auto fsName = fmt::format("{}/{}.fs", shaderFolder, name);
 
-    // fs::path p = fs::current_path();
-    // std::cout << "Current path: " << p << std::endl;
+    // glLogger->debug("Vertex path:   {}\n", vsName);
+    // glLogger->debug("Fragment path: {}\n", fsName);
 
     str_t vsSource, fsSource;
     struct stat st;

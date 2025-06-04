@@ -11,7 +11,7 @@ set(OFS_SOL_SYSTEM
 )
 
 install(DIRECTORY .
-    DESTINATION ${OFS_INSTALL_ROOT_DIR}/systems/sol
+    DESTINATION ${OFS_INSTALL_HOME_DIR}/systems/sol
     FILES_MATCHING
     PATTERN "*.yaml"
 )
