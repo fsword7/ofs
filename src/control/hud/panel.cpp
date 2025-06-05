@@ -46,7 +46,7 @@ void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
 
     int dx0 = int(val * tsep2);
     int d2 = int(val + 0.5);
-    char cbuf[4];
+    str_t sbuf;
 
     for (int x = x0 - dx0, d = d2; x >= xmin; x -= tsep2, d--)
     {
@@ -58,8 +58,8 @@ void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
             pad->drawLineTo(x, 20);
             if (d < 0)
                 d += 180;
-            sprintf(cbuf, "%03d", d);
-            pad->text(x, 20, cbuf, 3);
+            sbuf = fmt::format("{:03d}", d);
+            pad->text(x, 20, sbuf.c_str(), 3);
         }
     }
 
@@ -73,8 +73,8 @@ void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
             pad->drawLineTo(x, 20);
             if (d >= 180)
                 d -= 180;
-            sprintf(cbuf, "%03d", d);
-            pad->text(x, 20, cbuf, 3);
+            sbuf = fmt::format("{:03d}", d);
+            pad->text(x, 20, sbuf.c_str(), 3);
         }
     }
 }
@@ -133,16 +133,16 @@ void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosa, double lsina,
         pad->drawLine(x1+dx/2-dy/8, y1+dy/2+dx/8, x1+dx/2-dy/4, y1+dy/2+dx+4);
     }
 
-    char cbuf[4];
+    str_t sbuf;
     if (markSubzero)
     {
-        sprintf(cbuf, "%+d", phi0);
-        // pad->text(x1+dx/2-(3*fw)/2, y1+dy2-fh/2, cbuf, 3);
+        sbuf = fmt::format("{:.0f}", phi0);
+        // pad->text(x1+dx/2-(3*fw)/2, y1+dy2-fh/2, sbuf.c_str(), 3);
     }
     else
     {
-        sprintf(cbuf, "%d", lab);
-        // pad->text(x1+dx/21-fw, y1+dy/2-fh/2, cbuf, 2);
+        sbuf = fmt::format("{:d}", lab);
+        // pad->text(x1+dx/21-fw, y1+dy/2-fh/2, sbuf.c_str(), 2);
     }
 }
 
