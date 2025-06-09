@@ -259,7 +259,7 @@ typedef void (*ovcExit_t)(VehicleModule *);
 
 struct antrans_t
 {
-    enum { rotate, translate, scale } type;
+    enum { null, rotate, translate, scale } type;
     int midx, gidx;
     union
     {

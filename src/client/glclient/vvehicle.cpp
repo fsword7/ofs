@@ -71,8 +71,34 @@ void vVehicle::updateAnimations()
     }
 }
 
+void vVehicle::animateComponent(ancomp_t *ac, const glm::mat4 &T)
+{
+
+}
+
 void vVehicle::animate(anim_t *an, double state, int midx)
 {
+    glm::mat4 T;
+
+    for (auto comp : an->compList)
+    {
+        switch (comp->trans.type)
+        {
+        case antrans_t::null:
+            T = glm::mat4(1.0f);
+            animateComponent(comp, T);
+            break;
+        case antrans_t::rotate:
+            animateComponent(comp, T);
+            break;
+        case antrans_t::translate:
+            animateComponent(comp, T);
+            break;
+        case antrans_t::scale:
+            animateComponent(comp, T);
+            break;
+        }
+    }
 }
 
 void vVehicle::update(int now)
