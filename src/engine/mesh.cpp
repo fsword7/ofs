@@ -342,14 +342,14 @@ std::istream &operator >> (std::istream &is, Mesh &mesh)
                     }
                     if (bNormal)
                     {
-                        int j = sscanf(cbuf, "%lf%lf%lf%lf%lf%lf%lf%lf",
+                        int j = sscanf(cbuf, "%f%f%f%f%f%f%f%f",
                             &v.vtx.x, &v.vtx.y, &v.vtx.z, &v.nml.x, &v.nml.y, &v.nml.z, &v.tc.x, &v.tc.y);
                         if (j < 6)
                             bCalcNormal = true;
                     }
                     else
                     {
-                        int j = sscanf(cbuf, "%lf%lf%lf%lf%lf",
+                        int j = sscanf(cbuf, "%f%f%f%f%f",
                             &v.vtx.x, &v.vtx.y, &v.vtx.z, &v.tc.x, &v.tc.y);
                     }
                 }
@@ -418,14 +418,15 @@ std::istream &operator >> (std::istream &is, Mesh &mesh)
         for (int idx = 0; idx < nMaterials; idx++)
         {
             is.getline(cbuf, sizeof(cbuf));
-            sscanf(cbuf, "%s", names[idx]);
+            names[idx] = std::string(sizeof(cbuf)+1, '\0');
+            sscanf(cbuf, "%s", names[idx].data());
         }
         for (int idx = 0; idx < nMaterials; idx++)
         {
             mtrl = new MeshMaterial;
-            memset(mtrl, 0, sizeof(MeshMaterial));
+            memset((void *)mtrl, 0, sizeof(MeshMaterial));
             is.getline(cbuf, sizeof(cbuf));
-            sscanf(cbuf+8, "%s", mtrl->name);
+            sscanf(cbuf+8, "%s", mtrl->name.data());
             is.getline(cbuf, sizeof(cbuf));
             sscanf(cbuf, "%f%f%f%f", &mtrl->diffuse.r, &mtrl->diffuse.g, &mtrl->diffuse.b, &mtrl->diffuse.a);
             is.getline(cbuf, sizeof(cbuf));
@@ -445,14 +446,14 @@ std::istream &operator >> (std::istream &is, Mesh &mesh)
     // Read texture list from file
     if (is.getline(cbuf, sizeof(cbuf)) && !strncmp(cbuf, "TEXTURES", 9) && (sscanf(cbuf+9, "%d", &nTextures) == 1))
     {
-        std::string texName, flagStr;
+        std::string texName(256, '\0'), flagStr;
         bool uncompress = false;
         GraphicsClient *gclient = ofsAppCore->getClient();
 
         for (int idx = 0; idx < nTextures; idx++)
         {
             is.getline(cbuf, sizeof(cbuf));
-            sscanf(cbuf, "%s%s", texName, flagStr);
+            sscanf(cbuf, "%s%s", texName.data(), flagStr.data());
             if (!texName.empty())
                 uncompress = toupper(flagStr[0]) == 'D';
             int flags = uncompress ? 2 : 0;
