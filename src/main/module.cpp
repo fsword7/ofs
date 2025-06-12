@@ -11,11 +11,14 @@
 OFSAPI ModuleHandle ofsLoadModule(const char *name)
 {
     std::string path = name;
-#ifdef __MINGW32__
+#ifdef __unix__
+    return dlopen(path.c_str(), RTLD_LAZY|RTLD_GLOBAL|RTLD_DEEPBIND);
+#elif __MINGW32__
     return dlopen(path.c_str(), RTLD_LAZY|RTLD_GLOBAL);
 #else
-    return dlopen(path.c_str(), RTLD_LAZY|RTLD_GLOBAL|RTLD_DEEPBIND);
-#endif /* __MINGW32__ */
+    static_assert("System does not support library routines - aborted.\n");
+    return nullptr;
+#endif
 }
 
 OFSAPI void ofsUnloadModule(ModuleHandle module)

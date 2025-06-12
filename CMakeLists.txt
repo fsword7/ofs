@@ -60,6 +60,8 @@ set(OFS_LIB $<TARGET_LINKER_FILE:ofs>)
 
 set(EXTERN_DIR ${CMAKE_SOURCE_DIR}/externs)
 
+set(OFS_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
+
 # ImGUI libraries
 
 set(IMGUI_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/src/imgui")

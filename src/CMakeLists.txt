@@ -241,7 +241,7 @@ set_target_properties(ofs
 
 # installing Sol system files
 add_subdirectory(ephem/sol)
-
+add_subdirectory(vehicles/glider)
 
 install(TARGETS ofs
     RUNTIME DESTINATION ${OFS_INSTALL_BIN_DIR}

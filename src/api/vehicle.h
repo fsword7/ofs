@@ -6,7 +6,7 @@
 #pragma once
 
 #include "api/ofsapi.h"
-#include "engine/vehicle.h"
+#include "engine/vehicle/vehicle.h"
 
 class OFSAPI VehicleModule
 {
