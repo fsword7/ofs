@@ -256,21 +256,6 @@ Vehicle::~Vehicle()
         clearModule();
 }
 
-void Vehicle::clearModule()
-{
-    if (vif.module != nullptr && vif.ovcExit != nullptr)
-        vif.ovcExit(vif.module);
-    if (handle != nullptr)
-        ofsUnloadModule(handle);
-    handle = nullptr;
-
-    // Clear all rehgister module
-    vif.module  = nullptr;
-    vif.version = 0;
-    vif.ovcInit = nullptr;
-    vif.ovcExit = nullptr;
-}
-
 bool Vehicle::registerModule(cstr_t &name)
 {
     assert(handle == nullptr);
@@ -296,6 +281,21 @@ bool Vehicle::registerModule(cstr_t &name)
     vif.ovcExit = (ovcExit_t)ofsGetProcAddress(handle, "ovcExit");
 
     return true;
+}
+
+void Vehicle::clearModule()
+{
+    if (vif.module != nullptr && vif.ovcExit != nullptr)
+        vif.ovcExit(vif.module);
+    if (handle != nullptr)
+        ofsUnloadModule(handle);
+    handle = nullptr;
+
+    // Clear all registered module
+    vif.module  = nullptr;
+    vif.version = 0;
+    vif.ovcInit = nullptr;
+    vif.ovcExit = nullptr;
 }
 
 bool Vehicle::loadModule(cstr_t &name)

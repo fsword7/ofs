@@ -6,6 +6,7 @@ find_package(fmt REQUIRED)
 
 set(SG_CPP_SRCS
     glider.cpp
+    module.cpp
 )
 
 set(SG_H_SRCS

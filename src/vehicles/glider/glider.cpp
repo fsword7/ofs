@@ -4,20 +4,21 @@
 // Date:    Jun 11, 2025
 
 #include "main/core.h"
-#include "api/vehicle.h"
+#include "api/logger.h"
+#include "api/module.h"
 #include "glider.h"
 
 Logger *sgLogger = nullptr;
 
-LIBCALL VehicleModule *ovcInit(Vehicle *vehicle)
+Glider::Glider(Vehicle *vehicle, int flightModel)
+: VehicleModule(vehicle)
 {
-    // sgLogger = new Logger(Logger::logDebug, "glider.log");
-    // sgLogger->info("--------- Space Glider --------\n");
+    sgLogger = new Logger(Logger::logDebug, "glider.log");
+    sgLogger->info("--------- Space Glider --------\n");
 
-    return nullptr;
 }
 
-LIBCALL void ovcExit(Vehicle *vehicle)
+Glider::~Glider()
 {
-}
 
+}

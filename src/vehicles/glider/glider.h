@@ -8,4 +8,13 @@
 #include "api/vehicle.h"
 
 
+class Glider : public VehicleModule
+{
+public:
+    Glider(Vehicle *vehicle, int flightModel = 0);
+    ~Glider();
+
+protected:
+};
+
 extern Logger *sgLogger;
