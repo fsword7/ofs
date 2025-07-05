@@ -68,9 +68,14 @@ void CoreApp::init()
     if (gclient != nullptr)
         createSceneWindow();
 
+    fs::path homePath = OFS_HOME_DIR;
+    std::ifstream inFile(homePath / "scen/start.json");
+    json config = json::parse(inFile, nullptr, false, true);
+
     // Initialize universe
     universe = new Universe();
     universe->init();
+    universe->configure(config);
 }
 
 void CoreApp::cleanup()

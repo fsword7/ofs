@@ -8,11 +8,14 @@
 #include "main/core.h"
 #include "api/ofsapi.h"
 #include "main/timedate.h"
+#include "main/app.h"
 // #include "engine/frame.h"
 #include "engine/vehicle/vehicle.h"
 #include "universe/celbody.h"
 #include "universe/body.h"
+#include "universe/universe.h"
 #include "engine/player.h"
+#include "utils/json.h"
 
 // ******** Camera ********
 
@@ -95,8 +98,69 @@ Player::Player(TimeDate *td, int width, int height)
     elevTiles.resize(2);
 }
 
+Player::Player(json &config, TimeDate *td, int width, int height)
+: cam(width, height), td(td)
+{
+
+
+    updateCamera();
+
+    // Allocating two elevation tiles
+    elevTiles.resize(2);
+}
+
 Player::~Player()
 {
+}
+
+void Player::configure(json &config)
+{
+
+    // if (!config["player"].IsSequence())
+    //     return; // false;
+
+    // const YAML::Node &list = config["player"];
+    // Universe *univ = ofsAppCore->getUniverse();
+
+    // str_t tgt = yaml::getValueString<str_t>(list, "target");
+    // if (!tgt.empty())
+    // {
+    //     Object *obj = univ->findPath(tgt);
+    //     if (obj == nullptr)
+    //         return; // false;
+    // }
+
+    // const YAML::Node &modes = config["mode"];
+    // if (modes.IsSequence())
+    // {
+    //     str_t tgtName = yaml::getValueString<str_t>(modes, "target");
+    //     glm::dvec3 pos = yaml::getArray<glm::dvec3, double>(modes, "position", { 0, 0, 0 });
+    //     // glm::dvec3 dir = yaml::getArray<glm::dvec3, double>(modes, "direction", { 0, 0, 1 });
+    //     str_t type = yaml::getValueString<str_t>(modes, "type");
+    //     double scale = 4;
+    //     double elev = 0;
+
+    //     cameraMode mode = camGlobalFrame;
+    //     if (type == "target-sync")
+    //         mode = camTargetSync;
+    //     else if (type == "target-relative")
+    //         mode = camTargetRelative;
+
+    //     str_t stgtName;
+    //     if (mode == camTargetSync)
+    //         stgtName = yaml::getValueString<str_t>(modes, "sync");
+
+    //     Celestial *cbody = univ->findPath(tgtName);
+    //     Celestial *scbody = univ->findPath(stgtName);
+    //     double rad = cbody->getRadius();
+    //     if (glm::length(pos) < rad)
+    //         pos = glm::normalize(pos) *
+    //             ((elev != 0) ? (rad + elev) : (rad * scale));
+    //     cam.setPosition(pos);
+    //     attach(cbody, mode, scbody);
+    // }
+
+    // look(tgtFocus);
 }
 
 double Player::computeCoarseness(double maxCoarseness)

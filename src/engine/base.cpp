@@ -7,7 +7,7 @@
 #include "universe/body.h"
 #include "engine/base.h"
 
-Base::Base(YAML::Node &config, CelestialPlanet *planet, double lat, double lng)
+Base::Base(json &config, CelestialPlanet *planet, double lat, double lng)
 : Celestial(config, objSurfBase, cbSurfBase), lat(lat), lng(lng)
 {
     // Assign this base to planet as target

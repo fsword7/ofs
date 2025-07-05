@@ -7,12 +7,12 @@
 #include "api/celbody.h"
 #include "ephem/elements.h"
 #include "ephem/vsop87/vsop87.h"
-#include "ephem/sol/lunar/elp82.h"
+#include "ephem/sol/luna/elp82.h"
 #include "engine/celestial.h"
 #include "universe/astro.h"
-#include "utils/yaml.h"
+#include "utils/json.h"
 
-Celestial::Celestial(YAML::Node &config, ObjectType type, celType ctype)
+Celestial::Celestial(json &config, ObjectType type, celType ctype)
 : Object(config, type), cbType(ctype)
 {
     setup(config);
@@ -25,25 +25,25 @@ Celestial::~Celestial()
         delete ephemeris;
 }
 
-void Celestial::setup(YAML::Node &config)
+void Celestial::setup(json &config)
 {
     // Set up precession parameters
-    eps_rel = yaml::getValue<double>(config, "Obliquity");
-    precT   = yaml::getValue<double>(config, "PrecessionPeriod");
-    eps_ref = yaml::getValue<double>(config, "PrecessionObliquity");
-    lan_ref = yaml::getValue<double>(config, "PrecessionLAN");
-    Lrel0   = yaml::getValue<double>(config, "LAN");
-    mjd_rel = yaml::getValue<double>(config, "LAN_MJD", astro::MJD2000);
+    eps_rel = myjson::getFloat<double>(config, "obliquity");
+    precT   = myjson::getFloat<double>(config, "precession-period");
+    eps_ref = myjson::getFloat<double>(config, "precession-obliquity");
+    lan_ref = myjson::getFloat<double>(config, "precession-LAN");
+    Lrel0   = myjson::getFloat<double>(config, "LAN");
+    mjd_rel = myjson::getFloat<double>(config, "LAN-MJD", astro::MJD2000);
 
     // Set up rotation parameters
-    Dphi = yaml::getValue<double>(config, "SidRotOffset");
-    rotT = yaml::getValue<double>(config, "SidRotPeriod");
+    Dphi = myjson::getFloat<double>(config, "sid-rot-offset");
+    rotT = myjson::getFloat<double>(config, "sid-rot-period");
 
     Dphi += (ofsDate->getMJD0() - oel.getMJDEpoch() * ((86400.0/rotT)*pi2));
     Dphi += Lrel0 * cos(eps_rel);
     Dphi = fmod(Dphi, pi2);
 
-    str_t epName = yaml::getValueString<str_t>(config, "Orbit");
+    str_t epName = myjson::getString<str_t>(config, "orbit");
     if (!epName.empty())
     {
         OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
@@ -52,12 +52,12 @@ void Celestial::setup(YAML::Node &config)
         if (orbit != nullptr)
             ephemeris = orbit;
         else
-            ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
+            ofsLogger->error("OFS: Unknown orbital ephemeris: {}\n", epName);
     }
 
-    reflectivity = yaml::getValue<double>(config, "GeomAlbedo");
+    reflectivity = myjson::getFloat<double>(config, "geom-albedo");
 
-    geomColor = yaml::getArray<color_t, float>(config, "Color", { 0.5, 0.5, 0.5, 1.0 });
+    // geomColor = yaml::getArray<color_t, float>(config, "Color", { 0.5, 0.5, 0.5, 1.0 });
 }
 
 void Celestial::setupRotation()

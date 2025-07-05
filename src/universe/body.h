@@ -28,7 +28,8 @@ class CelestialPlanet : public CelestialBody
 {
 public:
     CelestialPlanet(cstr_t &name, celType type);
-    CelestialPlanet(YAML::Node &config, celType type);
+    // CelestialPlanet(YAML::Node &config, celType type);
+    CelestialPlanet(json &config, celType type);
     ~CelestialPlanet();
 
     void setup();

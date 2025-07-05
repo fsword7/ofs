@@ -10,7 +10,7 @@
 #include "universe/psystem.h"
 #include "universe/frame.h"
 
-RigidBody::RigidBody(YAML::Node &config, ObjectType type, celType celtype)
+RigidBody::RigidBody(json &config, ObjectType type, celType celtype)
 : Celestial(config, type, celtype)
 {
 

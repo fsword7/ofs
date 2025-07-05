@@ -19,7 +19,7 @@ class SuperVehicle : public RigidBody
 {
 public:
     SuperVehicle();
-    SuperVehicle(YAML::Node &config);
+    SuperVehicle(json &config);
     virtual ~SuperVehicle() = default;
 
     bool addVehicle(Vehicle *vehicle1, int port1, Vehicle *vehicle2, int port2);

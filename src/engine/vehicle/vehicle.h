@@ -317,7 +317,7 @@ public:
     };
 
     VehicleBase(cstr_t &name);
-    VehicleBase(YAML::Node &config);
+    VehicleBase(json &config);
     virtual ~VehicleBase() = default;
 
     inline surface_t *getSurfaceParameters() { return &surfParam; }
@@ -350,7 +350,7 @@ class Vehicle : public VehicleBase
 
 public:
     Vehicle(cstr_t &name = "(self)");
-    Vehicle(YAML::Node &config);
+    Vehicle(json &config);
     virtual ~Vehicle();
 
     void clearModule();

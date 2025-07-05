@@ -211,7 +211,7 @@ VehicleBase::VehicleBase(cstr_t &name)
     etile.reserve(2);
 }
 
-VehicleBase::VehicleBase(YAML::Node &config)
+VehicleBase::VehicleBase(json &config)
 : RigidBody(config, objVehicle, cbVehicle)
 {
     etile.reserve(2);
@@ -242,7 +242,7 @@ Vehicle::Vehicle(cstr_t &name)
         thgrpList[idx] = nullptr;
 }
 
-Vehicle::Vehicle(YAML::Node &config)
+Vehicle::Vehicle(json &config)
 : VehicleBase(config)
 {
     thgrpList.reserve(thgMaxThrusters);

@@ -10,7 +10,7 @@
 #include "engine/vehicle/vehicle.h"
 #include "engine/vehicle/svehicle.h"
 
-SuperVehicle::SuperVehicle(YAML::Node &config)
+SuperVehicle::SuperVehicle(json &config)
 : RigidBody(config, objVehicle, cbVehicle)
 {
     

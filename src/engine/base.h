@@ -12,7 +12,7 @@ class CelestialPlanet;
 class Base : public Celestial
 {
 public:
-    Base(YAML::Node &config, CelestialPlanet *planet, double lat = 0, double lng = 0);
+    Base(json &config, CelestialPlanet *planet, double lat = 0, double lng = 0);
     virtual ~Base();
 
     void setup();

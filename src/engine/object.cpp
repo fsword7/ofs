@@ -8,39 +8,15 @@
 #include "main/core.h"
 // #include "yaml-cpp/yaml.h"
 #include "engine/object.h"
+#include "utils/json.h"
 
-
-Object::Object(YAML::Node &config, ObjectType type)
+Object::Object(json &config, ObjectType type)
 : objType(type)
 {
-    std::string name = "(unknown)";
-
-    if (config["Name"].IsScalar())
-    {
-        setsName(config["Name"].as<std::string>());
-        ofsLogger->info("Planet: {}\n", getsName());
-    }
-
-    if (config["Mass"].IsScalar())
-    {
-        setMass(config["Mass"].as<double>());
-        ofsLogger->info("Mass: {:f}\n", getMass());
-    }
-
-    if (config["Radius"].IsScalar())
-    {
-        setRadius(config["Radius"].as<double>());
-        ofsLogger->info("Radius: {:f}\n", getRadius());
-    }
-
-    if (config["GeomAlbedo"].IsScalar())
-    {
-        setAlbedo(config["GeomAlbedo"].as<double>());
-        ofsLogger->info("Albedo: {:f}\n", getAlbedo());
-    }
-
-    // if (config["Color"].IsSequence())
-    //     geomColor = config["Color"].as<color_t>();
+    setsName(myjson::getString<str_t>(config, "name", "(unknown)"));
+    setMass(myjson::getFloat<double>(config, "mass"));
+    setRadius(myjson::getFloat<double>(config, "radius"));
+    setAlbedo(myjson::getFloat<double>(config, "geom-albedo"));
 }
 
 void Object::update(bool force)

@@ -105,7 +105,10 @@ class OFSAPI Player
 {
 public:
     Player(TimeDate *td, int width, int height);
+    Player(json &config, TimeDate *td, int width, int height);
     ~Player();
+
+    void configure(json &config);
 
     inline bool isExternal() const              { return modeExternal; }
     inline bool isInternal() const              { return !modeExternal; }

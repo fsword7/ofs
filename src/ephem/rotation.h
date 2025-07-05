@@ -11,7 +11,7 @@ public:
     Rotation() = default;
     virtual ~Rotation() = default;
 
-    static Rotation *create(YAML::Node &config);
+    static Rotation *create(json &config);
 
     virtual void update(double mjd) = 0;
 };
@@ -28,10 +28,10 @@ class RotationUniform : public Rotation
 {
 public:
     RotationUniform() = default;
-    RotationUniform(YAML::Node &config);
+    RotationUniform(json &config);
     virtual ~RotationUniform() = default;
 
-    void configure(YAML::Node &config);
+    void configure(json &config);
 
     void update(double mjd) override;
     double spin(double mjd);

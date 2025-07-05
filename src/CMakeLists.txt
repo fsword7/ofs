@@ -30,8 +30,8 @@ set(OFS_CPP_SRCS
     ephem/sol/earth/nrlmsise00_math.cpp
     ephem/sol/earth/nrlmsise00_p.cpp
     ephem/sol/earth/nrlmsise00.cpp
-    ephem/sol/lunar/elp82.cpp
-    ephem/sol/lunar/lunar.cpp
+    ephem/sol/luna/elp82.cpp
+    ephem/sol/luna/luna.cpp
     ephem/sol/mars/atmo.cpp
     ephem/sol/venus/atmo.cpp
     ephem/vsop87/earth.cpp
@@ -126,8 +126,8 @@ set(OFS_H_SRCS
     ephem/sol/earth/nrlmsise00_math.hpp
     ephem/sol/earth/nrlmsise00_p.hpp
     ephem/sol/earth/nrlmsise00.hpp
-    ephem/sol/lunar/elp82.h
-    ephem/sol/lunar/lunar.h
+    ephem/sol/luna/elp82.h
+    ephem/sol/luna/luna.h
     ephem/sol/mars/atmo.h
     ephem/sol/venus/atmo.h
     ephem/vsop87/earth.h
@@ -180,9 +180,10 @@ set(OFS_H_SRCS
     # universe/system.h
     universe/universe.h
     utils/color.h
+    utils/json.h
     utils/string.h
     utils/tree.h
-    utils/yaml.h
+    # utils/yaml.h
     utils/ztreemgr.h
 )
 
@@ -214,7 +215,7 @@ target_link_libraries(ofs
     Freetype::Freetype
     fmt::fmt
     ZLIB::ZLIB
-    yaml-cpp::yaml-cpp
+    nlohmann_json::nlohmann_json
     imgui
     glfw
     OpenGL::GL
@@ -242,6 +243,10 @@ set_target_properties(ofs
 # installing Sol system files
 add_subdirectory(ephem/sol)
 add_subdirectory(vehicles/glider)
+
+install(DIRECTORY data/
+    DESTINATION ${OFS_INSTALL_HOME_DIR}
+)
 
 install(TARGETS ofs
     RUNTIME DESTINATION ${OFS_INSTALL_BIN_DIR}

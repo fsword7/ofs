@@ -92,7 +92,7 @@ public:
     NavigationManager();
     ~NavigationManager();
 
-    bool setup(YAML::Node &config);
+    bool setup(json &config);
 
     inline int getNavSize() const                   { return navList.size(); }
     inline RadioNavigation *getNav(int idx) const   { return idx < navList.size() ? navList[idx] : nullptr; }

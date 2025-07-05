@@ -44,10 +44,10 @@ public:
     : Object(name, type), cbType(ctype)
     { }
 
-    Celestial(YAML::Node &config, ObjectType type, celType ctype);
+    Celestial(json &config, ObjectType type, celType ctype);
     virtual ~Celestial();
 
-    void setup(YAML::Node &config);
+    void setup(json &config);
 
     void updateCelestial(bool force);
 

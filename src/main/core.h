@@ -15,6 +15,7 @@
 #include <sstream>
 #include <filesystem>
 #include <string>
+#include <list>
 #include <vector>
 #include <queue>
 #include <map>
@@ -23,8 +24,9 @@
 #include <algorithm>
 #include <typeinfo>
 
-#define YAML_CPP_API
-#include "yaml-cpp/yaml.h"
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
+using cjson = const nlohmann::json;
 
 typedef const char          cchar_t;
 typedef std::string         str_t;

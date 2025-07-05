@@ -27,6 +27,7 @@ public:
     inline std::vector<const CelestialStar *> &getNearStars() { return nearStars; }
 
     void init();
+    void configure(const json &config);
     void start(const TimeDate &td);
     void update(Player *player, const TimeDate &td);
     void finalizeUpdate();
@@ -37,8 +38,8 @@ public:
 
     CelestialStar *findStar(cstr_t &name) const;
 
-    Object *findObject(const Object *obj, const std::string &name) const;
-    Object *findPath(cstr_t &path) const;
+    Celestial *findObject(const Object *obj, const std::string &name) const;
+    Celestial *findPath(cstr_t &path) const;
 
     // int findCloseStars(const vec3d_t &obs, double mdist,
     //     std::vector<const celStar *> &closeStars) const;
@@ -67,6 +68,6 @@ private:
     CelestialStar *sun;
     CelestialPlanet *mercury, *venus, *earth;
     CelestialPlanet *mars, *jupiter, *saturn;
-    CelestialPlanet *uranus, *neptune, *lunar;
+    CelestialPlanet *uranus, *neptune, *luna;
     Vehicle *vehicle = nullptr;
 };

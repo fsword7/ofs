@@ -1,4 +1,4 @@
-Name: "Lunar"
+Name: "Luna"
 System: "Earth"
 Type: moon
 
@@ -15,7 +15,7 @@ GeomAlbedo: 0.136
 MaxLOD: 12
 ElevRes: 0.5
 
-Orbit: "elp82b-lunar"
+Orbit: "elp82b-luna"
 
 # Rotation and precession parameters
 Rotation: Uniform

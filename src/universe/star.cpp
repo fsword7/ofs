@@ -9,6 +9,7 @@
 #include "universe/star.h"
 #include "universe/psystem.h"
 #include "universe/astro.h"
+#include "utils/json.h"
 
 CelestialStar::CelestialStar(cstr_t &name)
 : CelestialBody(name, objCelestialStar, cbStar)
@@ -66,30 +67,18 @@ CelestialStar *CelestialStar::create(double ra, double de, double pc,
     return star;
 }
 
-void CelestialStar::configure(YAML::Node &config)
+void CelestialStar::configure(json &config)
 {
-    if (config["Mass"].IsScalar())
-    {
-        setMass(config["Mass"].as<double>());
-        // knownFlags |= cbKnownMass;
-        ofsLogger->info("Mass: {:f}\n", getMass());
-    }
+    setMass(myjson::getFloat<double>(config, "mass"));
+    setRadius(myjson::getFloat<double>(config, "radius"));
 
-    if (config["Radius"].IsScalar())
+    str_t epName = myjson::getString<str_t>(config, "orbit");
+    if (!epName.empty())
     {
-        setRadius(config["Radius"].as<double>());
-        knownFlags |= cbKnownRadius;
-        ofsLogger->info("Radius: {:f}\n", getRadius());
-    }
-
-    if (config["Orbit"].IsScalar())
-    {
-        str_t epName = config["Orbit"].as<str_t>();
         OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
-
         if (orbit != nullptr)
             setEphemeris(orbit);
         else
-            ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
+            ofsLogger->error("OFS: Unknown orbital ephemeris: {}\n", epName);
     }
 }

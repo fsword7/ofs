@@ -6,7 +6,7 @@
 #include "main/core.h"
 #include "main/app.h"
 #include "api/graphics.h"
-#include "utils/yaml.h"
+#include "utils/json.h"
 #include "engine/mesh.h"
 
 Mesh::~Mesh()
@@ -83,142 +83,142 @@ void Mesh::addMaterial(MeshMaterial *mtrl)
     materials.push_back(mtrl);
 }
 
-void Mesh::load(YAML::Node &config, Mesh &mesh)
+void Mesh::load(json &config, Mesh &mesh)
 {
-    int nGroups;
-    bool bStaticMesh;
+    // int nGroups;
+    // bool bStaticMesh;
 
-    bStaticMesh = yaml::getValue(config, "StaticMesh", false);
+    // bStaticMesh = yaml::getValue(config, "StaticMesh", false);
 
-    if (!config["MeshData"].IsSequence())
-        return;
-    YAML::Node data = config["MeshData"];
-    nGroups = data.size();
+    // if (!config["MeshData"].IsSequence())
+    //     return;
+    // YAML::Node data = config["MeshData"];
+    // nGroups = data.size();
 
-    for (int gidx = 0; gidx < nGroups; gidx++)
-    {
-        YAML::Node entry = data["MeshData"][gidx];
+    // for (int gidx = 0; gidx < nGroups; gidx++)
+    // {
+    //     YAML::Node entry = data["MeshData"][gidx];
 
-        bool bNormals = false;
-        bool bCalcNormals = false;
-        int mtrlIndex = -1;
-        int texIndex = -1;
-        int nvtx, nidx, ntri;
-        MeshVertex *vtx = nullptr;
-        uint16_t *idx = nullptr;
+    //     bool bNormals = false;
+    //     bool bCalcNormals = false;
+    //     int mtrlIndex = -1;
+    //     int texIndex = -1;
+    //     int nvtx, nidx, ntri;
+    //     MeshVertex *vtx = nullptr;
+    //     uint16_t *idx = nullptr;
 
-        uint32_t flags = bStaticMesh ? 4 : 0;
-        uint32_t userFlags = 0;
+    //     uint32_t flags = bStaticMesh ? 4 : 0;
+    //     uint32_t userFlags = 0;
 
-        mtrlIndex = yaml::getValue<int>(entry, "material", -1);
-        texIndex = yaml::getValue<int>(entry,"texture", -1);
-        bNormals = yaml::getValue<bool>(entry, "Normals", false);
-        userFlags = yaml::getValue<uint32_t>(entry, "Flags", 0);
+    //     mtrlIndex = yaml::getValue<int>(entry, "material", -1);
+    //     texIndex = yaml::getValue<int>(entry,"texture", -1);
+    //     bNormals = yaml::getValue<bool>(entry, "Normals", false);
+    //     userFlags = yaml::getValue<uint32_t>(entry, "Flags", 0);
 
-        str_t wrap = yaml::getValueString<str_t>(entry, "TexWrap");
-        if (!wrap.empty()) {
-            if (toupper(wrap[0]) == 'U' || toupper(wrap[1]) == 'U')
-                flags |= 1;
-            if (toupper(wrap[0]) == 'V' || toupper(wrap[1]) == 'V')
-                flags |= 2;
-        }
+    //     str_t wrap = yaml::getValueString<str_t>(entry, "TexWrap");
+    //     if (!wrap.empty()) {
+    //         if (toupper(wrap[0]) == 'U' || toupper(wrap[1]) == 'U')
+    //             flags |= 1;
+    //         if (toupper(wrap[0]) == 'V' || toupper(wrap[1]) == 'V')
+    //             flags |= 2;
+    //     }
 
-        if (!entry["vertices"].IsSequence())
-            return;
-        nvtx = entry["vertices"].size();
-        vtx = new MeshVertex[nvtx];
-        memset(vtx, 0, sizeof(MeshVertex)*nvtx);
-        for (int vidx = 0; vidx < nvtx; vidx++)
-        {
-            YAML::Node geom = entry["vertices"][vidx];
-            if (!geom.IsSequence())
-                return;
-            MeshVertex &v = vtx[vidx];
-            if (bNormals) {
-                v.vtx.x = geom[0].as<double>(), v.vtx.y = geom[1].as<double>(), v.vtx.z = geom[2].as<double>();
-                v.nml.x = geom[3].as<double>(), v.nml.y = geom[4].as<double>(), v.nml.z = geom[5].as<double>();
-                v.tc.x  = geom[6].as<double>(), v.tc.y  = geom[7].as<double>();
-            } else {
-                v.vtx.x = geom[0].as<double>(), v.vtx.y = geom[1].as<double>(), v.vtx.z = geom[2].as<double>();
-                v.tc.x  = geom[3].as<double>(), v.tc.y  = geom[4].as<double>();
-                bCalcNormals = true;
-            }
-        }
+    //     if (!entry["vertices"].IsSequence())
+    //         return;
+    //     nvtx = entry["vertices"].size();
+    //     vtx = new MeshVertex[nvtx];
+    //     memset(vtx, 0, sizeof(MeshVertex)*nvtx);
+    //     for (int vidx = 0; vidx < nvtx; vidx++)
+    //     {
+    //         YAML::Node geom = entry["vertices"][vidx];
+    //         if (!geom.IsSequence())
+    //             return;
+    //         MeshVertex &v = vtx[vidx];
+    //         if (bNormals) {
+    //             v.vtx.x = geom[0].as<double>(), v.vtx.y = geom[1].as<double>(), v.vtx.z = geom[2].as<double>();
+    //             v.nml.x = geom[3].as<double>(), v.nml.y = geom[4].as<double>(), v.nml.z = geom[5].as<double>();
+    //             v.tc.x  = geom[6].as<double>(), v.tc.y  = geom[7].as<double>();
+    //         } else {
+    //             v.vtx.x = geom[0].as<double>(), v.vtx.y = geom[1].as<double>(), v.vtx.z = geom[2].as<double>();
+    //             v.tc.x  = geom[3].as<double>(), v.tc.y  = geom[4].as<double>();
+    //             bCalcNormals = true;
+    //         }
+    //     }
 
-        if (!entry["indices"].IsSequence())
-            return;
-        ntri = entry["indices"].size(), nidx = ntri * 3;
-        idx = new uint16_t[nidx];
-        memset(vtx, 0, sizeof(MeshVertex)*nvtx);
-        for (int eidx = 0, jidx = 0; eidx < ntri; eidx++, jidx += 3)
-        {
-            YAML::Node value = entry["indices"][eidx];
-            if (!value.IsSequence())
-                return;
-            idx[jidx+0] = value[0].as<double>();
-            idx[jidx+1] = value[1].as<double>();
-            idx[jidx+2] = value[2].as<double>();
-        }
+    //     if (!entry["indices"].IsSequence())
+    //         return;
+    //     ntri = entry["indices"].size(), nidx = ntri * 3;
+    //     idx = new uint16_t[nidx];
+    //     memset(vtx, 0, sizeof(MeshVertex)*nvtx);
+    //     for (int eidx = 0, jidx = 0; eidx < ntri; eidx++, jidx += 3)
+    //     {
+    //         YAML::Node value = entry["indices"][eidx];
+    //         if (!value.IsSequence())
+    //             return;
+    //         idx[jidx+0] = value[0].as<double>();
+    //         idx[jidx+1] = value[1].as<double>();
+    //         idx[jidx+2] = value[2].as<double>();
+    //     }
 
-        if (nvtx > 0 && nidx > 0)
-        {
-            MeshGroup *group = new MeshGroup;
+    //     if (nvtx > 0 && nidx > 0)
+    //     {
+    //         MeshGroup *group = new MeshGroup;
 
-            // Assign vertices to group
-            group->nvtx = nvtx;
-            group->vtx = vtx;
-            // Assign indices to group
-            group->nidx = nidx;
-            group->idx = idx;
+    //         // Assign vertices to group
+    //         group->nvtx = nvtx;
+    //         group->vtx = vtx;
+    //         // Assign indices to group
+    //         group->nidx = nidx;
+    //         group->idx = idx;
 
-            group->Flags = flags;
-            group->userFlags = userFlags;
-            group->texIndex = texIndex;
-            group->mtrlIndex = mtrlIndex;
+    //         group->Flags = flags;
+    //         group->userFlags = userFlags;
+    //         group->texIndex = texIndex;
+    //         group->mtrlIndex = mtrlIndex;
 
-            if (bCalcNormals)
-                mesh.calculateNormals(group, true);
-            mesh.addGroup(group);
-        }
-    }
+    //         if (bCalcNormals)
+    //             mesh.calculateNormals(group, true);
+    //         mesh.addGroup(group);
+    //     }
+    // }
 
-    if (!config["Materials"].IsSequence())
-        return;
-    YAML::Node mlist = config["Materials"];
-    for (int midx = 0; midx < mlist.size(); midx++)
-    {
-        MeshMaterial *mtrl = new MeshMaterial;
+    // if (!config["Materials"].IsSequence())
+    //     return;
+    // YAML::Node mlist = config["Materials"];
+    // for (int midx = 0; midx < mlist.size(); midx++)
+    // {
+    //     MeshMaterial *mtrl = new MeshMaterial;
 
-        YAML::Node entry = mlist[midx];
-        mtrl->name = yaml::getValueString<str_t>(entry, "Name");
-        mtrl->diffuse = yaml::getArray<glm::vec4, float>(entry, "Diffuse", { 0.0, 0.0, 0.0, 0.0 });
-        mtrl->specular = yaml::getArray<glm::vec4, float>(entry, "Specular", { 0.0, 0.0, 0.0, 0.0 });
-        mtrl->ambient = yaml::getArray<glm::vec4, float>(entry, "Ambient", { 0.0, 0.0, 0.0, 0.0 });
-        mtrl->emissive = yaml::getArray<glm::vec4, float>(entry, "Emissive", { 0.0, 0.0, 0.0, 0.0 });
-        mtrl->power = yaml::getValue<float>(entry, "Power", 0.0);
+    //     YAML::Node entry = mlist[midx];
+    //     mtrl->name = yaml::getValueString<str_t>(entry, "Name");
+    //     mtrl->diffuse = yaml::getArray<glm::vec4, float>(entry, "Diffuse", { 0.0, 0.0, 0.0, 0.0 });
+    //     mtrl->specular = yaml::getArray<glm::vec4, float>(entry, "Specular", { 0.0, 0.0, 0.0, 0.0 });
+    //     mtrl->ambient = yaml::getArray<glm::vec4, float>(entry, "Ambient", { 0.0, 0.0, 0.0, 0.0 });
+    //     mtrl->emissive = yaml::getArray<glm::vec4, float>(entry, "Emissive", { 0.0, 0.0, 0.0, 0.0 });
+    //     mtrl->power = yaml::getValue<float>(entry, "Power", 0.0);
 
-        addMaterial(mtrl);
-    }
+    //     addMaterial(mtrl);
+    // }
 
-    if (!config["Textures"].IsSequence())
-        return;
-    YAML::Node tlist = config["Textures"];
-    GraphicsClient *gclient = ofsAppCore->getClient();
-    for (int tidx = 0; tidx < tlist.size(); tidx++)
-    {
-        YAML::Node entry = tlist[tidx];
-        Texture *txImage;
-        str_t texName = yaml::getValueString<str_t>(entry, "texname");
-        bool uncompress = yaml::getValue<bool>(entry, "uncompress", false);
-        int flags = uncompress ? 2 : 0;
-        if (gclient != nullptr)
-        {
-            txImage = gclient->loadTexture(texName, flags | 8);
-            txImages.push_back(txImage);
-        }
-    }
+    // if (!config["Textures"].IsSequence())
+    //     return;
+    // YAML::Node tlist = config["Textures"];
+    // GraphicsClient *gclient = ofsAppCore->getClient();
+    // for (int tidx = 0; tidx < tlist.size(); tidx++)
+    // {
+    //     YAML::Node entry = tlist[tidx];
+    //     Texture *txImage;
+    //     str_t texName = yaml::getValueString<str_t>(entry, "texname");
+    //     bool uncompress = yaml::getValue<bool>(entry, "uncompress", false);
+    //     int flags = uncompress ? 2 : 0;
+    //     if (gclient != nullptr)
+    //     {
+    //         txImage = gclient->loadTexture(texName, flags | 8);
+    //         txImages.push_back(txImage);
+    //     }
+    // }
 
-    mesh.setup();
+    // mesh.setup();
 }
 
 std::istream &operator >> (std::istream &is, Mesh &mesh)

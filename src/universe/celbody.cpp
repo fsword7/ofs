@@ -9,7 +9,7 @@
 #include "ephem/elements.h"
 #include "engine/rigidbody.h"
 #include "ephem/vsop87/vsop87.h"
-#include "ephem/sol/lunar/elp82.h"
+#include "ephem/sol/luna/elp82.h"
 #include "ephem/rotation.h"
 // #include "ephem/elements.h"
 #include "universe/elevmgr.h"
@@ -63,33 +63,9 @@
 //     return ownSystem;
 // }
 
-CelestialBody::CelestialBody(YAML::Node &config, ObjectType type, celType cbtype)
+CelestialBody::CelestialBody(json &config, ObjectType type, celType cbtype)
 : RigidBody(config, type, cbtype)
 {
-
-    // if (config["Orbit"].IsScalar())
-    // {
-    //     str_t epName = config["Orbit"].as<str_t>();
-    //     OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
-    //     if (orbit == nullptr)
-    //         orbit = OrbitELP82::create(*this, epName);
-
-    //     if (orbit != nullptr)
-    //         setEphemeris(orbit);
-    //     else
-    //         ofsLogger->error("OFS Error: Unknown orbital ephemeris: {}\n", epName);
-    // }
-
-    // getValueReal(cfg, "LAN", Lrel0);
-    // getValueReal(cfg, "LAN_MJD", mjd_rel);
-    // getValueReal(cfg, "SidRotPeriod", rotT);
-    // getValueReal(cfg, "SidRotOffset", Dphi);
-    // getValueReal(cfg, "Obliquity", eps_rel);
-
-    // getValueReal(cfg, "PrecessionPeriod", precT);
-    // getValueReal(cfg, "PrecessionObliquity", eps_ref);
-    // getValueReal(cfg, "PreccesionLAN", lan_ref);
-
 }
 
 CelestialBody::~CelestialBody()

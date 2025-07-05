@@ -1,0 +1,24 @@
+system: Sol
+
+ships:
+- name: "SG:Space glider"
+  tag: SG-01
+  module: glider
+  status: [ "landed", "Sol:Earth" ]
+  location: [ 28.632307, -80.705774 ]
+  heading: 150
+
+# player:
+#   target: SG-01
+#   mode: cockpit
+#   fov: 50.0
+
+player:
+  mode:
+    target: "Sol/Earth"
+    type: target-sync
+    position: [ 0, 0, 1 ]
+    sync: "Sol"
+  travel: free
+  focus: "Sol/Earth"
+  fov: 50.0

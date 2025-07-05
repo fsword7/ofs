@@ -55,7 +55,7 @@ public:
 
     void calculateNormals(MeshGroup *group, bool missing);
 
-    void load(YAML::Node &config, Mesh &mesh);
+    void load(json &config, Mesh &mesh);
 
     friend std::istream &operator >> (std::istream &is, Mesh &mesh);
 

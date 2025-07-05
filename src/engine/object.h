@@ -32,7 +32,7 @@ public:
         objNames[0] = name;
     }
 
-    Object(YAML::Node &config, ObjectType type);
+    Object(json &config, ObjectType type);
     
     virtual ~Object() = default;
 

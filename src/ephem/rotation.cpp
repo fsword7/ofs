@@ -5,42 +5,42 @@
 
 #include "main/core.h"
 #include "ephem/rotation.h"
-#include "utils/yaml.h"
+#include "utils/json.h"
 
 // **** Base Rotation ****
 
 
-Rotation *Rotation::create(YAML::Node &config)
+Rotation *Rotation::create(json &config)
 {
     Rotation *rot = nullptr;
 
-    cstr_t name = yaml::getValue<str_t>(config, "Rotation");
-    if (name == "Uniform")
-        rot = new RotationUniform(config);
+    // cstr_t name = yaml::getValue<str_t>(config, "Rotation");
+    // if (name == "Uniform")
+    //     rot = new RotationUniform(config);
 
     return rot;
 }
 
 // **** Uniformed Rotation ****
 
-RotationUniform::RotationUniform(YAML::Node &config)
+RotationUniform::RotationUniform(json &config)
 {
     configure(config);
 }
 
-void RotationUniform::configure(YAML::Node &config)
+void RotationUniform::configure(json &config)
 {
-    // Get sideral rotation parameters
-    Dphi = yaml::getValue<double>(config, "SidRotOffset");
-    rotT = yaml::getValue<double>(config, "SidRotPeriod");
+    // // Get sideral rotation parameters
+    // Dphi = yaml::getValue<double>(config, "SidRotOffset");
+    // rotT = yaml::getValue<double>(config, "SidRotPeriod");
 
-    // Get prcession parameters
-    Lrel0   = yaml::getValue<double>(config, "LAN");
-    mjd_rel = yaml::getValue<double>(config, "LAN_MJD");
-    eps_rel = yaml::getValue<double>(config, "Obliquity");
-    lan_ref = yaml::getValue<double>(config, "PrecessionLAN");
-    eps_ref = yaml::getValue<double>(config, "PrecessionObliquity");
-    precT   = yaml::getValue<double>(config, "PrecessionPeriod");
+    // // Get prcession parameters
+    // Lrel0   = yaml::getValue<double>(config, "LAN");
+    // mjd_rel = yaml::getValue<double>(config, "LAN_MJD");
+    // eps_rel = yaml::getValue<double>(config, "Obliquity");
+    // lan_ref = yaml::getValue<double>(config, "PrecessionLAN");
+    // eps_ref = yaml::getValue<double>(config, "PrecessionObliquity");
+    // precT   = yaml::getValue<double>(config, "PrecessionPeriod");
 }
 
 double RotationUniform::spin(double t)

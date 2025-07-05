@@ -9,19 +9,21 @@ class Universe;
 class Celestial;
 class CelestialStar;
 class CelestialBody;
+class SuperVehicle;
 class Vehicle;
 class TimeDate;
 class pSystem
 {
 public:
     pSystem() = default;
-    pSystem(str_t &name);
+    pSystem(cstr_t &name);
     pSystem(Celestial *star);
     ~pSystem() = default;
 
     void addStar(Celestial *cbody);
     void addBody(Celestial *cbody);
     void addPlanet(CelestialBody *planet, CelestialBody *cbody);
+    void addSuperVehicle(SuperVehicle *svehicle);
     void addVehicle(Vehicle *vehicle);
     void addCelestial(Celestial *cel);
     void sortCelestials();
@@ -41,26 +43,24 @@ public:
     glm::dvec3 addGravity(const glm::dvec3 &gpos, const Celestial *exclude = nullptr) const;
     glm::dvec3 addGravityIntermediate(const glm::dvec3 &gpos, double tfrac, const Celestial *exclude = nullptr) const;
 
-    // static bool loadSystems(Universe *universe, cstr_t &sysName);
-    // static bool loadPlanet(const cstr_t &cbName, pSystem *psys, fs::path cbFolder);
-
-    static bool loadStar(const cstr_t &cbName, Universe *universe, pSystem *psys, cstr_t &cbFolder);
-    static bool loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbFolder);
-    static bool loadSystems(Universe *universe, cstr_t &sysName);
+    static bool loadStar(cstr_t &cbName, Universe *univ, pSystem *psys, fs::path &cbPath);
+    static bool loadPlanet(cstr_t &cbName, pSystem *psys, fs::path &cbPath);
+    static bool loadSystem(Universe *univ, cstr_t &sysName, const fs::path &path);
 
     void update(bool force);
     void finalizeUpdate();
 
 private:
-    str_t sysName;
-    str_t sysPath;
-    str_t sysFolder;
+    cstr_t sysName;
+    str_t  sysPath;
+    str_t  sysFolder;
 
     Celestial *primaryStar = nullptr;
 
     std::vector<Celestial *> stars;
     std::vector<Celestial *> bodies;
     std::vector<Celestial *> planets;
+    std::vector<SuperVehicle *> svehicles;
     std::vector<Vehicle *> vehicles;
     std::vector<Celestial *> celestials;
 

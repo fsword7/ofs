@@ -6,12 +6,13 @@
 #define OFSAPI_SERVER_BUILD
 
 #include "main/core.h"
+#include "utils/json.h"
 #include "engine/player.h"
 #include "engine/celestial.h"
 #include "engine/vehicle/vehicle.h"
 #include "ephem/orbit.h"
 #include "ephem/vsop87/vsop87.h"
-#include "ephem/sol/lunar/elp82.h"
+#include "ephem/sol/luna/elp82.h"
 #include "ephem/rotation.h"
 #include "universe/universe.h"
 #include "universe/star.h"
@@ -28,11 +29,37 @@ void Universe::init()
     stardb.loadXHIPData(homePath / "data/xhip");
     constellations.load(homePath / "data/constellations/western/constellationship.fab");
     // constellations.load("constellations/western_rey/constellationship.fab");
+}
 
-    if (!pSystem::loadSystems(this, "sol"))
-        exit(1);
+void Universe::configure(const json &config)
+{
+    if (config["systems"].is_array())
+    {
+        for (auto &item : config["systems"].items())
+        {
+            if (!item.value().is_object())
+                continue;
+            auto entry = item.value();
 
+            str_t sysName;
+            fs::path sysFolder;
 
+            sysName = myjson::getString<str_t>(entry, "name");
+            sysFolder = myjson::getString<fs::path>(entry, "folder");
+
+            // if (entry["name"].is_string())
+            //     sysName = entry["name"].get<str_t>();
+            
+            // if (entry["folder"].is_string())
+            //     sysFolder = entry["folder"].get<fs::path>();
+            // sysFolder = OFS_HOME_DIR / sysFolder;
+
+            ofsLogger->info("JSON: Name: {}, Folder: {}\n", sysName, sysFolder.c_str());
+
+            sysFolder = OFS_HOME_DIR / sysFolder;
+            if (!pSystem::loadSystem(this, sysName, sysFolder));
+        }
+    }
 }
 
 void Universe::start(const TimeDate &td)
@@ -43,7 +70,7 @@ void Universe::start(const TimeDate &td)
     CelestialStar *sun = dynamic_cast<CelestialStar *>(stardb.find("Sol"));
     pSystem *psys = sun->getSystem();
     Celestial *earth = dynamic_cast<Celestial *>(psys->find("Earth"));
-    Celestial *lunar = dynamic_cast<Celestial *>(psys->find("Lunar"));
+    Celestial *luna = dynamic_cast<Celestial *>(psys->find("Luna"));
     Celestial *mars = dynamic_cast<Celestial *>(psys->find("Mars"));
     Celestial *mercury = dynamic_cast<Celestial *>(psys->find("Mercury"));
     Celestial *jupiter = dynamic_cast<Celestial *>(psys->find("Jupiter"));
@@ -54,7 +81,7 @@ void Universe::start(const TimeDate &td)
     assert(sun != nullptr);
     assert(psys != nullptr);
     assert(earth != nullptr);
-    assert(lunar != nullptr);
+    assert(luna != nullptr);
     assert(mars != nullptr);
     assert(mercury != nullptr);
     assert(jupiter != nullptr);
@@ -194,42 +221,38 @@ CelestialStar *Universe::findStar(cstr_t &name) const
     return stardb.find(name);
 }
 
-Object *Universe::findObject(const Object *obj, cstr_t &name) const
+Celestial *Universe::findObject(const Object *obj, cstr_t &name) const
 {
-    System *system;
+    pSystem *psys;
     const CelestialStar *sun;
     const CelestialBody *body;
-    // const PlanetarySystem *objects;
 
     switch (obj->getType())
     {
     case ObjectType::objCelestialStar:
         sun = dynamic_cast<const CelestialStar *>(obj);
-        // if ((system = sun->getSolarSystem()) == nullptr)
-        //     break;
-        // objects = system->getPlanetarySystem();
-        // return objects->find(name);
-        break;
+        if ((psys = sun->getPlanetarySystem()) == nullptr)
+            break;
+        return psys->find(name);
 
     case ObjectType::objCelestialBody:
         body = dynamic_cast<const CelestialBody *>(obj);
-        // objects = body->getOwnSystem();
-        // if (objects != nullptr)
-        //     return objects->find(name);
-        break;
+        if ((psys = body->getSystem()) == nullptr)
+            break;
+        return psys->find(name);
     }
 
     return nullptr;
 }
 
-Object *Universe::findPath(cstr_t &path) const
+Celestial *Universe::findPath(cstr_t &path) const
 {
     std::string::size_type pos = path.find('/', 0);
     if (pos == std::string::npos)
         return findStar(path);
 
     std::string base(path, 0, pos);
-    Object *obj = findStar(base);
+    Celestial *obj = findStar(base);
 
     while (obj != nullptr && pos != std::string::npos)
     {

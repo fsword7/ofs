@@ -17,7 +17,7 @@ public:
     : Celestial(name, type, cbtype)
     { }
 
-    RigidBody(YAML::Node &config, ObjectType type, celType ctype);
+    RigidBody(json &config, ObjectType type, celType ctype);
 
     virtual ~RigidBody() = default;
 

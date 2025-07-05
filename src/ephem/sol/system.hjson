@@ -1,0 +1,18 @@
+{
+    # Sol solar system
+    system: Sol
+
+    # folders list
+    celestial-bodies: [
+        { name: "Sol", type: "star", folder: "sol/sol" },
+            { name: "Mercury", type: "planet", folder: "sol/mercury" },
+            { name: "Venus", type: "planet", folder: "sol/venus" },
+            { name: "Earth", type: "planet", folder: "sol/earth" },
+                { name: "Luna", type: "moon", folder: "sol/luna" },
+            { name: "Mars", type: "planet", folder: "sol/mars" },
+            { name: "Jupiter", type: "planet", folder: "sol/jupiter" },
+            { name: "Saturn", type: "planet", folder: "sol/saturn" },
+            { name: "Uranus", type: "planet", folder: "sol/uranus" },
+            { name: "Neptune", type: "planet", folder: "sol/neptune" },
+    ]
+}

@@ -65,7 +65,7 @@ public:
     {
     }
 
-    CelestialBody(YAML::Node &config, ObjectType type, celType cbtype);
+    CelestialBody(json &config, ObjectType type, celType cbtype);
     virtual ~CelestialBody();
 
     // bool load(json &cfg);

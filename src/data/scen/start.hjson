@@ -1,0 +1,27 @@
+{
+    system: "Sol"
+
+    ships: [
+        {
+            name: "SG:Space Glider"
+            tag: "SG-01"
+            module: "glider"
+            status: ["landed", "Sol/Earth"]
+            location: [ 28.632307, -80.705774 ]
+            heading: 150
+        },
+    ],
+
+    // player configuration settings
+    player: {
+        mode: {
+            target: "Sol/Earth"
+            type: target-sync
+            position: [ 0, 0, 1 ]
+            sync: "Sol"
+        },
+        travel: free,
+        focus: "Sol/Earth"
+        fov: 50.0
+    }
+}

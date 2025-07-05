@@ -13,7 +13,7 @@ find_package(Freetype REQUIRED)
 find_package(fmt REQUIRED)
 find_package(ZLIB REQUIRED)
 #find_package(lua REQUIRED)
-find_package(yaml-cpp REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 # Get git commit ID
 execute_process(
@@ -35,10 +35,12 @@ message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
 if (UNIX)
     set(OFS_HOME_DIR ${CMAKE_INSTALL_PREFIX}/share/ofs)
+    set(OFS_BINARY_DIR ${CMAKE_INSTALL_PREFIX}/bin)
     set(OFS_LIBRARY_DIR ${CMAKE_INSTALL_PREFIX}/lib/ofs)
 endif (UNIX)
 if (MINGW)
     set(OFS_HOME_DIR ${CMAKE_INSTALL_PREFIX})
+    set(OFS_BINARY_DIR ${CMAKE_INSTALL_PREFIX}/bin)
     set(OFS_LIBRARY_DIR ${CMAKE_INSTALL_PREFIX}/lib)
 endif (MINGW)
 
@@ -51,7 +53,7 @@ set(OFS_BINARY_PLUGIN_DIR ${OFS_BINARY_LIB_DIR}/plugin)
 
 # path in relative to CMAKE_INSTALL_PREFIX
 set(OFS_INSTALL_HOME_DIR ${OFS_HOME_DIR})
-set(OFS_INSTALL_BIN_DIR ${OFS_HOME_DIR}/bin)
+set(OFS_INSTALL_BIN_DIR ${OFS_BINARY_DIR})
 set(OFS_INSTALL_LIB_DIR ${OFS_LIBRARY_DIR})
 set(OFS_INSTALL_STARTUP_DIR ${OFS_INSTALL_LIB_DIR}/startup)
 set(OFS_INSTALL_PLUGIN_DIR ${OFS_INSTALL_LIB_DIR}/plugin)

@@ -9,12 +9,13 @@
 #include "universe/astro.h"
 #include "universe/body.h"
 #include "universe/star.h"
+#include "engine/vehicle/svehicle.h"
 #include "engine/vehicle/vehicle.h"
 #include "universe/psystem.h"
 
-#include "yaml-cpp/yaml.h"
+#include "utils/json.h"
 
-pSystem::pSystem(str_t &name)
+pSystem::pSystem(cstr_t &name)
 : sysName(name)
 {
 }
@@ -42,6 +43,12 @@ void pSystem::addStar(Celestial *star)
 void pSystem::addBody(Celestial *cbody)
 {
     bodies.push_back(cbody);
+}
+
+void pSystem::addSuperVehicle(SuperVehicle *svehicle)
+{
+    svehicles.push_back(svehicle);
+    addBody(svehicle);
 }
 
 void pSystem::addVehicle(Vehicle *vehicle)
@@ -163,72 +170,33 @@ struct {
     { "moon", cbMoon }
 };
 
-bool pSystem::loadStar(const cstr_t &cbName, Universe *universe, pSystem *psys, cstr_t &cbPath)
+bool pSystem::loadStar(cstr_t &cbName, Universe *univ, pSystem *psys, fs::path &cbPath)
 {
     ofsLogger->info("Loading {}...\n", cbName);
-    str_t fileName = cbName + ".yaml";
+    fs::path path = cbPath / "cbody.json";
 
-    YAML::Node config;
-    config = YAML::LoadFile(cbPath + fileName);
+    std::ifstream jsonFile(path);
+    json config = json::parse(jsonFile, nullptr, false, true);
 
-    if (config["Activate"].IsScalar())
-    {
-        if (config["Activate"].as<bool>() == false)
-        {
-            ofsLogger->info("OFS Info: Disabled celestial body: {}\n",
-                cbName);
-            return false;
-        }
-    }
-
-    str_t sysName;
-    if (config["System"].IsScalar())
-    {
-        sysName = config["System"].as<std::string>();
-        if (sysName.empty())
-        {
-            ofsLogger->info("OFS: system name not found in {} - aborted", fileName);
-            return false;
-        }
-    }
-
-    StarDatabase &stardb = universe->getStarDatabase();
-    CelestialStar *star = stardb.find(sysName);
-    if (star == nullptr)
-    {
-        ofsLogger->info("OFS: {} system not found\n", sysName);
+    if (!myjson::getInteger<bool>(config, "activate", true)) {
+        ofsLogger->info("OFS info: Dosabled celestial body: {}\n", cbName);
         return false;
     }
 
-    // str_t sysName;
-    // CelestialBody *parent = nullptr;
-    // if (config["System"].IsScalar())
-    // {
-    //     sysName = config["System"].as<std::string>();
-    //     parent = psys->find(sysName);
-    //     if (parent == nullptr)
-    //     {
-    //         ofsLogger->error("OFS Error: Unknown system: {}\n", sysName);
-    //         return false;
-    //     }
-    // }
+    str_t sysName = myjson::getString<str_t>(config, "system");
+    if (sysName.empty()) {
+        ofsLogger->error("OFS: Required planetary system name - aborted\n");
+        return false;
+    }
 
-    // celType type = cbUnknown;
-    // if (config["Type"].IsScalar())
-    // {
-    //     std::string typeName = config["Type"].as<std::string>();
-    //     for (auto ctype : celTypes)
-    //         if (ctype.name == typeName)
-    //             type = ctype.type;
-    //     if (type == cbUnknown)
-    //     {
-    //         ofsLogger->info("OFS Error: Unknown celestial body type: {}\n",
-    //             typeName);
-    //         return false;
-    //     }
-    // }
+    StarDatabase &stardb = univ->getStarDatabase();
+    CelestialStar *star = stardb.find(sysName);
+    if (star == nullptr) {
+        ofsLogger->error("OFS: Unknown star system: {} - aborted\n", sysName);
+        return false;
+    }
 
-    star->configure(config);
+    // star->configure(config);
     star->setPath(cbPath);
     // star->setFolder(cbFolder);
     psys->addStar(star);
@@ -236,49 +204,45 @@ bool pSystem::loadStar(const cstr_t &cbName, Universe *universe, pSystem *psys, 
     return true;
 }
 
-bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbPath)
+bool pSystem::loadPlanet(cstr_t &cbName, pSystem *psys, fs::path &cbPath)
 {
     ofsLogger->info("Loading {}...\n", cbName);
-    str_t fileName = cbName + ".yaml";
+    fs::path path = cbPath / "cbody.json";
 
-    YAML::Node config;
-    config = YAML::LoadFile(cbPath + fileName);
+    std::ifstream jsonFile(path);
+    json config = json::parse(jsonFile, nullptr, false, true);
 
-    if (config["Activate"].IsScalar())
-    {
-        if (config["Activate"].as<bool>() == false)
-        {
-            ofsLogger->info("OFS Info: Disabled celestial body: {}\n",
-                cbName);
-            return false;
-        }
+    if (!myjson::getInteger<bool>(config, "activate", true)) {
+        ofsLogger->info("OFS info: Dosabled celestial body: {}\n", cbName);
+        return false;
     }
 
     CelestialBody *parent = nullptr;
-    if (config["System"].IsScalar())
-    {
-        std::string sysName = config["System"].as<std::string>();
-        parent = dynamic_cast<CelestialBody *>(psys->find(sysName));
-        if (parent == nullptr)
-        {
-            ofsLogger->error("OFS Error: Unknown system: {}\n", sysName);
-            return false;
-        }
+    str_t sysName = myjson::getString<str_t>(config, "system");
+    if (sysName.empty()) {
+        ofsLogger->error("OFS: Required planetary system name - aborted\n");
+        return false;
+    }
+    parent = dynamic_cast<CelestialBody *>(psys->find(sysName));
+    if (parent == nullptr) {
+        ofsLogger->error("OFS: Unknown planetary system: {} - aborted\n", sysName);
+        return false;
     }
 
     celType type = cbUnknown;
-    if (config["Type"].IsScalar())
+    str_t typeName = myjson::getString<str_t>(config, "type");
+    if (typeName.empty()) {
+        ofsLogger->error("OFS: Required celestial body type - aborted\n");
+        return false;
+    }
+    for (auto ctype : celTypes)
+        if (ctype.name == typeName)
+            type = ctype.type;
+    if (type == cbUnknown)
     {
-        std::string typeName = config["Type"].as<std::string>();
-        for (auto ctype : celTypes)
-            if (ctype.name == typeName)
-                type = ctype.type;
-        if (type == cbUnknown)
-        {
-            ofsLogger->info("OFS Error: Unknown celestial body type: {}\n",
-                typeName);
-            return false;
-        }
+        ofsLogger->info("OFS: Unknown celestial body type: {} - aborted\n",
+            typeName);
+        return false;
     }
 
     CelestialPlanet *cbody = new CelestialPlanet(config, type);
@@ -290,86 +254,43 @@ bool pSystem::loadPlanet(const cstr_t &cbName, pSystem *psys, cstr_t &cbPath)
     return true;
 }
 
-bool pSystem::loadSystems(Universe *universe, cstr_t &sysName)
+bool pSystem::loadSystem(Universe *univ, cstr_t &sysName, const fs::path &path)
 {
     ofsLogger->info("Loading {} system...\n", sysName);
 
-    str_t sysPath = OFS_HOME_DIR;
-    sysPath += "/systems/" + sysName + "/";
-    str_t sysFolder = sysName;
-    str_t fileName = "system.yaml";
+    fs::path fname = path / "system.json";
+    json sysConfig;
+    // str_t sysName;
 
-    YAML::Node config;
+    std::ifstream jsonFile(fname);
+    sysConfig = json::parse(jsonFile, nullptr, false, true);
 
-    try {
-        config = YAML::LoadFile(sysPath + fileName);
-    }
-    catch (YAML::Exception &e)
+    pSystem *psys = new pSystem(sysName);
+    ofsLogger->info("Creating {} planetary system...\n", sysName);
+
+    if (sysConfig["celestial-bodies"].is_array())
     {
-        ofsLogger->info("Error: {}\n", e.what());
-        return false;
-    }
+        for (auto &item : sysConfig["celestial-bodies"].items())
+        {
+            if (!item.value().is_object())
+                continue;
+            auto &entry = item.value();
+            str_t cbName, cbType;
+            fs::path cbPath = OFS_HOME_DIR;
+            cbPath /= "systems";
 
-    // for (auto it = config.begin(); it != config.end(); ++it)
-    // {
-    //     std::string key = it->first.as<std::string>();
-    //     YAML::Node value = it->second;
-    //     ofsLogger->info("Key: {}:", key);
-    //     switch (value.Type())
-    //     {
-    //     case YAML::NodeType::Null:
-    //         ofsLogger->info(" (Null)\n");
-    //         break;
-    //     case YAML::NodeType::Scalar:
-    //         ofsLogger->info(" (Scalar) {}\n",
-    //             value.as<std::string>());
-    //         break;
-    //     case YAML::NodeType::Sequence:
-    //         ofsLogger->info(" (Sequence)\n");
-    //         break;
-    //     case YAML::NodeType::Map:
-    //         ofsLogger->info(" (Map)\n");
-    //         break;
-    //     case YAML::NodeType::Undefined:
-    //         ofsLogger->info(" (Undefined)\n");
-    //         break;
-    //     }
-    // }
+            if (entry["name"].is_string())
+                cbName = entry["name"].get<str_t>();
+            if (entry["type"].is_string())
+                cbType = entry["type"].get<str_t>();
+            if (entry["folder"].is_string())
+                cbPath /= entry["folder"].get<fs::path>();
 
-    YAML::Node sys = config["system"];
-    std::string name;
-    if (sys.IsScalar())
-        name = sys.as<std::string>();
-
-    // StarDatabase &stardb = universe->getStarDatabase();
-    // CelestialStar *sun = stardb.find(name);
-    // if (sun == nullptr)
-    // {
-    //     ofsLogger->info("System: {}: star not found\n", name);
-    //     return false;
-    // }
-    pSystem *psys = new pSystem(name);
-    psys->sysPath = sysPath;
-    psys->sysFolder = sysFolder;
-    // pSystem *psys = new pSystem(sun);
-    ofsLogger->info("Creating {} planetary system...\n", name);
-
-    for (auto body : config["stars"])
-    {
-        // ofsLogger->info("Star: {}\n", planet.as<std::string>());
-        str_t cbName = body.as<std::string>();
-        str_t cbPath = sysPath + cbName + "/";
-        str_t cbFolder = sysFolder + "/" + cbName;
-        loadStar(cbName, universe, psys, cbPath);
-    }
-
-    for (auto body : config["planets"])
-    {
-        // ofsLogger->info("Planet: {}\n", planet.as<std::string>());
-        str_t cbName = body.as<std::string>();
-        str_t cbPath = sysPath + cbName + "/";
-        str_t cbFolder = sysFolder + "/" + cbName;
-        loadPlanet(cbName, psys, cbPath);
+            if (cbType == "star")
+                loadStar(cbName, univ, psys, cbPath);
+            else
+                loadPlanet(cbName, psys, cbPath);
+        }
     }
 
     return true;

@@ -6,7 +6,7 @@
 #include "main/core.h"
 #include "engine/base.h"
 #include "universe/body.h"
-#include "utils/yaml.h"
+#include "utils/json.h"
 
 CelestialPlanet::CelestialPlanet(cstr_t &name, celType type)
 : CelestialBody(name, objCelestialBody, type)
@@ -14,46 +14,17 @@ CelestialPlanet::CelestialPlanet(cstr_t &name, celType type)
     emgr = new ElevationManager(this);
 }
 
-CelestialPlanet::CelestialPlanet(YAML::Node &config, celType type)
+CelestialPlanet::CelestialPlanet(json &config, celType type)
 : CelestialBody(config, objCelestialBody, type)
 {
-    str_t atmName = yaml::getValueString<str_t>(config, "Atmosphere");
-    if (!atmName.empty())
-    {
+    str_t atmName = myjson::getString<str_t>(config, "atmosphere");
+    if (!atmName.empty()) {
         Atmosphere *atmp = Atmosphere::create(atmName);
         if (atmp != nullptr) {
             atm = atmp;
             atm->getAtmConstants(atmc);
         } else
-            ofsLogger->error("OFS Error: Unknown atmosphere model: {}\n", atmName);
-    }
-
-    atmc.color0 = yaml::getArray<color_t, float>(config, "AtmColor", {0, 0, 0});
-
-    if (config["GroundObservers"].IsSequence())
-    {
-        const YAML::Node &poiList = config["GroundObservers"];
-        str_t poiName;
-        glm::dvec3 gloc;
-        double gdir;
-        ofsLogger->info("Ground Observers: ({} records)\n", poiList.size());
-        for (int idx = 0; idx < poiList.size(); idx++) {
-            const YAML::Node &poi = poiList[idx];
-            if (poi.IsSequence())
-            {
-                poiName = poi[0].as<str_t>();
-                if (poi[1].IsSequence() && poi[1].size() == 3) {
-                    gloc.x = poi[1][0].as<double>();
-                    gloc.y = poi[1][1].as<double>();
-                    gloc.z = poi[1][2].as<double>();
-                }
-                gdir = poi[2].as<double>();
-
-                addGroundPOI(poiName, gloc, gdir);
-                ofsLogger->info("POI: {}, ({}, {}, {}) heading {}\n",
-                    poiName, gloc.x, gloc.y, gloc.z, gdir);
-            }
-        }
+            ofsLogger->error("OFS: Unknown atmosphere model: {}\n", atmName);
     }
 
     enableSecondaryIlluminator(true);
@@ -61,6 +32,54 @@ CelestialPlanet::CelestialPlanet(YAML::Node &config, celType type)
     // Initialize configurations from Yaml database.
     setup();
 }
+
+// CelestialPlanet::CelestialPlanet(YAML::Node &config, celType type)
+// : CelestialBody(config, objCelestialBody, type)
+// {
+//     str_t atmName = yaml::getValueString<str_t>(config, "Atmosphere");
+//     if (!atmName.empty())
+//     {
+//         Atmosphere *atmp = Atmosphere::create(atmName);
+//         if (atmp != nullptr) {
+//             atm = atmp;
+//             atm->getAtmConstants(atmc);
+//         } else
+//             ofsLogger->error("OFS Error: Unknown atmosphere model: {}\n", atmName);
+//     }
+
+//     atmc.color0 = yaml::getArray<color_t, float>(config, "AtmColor", {0, 0, 0});
+
+//     if (config["GroundObservers"].IsSequence())
+//     {
+//         const YAML::Node &poiList = config["GroundObservers"];
+//         str_t poiName;
+//         glm::dvec3 gloc;
+//         double gdir;
+//         ofsLogger->info("Ground Observers: ({} records)\n", poiList.size());
+//         for (int idx = 0; idx < poiList.size(); idx++) {
+//             const YAML::Node &poi = poiList[idx];
+//             if (poi.IsSequence())
+//             {
+//                 poiName = poi[0].as<str_t>();
+//                 if (poi[1].IsSequence() && poi[1].size() == 3) {
+//                     gloc.x = poi[1][0].as<double>();
+//                     gloc.y = poi[1][1].as<double>();
+//                     gloc.z = poi[1][2].as<double>();
+//                 }
+//                 gdir = poi[2].as<double>();
+
+//                 addGroundPOI(poiName, gloc, gdir);
+//                 ofsLogger->info("POI: {}, ({}, {}, {}) heading {}\n",
+//                     poiName, gloc.x, gloc.y, gloc.z, gdir);
+//             }
+//         }
+//     }
+
+//     enableSecondaryIlluminator(true);
+
+//     // Initialize configurations from Yaml database.
+//     setup();
+// }
 
 CelestialPlanet::~CelestialPlanet()
 {

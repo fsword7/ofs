@@ -7,10 +7,10 @@
 #include "api/ofsapi.h"
 #include "api/celbody.h"
 #include "ephem/ephemeris.h"
-#include "ephem/sol/lunar/elp82.h"
-#include "ephem/sol/lunar/lunar.h"
+#include "ephem/sol/luna/elp82.h"
+#include "ephem/sol/luna/luna.h"
 
-#include "ephem/sol/lunar/elp82dat.cpp"
+#include "ephem/sol/luna/elp82dat.cpp"
 
 OrbitELP82::OrbitELP82(Celestial &cbody)
 : OrbitEphemeris(cbody)
@@ -360,7 +360,7 @@ void OrbitELP82::getEphemeris(double mjd, double *res)
 
 OrbitEphemeris *OrbitELP82::create(Celestial &cbody, cstr_t &name)
 {
-	if (name == "elp82b-lunar")
+	if (name == "elp82b-luna")
 		return new OrbitELP82Lunar(cbody);
 	return nullptr;
 }

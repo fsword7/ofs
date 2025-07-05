@@ -12,6 +12,5 @@ set(OFS_SOL_SYSTEM
 
 install(DIRECTORY .
     DESTINATION ${OFS_INSTALL_HOME_DIR}/systems/sol
-    FILES_MATCHING
-    PATTERN "*.yaml"
+    FILES_MATCHING PATTERN "*.json"
 )
