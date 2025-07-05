@@ -1,0 +1,29 @@
+{
+    "name": "Uranus",
+    "system": "Sol",
+    "type": "planet",
+
+    "surface-orbiter": "sol/uranus/orbiter",
+    "activate": false,
+
+    "mass": 8.6832054e+25,
+    "radius": 25362.0,
+
+    "albedo": [  1.06, 1.27, 1.21 ],
+    "color": [ 0.86828, 0.97, 1.0 ],
+    "geom-albedo": 0.437118,
+
+    "max-lod": 2,
+
+    "orbit": "vsop87b-uranus",
+
+    // Rotation and precession parameters
+    "rotation": "uniform",
+    "LAN": 2.925986535,
+    "LAN_MJD": 51544.5,
+    "obliquity": 1.436025521,
+    "sid-rot-offset": 0.5200623232,
+    "sid-rot-period": -62064
+
+    // SidRotPeriod (days): -0.7183333333
+}

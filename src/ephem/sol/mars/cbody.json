@@ -1,0 +1,38 @@
+{
+    "name": "Mars",
+    "system": "Sol",
+    "type": "planet",
+
+    "surface-orbiter": "sol/mars/orbiter",
+    "activate": true,
+
+    "mass": 6.418542e+23,
+    "radius": 3390.0,
+
+    "albedo": [ 0.52, 0.40, 0.16 ],
+    "color": [ 1.0, 0.79855, 0.56429 ],
+    "geom-albedo": 0.174821,
+
+    "max-lod": 12,
+
+    "orbit": "vsop87b-mars",
+
+    // Rotation and precession parameters
+    "rotation": "uniform",
+    "precession-LAN": 4.005081124,
+    "precession-obliquity":  0.03224369545,
+    "precession-period": -63346652.48,
+    "LAN": 0.6210531483,
+    "LAN-MJD": 51544.5,
+    "obliquity": 0.4397415938,
+    "sid-rot-offset": 5.469523488,
+    "sid-rot-period": 88642.66435
+
+    // SidRotPeriod (days): 1.025956763
+    // SidRotPeriod (SI seconds): 1.025956748
+    // Pecession Period (years): -173433.6824
+    // Obliquity (degrees): 25.1953374
+    // Ecliptic Obliquity (rad): 5.040408866
+    // Axis RMS Error (deg): 3.596520014e-006
+    // Lat/Lon RMS Error (deg): 0.000228792323
+}

@@ -1,0 +1,48 @@
+{
+    "name":       "Earth",
+    "system":     "Sol",
+    "type":       "planet",
+
+    "surface-orbiter":  "sol/earth/orbiter",
+    "activate":   true,
+
+    "mass":       5.973698968e+24,
+    "radius":     6378.140,
+
+    "albedo":     [ 0.7, 0.85, 1.0 ],
+    "color":      [ 0.87572, 0.91517, 1.0 ],
+    "geom-albedo": 0.449576,
+
+    "max-lod": 12,
+
+    "orbit": "vsop87b-earth",
+
+    // Atomsphere parameters
+    "atmosphere": "msise00-earth",
+    "atm-color":   [ 0.0, 0.0, 0.0 ],
+
+    // Rotation and precession parameters
+    "rotation":             "uniform",
+    "precession-LAN":        0,
+    "precession-obliquity":  0,
+    "precession-period":     -9413040.4,
+    "LAN":                  0,
+    "LAN-MJD":              51544.5,
+    "obliquity":            0.4090928023,
+    "sid-rot-offset":         4.88948754,
+    "sid-rot-period":         86164.10132,
+
+    // SidRotPeriod (days):          0.99726968
+    // SidRotPeriod (SI seconds):    86164.092
+    // Pecession Period (years):     -25771.5
+    // Obliquity (degrees):          23.439291
+    // Ecliptic Obliquity (degrees): 23.439291
+
+    "ground-observers": [
+        ["KSC Runway 15", [ 28.632307, -80.705774, 1 ],  150 ],
+        ["KSC Runway 15 Ground", [ 28.632307, -80.705774, 0.002 ],  150 ],
+        ["Rocky Mountains", [ 39.7309918, -104.7046216, 2 ], 270 ],
+        ["Grand Canyon", [ 36.018679, -112.121223, 5 ], 0 ],
+        ["Hawaiian Islands", [21.059613, -157.957629, 3 ], 0 ]
+    ]
+}

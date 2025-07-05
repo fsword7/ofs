@@ -1,0 +1,31 @@
+{
+    "name": "Venus",
+    "system": "Sol",
+    "type": "planet",
+
+    "activate": false,
+
+    "mass": 4.86855374e+24,
+    "radius": 6051.84,
+
+    "albedo": [  1.76, 1.58, 1.32 ],
+    "color": [ 0.98965, 1.0, 0.98452 ],
+    "geom-albedo": 0.672604,
+
+    "max-lod": 4,
+
+    "orbit": "vsop87b-venus",
+
+    // Rotation and precession parameters
+    "rotation": "uniform",
+    "LAN": 5.2392469,
+    "LAN_MJD": 51544.5,
+    "obliquity": 0.021624781,
+    "sid-rot-offset": 3.88425353,
+    "sid-rot-period": -20996797.02
+
+    // SidRotPeriod (days): -243.01848
+    // SidRotPeriod (SI seconds): -243.01848
+    // Pecession Period (years): N/A
+    // Obliquity (degrees): 1.2390087
+}

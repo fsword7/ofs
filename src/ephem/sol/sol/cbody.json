@@ -1,0 +1,12 @@
+{
+    "name": "Sun",
+    "system": "Sol",
+    "type": "star",
+
+    "activate": true,
+
+    "mass": 1.9889194444e+30,
+    "radius": 696000.0,
+
+    "orbit": "vsop87e-sol"
+}

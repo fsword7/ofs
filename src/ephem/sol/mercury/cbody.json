@@ -1,0 +1,40 @@
+{
+    "name": "Mercury",
+    "system": "Sol",
+    "type": "planet",
+    
+    "surface-orbiter": "sol/mercury/orbiter",
+    "activate": true,
+
+    "mass": 3.301880e+23,
+    "radius": 2439.4,
+
+    "albedo": [  0.48, 0.33, 0.15 ],
+    "color": [ 1.0, 0.95415, 0.86031 ],
+    "geom-albedo": 0.141380,
+
+    "max-lod": 9,
+
+    "orbit": "vsop87b-mercury",
+
+    // Rotation and precession parameters
+    "rotation": "uniform",
+    "precession-LAN": 3.981463274,
+    "precession-obliquity": 0.1224024085,
+    "precession-period": 995828.2664,
+    "LAN": 1.674482844,
+    "LAN-MJD": 51544.5,
+    "obliquity": 0.0005931973805,
+    "sid-rot-offset": 0.2687078469,
+    "sid-rot-period": 5067034.512
+
+    // SidRotPeriod (days): 58.64623278
+    // SidRotPeriod (SI seconds): 58.64968677
+    // Pecession Period (years): 2726.429203
+    // Obliquity (degrees): 0.03398770632
+    // Ecliptic LAN (rad): 3.986297968
+    // Ecliptic Obliquity (rad): 0.1223424276
+    // Ecliptic SidRotOffset (rad): 1.614667355
+    // Axis RMS Error (deg): 0.304377661
+    // Lat/Lon RMS Error (deg): 0.00299152648
+}

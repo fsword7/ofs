@@ -1,0 +1,40 @@
+{
+    "name": "Saturn",
+    "system": "Sol",
+    "type": "planet",
+
+    "surface-orbiter": "sol/saturn/orbiter",
+    "activate": false,
+
+    "mass": 5.6846272e+26,
+    "radius": 58232.0,
+
+    "albedo": [  1.19, 1.11, 0.96 ],
+    "color": [ 1.0, 0.9476, 0.81514 ],
+    "geom-albedo": 0.499740,
+
+    "max-lod": 2,
+
+    "orbit": "vsop87b-saturn",
+
+    // Rotation and precession parameters
+    "rotation": "uniform",
+    "precession-LAN": 5.125198679,
+    "precession-obliquity": 0.04338756247,
+    "precession-period": -1038685047,
+    "LAN": 1.046172688,
+    "LAN_MJD": 51544.5,
+    "obliquity": 0.4665349048,
+    "sid-rot-offset": 3.043083327,
+    "sid-rot-period": 38362.40004
+
+    // SidRotPeriod (days): 0.4440092598
+    // SidRotPeriod (SI seconds): 0.4440092596
+    // Pecession Period (years): -2843764.675
+    // Obliquity (degrees): 26.73048104
+    // Ecliptic LAN (rad): 6.100405924
+    // Ecliptic Obliquity (rad): 0.4896028032
+    // Ecliptic SidRotOffset (rad): 2.060306985
+    // Axis RMS Error (deg): 9.561289836e-008
+    // Lat/Lon RMS Error (deg): 3.346335441e-005
+}

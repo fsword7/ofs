@@ -1,0 +1,27 @@
+{
+    "name": "Neptune",
+    "system": "Sol",
+    "type": "planet",
+
+    "surface-orbiter": "Orbiter",
+    "activate": false,
+
+    "mass": 1.024569e+26,
+    "radius": 24624.0,
+
+    "albedo": [  0.68, 0.91, 1.25 ],
+    "color": [ 0.78302, 0.91535, 1.0 ],
+    "geom-albedo": 0.409338,
+
+    "max-lod": 2,
+
+    "orbit": "vsop87b-neptune",
+        
+    // Rotation and precession parameters
+    "rotation": "uniform",
+    "LAN": 3.99252511,
+    "LAN_MJD": 51544.5,
+    "obliquity": 0.49712071,
+    "sid-rot-offset": 0.85660503,
+    "sid-rot-period": 57996
+}
