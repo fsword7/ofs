@@ -115,7 +115,54 @@ Player::~Player()
 
 void Player::configure(json &config)
 {
+    Universe *univ = ofsAppCore->getUniverse();
 
+    if (config["mode"].is_array()) {
+        json list = config["mode"];
+        str_t modeType = list[0];
+        cameraMode camMode;
+        if (modeType == "target-sync")
+            camMode = camTargetSync;
+        else if (modeType == "target-relative")
+            camMode = camTargetRelative;
+        else if (modeType == "global-frame")
+            camMode = camGlobalFrame;
+        else if (modeType == "ground-observer")
+            camMode = camGroundObserver;
+        
+        str_t primaryPath, secondaryPath;
+        Celestial *primary, *secondary;
+
+        switch (camMode) {
+        case camTargetSync:
+            primaryPath = list[1];
+            secondaryPath = list[2];
+            primary = univ->findPath(primaryPath);
+            secondary = univ->findPath(secondaryPath);
+
+            assert(primary != nullptr && secondary != nullptr);
+            ofsLogger->info("Player: Primary: {} Second: {}\n",
+                primary->getsName(), secondary->getsName());
+
+            glm::dvec3 rpos;
+            glm::dvec3 rdir = myjson::getFloatArray2<glm::dvec3, double>(list[3]);
+            double scale = list[4].get<double>();
+            cam.setPosition(rdir * (primary->getRadius() * scale));
+            ofsLogger->info("Relative position: {},{},{} scale: {}\n",
+                cam.rpos.x, cam.rpos.y, cam.rpos.z, scale);
+
+            attach(primary, camMode, secondary);
+            break;
+        }
+    }
+
+    str_t focusPath = myjson::getString<str_t>(config, "focus");
+    if (!focusPath.empty()) {
+        Celestial *focus = univ->findPath(focusPath);
+        if (focus != nullptr)
+            focusObject = focus;
+    }
+         
     // if (!config["player"].IsSequence())
     //     return; // false;
 
@@ -245,6 +292,10 @@ void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
         gspos = tgtObject->getuOrientation(0) * *vcpos;
         gpos = gspos + tgtObject->getuPosition(0);
     }
+
+    // Assign player to planetary system
+    pSystem *psys = tgtObject->getPlanetarySystem();
+    setSystem(psys);
 
     updateCamera();
 }
@@ -393,6 +444,13 @@ void Player::update(const TimeDate &td)
             }
             break;
         };
+
+        // focus on object at request
+        if (focusObject != nullptr)
+        {
+            look(focusObject);
+            focusObject = nullptr;
+        }
     }
     else
     {

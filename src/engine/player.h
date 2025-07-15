@@ -180,6 +180,7 @@ private:
     pSystem   *system = nullptr;
     Celestial *tgtObject = nullptr;
     Celestial *syncObject = nullptr;
+    Celestial *focusObject = nullptr;
 
     // Global (universal) parmeters
     glm::dvec3 gspos;   // Relative to target in global coordinates

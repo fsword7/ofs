@@ -27,6 +27,12 @@ CelestialPlanet::CelestialPlanet(json &config, celType type)
             ofsLogger->error("OFS: Unknown atmosphere model: {}\n", atmName);
     }
 
+    atmc.color0 = myjson::getFloatArray<color_t, float>(config, "atm-color", { 0, 0, 0 });
+
+    if (config["ground-observers"].is_array()) {
+
+    }
+
     enableSecondaryIlluminator(true);
 
     // Initialize configurations from Yaml database.

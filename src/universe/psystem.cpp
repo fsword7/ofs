@@ -178,8 +178,8 @@ bool pSystem::loadStar(cstr_t &cbName, Universe *univ, pSystem *psys, fs::path &
     std::ifstream jsonFile(path);
     json config = json::parse(jsonFile, nullptr, false, true);
 
-    if (!myjson::getInteger<bool>(config, "activate", true)) {
-        ofsLogger->info("OFS info: Dosabled celestial body: {}\n", cbName);
+    if (!myjson::getBoolean<bool>(config, "activate", true)) {
+        ofsLogger->info("OFS info: Disabled celestial body: {}\n", cbName);
         return false;
     }
 
@@ -212,8 +212,8 @@ bool pSystem::loadPlanet(cstr_t &cbName, pSystem *psys, fs::path &cbPath)
     std::ifstream jsonFile(path);
     json config = json::parse(jsonFile, nullptr, false, true);
 
-    if (!myjson::getInteger<bool>(config, "activate", true)) {
-        ofsLogger->info("OFS info: Dosabled celestial body: {}\n", cbName);
+    if (!myjson::getBoolean<bool>(config, "activate", true)) {
+        ofsLogger->info("OFS info: Disabled celestial body: {}\n", cbName);
         return false;
     }
 

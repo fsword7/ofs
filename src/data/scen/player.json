@@ -1,0 +1,6 @@
+{
+    "mode": ["target-sync", "Sol/Earth", "Sol", [0, 0, 1], 4],
+    "travel": "free",
+    "focus": "Sol/Earth",
+    "fov": 50.0
+}

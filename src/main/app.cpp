@@ -113,14 +113,21 @@ void CoreApp::openSession()
     panel = new Panel(gclient, video->width, video->height, 8);
     guimgr->setPlayer(player);
 
-    if (gclient != nullptr)
-    {
+    universe->update(player, td);
+
+    fs::path homePath = OFS_HOME_DIR;
+    std::ifstream inFile(homePath / "scen/player.json");
+    json config = json::parse(inFile, nullptr, false, true);
+    player->configure(config);
+    player->update(td);
+
+    if (gclient != nullptr) {
         gclient->cbStart(universe);
         gclient->showWindow();
     }
 
     bSession = true;
-    bStarted = true;
+    // bStarted = true;
 
     ofsLogger->info("\nStarting of sesssion\n");
     ofsLogger->info("--------------------\n");

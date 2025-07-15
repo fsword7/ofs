@@ -56,8 +56,7 @@ void Celestial::setup(json &config)
     }
 
     reflectivity = myjson::getFloat<double>(config, "geom-albedo");
-
-    // geomColor = yaml::getArray<color_t, float>(config, "Color", { 0.5, 0.5, 0.5, 1.0 });
+    geomColor = myjson::getFloatArray<color_t, float>(config, "color", { 0.5, 0.5, 0.5, 1.0 });
 }
 
 void Celestial::setupRotation()
@@ -315,6 +314,8 @@ bool Celestial::updateEphemeris()
     bool hbary = false;
     bool hvel = false;
  
+    // ofsLogger->info("Updating: {}\n", getsName());
+
     // Updating secondaries (planets/moons) recursively
     // from origin of star or specific body
     for (auto body : secondaries)

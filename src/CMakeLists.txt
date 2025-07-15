@@ -91,6 +91,7 @@ set(OFS_CPP_SRCS
     # universe/system.cpp
     universe/universe.cpp
     utils/color.cpp
+    utils/json.cpp
     utils/string.cpp
     utils/ztreemgr.cpp
     ${IMGUI_LIBRARY_DIR}/backends/imgui_impl_glfw.cpp
