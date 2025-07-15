@@ -129,8 +129,6 @@ protected:
     bool bFreezing = false;
     bool isPaused = false;
 
-    bool bStarted = false;
-
     TimeDate td;
 
     bool stateKey[512];

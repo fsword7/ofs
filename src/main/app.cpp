@@ -127,7 +127,6 @@ void CoreApp::openSession()
     }
 
     bSession = true;
-    // bStarted = true;
 
     ofsLogger->info("\nStarting of sesssion\n");
     ofsLogger->info("--------------------\n");
@@ -154,11 +153,6 @@ void CoreApp::closeSession()
 void CoreApp::updateWorld()
 {
     universe->update(player, td);
-    if (bStarted)
-    {
-        universe->start(td);
-        bStarted = false;
-    }
     player->update(td);
 }
 
