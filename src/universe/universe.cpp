@@ -64,56 +64,10 @@ void Universe::configure(const json &config)
 
 void Universe::start(const TimeDate &td)
 {
-    // Camera *cam = ofsAppCore->getCamera();
-    // Player *player = ofsAppCore->getPlayer();
-
-    // CelestialStar *sun = dynamic_cast<CelestialStar *>(stardb.find("Sol"));
-    // pSystem *psys = sun->getSystem();
-    // Celestial *earth = dynamic_cast<Celestial *>(psys->find("Earth"));
-    // Celestial *luna = dynamic_cast<Celestial *>(psys->find("Luna"));
-    // Celestial *mars = dynamic_cast<Celestial *>(psys->find("Mars"));
-    // Celestial *mercury = dynamic_cast<Celestial *>(psys->find("Mercury"));
-    // Celestial *jupiter = dynamic_cast<Celestial *>(psys->find("Jupiter"));
-  
-    // vehicle = new Vehicle();
-    // psys->addVehicle(vehicle);
-
-    // assert(sun != nullptr);
-    // assert(psys != nullptr);
-    // assert(earth != nullptr);
-    // assert(luna != nullptr);
-    // assert(mars != nullptr);
-    // assert(mercury != nullptr);
-    // assert(jupiter != nullptr);
-
-    // cam->setPosition({ 0, 0, -sun->getRadius() * 4.0 });
-    // player->attach(sun, camTargetRelative);
-    // player->look(sun);
-
-    // cam->setPosition({ 0, 0, mercury->getRadius() * 4.0 });
-    // player->attach(mercury, camTargetSync, sun);
-    // player->look(mercury);
-
-    // cam->setPosition({ 0, 0, mars->getRadius() * 4.0 });
-    // player->attach(mars, camTargetSync, sun);
-    // player->look(mars);
-
-    // cam->setPosition({ 0, 0, jupiter->getRadius() * 4.0 });
-    // player->attach(jupiter, camTargetSync, sun);
-    // player->look(jupiter);
-
     // cam->setPosition(earth->convertEquatorialToLocal(
     //     glm::radians(28.632307), glm::radians(-80.705774), earth->getRadius()+50));
     // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
     // player->attach(earth, camTargetRelative);
-    // player->look(earth);
-
-    // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
-    // player->attach(earth, camTargetUnlocked);
-    // player->look(earth);
-
-    // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
-    // player->attach(earth, camTargetSync, sun);
     // player->look(earth);
 
     // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
@@ -131,24 +85,6 @@ void Universe::start(const TimeDate &td)
 
     // Observe Hawaiian islands
     // player->setGroundObserver(earth, { 21.059613, -157.957629, 3}, 0);
-
-    // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
-    // player->attach(lunar, camTargetSync);
-    // player->look(lunar);
-
-    // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
-    // player->attach(lunar, camTargetSync, sun);
-    // player->look(lunar);
-
-    // cam->setPosition({ 0, 0, lunar->getRadius() * 4.0});
-    // player->attach(lunar, camTargetSync, earth);
-    // player->look(lunar);
-
-    // Ground observer on Lunar
-    // player->setGroundObserver(lunar, { 0, 0, 3 }, 0);
-
-    // player->setSystem(psys);
-    // player->update(td);
 }
 
 void Universe::update(Player *player, const TimeDate &td)

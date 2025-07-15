@@ -62,12 +62,4 @@ private:
     // SystemsList  systems;
 
     std::vector<const CelestialStar *> nearStars;
-
-    // Hacks (to be removed later)
-
-    CelestialStar *sun;
-    CelestialPlanet *mercury, *venus, *earth;
-    CelestialPlanet *mars, *jupiter, *saturn;
-    CelestialPlanet *uranus, *neptune, *luna;
-    Vehicle *vehicle = nullptr;
 };

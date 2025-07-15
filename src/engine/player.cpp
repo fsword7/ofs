@@ -117,10 +117,13 @@ void Player::configure(json &config)
 {
     Universe *univ = ofsAppCore->getUniverse();
 
-    if (config["mode"].is_array()) {
-        json list = config["mode"];
-        str_t modeType = list[0];
+    Celestial *primary = nullptr, *secondary = nullptr;
+
+    if (config["mode"].is_object()) {
+        json &modes = config["mode"];
+        str_t modeType = myjson::getString<str_t>(modes, "type");
         cameraMode camMode;
+
         if (modeType == "target-sync")
             camMode = camTargetSync;
         else if (modeType == "target-relative")
@@ -129,85 +132,50 @@ void Player::configure(json &config)
             camMode = camGlobalFrame;
         else if (modeType == "ground-observer")
             camMode = camGroundObserver;
-        
-        str_t primaryPath, secondaryPath;
-        Celestial *primary, *secondary;
-
-        switch (camMode) {
-        case camTargetSync:
-            primaryPath = list[1];
-            secondaryPath = list[2];
-            primary = univ->findPath(primaryPath);
-            secondary = univ->findPath(secondaryPath);
-
-            assert(primary != nullptr && secondary != nullptr);
-            ofsLogger->info("Player: Primary: {} Second: {}\n",
-                primary->getsName(), secondary->getsName());
-
-            glm::dvec3 rpos;
-            glm::dvec3 rdir = myjson::getFloatArray2<glm::dvec3, double>(list[3]);
-            double scale = list[4].get<double>();
-            cam.setPosition(rdir * (primary->getRadius() * scale));
-            ofsLogger->info("Relative position: {},{},{} scale: {}\n",
-                cam.rpos.x, cam.rpos.y, cam.rpos.z, scale);
-
-            attach(primary, camMode, secondary);
-            break;
+        else {
+            ofsLogger->error("JSON: Unknown camera type: {} - aborted\n", modeType);
+            return;
         }
+
+        str_t primaryTarget, secondaryTarget;
+
+        primaryTarget = myjson::getString<str_t>(modes, "target");
+        if (!primaryTarget.empty())
+            primary = univ->findPath(primaryTarget);
+        if (camMode == camTargetSync) {
+            secondaryTarget = myjson::getString<str_t>(modes, "sync-target");
+            if (!secondaryTarget.empty())
+                secondary = univ->findPath(secondaryTarget);
+        }
+
+        double elev = 0.01, scale;
+        double rad = primary->getRadius();
+        glm::dvec3 rdir = myjson::getFloatArray<glm::dvec3, double>(modes, "direction");
+        glm::dvec3 rpos = myjson::getFloatArray<glm::dvec3, double>(modes, "position");
+        scale = myjson::getFloat<double>(modes, "scale", 1.0);
+
+        if (rpos.x != 0 || rpos.y != 0 || rpos.z != 0) {
+            if (glm::length(rpos) < rad)
+                rpos = glm::normalize(rpos) *
+                    ((elev != 0) ? (rad + elev) : (rad * scale));
+        } else if (rdir.x != 0 || rdir.y != 0 || rdir.z != 0) {
+            rpos = rdir * (rad * scale);
+        } else {
+            ofsLogger->error("JSON: Required position or direction - aborted\n");
+            return;    
+        }
+
+        cam.setPosition(rpos);
+
+        attach(primary, camMode, secondary);
     }
 
-    str_t focusPath = myjson::getString<str_t>(config, "focus");
-    if (!focusPath.empty()) {
-        Celestial *focus = univ->findPath(focusPath);
-        if (focus != nullptr)
-            focusObject = focus;
-    }
-         
-    // if (!config["player"].IsSequence())
-    //     return; // false;
+    str_t focusTarget = myjson::getString<str_t>(config, "focus");
+    if (!focusTarget.empty())
+        focusObject = univ->findPath(focusTarget);
+    if (focusObject == nullptr)
+        focusObject = primary;
 
-    // const YAML::Node &list = config["player"];
-    // Universe *univ = ofsAppCore->getUniverse();
-
-    // str_t tgt = yaml::getValueString<str_t>(list, "target");
-    // if (!tgt.empty())
-    // {
-    //     Object *obj = univ->findPath(tgt);
-    //     if (obj == nullptr)
-    //         return; // false;
-    // }
-
-    // const YAML::Node &modes = config["mode"];
-    // if (modes.IsSequence())
-    // {
-    //     str_t tgtName = yaml::getValueString<str_t>(modes, "target");
-    //     glm::dvec3 pos = yaml::getArray<glm::dvec3, double>(modes, "position", { 0, 0, 0 });
-    //     // glm::dvec3 dir = yaml::getArray<glm::dvec3, double>(modes, "direction", { 0, 0, 1 });
-    //     str_t type = yaml::getValueString<str_t>(modes, "type");
-    //     double scale = 4;
-    //     double elev = 0;
-
-    //     cameraMode mode = camGlobalFrame;
-    //     if (type == "target-sync")
-    //         mode = camTargetSync;
-    //     else if (type == "target-relative")
-    //         mode = camTargetRelative;
-
-    //     str_t stgtName;
-    //     if (mode == camTargetSync)
-    //         stgtName = yaml::getValueString<str_t>(modes, "sync");
-
-    //     Celestial *cbody = univ->findPath(tgtName);
-    //     Celestial *scbody = univ->findPath(stgtName);
-    //     double rad = cbody->getRadius();
-    //     if (glm::length(pos) < rad)
-    //         pos = glm::normalize(pos) *
-    //             ((elev != 0) ? (rad + elev) : (rad * scale));
-    //     cam.setPosition(pos);
-    //     attach(cbody, mode, scbody);
-    // }
-
-    // look(tgtFocus);
 }
 
 double Player::computeCoarseness(double maxCoarseness)

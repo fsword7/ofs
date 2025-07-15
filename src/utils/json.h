@@ -41,7 +41,7 @@ namespace myjson
     {
         if (!config.contains(name))
             return defValue;
-        if (!config[name].is_number_float())
+        if (!config[name].is_number())
             return defValue;
         ofsLogger->info("JSON: {}: {:f}\n",
             name, config[name].get<T>());
@@ -71,7 +71,7 @@ namespace myjson
         cjson &items = config[name];
         ofsLogger->info("JSON: {}: {}\n", name, items.dump());
         for (int idx = 0; idx < items.size(); idx++) {
-            if (items[idx].is_number_float()) {
+            if (items[idx].is_number()) {
                 value[idx] = items[idx].get<U>();
                 ofsLogger->info("JSON: {}[{:d}]: {:f}\n",
                     name, idx, value[idx]);

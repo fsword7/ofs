@@ -1,6 +1,10 @@
 {
-    "mode": ["target-sync", "Sol/Earth", "Sol", [0, 0, 1], 4],
+    "mode": {
+        "type": "target-sync",
+        "target": "Sol/Earth", "sync-target": "Sol",
+        "direction": [0, 0, 1], "scale": 4
+    },
     "travel": "free",
-    "focus": "Sol/Earth",
+    // "focus": "Sol/Earth",
     "fov": 50.0
 }
