@@ -497,7 +497,8 @@ void CoreApp::processUserInputs()
 
 void CoreApp::keyBufferedSystem(char32_t key, int mods)
 {
-    if (stateKey[ofs::keyF5]) guimgr->showControl<DialogCamera>();
+    if (stateKey[ofs::keyF5] || stateKey[ofs::key5])
+        guimgr->showControl<DialogCamera>();
 }
 
 void CoreApp::keyBufferedOnRunning(char32_t key, int mods)
@@ -508,11 +509,11 @@ void CoreApp::keyBufferedOnRunning(char32_t key, int mods)
     // else if (stateKey[keyCode::keyF4])
     //     decreaseTimeWarp();
 
-    if (stateKey[ofs::keyF4])
+    if (stateKey[ofs::keyF4] || stateKey[ofs::key4])
         increaseTimeWarp();
-    else if (stateKey[ofs::keyF3])
+    else if (stateKey[ofs::keyF3] || stateKey[ofs::key3])
         decreaseTimeWarp();
-    else if (stateKey[ofs::keyF2])
+    else if (stateKey[ofs::keyF2] || stateKey[ofs::key2])
         setWarpFactor(1.0);
 
 }
