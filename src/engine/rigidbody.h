@@ -17,7 +17,7 @@ public:
     : Celestial(name, type, cbtype)
     { }
 
-    RigidBody(json &config, ObjectType type, celType ctype);
+    RigidBody(cjson &config, ObjectType type, celType ctype);
 
     virtual ~RigidBody() = default;
 

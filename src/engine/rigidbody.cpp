@@ -10,10 +10,9 @@
 #include "universe/psystem.h"
 #include "universe/frame.h"
 
-RigidBody::RigidBody(json &config, ObjectType type, celType celtype)
+RigidBody::RigidBody(cjson &config, ObjectType type, celType celtype)
 : Celestial(config, type, celtype)
 {
-
 }
 
 // glm::dvec3 RigidBody::getuPosition(double tjd) const

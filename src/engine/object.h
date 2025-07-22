@@ -32,7 +32,7 @@ public:
         objNames[0] = name;
     }
 
-    Object(json &config, ObjectType type);
+    Object(cjson &config, ObjectType type);
     
     virtual ~Object() = default;
 

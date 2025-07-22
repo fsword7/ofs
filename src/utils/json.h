@@ -19,8 +19,10 @@ namespace myjson
             return defValue;
         if (!config[name].is_boolean())
             return defValue;
-        ofsLogger->info("JSON: {}: {}\n",
-            name, config[name].get<T>());
+        ofsLogger->debug("JSON: {}: {}\n",
+            name, config[name].dump());
+        // ofsLogger->info("JSON: {}: {}\n",
+        //     name, config[name].get<T>());
         return config[name].get<T>();
     }
 
@@ -31,8 +33,10 @@ namespace myjson
             return defValue;
         if (!config[name].is_number_integer())
             return defValue;
-        ofsLogger->info("JSON: {}: {:d}\n",
-            name, config[name].get<T>());
+        ofsLogger->debug("JSON: {}: {}\n",
+            name, config[name].dump());
+        // ofsLogger->info("JSON: {}: {:d}\n",
+        //     name, config[name].get<T>());
         return config[name].get<T>();
     }
 
@@ -43,8 +47,10 @@ namespace myjson
             return defValue;
         if (!config[name].is_number())
             return defValue;
-        ofsLogger->info("JSON: {}: {:f}\n",
-            name, config[name].get<T>());
+        ofsLogger->debug("JSON: {}: {}\n",
+            name, config[name].dump());
+        // ofsLogger->info("JSON: {}: {:f}\n",
+        //     name, config[name].get<T>());
         return config[name].get<T>();
     }
 
@@ -55,8 +61,10 @@ namespace myjson
             return defValue;
         if (!config[name].is_string())
             return defValue;
-        ofsLogger->info("JSON: {}: {}\n",
-            name, config[name].get<cstr_t>());
+        ofsLogger->debug("JSON: {}: {}\n",
+            name, config[name].dump());
+        // ofsLogger->info("JSON: {}: {}\n",
+        //     name, config[name].get<cstr_t>());
         return config[name].get<T>();
     }
 
@@ -69,7 +77,8 @@ namespace myjson
             return defValue;
         T value = {};
         cjson &items = config[name];
-        ofsLogger->info("JSON: {}: {}\n", name, items.dump());
+        ofsLogger->debug("JSON: {}: {}\n",
+            name, items.dump());
         for (int idx = 0; idx < items.size(); idx++) {
             if (items[idx].is_number()) {
                 value[idx] = items[idx].get<U>();
@@ -86,7 +95,7 @@ namespace myjson
         if (!items.is_array())
             return defValue;
         T value = {};
-        ofsLogger->info("JSON: array: {}\n", items.dump());
+        ofsLogger->debug("JSON: array: {}\n", items.dump());
         for (int idx = 0; idx < items.size(); idx++) {
             if (items[idx].is_number()) {
                 value[idx] = items[idx].get<U>();

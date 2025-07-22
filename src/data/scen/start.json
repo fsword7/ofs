@@ -9,7 +9,8 @@
             "name": "SG:Space Glider",
             "tag": "SG-01",
             "module": "glider",
-            "status": ["landed", "Sol/Earth"],
+            "status": "landed",
+            "target": "Sol/Earth",
             "location": [ 28.632307, -80.705774 ],
             "heading": 150
         },
@@ -17,7 +18,8 @@
             "name": "SG:Space Glider",
             "tag": "SG-02",
             "module": "glider",
-            "status": ["landed", "Sol/Earth"],
+            "status": "landed",
+            "target": "Sol/Earth",
             "location": [ 28.632307, -80.705774 ],
             "heading": 150
         }
@@ -25,13 +27,11 @@
 
     "player": {
         "mode": {
-            "target": "Sol/Earth",
             "type": "target-sync",
-            "position": [ 0, 0, 1 ],
-            "sync": "Sol"
+            "target": "Sol/Earth", "sync-target": "Sol",
+            "direction": [0, 0, 1], "scale": 4
         },
         "travel": "free",
-        "focus": "Sol/Earth",
         "fov": 50.0
     }
 }

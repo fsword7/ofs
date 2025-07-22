@@ -27,7 +27,7 @@ public:
     inline std::vector<const CelestialStar *> &getNearStars() { return nearStars; }
 
     void init();
-    void configure(const json &config);
+    void configure(cjson &config);
     void start(const TimeDate &td);
     void update(Player *player, const TimeDate &td);
     void finalizeUpdate();

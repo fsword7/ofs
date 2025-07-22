@@ -10,13 +10,16 @@
 #include "engine/object.h"
 #include "utils/json.h"
 
-Object::Object(json &config, ObjectType type)
+Object::Object(cjson &config, ObjectType type)
 : objType(type)
 {
-    setsName(myjson::getString<str_t>(config, "name", "(unknown)"));
-    setMass(myjson::getFloat<double>(config, "mass"));
-    setRadius(myjson::getFloat<double>(config, "radius"));
-    setAlbedo(myjson::getFloat<double>(config, "geom-albedo"));
+    if (objType == objCelestialBody || objType == objCelestialStar)
+    {
+        setsName(myjson::getString<str_t>(config, "name", "(unknown)"));
+        setMass(myjson::getFloat<double>(config, "mass"));
+        setRadius(myjson::getFloat<double>(config, "radius"));
+        setAlbedo(myjson::getFloat<double>(config, "geom-albedo"));
+    }
 }
 
 void Object::update(bool force)

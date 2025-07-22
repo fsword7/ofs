@@ -12,7 +12,7 @@
 #include "universe/astro.h"
 #include "utils/json.h"
 
-Celestial::Celestial(json &config, ObjectType type, celType ctype)
+Celestial::Celestial(cjson &config, ObjectType type, celType ctype)
 : Object(config, type), cbType(ctype)
 {
     setup(config);
@@ -25,38 +25,42 @@ Celestial::~Celestial()
         delete ephemeris;
 }
 
-void Celestial::setup(json &config)
+void Celestial::setup(cjson &config)
 {
-    // Set up precession parameters
-    eps_rel = myjson::getFloat<double>(config, "obliquity");
-    precT   = myjson::getFloat<double>(config, "precession-period");
-    eps_ref = myjson::getFloat<double>(config, "precession-obliquity");
-    lan_ref = myjson::getFloat<double>(config, "precession-LAN");
-    Lrel0   = myjson::getFloat<double>(config, "LAN");
-    mjd_rel = myjson::getFloat<double>(config, "LAN-MJD", astro::MJD2000);
 
-    // Set up rotation parameters
-    Dphi = myjson::getFloat<double>(config, "sid-rot-offset");
-    rotT = myjson::getFloat<double>(config, "sid-rot-period");
-
-    Dphi += (ofsDate->getMJD0() - oel.getMJDEpoch() * ((86400.0/rotT)*pi2));
-    Dphi += Lrel0 * cos(eps_rel);
-    Dphi = fmod(Dphi, pi2);
-
-    str_t epName = myjson::getString<str_t>(config, "orbit");
-    if (!epName.empty())
+    if (getType() == objCelestialBody || getType() == objCelestialStar)
     {
-        OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
-        if (orbit == nullptr)
-            orbit = OrbitELP82::create(*this, epName);
-        if (orbit != nullptr)
-            ephemeris = orbit;
-        else
-            ofsLogger->error("OFS: Unknown orbital ephemeris: {}\n", epName);
-    }
+        // Set up precession parameters
+        eps_rel = myjson::getFloat<double>(config, "obliquity");
+        precT   = myjson::getFloat<double>(config, "precession-period");
+        eps_ref = myjson::getFloat<double>(config, "precession-obliquity");
+        lan_ref = myjson::getFloat<double>(config, "precession-LAN");
+        Lrel0   = myjson::getFloat<double>(config, "LAN");
+        mjd_rel = myjson::getFloat<double>(config, "LAN-MJD", astro::MJD2000);
 
-    reflectivity = myjson::getFloat<double>(config, "geom-albedo");
-    geomColor = myjson::getFloatArray<color_t, float>(config, "color", { 0.5, 0.5, 0.5, 1.0 });
+        // Set up rotation parameters
+        Dphi = myjson::getFloat<double>(config, "sid-rot-offset");
+        rotT = myjson::getFloat<double>(config, "sid-rot-period");
+
+        Dphi += (ofsDate->getMJD0() - oel.getMJDEpoch() * ((86400.0/rotT)*pi2));
+        Dphi += Lrel0 * cos(eps_rel);
+        Dphi = fmod(Dphi, pi2);
+
+        str_t epName = myjson::getString<str_t>(config, "orbit");
+        if (!epName.empty())
+        {
+            OrbitEphemeris *orbit = OrbitVSOP87::create(*this, epName);
+            if (orbit == nullptr)
+                orbit = OrbitELP82::create(*this, epName);
+            if (orbit != nullptr)
+                ephemeris = orbit;
+            else
+                ofsLogger->error("OFS: Unknown orbital ephemeris: {}\n", epName);
+        }
+
+        reflectivity = myjson::getFloat<double>(config, "geom-albedo");
+        geomColor = myjson::getFloatArray<color_t, float>(config, "color", { 0.5, 0.5, 0.5, 1.0 });
+    }
 }
 
 void Celestial::setupRotation()

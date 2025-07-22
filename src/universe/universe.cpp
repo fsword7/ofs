@@ -31,7 +31,7 @@ void Universe::init()
     // constellations.load("constellations/western_rey/constellationship.fab");
 }
 
-void Universe::configure(const json &config)
+void Universe::configure(cjson &config)
 {
     if (config["systems"].is_array())
     {
@@ -58,6 +58,39 @@ void Universe::configure(const json &config)
 
             sysFolder = OFS_HOME_DIR / sysFolder;
             if (!pSystem::loadSystem(this, sysName, sysFolder));
+        }
+    }
+
+    if (config["ships"].is_array())
+    {
+        cjson &ships = config["ships"];
+
+        for (int idx = 0; idx < ships.size(); idx++) {
+            cjson &ship = ships[idx];
+            if (!ship.is_object())
+                continue;
+
+            str_t sysTarget = myjson::getString<str_t>(ship, "target");
+            Celestial *sun = nullptr;
+            if (!sysTarget.empty())
+                sun = findPath(sysTarget);
+            else {
+                ofsLogger->error("JSON: Unknown system: {} - aborted\n",
+                    sysTarget);
+                continue;
+            }
+
+            pSystem *psys = nullptr;
+            if (sun->hasSystem())
+                psys = sun->getSystem();
+            else {
+                ofsLogger->error("JSON: {} system does not have solar system - aborted.\n",
+                    sun->getsName());
+                continue;
+            }
+
+            Vehicle *veh = new Vehicle(ship);
+            psys->addVehicle(veh);
         }
     }
 }

@@ -44,10 +44,10 @@ public:
     : Object(name, type), cbType(ctype)
     { }
 
-    Celestial(json &config, ObjectType type, celType ctype);
+    Celestial(cjson &config, ObjectType type, celType ctype);
     virtual ~Celestial();
 
-    void setup(json &config);
+    void setup(cjson &config);
 
     void updateCelestial(bool force);
 
