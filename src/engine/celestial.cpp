@@ -265,8 +265,6 @@ void Celestial::updateRotation()
 
 void Celestial::updateCelestial(bool force)
 {
-    // ofsLogger->info("Yes, here.\n");
-
     if (precT != 0.0)
         updatePrecission();
     updateRotation();
@@ -318,7 +316,7 @@ bool Celestial::updateEphemeris()
     bool hbary = false;
     bool hvel = false;
  
-    // ofsLogger->info("Updating: {}\n", getsName());
+    // ofsLogger->info("Updating: {}  Time: {}\n", getsName(), ofsDate->getMJD1());
 
     // Updating secondaries (planets/moons) recursively
     // from origin of star or specific body
@@ -381,6 +379,9 @@ bool Celestial::updateEphemeris()
                     bvel = { state[9], state[10], state[11] };
             }
         }
+
+        // ofsLogger->info("{}: P({:.6f},{:.6f},{:.6f}) V({:.6f},{:.6f},{:.6f})\n", getsName(),
+        //     cpos.x, cpos.y, cpos.z, cvel.x, cvel.y, cvel.z);
     }
     else
     {
@@ -438,6 +439,9 @@ bool Celestial::updateEphemeris()
         }
     }
 
+    // ofsLogger->info("{}: P({:.6f},{:.6f},{:.6f}) V({:.6f},{:.6f},{:.6f})\n", getsName(),
+    //     cpos.x, cpos.y, cpos.z, cvel.x, cvel.y, cvel.z);
+
     bparent = (flags & EPHEM_PARENT) != 0;
 
     return bparent;
@@ -458,7 +462,7 @@ void Celestial::updatePostEphemeris()
     baryPosition = bpos;
     baryVelocity = bvel;
 
-    // Logger::getLogger()->info("{}: P({:.6f},{:.6f},{:.6f}) V({:.6f},{:.6f},{:.6f})\n", getsName(),
+    // ofsLogger->info("{}: P({:.6f},{:.6f},{:.6f}) V({:.6f},{:.6f},{:.6f})\n", getsName(),
     //     objPosition.x, objPosition.y, objPosition.z,
     //     objVelocity.x, objVelocity.y, objVelocity.z);
 

@@ -113,13 +113,17 @@ void CoreApp::openSession()
     panel = new Panel(gclient, video->width, video->height, 8);
     guimgr->setPlayer(player);
 
-    universe->update(player, td);
+    // initializing solar system with
+    // new time for that session.
+    universe->start();
 
     fs::path homePath = OFS_HOME_DIR;
     std::ifstream inFile(homePath / "scen/player.json");
     json config = json::parse(inFile, nullptr, false, true);
     player->configure(config);
     player->update(td);
+
+    universe->update(player, td);
 
     if (gclient != nullptr) {
         gclient->cbStart(universe);

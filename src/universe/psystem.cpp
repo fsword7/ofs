@@ -147,7 +147,6 @@ glm::dvec3 pSystem::addGravityIntermediate(const glm::dvec3 &gpos, double step, 
 
 void pSystem::update(bool force)
 {
-
     for (auto star : stars)
         star->updateEphemeris();
     for (auto star : stars)
@@ -196,7 +195,7 @@ bool pSystem::loadStar(cstr_t &cbName, Universe *univ, pSystem *psys, fs::path &
         return false;
     }
 
-    // star->configure(config);
+    star->configure(config);
     star->setPath(cbPath);
     // star->setFolder(cbFolder);
     psys->addStar(star);
@@ -265,7 +264,8 @@ bool pSystem::loadSystem(Universe *univ, cstr_t &sysName, const fs::path &path)
     std::ifstream jsonFile(fname);
     sysConfig = json::parse(jsonFile, nullptr, false, true);
 
-    pSystem *psys = new pSystem(sysName);
+    // pSystem *psys = new pSystem(sysName);
+    pSystem *psys = univ->createSolarSystem(sysName);
     ofsLogger->info("Creating {} planetary system...\n", sysName);
 
     if (sysConfig["celestial-bodies"].is_array())

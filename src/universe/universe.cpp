@@ -95,7 +95,7 @@ void Universe::configure(cjson &config)
     }
 }
 
-void Universe::start(const TimeDate &td)
+void Universe::start()
 {
     // cam->setPosition(earth->convertEquatorialToLocal(
     //     glm::radians(28.632307), glm::radians(-80.705774), earth->getRadius()+50));
@@ -118,6 +118,10 @@ void Universe::start(const TimeDate &td)
 
     // Observe Hawaiian islands
     // player->setGroundObserver(earth, { 21.059613, -157.957629, 3}, 0);
+
+    // Initiializing solar systems with time
+    for (auto &psys : systemList)
+        psys->update(true);
 }
 
 void Universe::update(Player *player, const TimeDate &td)
@@ -125,6 +129,9 @@ void Universe::update(Player *player, const TimeDate &td)
     // Updating periodic close stars
     nearStars.clear();
     findCloseStars(player->getPosition(), 1.0, nearStars);
+    // glm::dvec3 pos = player->getPosition();
+    // ofsLogger->info("Update: {} nearby stars - Player position: {:f},{:f},{:f}\n",
+    //     nearStars.size(), pos.x, pos.y, pos.z);
 
     // Updating local solar systems
     for (auto sun : nearStars)
@@ -158,32 +165,29 @@ void Universe::finalizeUpdate()
 
 void Universe::addSystem(pSystem *psys)
 {
-
 }
 
-// System *Universe::createSolarSystem(CelestialStar *star)
-// {
-//     System *system = getSolarSystem(star);
-//     if (system != nullptr)
-//         return system;
+pSystem *Universe::createSolarSystem(cstr_t &sysName)
+{
+    pSystem *psys = getSolarSystem(sysName);
+    if (psys != nullptr)
+        return psys;
+    psys = new pSystem(sysName);
+    systems.insert({sysName, psys});
+    systemList.push_back(psys);
 
-//     auto idStar = star->getHIPnumber();
-//     system = new System(star);
-//     systems.insert({idStar, system});
+    return psys;
+}
 
-//     return system;
-// }
-
-// System *Universe::getSolarSystem(CelestialStar *star) const
-// {
-//     if (star == nullptr)
-//         return nullptr;
-//     auto idStar = star->getHIPnumber();
-//     auto iter = systems.find(idStar);
-//     if (iter != systems.end())
-//         return iter->second;
-//     return nullptr;
-// }
+pSystem *Universe::getSolarSystem(cstr_t &sysName) const
+{
+    if (sysName.empty())
+        return nullptr;
+    auto iter = systems.find(sysName);
+    if (iter != systems.end())
+        return iter->second;
+    return nullptr;
+}
 
 CelestialStar *Universe::findStar(cstr_t &name) const
 {

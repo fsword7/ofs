@@ -183,12 +183,12 @@ private:
     Celestial *focusObject = nullptr;
 
     // Global (universal) parmeters
-    glm::dvec3 gspos;   // Relative to target in global coordinates
-    glm::dvec3 gpos;
-    glm::dvec3 gdir;    // Direction
-    glm::dmat3 grot;
-    glm::dquat gqrot;
-    glm::dmat3 osrot;   // solar/object-sync reference frame
+    glm::dvec3 gspos = {};   // Relative to target in global coordinates
+    glm::dvec3 gpos  = {};
+    glm::dvec3 gdir  = { 0, 0, 1 };    // Direction
+    glm::dmat3 grot  = {};
+    glm::dquat gqrot = {};
+    glm::dmat3 osrot = {};   // solar/object-sync reference frame
 
     glm::dvec3 *vcpos = nullptr;    // virtual cockpit position
     glm::dvec3 *vcdir = nullptr;    // virtual cockpit direction

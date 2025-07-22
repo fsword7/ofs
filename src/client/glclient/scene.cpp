@@ -115,13 +115,11 @@ void Scene::update(Player *player)
     mjd = player->getTimeDate()->getMJD0();
     now = player->getTimeDate()->getSimTime0();
 
-    // nearStars.clear();
     visibleStars.clear();
     renderList.clear();
     lightSources.clear();
     secondaryLights.clear();
 
-    // universe->findCloseStars(camera->getGlobalPosition(), 1.0, nearStars);
     nearStars = universe->getNearStars();
     setupPrimaryLightSources(nearStars, observer->getPosition(), lightSources);
 

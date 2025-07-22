@@ -7,7 +7,7 @@
 
 #include "universe/constellations.h"
 #include "universe/starlib.h"
-// #include "universe/system.h"
+#include "universe/psystem.h"
 #include "universe/handle.h"
 #include "universe/celbody.h"
 
@@ -27,13 +27,13 @@ public:
     inline std::vector<const CelestialStar *> &getNearStars() { return nearStars; }
 
     void init();
+    void start();
     void configure(cjson &config);
-    void start(const TimeDate &td);
     void update(Player *player, const TimeDate &td);
     void finalizeUpdate();
 
-    // System *createSolarSystem(CelestialStar *star);
-    // System *getSolarSystem(CelestialStar *star) const;
+    pSystem *createSolarSystem(cstr_t &sysName);
+    pSystem *getSolarSystem(cstr_t &sysName) const;
     void addSystem(pSystem *psys);
 
     CelestialStar *findStar(cstr_t &name) const;
@@ -59,7 +59,8 @@ private:
     StarDatabase stardb;
     Constellations constellations;
 
-    // SystemsList  systems;
+    std::vector<pSystem *> systemList;
+    SystemsList  systems;
 
     std::vector<const CelestialStar *> nearStars;
 };

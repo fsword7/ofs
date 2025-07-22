@@ -12,6 +12,7 @@ class CelestialBody;
 class SuperVehicle;
 class Vehicle;
 class TimeDate;
+
 class pSystem
 {
 public:
@@ -65,3 +66,6 @@ private:
     std::vector<Celestial *> celestials;
 
 };
+
+// typedef std::map<uint32_t, pSystem *> SystemsList;
+typedef std::map<cstr_t, pSystem *> SystemsList;

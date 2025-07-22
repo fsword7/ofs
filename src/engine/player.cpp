@@ -167,6 +167,7 @@ void Player::configure(json &config)
 
         cam.setPosition(rpos);
 
+        modeExternal = true;
         attach(primary, camMode, secondary);
     }
 

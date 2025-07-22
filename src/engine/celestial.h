@@ -194,7 +194,7 @@ protected:
     glm::dvec3 bvel;    // barycentre velocity
     glm::dvec3 bposofs; // barycentre position offset (reference frame)
     glm::dvec3 bvelofs; // barycentre velocity offset (reference frame)
-    bool bparent;
+    bool bparent = false;
 
     // Rotation/prcession parameters
     double crot = 0.0;      // Current rotation
