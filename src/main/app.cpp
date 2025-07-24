@@ -67,15 +67,6 @@ void CoreApp::init()
     // Initialize graphics client module
     if (gclient != nullptr)
         createSceneWindow();
-
-    fs::path homePath = OFS_HOME_DIR;
-    std::ifstream inFile(homePath / "scen/start.json");
-    json config = json::parse(inFile, nullptr, false, true);
-
-    // Initialize universe
-    universe = new Universe();
-    universe->init();
-    universe->configure(config);
 }
 
 void CoreApp::cleanup()
@@ -96,8 +87,22 @@ void CoreApp::setFocusingObject(Celestial *object)
     }
 }
 
-void CoreApp::openSession()
+void CoreApp::launch()
 {
+    fs::path homePath = OFS_HOME_DIR;
+    std::ifstream inFile(homePath / "scen/start.json");
+    json config = json::parse(inFile, nullptr, false, true);
+
+    universe = new Universe();
+    universe->init();
+    universe->configure(config);
+    openSession(config);
+}
+
+void CoreApp::openSession(json &config)
+{
+    ofsLogger->info("Now running the world\n");
+
     // Starting current time from system time
     auto now = std::chrono::system_clock::now();
     std::chrono::duration<double> nowTime = now.time_since_epoch();
@@ -117,10 +122,17 @@ void CoreApp::openSession()
     // new time for that session.
     universe->start();
 
-    fs::path homePath = OFS_HOME_DIR;
-    std::ifstream inFile(homePath / "scen/player.json");
-    json config = json::parse(inFile, nullptr, false, true);
-    player->configure(config);
+    json pconfig;
+    if (config.contains("player"))
+        pconfig = config["player"];
+    else {
+        // Get default player configurations
+        ofsLogger->info("Use default player configuration\n");
+        fs::path homePath = OFS_HOME_DIR;
+        std::ifstream inFile(homePath / "scen/player.json");
+        pconfig = json::parse(inFile, nullptr, false, true);
+    }
+    player->configure(pconfig);
     player->update(td);
 
     universe->update(player, td);
@@ -227,8 +239,6 @@ void CoreApp::setWindowTitle(cstr_t &title)
 
 void CoreApp::run()
 {
-    openSession();
-
     while (!guimgr->shouldClose())
     {
         // Process polling events

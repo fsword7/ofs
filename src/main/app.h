@@ -44,7 +44,8 @@ public:
     inline Player    *getPlayer() { return player; }
     inline Universe  *getUniverse() { return universe; }
 
-    void openSession();
+    void launch();
+    void openSession(json &config);
     void closeSession();
     void updateWorld();
     void renderScene();
