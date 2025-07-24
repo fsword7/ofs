@@ -245,8 +245,7 @@ Vehicle::Vehicle(cstr_t &name)
 Vehicle::Vehicle(cjson &config, Celestial *object)
 : VehicleBase(config)
 {
-    // setGenericDefaults();
-    thgrpList.clear();
+    setGenericDefaults();
     thgrpList.resize(thgMaxThrusters);
     for (int idx = 0; idx < thgMaxThrusters; idx++)
         thgrpList[idx] = nullptr;
@@ -331,7 +330,7 @@ void Vehicle::setGenericDefaults()
     tdvtx[0].pos = {  0, -2,  2 }; // forward leg
     tdvtx[1].pos = { -2, -2, -2 }; // left back leg
     tdvtx[2].pos = {  2, -2, -2 }; // right back leg
-    for (int idx = 0; idx < sizeof(tdvtx); idx++)
+    for (int idx = 0; idx < ARRAY_SIZE(tdvtx); idx++)
     {
         tdvtx[idx].stiffness = 1e6;
         tdvtx[idx].damping = 1e5;
@@ -339,7 +338,7 @@ void Vehicle::setGenericDefaults()
         tdvtx[idx].mulng = mulng;
     }
 
-    setTouchdownPoints(tdvtx, sizeof(tdvtx));
+    setTouchdownPoints(tdvtx, ARRAY_SIZE(tdvtx));
 
 }
 
