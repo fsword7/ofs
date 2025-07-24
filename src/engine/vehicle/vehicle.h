@@ -350,8 +350,10 @@ class Vehicle : public VehicleBase
 
 public:
     Vehicle(cstr_t &name = "(self)");
-    Vehicle(cjson &config);
+    Vehicle(cjson &config, Celestial *object);
     virtual ~Vehicle();
+
+    void configure(cjson &config, Celestial *object);
 
     void clearModule();
     bool registerModule(cstr_t &name);

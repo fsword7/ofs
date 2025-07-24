@@ -11,6 +11,10 @@
 class OFSAPI VehicleModule
 {
 public:
-    VehicleModule(Vehicle *vehicle);
+    VehicleModule(Vehicle *vehicle)
+    : veh(vehicle)
+    { }
 
+protected:
+    Vehicle *veh = nullptr;
 };

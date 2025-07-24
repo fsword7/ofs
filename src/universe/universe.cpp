@@ -70,26 +70,26 @@ void Universe::configure(cjson &config)
             if (!ship.is_object())
                 continue;
 
-            str_t sysTarget = myjson::getString<str_t>(ship, "target");
-            Celestial *sun = nullptr;
-            if (!sysTarget.empty())
-                sun = findPath(sysTarget);
+            str_t cbTarget = myjson::getString<str_t>(ship, "target");
+            Celestial *cbody = nullptr;
+            if (!cbTarget.empty())
+                cbody = findPath(cbTarget);
             else {
-                ofsLogger->error("JSON: Unknown system: {} - aborted\n",
-                    sysTarget);
+                ofsLogger->error("JSON: Unknown celestial body: {} - aborted\n",
+                    cbTarget);
                 continue;
             }
 
             pSystem *psys = nullptr;
-            if (sun->hasSystem())
-                psys = sun->getSystem();
+            if (cbody->hasSystem())
+                psys = cbody->getSystem();
             else {
-                ofsLogger->error("JSON: {} system does not have solar system - aborted.\n",
-                    sun->getsName());
+                ofsLogger->error("JSON: {} system does not have solar/planetary system - aborted.\n",
+                    cbody->getsName());
                 continue;
             }
 
-            Vehicle *veh = new Vehicle(ship);
+            Vehicle *veh = new Vehicle(ship, cbody);
             psys->addVehicle(veh);
         }
     }

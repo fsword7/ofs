@@ -29,7 +29,7 @@ target_compile_definitions(glider
     PRIVATE NVG_NO_STB=1 FONS_USE_FREETYPE=1
     PUBLIC GIT_COMMIT_ID="${GIT_COMMIT_ID}"
     PUBLIC OFS_HOME_DIR="${OFS_HOME_DIR}"
-    PUBLIC OFS_LIBRARY_DIR="${OFS_LIBRARY_DIR}"
+    PUBLIC OFS_LIBRARY_DIR="${OFS_INSTALL_VEHICLE_DIR}"
 )
 
 target_include_directories(glider PUBLIC

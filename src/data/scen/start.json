@@ -6,8 +6,7 @@
 
     "ships": [
         {
-            "name": "SG:Space Glider",
-            "tag": "SG-01",
+            "name": "SG-01:Space Glider 1",
             "module": "glider",
             "status": "landed",
             "target": "Sol/Earth",
@@ -15,8 +14,7 @@
             "heading": 150
         },
         {
-            "name": "SG:Space Glider",
-            "tag": "SG-02",
+            "name": "SG-02:Space Glider 2",
             "module": "glider",
             "status": "landed",
             "target": "Sol/Earth",

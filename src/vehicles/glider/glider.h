@@ -15,6 +15,7 @@ public:
     ~Glider();
 
 protected:
+
 };
 
 extern Logger *sgLogger;

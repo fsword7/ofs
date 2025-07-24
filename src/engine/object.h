@@ -36,9 +36,10 @@ public:
     
     virtual ~Object() = default;
 
-    inline void setsName(str_t name)            { objNames[0] = name; }    
+    inline void setsName(str_t name)            { objNames[0] = name; }
+    inline void addName(str_t alias)            { objNames.push_back(alias); }   
     inline str_t getName() const                { return objNames[0]; }
-    inline str_t getsName() const               { return objNames[0]; }
+    inline str_t getsName(int idx = 0) const    { return (idx < objNames.size()) ? objNames[idx] : ""; }
     inline cchar_t *getcName() const            { return objNames[0].c_str(); }
 
     inline ObjectType getType() const           { return objType; }

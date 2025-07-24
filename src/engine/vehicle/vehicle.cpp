@@ -237,17 +237,21 @@ Vehicle::Vehicle(cstr_t &name)
 : VehicleBase(name)
 {
     setGenericDefaults();
-    thgrpList.reserve(thgMaxThrusters);
+    thgrpList.resize(thgMaxThrusters);
     for (int idx = 0; idx < thgMaxThrusters; idx++)
         thgrpList[idx] = nullptr;
 }
 
-Vehicle::Vehicle(cjson &config)
+Vehicle::Vehicle(cjson &config, Celestial *object)
 : VehicleBase(config)
 {
-    thgrpList.reserve(thgMaxThrusters);
+    // setGenericDefaults();
+    thgrpList.clear();
+    thgrpList.resize(thgMaxThrusters);
     for (int idx = 0; idx < thgMaxThrusters; idx++)
         thgrpList[idx] = nullptr;
+
+    configure(config, object);
 }
 
 Vehicle::~Vehicle()
@@ -259,7 +263,7 @@ Vehicle::~Vehicle()
 bool Vehicle::registerModule(cstr_t &name)
 {
     assert(handle == nullptr);
-    cstr_t path = "modules/Vehicles/";
+    cstr_t path = OFS_LIB_VEHICLE_DIR;
 
 #ifdef __WIN32__
     std::string fname = fmt::format("{}/lib{}.dll", path, name);
@@ -269,8 +273,8 @@ bool Vehicle::registerModule(cstr_t &name)
     handle = ofsLoadModule(fname.c_str());
     if (handle == nullptr)
     {
-        printf("Failed loading module %s: %s\n",
-            name.c_str(), ofsGetModuleError());      
+        ofsLogger->error("{}: Failed loading module {}: {}\n",
+            getsName(), name, ofsGetModuleError());      
         return false;
     }
 

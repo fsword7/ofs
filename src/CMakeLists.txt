@@ -8,6 +8,7 @@ set(OFS_CPP_SRCS
     control/panel.cpp
     control/taskbar.cpp
     engine/vehicle/animation.cpp
+    engine/vehicle/config.cpp
     engine/vehicle/mesh.cpp
     engine/vehicle/svehicle.cpp
     engine/vehicle/thruster.cpp
@@ -230,6 +231,7 @@ target_compile_definitions(ofs
     PUBLIC GIT_COMMIT_ID="${GIT_COMMIT_ID}"
     PUBLIC OFS_HOME_DIR="${OFS_HOME_DIR}"
     PUBLIC OFS_LIBRARY_DIR="${OFS_LIBRARY_DIR}"
+    PUBLIC OFS_LIB_VEHICLE_DIR="${OFS_INSTALL_VEHICLE_DIR}"
 )
 
 target_include_directories(ofs PUBLIC
