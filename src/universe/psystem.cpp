@@ -102,6 +102,14 @@ Celestial *pSystem::find(cstr_t &name) const
     return nullptr;
 }
 
+Vehicle *pSystem::findVehicle(cstr_t &name) const
+{
+    for (auto veh : vehicles)
+        if (veh->getsName() == name)
+            return veh;
+    return nullptr;
+}
+
 glm::dvec3 pSystem::addSingleGravityPerturbation(const glm::dvec3 &rpos, const Celestial *body) const
 {
     return { 0, 0, 0 };
@@ -147,18 +155,33 @@ glm::dvec3 pSystem::addGravityIntermediate(const glm::dvec3 &gpos, double step, 
 
 void pSystem::update(bool force)
 {
+    // Updating solar/planetary system
     for (auto star : stars)
         star->updateEphemeris();
     for (auto star : stars)
         star->updatePostEphemeris();
     for (auto cel : celestials)
         cel->updateCelestial(force);
+
+    // Updating vehicles within solar system
+    // for (auto veh : vehicles)
+    //     veh->updateBodyForces();
+    // for (auto sveh : svehicles)
+    //     sveh->update(force);
+    // for (auto veh : vehicles)
+    //     veh->update(force);
 }
 
 void pSystem::finalizeUpdate()
 {
+    // Finalize updates
     for (auto body : bodies)
         body->endUpdate();
+
+    // for (auto sveh : svehicles)
+    //     sveh->updatePost();
+    // for (auto veh : vehicles)
+    //     veh->updatePost();
 }
 
 struct {

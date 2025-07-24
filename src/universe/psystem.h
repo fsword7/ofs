@@ -33,6 +33,7 @@ public:
     Celestial *getStar(int idx) const       { return idx < stars.size() ? stars[idx] : nullptr; }
 
     Celestial *find(cstr_t &name) const;
+    Vehicle *findVehicle(cstr_t &name) const;
 
     bool removeVehicle(Vehicle *);
     inline Vehicle *getVehicle(int idx) const   { return idx < vehicles.size() ? vehicles[idx] : nullptr; };

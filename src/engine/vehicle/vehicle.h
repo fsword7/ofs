@@ -324,6 +324,7 @@ public:
     inline csurface_t *getSurfaceParameters() const { return &surfParam; }
     
     void updateSurfaceParam();
+    void updatePost();
 
     // virtual void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
     virtual bool addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
@@ -383,10 +384,12 @@ public:
     void updateMass();
     virtual void update(bool force);
 
-    void updateBodyForces();
     void updateRadiationForces();
     void updateAerodynamicForces();
     void updateThrustForces();
+    void updateBodyForces();
+
+    void updatePost();
 
     void drawHUD(HUDPanel *hud, Sketchpad *pad);
 

@@ -31,6 +31,7 @@ public:
     void updateMassCG();
 
     void update(bool force);
+    void updatePost();
 
 private:
     std::vector<Vehicle *> vehicles;

@@ -131,3 +131,8 @@ void SuperVehicle::update(bool force)
     updateMassCG();
 
 }
+
+void SuperVehicle::updatePost()
+{
+    
+}

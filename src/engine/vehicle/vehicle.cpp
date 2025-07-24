@@ -231,6 +231,10 @@ bool VehicleBase::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateV
     return false;
 }
 
+void VehicleBase::updatePost()
+{
+}
+
 // ******** Vehicle ********
 
 Vehicle::Vehicle(cstr_t &name)
@@ -539,6 +543,16 @@ void Vehicle::updateRadiationForces()
 
 }
 
+void Vehicle::updateBodyForces()
+{
+    surface_t &sp = surfParam;
+
+    updateThrustForces();
+    if (sp.isInAtomsphere) {
+        // updateAerodynamicForces();
+    }
+}
+
 void Vehicle::update(bool force)
 {
     surface_t &sp = surfParam;
@@ -581,14 +595,9 @@ void Vehicle::update(bool force)
     updateMass();
 }
 
-void Vehicle::updateBodyForces()
+void Vehicle::updatePost()
 {
-    surface_t &sp = surfParam;
 
-    updateThrustForces();
-    if (sp.isInAtomsphere) {
-        // updateAerodynamicForces();
-    }
 }
 
 void Vehicle::drawHUD(HUDPanel *hud, Sketchpad *pad)

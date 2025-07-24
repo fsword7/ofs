@@ -31,5 +31,13 @@
         },
         "travel": "free",
         "fov": 50.0
+    },
+
+    "player2": {
+        "mode": {
+            "type": "cockpit",
+            "target": "SG-01"
+        },
+        "fov": 50.0
     }
 }
