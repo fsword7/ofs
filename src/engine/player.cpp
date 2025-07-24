@@ -128,10 +128,14 @@ void Player::configure(json &config)
             camMode = camTargetSync;
         else if (modeType == "target-relative")
             camMode = camTargetRelative;
+        else if (modeType == "target-unlocked")
+            camMode = camTargetUnlocked;
         else if (modeType == "global-frame")
             camMode = camGlobalFrame;
         else if (modeType == "ground-observer")
             camMode = camGroundObserver;
+        else if (modeType == "cockpit")
+            camMode = camCockpit;
         else {
             ofsLogger->error("JSON: Unknown camera type: {} - aborted\n", modeType);
             return;
@@ -139,36 +143,39 @@ void Player::configure(json &config)
 
         str_t primaryTarget, secondaryTarget;
 
-        primaryTarget = myjson::getString<str_t>(modes, "target");
-        if (!primaryTarget.empty())
-            primary = univ->findPath(primaryTarget);
-        if (camMode == camTargetSync) {
-            secondaryTarget = myjson::getString<str_t>(modes, "sync-target");
-            if (!secondaryTarget.empty())
-                secondary = univ->findPath(secondaryTarget);
+        if (camMode != camCockpit)
+        {
+            primaryTarget = myjson::getString<str_t>(modes, "target");
+            if (!primaryTarget.empty())
+                primary = univ->findPath(primaryTarget);
+            if (camMode == camTargetSync) {
+                secondaryTarget = myjson::getString<str_t>(modes, "sync-target");
+                if (!secondaryTarget.empty())
+                    secondary = univ->findPath(secondaryTarget);
+            }
+
+            double elev = 0.01, scale;
+            double rad = primary->getRadius();
+            glm::dvec3 rdir = myjson::getFloatArray<glm::dvec3, double>(modes, "direction");
+            glm::dvec3 rpos = myjson::getFloatArray<glm::dvec3, double>(modes, "position");
+            scale = myjson::getFloat<double>(modes, "scale", 1.0);
+
+            if (rpos.x != 0 || rpos.y != 0 || rpos.z != 0) {
+                if (glm::length(rpos) < rad)
+                    rpos = glm::normalize(rpos) *
+                        ((elev != 0) ? (rad + elev) : (rad * scale));
+            } else if (rdir.x != 0 || rdir.y != 0 || rdir.z != 0) {
+                rpos = rdir * (rad * scale);
+            } else {
+                ofsLogger->error("JSON: Required position or direction - aborted\n");
+                return;    
+            }
+
+            cam.setPosition(rpos);
+
+            modeExternal = true;
+            attach(primary, camMode, secondary);
         }
-
-        double elev = 0.01, scale;
-        double rad = primary->getRadius();
-        glm::dvec3 rdir = myjson::getFloatArray<glm::dvec3, double>(modes, "direction");
-        glm::dvec3 rpos = myjson::getFloatArray<glm::dvec3, double>(modes, "position");
-        scale = myjson::getFloat<double>(modes, "scale", 1.0);
-
-        if (rpos.x != 0 || rpos.y != 0 || rpos.z != 0) {
-            if (glm::length(rpos) < rad)
-                rpos = glm::normalize(rpos) *
-                    ((elev != 0) ? (rad + elev) : (rad * scale));
-        } else if (rdir.x != 0 || rdir.y != 0 || rdir.z != 0) {
-            rpos = rdir * (rad * scale);
-        } else {
-            ofsLogger->error("JSON: Required position or direction - aborted\n");
-            return;    
-        }
-
-        cam.setPosition(rpos);
-
-        modeExternal = true;
-        attach(primary, camMode, secondary);
     }
 
     str_t focusTarget = myjson::getString<str_t>(config, "focus");

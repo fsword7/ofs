@@ -28,16 +28,11 @@
             "type": "target-sync",
             "target": "Sol/Earth", "sync-target": "Sol",
             "direction": [0, 0, 1], "scale": 4
+
+            // "type": "cockpit",
+            // "target": "SG-01"
         },
         "travel": "free",
-        "fov": 50.0
-    },
-
-    "player2": {
-        "mode": {
-            "type": "cockpit",
-            "target": "SG-01"
-        },
         "fov": 50.0
     }
 }
