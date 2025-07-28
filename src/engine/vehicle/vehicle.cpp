@@ -10,6 +10,7 @@
 #include "engine/celestial.h"
 #include "engine/rigidbody.h"
 #include "engine/mesh.h"
+#include "engine/vehicle/svehicle.h"
 #include "engine/vehicle/vehicle.h"
 #include "universe/astro.h"
 #include "universe/body.h"
@@ -208,13 +209,13 @@ void surface_t::update(const StateVectors &s, const StateVectors &os, const Cele
 VehicleBase::VehicleBase(cstr_t &name)
 : RigidBody(name, objVehicle, cbVehicle)
 {
-    etile.reserve(2);
+    elevTiles.resize(2);
 }
 
 VehicleBase::VehicleBase(cjson &config)
 : RigidBody(config, objVehicle, cbVehicle)
 {
-    etile.reserve(2);
+    elevTiles.resize(2);
 }
 
 // void VehicleBase::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double dt)
@@ -223,7 +224,7 @@ VehicleBase::VehicleBase(cjson &config)
 
 void VehicleBase::updateSurfaceParam()
 {
-    surfParam.update(s1, cbody->s1, cbody, &etile);
+    surfParam.update(s1, cbody->s1, cbody, &elevTiles);
 }
 
 bool VehicleBase::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt)
@@ -434,35 +435,88 @@ void Vehicle::initLanded(Celestial *object, const glm::dvec3 &loc, double dir)
     CelestialPlanet *planet = dynamic_cast<CelestialPlanet *>(object);
     assert(planet != nullptr);
 
-    ElevationManager *emgr = planet->getElevationManager();
+    cbody = object;
+
+    double rad = cbody->getRadius();
+    double mg = (astro::G * mass * cbody->getMass()) / (rad * rad);
+    glm::dvec3 nml;
+
+    glm::dvec3 tpComp[3];
+    for (int idx = 0; idx < 3; idx++)
+        tpComp[idx] = tpVertices[idx].pos + (tpVertices[idx].compression*mg);
+    nml = glm::normalize(glm::cross(tpComp[0]-(tpComp[1]+tpComp[2])*0.5, tpComp[2]-tpComp[1]));
+    cogElev = glm::dot(nml, -tpComp[0]);
 
     surface_t &sp = surfParam;
+    sp.setLanded(loc, dir, cbody);
 
-    sp.setLanded(loc, dir, object);
+    double sdir = sin(ofs::radians(dir)), cdir = cos(ofs::radians(dir));
+    sp.ploc = cbody->convertEquatorialToLocal(sp.slat, sp.clat, sp.slng, sp.clng, sp.rad);
+    lhrot = { sp.clng*sp.slat*sdir - sp.slng*cdir, sp.clng*sp.clng, -sp.clng*sp.slat*cdir - sp.slng*sdir, 
+             -sp.clat*sdir,                        sp.slat,          sp.clat*cdir,
+              sp.slng*sp.slat*sdir + sp.clng*cdir, sp.clat*sp.slng, -sp.slng*sp.slat*cdir + sp.clng*sdir }; 
+
+    ElevationManager *emgr = planet->getElevationManager();
+
+    double gvel = pi2 * sp.rad * sp.clat / cbody->getRotationPeriod();
+
+    s0.pos = (cbody->getoRotation() * sp.ploc) + cbody->getoPosition();
+    s0.vel = { -gvel*sp.slng, 0.0, gvel*sp.clng };
+    s0.vel = (cbody->getoRotation() * s0.vel) + cbody->getoVelocity();
+    s0.R = cbody->s0.R * lhrot;
+    s0.Q = s0.R;
+
+    cpos = s0.pos - cbody->getoPosition();
+    cvel = s0.vel - cbody->getoVelocity();
+
+    rvelBase = s0.vel;
+    rvelAdd = {};
+    amom = {};
+
+    // updateSurfaceParam();
 
     fsType = fsLanded;
 }
 
-void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const glm::dvec3 &rot, const glm::dvec3 *vrot)
+void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const glm::dvec3 &arot, const glm::dvec3 *vrot)
 {
+    // sanity check - make sure that they must have non-zero length;
+    if (cpos.x != 0 && cpos.y != 0 && cpos.z != 0)
+        cpos.z = 1.0;
+    if (cvel.x != 0 && cvel.y != 0 && cvel.z != 0)
+        cvel.z = 1.0;
+    
     // Assign current position/velocity
     cpos = pos, cvel = vel;
 
-    oel.calculate(cpos, cvel, ofsDate->getSimTime0());
+    // sanity check: Make sure that we are above ground
+    double rad, elev = 0.0;
+    CelestialPlanet *planet = dynamic_cast<CelestialPlanet *>(cbody);
+    assert(planet != nullptr);
+    ElevationManager *emgr = planet->getElevationManager();
 
-    // Make sure that we are above ground (sanity check)
-    double rad = glm::length(cpos);
-    double elev = 0.0;
+    if (emgr != nullptr) {
+        glm::dvec3 ploc = cbody->convertLocalToEquatorial(cpos);
+        int rlod = int(32.0 - log(std::max(ploc.z, 0.1))*(1.0 / log(2.0)));
+        elev = emgr->getElevationData(ploc, rlod, &elevTiles);
+    } else {
+        rad = glm::length(cpos);
+    }
+
     if (rad < cbody->getRadius() + elev)
     {
         double scale = (cbody->getRadius() + elev) / rad;
         cpos *= scale;
     }
 
-    // s0.R = rot;
+    oel.calculate(cpos, cvel, ofsDate->getSimTime0());
+
+    s0.R = ofs::rotation<glm::dmat3, double>(arot);
     s0.Q = s0.R;
     if (vrot != nullptr)
         s0.omega = *vrot;
+    
+    updateGlobal(cpos + cbody->getoPosition(), cvel + cbody->getoVelocity());
 }
 
 void Vehicle::initDocked()
@@ -495,7 +549,7 @@ bool Vehicle::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVecto
 
     surface_t &sp = surfParam;
     StateVectors ps;
-    sp.update(s, ps, cbody, &etile);
+    sp.update(s, ps, cbody, &elevTiles);
     double alt = sp.alt;
     // if (alt > 2.0*size)
     //     return false;
@@ -515,7 +569,7 @@ bool Vehicle::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVecto
         double lat, lng, rad, elev = 0.0;
         cbody->convertLocalToEquatorial(p, lat, lng, rad);
         if (emgr != nullptr)
-            elev = emgr->getElevationData({lat, lng, 0}, rlod, &etile);
+            elev = emgr->getElevationData({lat, lng, 0}, rlod, &elevTiles);
         tp.tdy = rad - elev - cbody->getRadius();
         if (tp.tdy < tdymin)
             tdymin = tp.tdy;
@@ -536,6 +590,21 @@ void Vehicle::updateMass()
     // for (int idx; idx < nTanks; idx++)
     //     fmass += tanks[idx]->mass;
     mass = emass + fmass;
+}
+
+void Vehicle::updateGlobal(const glm::dvec3 &rpos, const::glm::dvec3 &rvel)
+{
+    if (superVehicle != nullptr)
+        superVehicle->updateGlobal(rpos, rvel);
+    else
+        updateGlobalIndividual(rpos, rvel);
+}
+
+void Vehicle::updateGlobalIndividual(const glm::dvec3 &rpos, const::glm::dvec3 &rvel)
+{
+    RigidBody::updateGlobal(rpos, rvel);
+    cpos = s0.pos - cbody->s0.pos;
+    cvel = s0.vel - cbody->s0.vel;
 }
 
 void Vehicle::updateRadiationForces()

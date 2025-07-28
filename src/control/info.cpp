@@ -33,12 +33,12 @@ void TaskBar::initPlanetInfo()
 
 void TaskBar::cleanPlanetInfo()
 {
-    if (ipad != nullptr)
-        delete ipad;
-    if (titleFont != nullptr)
-        delete titleFont;
-    if (textFont != nullptr)
-        delete textFont;
+    // if (ipad != nullptr)
+    //     delete ipad;
+    // if (titleFont != nullptr)
+    //     delete titleFont;
+    // if (textFont != nullptr)
+    //     delete textFont;
 }
 
 void TaskBar::displayPlanetocentric(double lat, double lng, double alt)

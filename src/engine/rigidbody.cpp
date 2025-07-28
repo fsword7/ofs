@@ -73,6 +73,14 @@ void RigidBody::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const St
     }
 }
 
+void RigidBody::updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel)
+{
+    s0.pos = rposBase = rpos;
+    s0.vel = rvelBase = rvel;
+    rposAdd = {};
+    rvelAdd = {};
+}
+
 void RigidBody::update(bool force)
 {
     // {

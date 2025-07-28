@@ -39,6 +39,10 @@ public:
     inline bool hasAtmosphere() const           { return atm != nullptr; }
     inline Atmosphere *getAtmosphere() const    { return atm; }
 
+    double getElevation(glm::dvec3 ploc);
+    glm::dvec3 getGroundVelocity(const glm::dvec3 &ploc);
+    glm::dvec3 getWindVelocity(const glm::dvec3 &ploc, double alt);
+
     void getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const;
 
     inline double getSoundSpeed(double temp) const

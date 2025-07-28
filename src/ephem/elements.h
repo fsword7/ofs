@@ -5,6 +5,11 @@
 
 #pragma once
 
+using orbit_t = double[7];
+
+#define NELEMENTS           7
+#define DEFAULT_ELEMENTS    { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, astro::MJD2000 }
+
 class OrbitalElements
 {
 public:
@@ -12,6 +17,7 @@ public:
     ~OrbitalElements() = default;
 
     OrbitalElements(double a, double e, double i, double theta, double omegab, double L, double mjd);
+    OrbitalElements(const double *el);
 
     inline double getLinearEccentricity() const             { return le; }
     inline double getApoapsis() const                       { return ad; }
@@ -44,6 +50,7 @@ public:
     bool getAscendingNode(glm::dvec3 &an) const;
     bool getDescendingNode(glm::dvec3 &dn) const;
 
+    void configure(const double *el);
     void setup(double m, double M, double mjd);
     void calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t);
     void update(double mjd, glm::dvec3 &pos, glm::dvec3 &vel);
@@ -60,7 +67,7 @@ public:
     double i      = 0.0;    // inclination [rad]
     double theta  = 0.0;    // longitude of ascending node [rad]
     double omegab = 0.0;    // longitude of periapsis [rad]
-    double L      = 0.0;    // mean longitude at epoch
+    double L      = 0.0;    // mean longitude at epoch [rad]
     
     double sint, cost;  // sin/cos of theta
     double sini, cosi;  // sin/cos of i (inclination)

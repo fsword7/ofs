@@ -123,6 +123,24 @@ void CelestialPlanet::getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const
     }
 }
 
+double CelestialPlanet::getElevation(glm::dvec3 ploc)
+{
+    return (emgr != nullptr) ? emgr->getElevationData(ploc) : 0;
+}
+
+glm::dvec3 CelestialPlanet::getGroundVelocity(const glm::dvec3 &ploc)
+{
+    double lat = ofs::radians(ploc.x), lng = ofs::radians(ploc.y);
+    double vel = (getRadius()+ploc.z) * cos(lat) / getRotationPeriod();
+
+    return {-vel*sin(lng), 0.0, -vel*cos(lng) };
+}
+
+glm::dvec3 CelestialPlanet::getWindVelocity(const glm::dvec3 &ploc, double alt)
+{
+    return {0, 0, 0};
+}
+
 void CelestialPlanet::addGroundPOI(cstr_t &name, glm::dvec3 &loc, double dir)
 {
     // Adding site ground observer/point of interest

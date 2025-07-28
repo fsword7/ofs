@@ -36,6 +36,8 @@ public:
     // glm::dmat3 getuOrientation(double tjd) const override;
     // glm::dvec3 getoPosition(double tjd) const override;
 
+    void updateGlobal(const glm::dvec3 &rpos, const::glm::dvec3 &rvel);
+
     virtual void update(bool force);
 
     virtual void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);

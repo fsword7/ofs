@@ -89,19 +89,34 @@ namespace myjson
         return value;
     }
 
-    template <typename T, typename U>
-    T getFloatArray2(cjson &items, T defValue = {})
+    template <typename T>
+    void setFloatArray(cjson &items, T *val, int size)
     {
         if (!items.is_array())
-            return defValue;
-        T value = {};
+            return;
         ofsLogger->debug("JSON: array: {}\n", items.dump());
-        for (int idx = 0; idx < items.size(); idx++) {
+        for (int idx = 0; idx < size || idx < items.size(); idx++) {
             if (items[idx].is_number()) {
-                value[idx] = items[idx].get<U>();
-                ofsLogger->info("JSON: [{:d}]: {:f}\n", idx, value[idx]);
+                val[idx] = items[idx].get<T>();
+                ofsLogger->info("JSON: [{:d}]: {:f}\n", idx, val[idx]);
             }
         }
-        return value;
+    }
+
+    template <typename T>
+    void setFloatArray(cjson &config, cchar_t *name, T *val, int size)
+    {
+        if (!config.contains(name))
+            return;
+        cjson &items = config[name];
+        if (!items.is_array())
+            return;
+        ofsLogger->debug("JSON: {}: {}\n", name, items.dump());
+        for (int idx = 0; idx < size || idx < items.size(); idx++) {
+            if (items[idx].is_number()) {
+                val[idx] = items[idx].get<T>();
+                ofsLogger->info("JSON: {}[{:d}]: {:f}\n", name, idx, val[idx]);
+            }
+        }
     }
 };

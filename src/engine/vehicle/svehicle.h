@@ -30,6 +30,8 @@ public:
 
     void updateMassCG();
 
+    void updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel);
+
     void update(bool force);
     void updatePost();
 

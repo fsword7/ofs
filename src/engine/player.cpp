@@ -397,7 +397,7 @@ void Player::update(const TimeDate &td)
                 // clockwise rotation. Points to east as default origin
                 // so that adding pi/2.0 to theta value for pointing to 
                 // north with zero heading.  
-                cam.rrot = xRotate(go.phi) * yRotate(-go.theta + pi/2.0);
+                cam.rrot = ofs::xRotate(go.phi) * ofs::yRotate(-go.theta + pi/2.0);
 
                 // glm::dvec3 wv = go.av * 0.5;
                 // glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
@@ -430,14 +430,20 @@ void Player::update(const TimeDate &td)
     }
     else
     {
-        // Internal camera updates
-
+        // Internal camera updates (in ship)
         assert(tgtObject->getType() == objVehicle);
-        
-        // Set global position/rotation for on the air
-        grot  = tgtObject->getoRotation() * cam.rrot;
-        gspos = grot * (cam.rpos + *vcpos);
-        gpos  = tgtObject->getoPosition() + gspos;
+
+        switch (modeCamera)
+        {
+        case camCockpit:
+            // Set global position/rotation for on the air
+            grot  = tgtObject->getoRotation() * cam.rrot;
+            gspos = grot * (cam.rpos + *vcpos);
+            gpos  = tgtObject->getoPosition() + gspos;
+
+            break;
+        }
+
     }
 
     updateCamera();

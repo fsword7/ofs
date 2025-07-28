@@ -27,6 +27,10 @@ TaskBar::~TaskBar()
 {
     if (ipad != nullptr)
         delete ipad;
+    if (titleFont != nullptr)
+        delete titleFont;
+    if (textFont != nullptr)
+        delete textFont;
 
     cleanPlanetInfo();
 }

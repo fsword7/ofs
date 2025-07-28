@@ -19,6 +19,23 @@ OrbitalElements::OrbitalElements(double a, double e, double i,
   mjdEpoch(mjd)
 { }
 
+OrbitalElements::OrbitalElements(const double *el)
+: a(el[0]), e(el[1]), i(el[2]), theta(el[3]),
+  omegab(el[4]), L(el[5]), mjdEpoch(el[6])
+{ }
+
+void OrbitalElements::configure(const double *el)
+{
+    // Set new orbital elmenets
+    a = el[0];
+    e = el[1];
+    i = el[2];
+    theta = el[3];
+    omegab = el[4];
+    L = el[5];
+    mjdEpoch = el[6];
+}
+
 void OrbitalElements::setMasses(double _m, double _M)
 {
     m  = _m;
@@ -367,7 +384,6 @@ void OrbitalElements::update(double mjd, glm::dvec3 &pos, glm::dvec3 &vel)
     pos = R;
     vel = V;
 }
-
 
 glm::dvec3 OrbitalElements::convertPolarToXYZ(double r, double ta) const
 {

@@ -342,7 +342,7 @@ protected:
     glm::dvec3 Fadd;   // collecting linear forces
     glm::dvec3 Ladd;   // collecting torque components
 
-    mutable elevTileList_t etile;
+    mutable elevTileList_t elevTiles;
 };
 
 class Vehicle : public VehicleBase
@@ -355,6 +355,7 @@ public:
     virtual ~Vehicle();
 
     void configure(cjson &config, Celestial *object);
+    void setDefaultPack();
 
     void clearModule();
     bool registerModule(cstr_t &name);
@@ -381,7 +382,11 @@ public:
 
     void updateUserAttitudeControls(int *ctrlKeyboard);
 
+    void updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel);
+    void updateGlobalIndividual(const glm::dvec3 &rpos, const glm::dvec3 &rvel);
+
     void updateMass();
+
     virtual void update(bool force);
 
     void updateRadiationForces();
@@ -470,6 +475,8 @@ private:
     glm::dvec3 cflin;       // Collecting linear force
     glm::dvec3 camom;       // Collecting torque force
     glm::dvec3 thrust;      // linear thrust force
+
+    glm::dmat3 lhrot;       // local horizon frame rotation
 
     // Collision detection parameters (touchdown points)
     std::vector<tdVertex_t> tpVertices; // touchdown vertices (vessel frame)

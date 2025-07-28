@@ -145,6 +145,12 @@ public:
         return { xz*clng, rad*slat, xz*-slng };
     }
 
+    inline glm::dvec3 convertEquatorialToLocal(double slat, double clat, double slng, double clng, double rad)
+    {
+        double xz = rad * clat;
+        return { xz*clng, rad*slat, xz*-slng };
+    }
+
     inline glm::dvec3 convertEquatorialToLocal(glm::dvec3 &epos)
     {
         return convertEquatorialToLocal(epos.x, epos.y, epos.z);

@@ -103,6 +103,11 @@ void SuperVehicle::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const
 
 }
 
+void SuperVehicle::updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel)
+{
+
+}
+
 void SuperVehicle::updateMassCG()
 {
     mass = 0.0;

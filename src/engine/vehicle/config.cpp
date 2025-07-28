@@ -45,7 +45,58 @@ void Vehicle::configure(cjson &config, Celestial *object)
     if (stName == "landed") {
         glm::dvec3 loc = myjson::getFloatArray<glm::dvec3, double>(config, "location");
         double dir = myjson::getFloat<double>(config, "heading");
-        surfParam.setLanded(loc, dir, cbody);
+        initLanded(object, loc, dir);
+    } else if (stName == "orbiting") {
+
+        glm::dvec3 rpos, rvel;
+        if (config.contains("elements")) {
+            double el[NELEMENTS] = DEFAULT_ELEMENTS;
+            cbody = object;
+
+            myjson::setFloatArray(config, "elements", el, ARRAY_SIZE(el));
+
+            // orbital elements - convert degrees to radians
+            el[2] = ofs::radians(el[2]); // inclination
+            el[3] = ofs::radians(el[3]); // longtitude of ascending node
+            el[4] = ofs::radians(el[4]); // longtitude of peripasis
+            el[5] = ofs::radians(el[5]); // mean longtitude at epoch
+            // set MJD reference as default
+            el[6] = (el[6] == 0) ? ofsDate->getMJDReference() : el[6];
+
+            // initialize orbital elements
+            oel.configure(el);
+            oel.setup(mass, cbody->getMass(), ofsDate->getMJDReference());
+            oel.update(ofsDate->getMJD1(), rpos, rvel);
+            orbitValid = true;
+        } else {
+            rpos = myjson::getFloatArray<glm::dvec3, double>(config, "rpos");
+            rvel = myjson::getFloatArray<glm::dvec3, double>(config, "rvel");
+        }
+
+        double alt = myjson::getFloat<double>(config, "alt");
+     
+        glm::dvec3 arot;
+        if (config.contains("arot")) {
+            glm::dvec3 arot = myjson::getFloatArray<glm::dvec3, double>(config, "arot");
+
+            // arot - convert degrees to radians
+            arot.x = ofs::radians(arot.x);
+            arot.y = ofs::radians(arot.y);
+            arot.z = ofs::radians(arot.z);
+        }
+
+        glm::dvec3 vrot;
+        if (config.contains("vrot")) {
+            glm::dvec3 vrot = myjson::getFloatArray<glm::dvec3, double>(config, "vrot");
+
+            // vrot - convert degrees to radians
+            vrot.x = ofs::radians(vrot.x);
+            vrot.y = ofs::radians(vrot.y);
+            vrot.z = ofs::radians(vrot.z);
+        }
+
+        initOrbiting(rpos, rvel, arot, &vrot);
+
     } else {
         ofsLogger->info("{}: Unknown flight status: {} - aborted\n",
             getsName(), stName);
@@ -53,4 +104,14 @@ void Vehicle::configure(cjson &config, Celestial *object)
     }
 
     ofsLogger->info("Vehicle name: {} desciption: {}\n", getsName(), getsName(1));
+}
+
+void Vehicle::setDefaultPack()
+{
+
+    switch (fsType)
+    {
+    case fsFlight:
+        break;
+    }
 }

@@ -21,6 +21,7 @@ public:
     inline double getSimDeltaTime0() const  { return simdt0; }
     inline double getSimDeltaTime1() const  { return simdt1; }
 
+    inline double getMJDReference() const   { return mjdref; }
     inline double getMJD0() const           { return mjd0; }
     inline double getMJD1() const           { return mjd1; }
     inline double getJD0() const            { return jd0; }

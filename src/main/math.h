@@ -31,76 +31,6 @@ template <typename T> inline constexpr T mod2pi(T x)
     return x - tpi * floor((x + pi) / tpi);
 }
 
-
-// rotation matrices for left-handed rule
-// template <typename T>
-// inline glm::dmat3 xRotate(T radians)
-// {
-//     double sang = sin(radians), cang = cos(radians);
-//     return glm::dmat3(
-//         { 1.0,   0.0,   0.0  },
-//         { 0.0,   cang,  sang },
-//         { 0.0,  -sang,  cang }
-//     );
-// }
-
-// template <typename T>
-// inline glm::dmat3 yRotate(T radians)
-// {
-//     double sang = sin(radians), cang = cos(radians);
-//     return glm::dmat3(
-//         { cang,  0.0,  -sang  },
-//         { 0.0,   1.0,   0.0   },
-//         { sang,  0.0,   cang  }
-//     );
-// }
-
-// template <typename T>
-// inline glm::dmat3 zRotate(T radians)
-// {
-//     double sang = sin(radians), cang = cos(radians);
-//     return glm::dmat3(
-//         { cang,  sang,  0.0   },
-//         {-sang,  cang,  0.0   },
-//         { 0.0 ,  0.0,   1.0   }
-//     );
-// }
-
-// rotation matrices for right-handed rule
-template <typename T>
-inline glm::dmat3 xRotate(T radians)
-{
-    double sang = sin(radians), cang = cos(radians);
-    return glm::dmat3(
-        { 1.0,   0.0,   0.0  },
-        { 0.0,   cang, -sang },
-        { 0.0,   sang,  cang }
-    );
-}
-
-template <typename T>
-inline glm::dmat3 yRotate(T radians)
-{
-    double sang = sin(radians), cang = cos(radians);
-    return glm::dmat3(
-        { cang,  0.0,   sang  },
-        { 0.0,   1.0,   0.0   },
-        {-sang,  0.0,   cang  }
-    );
-}
-
-template <typename T>
-inline glm::dmat3 zRotate(T radians)
-{
-    double sang = sin(radians), cang = cos(radians);
-    return glm::dmat3(
-        { cang, -sang,  0.0   },
-        { sang,  cang,  0.0   },
-        { 0.0 ,  0.0,   1.0   }
-    );
-}
-
-
 template <typename T>
 inline glm::dquat xqRotate(T radians)
 {
@@ -197,6 +127,90 @@ namespace ofs
         T ang = fmod(angle, pi2);
         return (ang >= 0.0 ? ang : (ang + pi2));
     }
+
+    // rotation matrices for right-handed rule
+    template <typename T>
+    inline glm::dmat3 xRotate(T radians)
+    {
+        double sang = sin(radians), cang = cos(radians);
+        return glm::dmat3(
+            { 1.0,   0.0,   0.0  },
+            { 0.0,   cang, -sang },
+            { 0.0,   sang,  cang }
+        );
+    }
+
+    template <typename T>
+    inline glm::dmat3 yRotate(T radians)
+    {
+        double sang = sin(radians), cang = cos(radians);
+        return glm::dmat3(
+            { cang,  0.0,   sang  },
+            { 0.0,   1.0,   0.0   },
+            {-sang,  0.0,   cang  }
+        );
+    }
+
+    template <typename T>
+    inline glm::dmat3 zRotate(T radians)
+    {
+        double sang = sin(radians), cang = cos(radians);
+        return glm::dmat3(
+            { cang, -sang,  0.0   },
+            { sang,  cang,  0.0   },
+            { 0.0 ,  0.0,   1.0   }
+        );
+    }
+
+    // rotation matrices for left-handed rule
+    // template <typename T>
+    // inline glm::dmat3 xRotate(T radians)
+    // {
+    //     double sang = sin(radians), cang = cos(radians);
+    //     return glm::dmat3(
+    //         { 1.0,   0.0,   0.0  },
+    //         { 0.0,   cang,  sang },
+    //         { 0.0,  -sang,  cang }
+    //     );
+    // }
+
+    // template <typename T>
+    // inline glm::dmat3 yRotate(T radians)
+    // {
+    //     double sang = sin(radians), cang = cos(radians);
+    //     return glm::dmat3(
+    //         { cang,  0.0,  -sang  },
+    //         { 0.0,   1.0,   0.0   },
+    //         { sang,  0.0,   cang  }
+    //     );
+    // }
+
+    // template <typename T>
+    // inline glm::dmat3 zRotate(T radians)
+    // {
+    //     double sang = sin(radians), cang = cos(radians);
+    //     return glm::dmat3(
+    //         { cang,  sang,  0.0   },
+    //         {-sang,  cang,  0.0   },
+    //         { 0.0 ,  0.0,   1.0   }
+    //     );
+    // }
+
+    template <typename T, typename U> inline constexpr T rotation(const glm::dvec3 &rot)
+    {
+        // U cosx = cos(rot.x), sinx = sin(rot.x);
+        // U cosy = cos(rot.y), siny = sin(rot.y);
+        // U cosz = cos(rot.z), sinz = sin(rot.z);
+
+        // Rotation matrix using right-handed rule
+        //
+        //     |  1     0     0  || cosy   0  siny || cosz -sinz   0  |
+        // R = |  0   cosx -sinx ||   0    1    0  || sinz  cosz   0  |
+        //     |  0   sinx  cosx ||-siny   0  cosy ||   0     0    1  |
+
+        return xRotate(rot.x) * yRotate(rot.y) * zRotate(rot.z);
+    }
+
 
     // template <typename T> Eigen::Quaternion<T> lookAt(const Eigen::Matrix<T, 3, 1> &from, const Eigen::Matrix<T, 3, 1> &to,
     //     const Eigen::Matrix<T, 3, 1> &up)
