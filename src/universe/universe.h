@@ -29,6 +29,7 @@ public:
     void init();
     void start();
     void configure(cjson &config);
+    void configureVehicles(cjson &config);
     void update(Player *player, const TimeDate &td);
     void finalizeUpdate();
 

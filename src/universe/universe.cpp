@@ -60,38 +60,42 @@ void Universe::configure(cjson &config)
             if (!pSystem::loadSystem(this, sysName, sysFolder));
         }
     }
+}
 
-    if (config["ships"].is_array())
-    {
-        cjson &ships = config["ships"];
+void Universe::configureVehicles(cjson &config)
+{
+    if (!config.contains("ships"))
+        return;
+    if (!config["ships"].is_array())
+        return;
+    cjson &ships = config["ships"];
 
-        for (int idx = 0; idx < ships.size(); idx++) {
-            cjson &ship = ships[idx];
-            if (!ship.is_object())
-                continue;
+    for (int idx = 0; idx < ships.size(); idx++) {
+        cjson &ship = ships[idx];
+        if (!ship.is_object())
+            continue;
 
-            str_t cbTarget = myjson::getString<str_t>(ship, "target");
-            Celestial *cbody = nullptr;
-            if (!cbTarget.empty())
-                cbody = findPath(cbTarget);
-            else {
-                ofsLogger->error("JSON: Unknown celestial body: {} - aborted\n",
-                    cbTarget);
-                continue;
-            }
-
-            pSystem *psys = nullptr;
-            if (cbody->hasSystem())
-                psys = cbody->getSystem();
-            else {
-                ofsLogger->error("JSON: {} system does not have solar/planetary system - aborted.\n",
-                    cbody->getsName());
-                continue;
-            }
-
-            Vehicle *veh = new Vehicle(ship, cbody);
-            psys->addVehicle(veh);
+        str_t cbTarget = myjson::getString<str_t>(ship, "target");
+        Celestial *cbody = nullptr;
+        if (!cbTarget.empty())
+            cbody = findPath(cbTarget);
+        else {
+            ofsLogger->error("JSON: Unknown celestial body: {} - aborted\n",
+                cbTarget);
+            continue;
         }
+
+        pSystem *psys = nullptr;
+        if (cbody->hasSystem())
+            psys = cbody->getSystem();
+        else {
+            ofsLogger->error("JSON: {} system does not have solar/planetary system - aborted.\n",
+                cbody->getsName());
+            continue;
+        }
+
+        Vehicle *veh = new Vehicle(ship, cbody);
+        psys->addVehicle(veh);
     }
 }
 

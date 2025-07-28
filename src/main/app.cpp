@@ -122,6 +122,10 @@ void CoreApp::openSession(json &config)
     // new time for that session.
     universe->start();
 
+    // Now load and configure vehicles (ships)
+    universe->configureVehicles(config);
+
+    // Now configure player
     json pconfig;
     if (config.contains("player"))
         pconfig = config["player"];
