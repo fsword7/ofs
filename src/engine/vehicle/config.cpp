@@ -60,8 +60,10 @@ void Vehicle::configure(cjson &config, Celestial *object)
             el[3] = ofs::radians(el[3]); // longtitude of ascending node
             el[4] = ofs::radians(el[4]); // longtitude of peripasis
             el[5] = ofs::radians(el[5]); // mean longtitude at epoch
-            // set MJD reference as default
-            el[6] = (el[6] == 0) ? ofsDate->getMJDReference() : el[6];
+
+            // sanity check - set MJD reference as default
+            if (el[6] == 0)
+                el[6] = ofsDate->getMJDReference();
 
             // initialize orbital elements
             oel.configure(el);
