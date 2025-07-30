@@ -25,9 +25,14 @@
 
     "player": {
         "mode": {
-            "type": "target-sync",
-            "target": "Sol/Earth", "sync-target": "Sol",
-            "direction": [0, 0, 1], "scale": 4
+            // "type": "target-sync",
+            // "target": "Sol/Earth", "sync-target": "Sol",
+            // "direction": [0, 0, 1], "scale": 4
+
+            "type": "personal-observer",
+            "target": "Sol/Earth",
+            "location": [ 28.632307, -80.705774, 0.002 ],
+            "heading": 150
 
             // "type": "cockpit",
             // "target": "SG-01"

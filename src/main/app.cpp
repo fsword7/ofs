@@ -619,7 +619,7 @@ void CoreApp::keyImmediateSystem()
                 player->dolly(dt * 2.0);
         }
 
-        if (mode == camGroundObserver)
+        if (mode == camGroundObserver || mode == camPersonalObserver)
         {
             double dphi(0.0), dtheta(0.0);
         
@@ -633,7 +633,9 @@ void CoreApp::keyImmediateSystem()
                 dtheta += dt * 0.8;
 
             player->rotateView(dphi, dtheta);
+        }
 
+        if (mode == camPersonalObserver) {
             glm::dvec3 dm(0, 0, 0);
             double dh(0.0);
 
@@ -651,7 +653,8 @@ void CoreApp::keyImmediateSystem()
                 dh -= dt;
 
             if (glm::length(dm) != 0)
-                player->shiftGroundObserver(dm, dh);
+                player->shiftPersonalObserver(dm, dh);
+        }
 
             // glm::dvec3 av = player->getGroundAngularControl();
             // glm::dvec3 tv = player->getGroundTravelControl();
@@ -684,7 +687,6 @@ void CoreApp::keyImmediateSystem()
 
             // player->setGroundAngularControl(av);
             // player->setGroundTravelControl(tv);
-        }
     }
     else
     {

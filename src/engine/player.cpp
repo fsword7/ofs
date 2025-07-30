@@ -134,6 +134,8 @@ void Player::configure(json &config)
             camMode = camGlobalFrame;
         else if (modeType == "ground-observer")
             camMode = camGroundObserver;
+        else if (modeType == "personal-observer")
+            camMode = camPersonalObserver;
         else if (modeType == "cockpit")
             camMode = camCockpit;
         else {
@@ -143,7 +145,19 @@ void Player::configure(json &config)
 
         str_t primaryTarget, secondaryTarget;
 
-        if (camMode != camCockpit)
+        if (camMode == camPersonalObserver) {
+            glm::dvec3 ploc;
+            double dir;
+
+            primaryTarget = myjson::getString<str_t>(modes, "target");
+            if (!primaryTarget.empty())
+                primary = univ->findPath(primaryTarget);
+
+            ploc = myjson::getFloatArray<glm::dvec3, double>(modes, "location");
+            dir = myjson::getFloat<double>(modes, "heading");
+
+            setPersonalObserver(primary, ploc, dir);
+        } else if (camMode != camCockpit)
         {
             primaryTarget = myjson::getString<str_t>(modes, "target");
             if (!primaryTarget.empty())
@@ -204,8 +218,8 @@ double Player::getGroundElevation(CelestialPlanet *cbody, double lat, double lng
     ElevationManager *emgr = cbody->getElevationManager();
     if (emgr != nullptr)
     {
-        int rlod = int(32.0 - log(std::max(go.alt0, 0.1))*(1.0 / log(2.0)));
-        elev = emgr->getElevationData({lat, lng, go.alt0}, rlod, &elevTiles);
+        int rlod = int(32.0 - log(std::max(pgo.alt0, 0.1))*(1.0 / log(2.0)));
+        elev = emgr->getElevationData({lat, lng, pgo.alt0}, rlod, &elevTiles);
     }
     return elev / 1000.0; 
 }
@@ -376,20 +390,20 @@ void Player::update(const TimeDate &td)
             }
             break;
 
-        case camGroundObserver:
+        case camPersonalObserver:
             {
                 cbody = dynamic_cast<CelestialPlanet *>(tgtObject);
                 assert(cbody != nullptr);
 
-                go.alt0 = cbody->getRadius();
-                go.elev = getGroundElevation(cbody, go.lat, go.lng);
-                go.alt  = go.alt0 + go.elev;
+                pgo.alt0 = cbody->getRadius();
+                pgo.elev = getGroundElevation(cbody, pgo.lat, pgo.lng);
+                pgo.alt  = pgo.alt0 + pgo.elev;
                 // ofsLogger->debug("Location: {:f}, {:f} -> {:f} feet\n",
                 //     glm::degrees(go.lat), glm::degrees(go.lng), elev);
 
                 // Calkculating planetocentric coordinates
-                double vcalt = go.alt + go.vcofs;
-                cam.rpos = cbody->convertEquatorialToLocal(go.lat, go.lng, vcalt);
+                double vcalt = pgo.alt + pgo.vcofs;
+                cam.rpos = cbody->convertEquatorialToLocal(pgo.lat, pgo.lng, vcalt);
                 gspos = cam.rpos * cbody->getoRotation();
                 gpos = cbody->getoPosition() + gspos;
 
@@ -397,7 +411,7 @@ void Player::update(const TimeDate &td)
                 // clockwise rotation. Points to east as default origin
                 // so that adding pi/2.0 to theta value for pointing to 
                 // north with zero heading.  
-                cam.rrot = ofs::xRotate(go.phi) * ofs::yRotate(-go.theta + pi/2.0);
+                cam.rrot = ofs::xRotate(pgo.phi) * ofs::yRotate(-pgo.theta + pi/2.0);
 
                 // glm::dvec3 wv = go.av * 0.5;
                 // glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
@@ -406,7 +420,7 @@ void Player::update(const TimeDate &td)
 
                 // cam.rpos -= glm::conjugate(cam.rqrot) * tv;
 
-                grot = cam.rrot * go.R * cbody->getoRotation();
+                grot = cam.rrot * pgo.R * cbody->getoRotation();
                 gqrot = grot;
  
                 // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
@@ -452,8 +466,12 @@ void Player::update(const TimeDate &td)
 // rotate camera 
 void Player::rotateView(double dtheta, double dphi)
 {
-    if (modeExternal && modeCamera == camGroundObserver)
-        rotateGroundObserver(dtheta, dphi);
+    if (modeExternal) {
+        if (modeCamera == camGroundObserver)
+            rotateGroundObserver(dtheta, dphi);
+        else if (modeCamera == camPersonalObserver)
+            rotatePersonalObserver(dtheta, dphi);
+    }
 }
 
 void Player::orbit(double phi, double theta, double dist)
@@ -609,4 +627,80 @@ void Player::rotateGroundObserver(double dtheta, double dphi)
         return;
     go.theta += dtheta;
     go.phi   += dphi;
+}
+
+
+void Player::setPersonalObserver(Celestial *object, glm::dvec3 loc, double heading)
+{
+    if (object == nullptr)
+        return;
+    attach(object, camPersonalObserver); 
+
+    pgo.lat = glm::radians(loc.x);
+    pgo.lng = glm::radians(loc.y);
+    pgo.dir = glm::radians(heading);
+    pgo.vcofs = loc.z;
+
+    pgo.theta = glm::radians(heading);
+    pgo.phi = glm::radians(0.0);
+
+    // Clear all ground velocity controls
+    pgo.av = { 0, 0, 0 };
+    pgo.tv = { 0, 0, 0 };
+
+    // Set rotation matrix for local horizon frame
+    // for right-handed rule (OpenGL). Points
+    // to east as origin at (0, 0).
+    //
+    //     |  slat  clat   0  | |  clng   0   slng |
+    // R = | -clat  slat   0  | |   0     1    0   |
+    //     |   0     0     1  | | -slng   0   clng |
+    //
+    double clat = cos(pgo.lat), slat = sin(pgo.lat);
+    double clng = cos(pgo.lng), slng = sin(pgo.lng);
+    pgo.R = { slat*clng,  clat*clng, slng,
+             -clat,       slat,      0,
+             -slat*slng, -clat*slng, clng };
+    pgo.Q = pgo.R;
+
+    // cam.rqrot = xqRotate(-go.phi) * yqRotate(go.theta - pi/2.0);
+    // cam.rrot  = glm::mat3_cast(cam.rqrot);
+
+    // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
+    // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[1][0], go.R[1][1], go.R[1][2]);
+    // ofsLogger->debug("    {:f} {:f} {:f}\n", go.R[2][0], go.R[2][1], go.R[2][2]);
+    // ofsLogger->debug("Q = {:f} {:f} {:f} {:f}\n", go.Q.w, go.Q.x, go.Q.y, go.Q.z);
+}
+
+void Player::shiftPersonalObserver(glm::dvec3 dm, double dh)
+{
+    if (modeExternal && modeCamera != camPersonalObserver)
+        return;
+
+    // Rotate movement at the direction of camera view.
+    dm = cam.rrot * dm;
+
+    // Updating personal observer
+    pgo.lat += dm.z;
+    pgo.lng += dm.x;
+    pgo.alt += dh;
+    pgo.alt0 += dh;
+    
+    // Set rotation matrix for local horizon frame
+    // for right-handed rule (OpenGL). Points
+    // to east as origin at (0, 0).
+    double clat = cos(pgo.lat), slat = sin(pgo.lat);
+    double clng = cos(pgo.lng), slng = sin(pgo.lng);
+    pgo.R = { slat*clng,  clat*clng, slng,
+             -clat,       slat,      0,
+             -slat*slng, -clat*slng, clng };
+    pgo.Q = pgo.R;
+}
+
+void Player::rotatePersonalObserver(double dtheta, double dphi)
+{
+    if (modeExternal && modeCamera != camPersonalObserver)
+        return;
+    pgo.theta += dtheta;
+    pgo.phi   += dphi;
 }

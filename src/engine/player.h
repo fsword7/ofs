@@ -19,6 +19,7 @@ enum cameraMode {
     camTargetUnlocked,
     camTargetSync,
     camGroundObserver,
+    camPersonalObserver,    // Personal observer/player - walking
     camCockpit
 };
 
@@ -173,6 +174,11 @@ public:
     void shiftGroundObserver(glm::dvec3 dm, double dh);
     void rotateGroundObserver(double dtheta, double dphi);
 
+    // Personal observer - walking, etc.
+    void setPersonalObserver(Celestial *object, glm::dvec3 loc, double heading);
+    void shiftPersonalObserver(glm::dvec3 dm, double dh);
+    void rotatePersonalObserver(double dtheta, double dphi);
+
 private:
     Camera cam;
     // PlayerFrame *frame = nullptr;
@@ -198,7 +204,8 @@ private:
     double cphi = 0.0;      // current phi rotation (free)
     double ctheta = 0.0;    // current theta rotation (free)
 
-    GroundObserver go;
+    GroundObserver go;      // Ground observer - watching vehicle from tower or ground.
+    GroundObserver pgo;     // Personal observer - walking around.
 
     // Rotation: X = Phi, Y = Theta, Z = distance
     glm::dvec3 orot;        // external camera from object frame
