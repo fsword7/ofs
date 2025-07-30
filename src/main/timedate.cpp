@@ -22,7 +22,7 @@ void TimeDate::reset(double now, double mjd)
     // Reset julian dates
     mjdref = mjd;
     mjd0 = mjd1 = mjdref;
-    simt0 = simt1 = astro::seconds(mjdref);
+    simt0 = simt1 = 0;
     // jd0 = jd1 = mjdref;
 }
 

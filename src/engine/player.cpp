@@ -144,21 +144,31 @@ void Player::configure(json &config)
         }
 
         str_t primaryTarget, secondaryTarget;
+        glm::dvec3 ploc, rpos, rdir;
+        double dir;
+        double rad, elev = 0.0;
+        double scale;
 
-        if (camMode == camPersonalObserver) {
-            glm::dvec3 ploc;
-            double dir;
-
+        switch (camMode) {
+        case camPersonalObserver:
             primaryTarget = myjson::getString<str_t>(modes, "target");
             if (!primaryTarget.empty())
                 primary = univ->findPath(primaryTarget);
 
+            if (!modes.contains("location") || !modes.contains("heading")) {
+                ofsLogger->error("JSON: Required location and heading - aborted\n");
+                return;
+            }
             ploc = myjson::getFloatArray<glm::dvec3, double>(modes, "location");
             dir = myjson::getFloat<double>(modes, "heading");
 
             setPersonalObserver(primary, ploc, dir);
-        } else if (camMode != camCockpit)
-        {
+            break;
+
+        case camTargetRelative:
+        case camTargetSync:
+        case camTargetUnlocked:
+        case camGlobalFrame:
             primaryTarget = myjson::getString<str_t>(modes, "target");
             if (!primaryTarget.empty())
                 primary = univ->findPath(primaryTarget);
@@ -168,10 +178,11 @@ void Player::configure(json &config)
                     secondary = univ->findPath(secondaryTarget);
             }
 
-            double elev = 0.01, scale;
-            double rad = primary->getRadius();
-            glm::dvec3 rdir = myjson::getFloatArray<glm::dvec3, double>(modes, "direction");
-            glm::dvec3 rpos = myjson::getFloatArray<glm::dvec3, double>(modes, "position");
+            rad = primary->getRadius();
+            elev = 0.01;
+
+            rdir = myjson::getFloatArray<glm::dvec3, double>(modes, "direction");
+            rpos = myjson::getFloatArray<glm::dvec3, double>(modes, "position");
             scale = myjson::getFloat<double>(modes, "scale", 1.0);
 
             if (rpos.x != 0 || rpos.y != 0 || rpos.z != 0) {
@@ -184,11 +195,12 @@ void Player::configure(json &config)
                 ofsLogger->error("JSON: Required position or direction - aborted\n");
                 return;    
             }
-
+        
             cam.setPosition(rpos);
 
             modeExternal = true;
             attach(primary, camMode, secondary);
+            break;
         }
     }
 
