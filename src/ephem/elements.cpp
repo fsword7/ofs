@@ -4,11 +4,8 @@
 // Date:    Apr 25, 2022
 
 #include "main/core.h"
+#include "universe/astro.h"
 #include "ephem/elements.h"
-
-const double G       = 6.67259e-11; // gravitational constant [m^3 kg^-1 s^-2]
-const double MJD2000 = 51544.5;     // MJD date for epoch J2000
-// const double pi      = 3.14159265358979323846;
 
 static constexpr const double E_CIRCLE_LIMIT = 1e-8;
 static constexpr const double I_NOINC_LIMIT  = 1e-8;
@@ -17,14 +14,18 @@ OrbitalElements::OrbitalElements(double a, double e, double i,
     double theta, double omegab, double L, double mjd)
 : a(a), e(e), i(i), theta(theta), omegab(omegab), L(L),
   mjdEpoch(mjd)
-{ }
+{ 
+    tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
+}
 
-OrbitalElements::OrbitalElements(const double *el)
+OrbitalElements::OrbitalElements(const double *el, double mjd)
 : a(el[0]), e(el[1]), i(el[2]), theta(el[3]),
-  omegab(el[4]), L(el[5]), mjdEpoch(el[6])
-{ }
+  omegab(el[4]), L(el[5]), mjdEpoch(mjd)
+{
+    tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
+}
 
-void OrbitalElements::configure(const double *el)
+void OrbitalElements::configure(const double *el, double mjd)
 {
     // Set new orbital elmenets
     a = el[0];
@@ -33,14 +34,47 @@ void OrbitalElements::configure(const double *el)
     theta = el[3];
     omegab = el[4];
     L = el[5];
-    mjdEpoch = el[6];
+    ma = 1e10;
+
+    // Set MJD date/time
+    mjdEpoch = mjd;
+    tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
+}
+
+void OrbitalElements::reset(double _a, double _e, double _i, double _theta,
+    double _omegab, double _L, double mjd)
+{
+    // Reset primary elements
+    a = _a;
+    e = _e;
+    i = _i;
+    theta = _theta;
+    omegab = _omegab;
+    L = _L;
+
+    // Reset MJD date/time
+    setup(m, M, mjd);
+}
+
+void OrbitalElements::reset(const double *el, double mjd)
+{
+    // Reset primary elements
+    a = el[0];
+    e = el[1];
+    i = el[2];
+    theta = el[3];
+    omegab = el[4];
+    L = el[5];
+
+    // Reset MJD date/time
+    setup(m, M, mjd);
 }
 
 void OrbitalElements::setMasses(double _m, double _M)
 {
     m  = _m;
     M  = _M;
-    mu = G * (m + M);
+    mu = astro::G * (m + M);
 }
 
 double OrbitalElements::getEccentricAnomaly(double ma) const
@@ -52,7 +86,7 @@ double OrbitalElements::getEccentricAnomaly(double ma) const
     double res;
     double E;
 
-    if (e < 1.0)
+    if (isClosedOrbit(e))
     {
         // closed orbit
         E = (fabs(ma-ma0) < 1e-2 ? ma0 : ma);
@@ -82,7 +116,7 @@ double OrbitalElements::getEccentricAnomaly(double ma) const
 
 double OrbitalElements::getEccentricAnomalyTA(double ta) const
 {
-    if (e < 1.0)
+    if (isClosedOrbit(e))
         return 2.0 * atan(tan(0.5 * ta) / tmp);
     else
     {
@@ -94,7 +128,7 @@ double OrbitalElements::getEccentricAnomalyTA(double ta) const
 
 double OrbitalElements::getTrueAnomalyE(double ea) const
 {
-    if (e < 1.0)
+    if (isClosedOrbit(e))
         return 2.0 * atan(tmp * tan(0.5 * ea));
     else
     {
@@ -106,7 +140,7 @@ double OrbitalElements::getTrueAnomalyE(double ea) const
 
 double OrbitalElements::getMeanAnomalyE(double ea) const
 {
-    if (e < 1.0)
+    if (isClosedOrbit(e))
         return ea - e*sin(ea);
     else
         return e*sinh(ea) - ea;
@@ -140,7 +174,7 @@ void OrbitalElements::setup(double m, double M, double mjd)
     p = std::max(0.0, a * (1.0 - a*a));
     muh = sqrt(mu/p);
 
-    if (e < 1.0)
+    if (isClosedOrbit(e))
     {
         // circular/elliptical orbit
         b = a * sqrt(1.0 - e*e);
@@ -160,11 +194,10 @@ void OrbitalElements::setup(double m, double M, double mjd)
     sino = sin(omega), coso = cos(omega);
 
     // set time parameters
-    double mjdStart = 0.0;
     T = (pi * 2.0) / n;                  // orbital period
     L += (mjd - mjdEpoch) * 86400.0 * n; // mean longitude
     mjdEpoch = mjd;
-    tEpoch = (mjdEpoch - mjdStart) * 86400.0;
+    tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
     tau = tEpoch - (L - omegab) / n;
 }
 
@@ -196,7 +229,7 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
     p = std::max(0.0, a * (1.0 - e*e));
     muh = sqrt(mu/p);
 
-    if (e < 1.0)
+    if (isClosedOrbit(e))
     {
         ad = a + le;
         b = a * sqrt(1.0 - e*e);
@@ -277,7 +310,7 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
     // True longitude
     if ((trl = omegab + tra) >= pi*2)
         trl -= pi*2;
-    if (e < 1.0)
+    if (isClosedOrbit(e))
     {
         // Closed orbit
 
@@ -315,11 +348,11 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
 
     // time of periapsis passage
     tau = t + Tpe;
-    if (e < 1.0)
+    if (isClosedOrbit(e))
         tau -= T;
     
     // mean longitude at epoch
-    if (e < 1.0)
+    if (isClosedOrbit(e))
     {
         L = ofs::posangle(omegab + n * (tEpoch - tau));
         ml = ofs::posangle(ma + omegab);
@@ -329,8 +362,6 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
         L = omegab + n * (tEpoch-tau);
         ml = ma + omegab;
     }
-
-    // mean longtiude
 }
 
 // updating position and velocity periodically

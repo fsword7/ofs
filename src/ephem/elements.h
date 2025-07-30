@@ -5,10 +5,10 @@
 
 #pragma once
 
-using orbit_t = double[7];
+#define NELEMENTS           6
+#define DEFAULT_ELEMENTS    { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0 }
 
-#define NELEMENTS           7
-#define DEFAULT_ELEMENTS    { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, astro::MJD2000 }
+using orbit_t = double[NELEMENTS];
 
 class OrbitalElements
 {
@@ -16,8 +16,11 @@ public:
     OrbitalElements() = default;
     ~OrbitalElements() = default;
 
-    OrbitalElements(double a, double e, double i, double theta, double omegab, double L, double mjd);
-    OrbitalElements(const double *el);
+    OrbitalElements(double a, double e, double i, double theta,
+        double omegab, double L, double mjd = astro::MJD2000);
+    OrbitalElements(const double *el, double mjd = astro::MJD2000);
+
+    inline bool isClosedOrbit(double e) const               { return e < 1.0; }
 
     inline double getLinearEccentricity() const             { return le; }
     inline double getApoapsis() const                       { return ad; }
@@ -50,7 +53,10 @@ public:
     bool getAscendingNode(glm::dvec3 &an) const;
     bool getDescendingNode(glm::dvec3 &dn) const;
 
-    void configure(const double *el);
+    void configure(const double *el, double mjd);
+    void reset(double a, double e, double i, double theta,
+        double omegab, double L, double mjd);
+    void reset(const double *el, double mjd);
     void setup(double m, double M, double mjd);
     void calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t);
     void update(double mjd, glm::dvec3 &pos, glm::dvec3 &vel);

@@ -20,6 +20,7 @@
 #include "main/guimgr.h"
 #include "main/app.h"
 #include "main/keys.h"
+#include "utils/json.h"
 
 // Global variables
 CoreApp *ofsAppCore = nullptr;
@@ -103,13 +104,14 @@ void CoreApp::openSession(json &config)
 {
     ofsLogger->info("Now running the world\n");
 
-    // Starting current time from system time
+    // Starting date/time from system time or json config file 
     auto now = std::chrono::system_clock::now();
     std::chrono::duration<double> nowTime = now.time_since_epoch();
-    ofsLogger->info("Today MJD Time: {} Date: {}\n",
-        astro::MJD(nowTime.count()), astro::getMJDDateStr(astro::MJD(nowTime.count())));
-    td.reset(astro::MJD2000);
-    td.jumpTo(astro::MJD(nowTime.count()));
+    double mjdref = astro::MJD(nowTime.count());
+    mjdref = myjson::getFloat<double>(config, "mjd", mjdref);
+    ofsLogger->info("Starting MJD Time: {} Date: {}\n",
+        mjdref, astro::getMJDDateStr(mjdref));
+    td.reset(nowTime.count(), mjdref);
     prevTime = now;
 
     VideoData *video = gclient->getVideoData();

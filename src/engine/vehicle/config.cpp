@@ -51,9 +51,12 @@ void Vehicle::configure(cjson &config, Celestial *object)
         glm::dvec3 rpos, rvel;
         if (config.contains("elements")) {
             double el[NELEMENTS] = DEFAULT_ELEMENTS;
+            double mjd, mjdref = ofsDate->getMJDReference();
+
             cbody = object;
 
             myjson::setFloatArray(config, "elements", el, ARRAY_SIZE(el));
+            mjd = myjson::getFloat<double>(config, "mjd", mjdref);
 
             // orbital elements - convert degrees to radians
             el[2] = ofs::radians(el[2]); // inclination
@@ -61,13 +64,9 @@ void Vehicle::configure(cjson &config, Celestial *object)
             el[4] = ofs::radians(el[4]); // longtitude of peripasis
             el[5] = ofs::radians(el[5]); // mean longtitude at epoch
 
-            // sanity check - set MJD reference as default
-            if (el[6] == 0)
-                el[6] = ofsDate->getMJDReference();
-
             // initialize orbital elements
-            oel.configure(el);
-            oel.setup(mass, cbody->getMass(), ofsDate->getMJDReference());
+            oel.configure(el, mjd);
+            oel.setup(mass, cbody->getMass(), mjd);
             oel.update(ofsDate->getMJD1(), rpos, rvel);
             orbitValid = true;
         } else {

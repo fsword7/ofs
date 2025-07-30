@@ -6,16 +6,12 @@
 #include "main/core.h"
 #include "main/timedate.h"
 
-TimeDate::TimeDate()
-{
-    reset(astro::MJD2000);
-}
-
-void TimeDate::reset(double mjd)
+void TimeDate::reset(double now, double mjd)
 {
     // Reset system/simulation time
-    syst0 = syst1 = sysdt = 0.0;
-    simt0 = simt1 = simdt0 = simdt1 = 0.0;
+    syst0 = syst1 = now;
+    simdt0 = simdt1 = 0.0;
+    sysdt = 0.0;
 
     // Reset FPS rate
     frameCount = 0;
@@ -26,6 +22,7 @@ void TimeDate::reset(double mjd)
     // Reset julian dates
     mjdref = mjd;
     mjd0 = mjd1 = mjdref;
+    simt0 = simt1 = astro::seconds(mjdref);
     // jd0 = jd1 = mjdref;
 }
 
