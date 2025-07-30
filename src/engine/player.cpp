@@ -211,6 +211,15 @@ void Player::configure(json &config)
             modeExternal = true;
             attach(primary, camMode, secondary);
             break;
+        
+        case camCockpit:
+            primaryTarget = myjson::getString<str_t>(modes, "target");
+            if (!primaryTarget.empty())
+                primary = univ->findVehicle(primaryTarget);
+
+            modeExternal = false;
+            attach(primary, camCockpit);
+            break;
         }
     }
 
@@ -295,14 +304,18 @@ void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
     else
     {
         assert(tgtObject->getType() == objVehicle);
-        Vehicle *vehicle = dynamic_cast<Vehicle *>(tgtObject);
+        Vehicle *veh = dynamic_cast<Vehicle *>(tgtObject);
+    
+        switch (modeCamera) {
+        case camCockpit:
+            vcpos = veh->getCameraPosition();
+            vcdir = veh->getCameraDirection();
 
-        vcpos = vehicle->getCameraPosition();
-        vcdir = vehicle->getCameraDirection();
-
-        grot = tgtObject->getuOrientation(0) * cam.rrot;
-        gspos = tgtObject->getuOrientation(0) * *vcpos;
-        gpos = gspos + tgtObject->getuPosition(0);
+            grot = tgtObject->getuOrientation(0) * cam.rrot;
+            gspos = tgtObject->getuOrientation(0) * *vcpos;
+            gpos = gspos + tgtObject->getuPosition(0);
+            break;
+        }
     }
 
     // Assign player to planetary system

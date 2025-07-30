@@ -224,6 +224,18 @@ Celestial *Universe::findPath(cstr_t &path) const
     return obj;
 }
 
+Vehicle *Universe::findVehicle(cstr_t &path) const
+{
+    Vehicle *veh;
+
+    for (auto psys : systemList) {
+        if (veh = psys->findVehicle(path))
+            return veh;
+    }
+
+    return nullptr;
+}
+
 int Universe::findCloseStars(const glm::dvec3 &obs, double mdist,
     std::vector<const CelestialStar *> &closeStars) const
 {

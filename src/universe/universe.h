@@ -41,6 +41,7 @@ public:
 
     Celestial *findObject(const Object *obj, const std::string &name) const;
     Celestial *findPath(cstr_t &path) const;
+    Vehicle *findVehicle(cstr_t &path) const;
 
     // int findCloseStars(const vec3d_t &obs, double mdist,
     //     std::vector<const celStar *> &closeStars) const;
