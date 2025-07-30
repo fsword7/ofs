@@ -181,18 +181,28 @@ void Player::configure(json &config)
             rad = primary->getRadius();
             elev = 0.01;
 
-            rdir = myjson::getFloatArray<glm::dvec3, double>(modes, "direction");
-            rpos = myjson::getFloatArray<glm::dvec3, double>(modes, "position");
             scale = myjson::getFloat<double>(modes, "scale", 1.0);
 
-            if (rpos.x != 0 || rpos.y != 0 || rpos.z != 0) {
+            if (modes.contains("location")) {
+                ploc = myjson::getFloatArray<glm::dvec3, double>(modes, "location");
+
+                ploc.x = ofs::radians(ploc.x);
+                ploc.y = ofs::radians(ploc.y);
+                ploc.z += (ploc.z < rad) ? rad : 0;
+
+                rpos = primary->convertEquatorialToLocal(ploc);
+            } else if (modes.contains("position")) {
+                rpos = myjson::getFloatArray<glm::dvec3, double>(modes, "position");
+
                 if (glm::length(rpos) < rad)
                     rpos = glm::normalize(rpos) *
                         ((elev != 0) ? (rad + elev) : (rad * scale));
-            } else if (rdir.x != 0 || rdir.y != 0 || rdir.z != 0) {
+            } else if (modes.contains("direction")) {
+                rdir = myjson::getFloatArray<glm::dvec3, double>(modes, "direction");
+
                 rpos = rdir * (rad * scale);
             } else {
-                ofsLogger->error("JSON: Required position or direction - aborted\n");
+                ofsLogger->error("JSON: Required location, position or direction - aborted\n");
                 return;    
             }
         

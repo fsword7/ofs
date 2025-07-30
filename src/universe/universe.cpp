@@ -101,28 +101,6 @@ void Universe::configureVehicles(cjson &config)
 
 void Universe::start()
 {
-    // cam->setPosition(earth->convertEquatorialToLocal(
-    //     glm::radians(28.632307), glm::radians(-80.705774), earth->getRadius()+50));
-    // cam->setPosition({ 0, 0, earth->getRadius() * 4.0 });
-    // player->attach(earth, camTargetRelative);
-    // player->look(earth);
-
-    // On Runway 15 (Cape Kennedy) - 28.632307, -80.705774
-    // player->setGroundObserver(earth, { 28.632307, -80.705774, 1}, 150);
-    // player->setGroundObserver(earth, { 28.632307, -80.705774, .003}, 150);
-
-    // vehicle->initLanded(earth, { 28.632307, -80.705774, 0}, 150);
-    // player->attach(vehicle);
-
-    // Observe Rocky Mountains in Denver metro area
-    // player->setGroundObserver(earth, { 39.7309918, -104.7046216, 2}, 270);
-
-    // Observe Grand Canyon in Arizona
-    // player->setGroundObserver(earth, { 36.018679, -112.121223, 5}, 0);
-
-    // Observe Hawaiian islands
-    // player->setGroundObserver(earth, { 21.059613, -157.957629, 3}, 0);
-
     // Initiializing solar systems with time
     for (auto &psys : systemList)
         psys->update(true);

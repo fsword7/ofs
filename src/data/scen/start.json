@@ -25,14 +25,40 @@
 
     "player": {
         "mode": {
+            // Observe rotating Earth
             "type": "target-sync",
             "target": "Sol/Earth", "sync-target": "Sol",
             "direction": [0, 0, 1], "scale": 4
 
+            // Observe Cape Kennedy Space Force
+            // "type": "target-relative",
+            // "target": "Sol/Earth",
+            // "location": [ 28.632307, -80.705774, 50 ]
+
+            // On Runway 15 at Cape Kennedy Space Force
             // "type": "personal-observer",
             // "target": "Sol/Earth",
             // "location": [ 28.632307, -80.705774, 0.002 ],
             // "heading": 150
+
+            // Observe Rocky Mountains in Colorado
+            // "type": "personal-observer",
+            // "target": "Sol/Earth",
+            // "location": [ 39.7309918, -104.7046216, 2 ],
+            // "heading": 270
+
+            // Observe Grand Canyon (south rim) in Arizona
+            // "type": "personal-observer",
+            // "target": "Sol/Earth",
+            // "location": [ 36.018679, -112.121223, 5 ],
+            // "heading": 0
+
+            // Observe islands in Hawaii
+            // "type": "personal-observer",
+            // "target": "Sol/Earth",
+            // "location": [ 21.059613, -157.957629, 3 ],
+            // "heading": 0
+        
 
             // "type": "cockpit",
             // "target": "SG-01"
