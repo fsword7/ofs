@@ -167,8 +167,8 @@ void pSystem::update(bool force)
     for (auto cel : celestials)
         cel->updateCelestial(force);
 
-    ofsLogger->info("{} system: {} super vehicles {} vehicles\n",
-        primaryStar->getsName(), svehicles.size(), vehicles.size());
+    // ofsLogger->info("{} system: {} super vehicles {} vehicles\n",
+    //     primaryStar->getsName(), svehicles.size(), vehicles.size());
 
     // Updating vehicles within solar system
     for (auto veh : vehicles)

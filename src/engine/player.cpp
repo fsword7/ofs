@@ -216,6 +216,11 @@ void Player::configure(json &config)
             primaryTarget = myjson::getString<str_t>(modes, "target");
             if (!primaryTarget.empty())
                 primary = univ->findVehicle(primaryTarget);
+            
+            Vehicle *veh = dynamic_cast<Vehicle *>(primary);
+            assert(veh != nullptr);
+            vcpos = veh->getCameraPosition();
+            vcdir = veh->getCameraDirection();
 
             modeExternal = false;
             attach(primary, camCockpit);
@@ -228,7 +233,7 @@ void Player::configure(json &config)
         focusObject = univ->findPath(focusTarget);
     if (focusObject == nullptr)
         focusObject = primary;
-
+    updateCamera();
 }
 
 double Player::computeCoarseness(double maxCoarseness)
@@ -263,66 +268,66 @@ void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
 
     modeCamera = mode;
 
-    if (modeExternal)
-    {
-        switch (modeCamera)
-        {
-        case camTargetUnlocked:
-            // Move observer to target object but
-            // not locked to target rotation
-            gspos = cam.rpos;
-            gpos  = tgtObject->getgPosition() + gspos;
-            grot  = cam.rrot;
-            break;
+    // if (modeExternal)
+    // {
+    //     switch (modeCamera)
+    //     {
+    //     case camTargetUnlocked:
+    //         // Move observer to target object but
+    //         // not locked to target rotation
+    //         gspos = cam.rpos;
+    //         gpos  = tgtObject->getgPosition() + gspos;
+    //         grot  = cam.rrot;
+    //         break;
 
-        case camTargetRelative:
-            // Move observer to target object
-            {
-                glm::dmat3 trot = tgtObject->getgRotation();
-                gspos = cam.rpos * trot;
-                gpos  = tgtObject->getgPosition() + gspos;
-                grot  = cam.rrot * trot;
-                gqrot = grot;
-            }
-            break;
+    //     case camTargetRelative:
+    //         // Move observer to target object
+    //         {
+    //             glm::dmat3 trot = tgtObject->getgRotation();
+    //             gspos = cam.rpos * trot;
+    //             gpos  = tgtObject->getgPosition() + gspos;
+    //             grot  = cam.rrot * trot;
+    //             gqrot = grot;
+    //         }
+    //         break;
 
-        case camTargetSync:
-            {
-                // Move observer to target object
-                // with solar/object sync
-                glm::dvec3 opos, tpos;
-                opos = syncObject->getgPosition();
-                tpos = tgtObject->getgPosition();
-                osrot  = glm::lookAt(opos, tpos, { 0, 1, 0});
-                gspos = cam.rpos * osrot;
-                gpos  = tpos + gspos;
-                grot  = cam.rrot * osrot;
-            }
-            break;
-        }
-    }
-    else
-    {
-        assert(tgtObject->getType() == objVehicle);
-        Vehicle *veh = dynamic_cast<Vehicle *>(tgtObject);
+    //     case camTargetSync:
+    //         {
+    //             // Move observer to target object
+    //             // with solar/object sync
+    //             glm::dvec3 opos, tpos;
+    //             opos = syncObject->getgPosition();
+    //             tpos = tgtObject->getgPosition();
+    //             osrot  = glm::lookAt(opos, tpos, { 0, 1, 0});
+    //             gspos = cam.rpos * osrot;
+    //             gpos  = tpos + gspos;
+    //             grot  = cam.rrot * osrot;
+    //         }
+    //         break;
+    //     }
+    // }
+    // else
+    // {
+    //     assert(tgtObject->getType() == objVehicle);
+    //     Vehicle *veh = dynamic_cast<Vehicle *>(tgtObject);
     
-        switch (modeCamera) {
-        case camCockpit:
-            vcpos = veh->getCameraPosition();
-            vcdir = veh->getCameraDirection();
+    //     switch (modeCamera) {
+    //     case camCockpit:
+    //         vcpos = veh->getCameraPosition();
+    //         vcdir = veh->getCameraDirection();
 
-            grot = tgtObject->getgRotation() * cam.rrot;
-            gspos = tgtObject->getgRotation() * *vcpos;
-            gpos = gspos + tgtObject->getgPosition();
-            break;
-        }
-    }
+    //         grot = tgtObject->getgRotation() * cam.rrot;
+    //         gspos = tgtObject->getgRotation() * *vcpos;
+    //         gpos = gspos + tgtObject->getgPosition();
+    //         break;
+    //     }
+    // }
 
     // Assign player to planetary system
     pSystem *psys = tgtObject->getPlanetarySystem();
     setSystem(psys);
 
-    updateCamera();
+    // updateCamera();
 }
 
 void Player::look(Celestial *object)
@@ -347,6 +352,8 @@ void Player::updateCamera()
 
 void Player::update(const TimeDate &td)
 {
+    if (tgtObject->s1.bUpdates == false)
+        return;
 
     CelestialPlanet *cbody = nullptr;
     double elev = 0.0;
@@ -393,15 +400,15 @@ void Player::update(const TimeDate &td)
 
         case camTargetUnlocked:
             gspos = cam.rpos;
-            gpos  = tgtObject->getgPosition() + gspos;
+            gpos  = tgtObject->s1.pos + gspos;
             grot  = cam.rrot;
             break;
 
         case camTargetRelative:
             {
-                glm::dmat3 trot = tgtObject->getgRotation();
+                glm::dmat3 trot = tgtObject->s1.R;
                 gspos = cam.rpos * trot;
-                gpos  = tgtObject->getgPosition() + gspos;
+                gpos  = tgtObject->s1.pos + gspos;
                 grot  = cam.rrot * trot;
                 gqrot = grot;
             }
@@ -416,12 +423,27 @@ void Player::update(const TimeDate &td)
             {
                 glm::dvec3 opos, tpos;
 
-                opos  = syncObject->getgPosition();
-                tpos  = tgtObject->getgPosition();
+                opos = syncObject->s1.pos;
+                tpos = tgtObject->s1.pos;
+
+                // ofsLogger->info("{}: S0 {}, {}, {}\n", tgtObject->getsName(),
+                //     tgtObject->s0.pos.x, tgtObject->s0.pos.y, tgtObject->s0.pos.z);
+                // ofsLogger->info("{}: S1 {}, {}, {} Flag: {}\n", tgtObject->getsName(),
+                //     tgtObject->s1.pos.x, tgtObject->s1.pos.y, tgtObject->s1.pos.z, tgtObject->s1.bUpdates);
+               
                 osrot = glm::lookAt(opos, tpos, { 0, 1, 0});
                 gspos = cam.rpos * osrot;
                 gpos  = tpos + gspos;
                 grot  = cam.rrot * osrot;
+
+                // ofsLogger->info("{}: O {}, {}, {}\n", tgtObject->getsName(),
+                //     opos.x, opos.y, opos.z);
+                // ofsLogger->info("{}: T {}, {}, {}\n", tgtObject->getsName(),
+                //     tpos.x, tpos.y, tpos.z);
+                // ofsLogger->info("{}: S {}, {}, {}\n", tgtObject->getsName(),
+                //     gspos.x, gspos.y, gspos.z);
+                // ofsLogger->info("{}: P {}, {}, {}\n", tgtObject->getsName(),
+                //     gpos.x, gpos.y, gpos.z);
             }
             break;
 
@@ -439,8 +461,8 @@ void Player::update(const TimeDate &td)
                 // Calkculating planetocentric coordinates
                 double vcalt = pgo.alt + pgo.vcofs;
                 cam.rpos = cbody->convertEquatorialToLocal(pgo.lat, pgo.lng, vcalt);
-                gspos = cam.rpos * cbody->getgRotation();
-                gpos = cbody->getgPosition() + gspos;
+                gspos = cam.rpos * cbody->s1.R;
+                gpos = cbody->s1.pos + gspos;
 
                 // Rotate camera in local frame. Negate theta value for 
                 // clockwise rotation. Points to east as default origin
@@ -455,7 +477,7 @@ void Player::update(const TimeDate &td)
 
                 // cam.rpos -= glm::conjugate(cam.rqrot) * tv;
 
-                grot = cam.rrot * pgo.R * cbody->getgRotation();
+                grot = cam.rrot * pgo.R * cbody->s1.R;
                 gqrot = grot;
  
                 // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
@@ -486,9 +508,16 @@ void Player::update(const TimeDate &td)
         {
         case camCockpit:
             // Set global position/rotation for on the air
-            grot  = tgtObject->getgRotation() * cam.rrot;
+            grot  = tgtObject->s1.R * cam.rrot;
             gspos = grot * (cam.rpos + *vcpos);
-            gpos  = tgtObject->getgPosition() + gspos;
+            gpos  = tgtObject->s1.pos + gspos;
+
+            // ofsLogger->info("{}: VC {}, {}, {}\n", tgtObject->getsName(),
+            //     vcpos->x, vcpos->y, vcpos->z);
+            // ofsLogger->info("{}: S {}, {}, {}\n", tgtObject->getsName(),
+            //     gspos.x, gspos.y, gspos.z);
+            // ofsLogger->info("{}: P {}, {}, {}\n", tgtObject->getsName(),
+            //     gpos.x, gpos.y, gpos.z);
 
             break;
         }

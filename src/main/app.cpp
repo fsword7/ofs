@@ -139,9 +139,9 @@ void CoreApp::openSession(json &config)
         pconfig = json::parse(inFile, nullptr, false, true);
     }
     player->configure(pconfig);
-    player->update(td);
 
-    universe->update(player, td);
+    // player->update(td);
+    // universe->update(player, td);
 
     if (gclient != nullptr) {
         gclient->cbStart(universe);
@@ -149,6 +149,10 @@ void CoreApp::openSession(json &config)
     }
 
     bSession = true;
+
+    // beginTimeStep(true);
+    // updateWorld();
+    // endTimeStep(true);
 
     ofsLogger->info("\nStarting of sesssion\n");
     ofsLogger->info("--------------------\n");
@@ -274,6 +278,8 @@ void CoreApp::run()
 
 bool CoreApp::beginTimeStep(bool running)
 {
+    // ofsLogger->info("Begin time updates\n");
+
     // Check for a pause/resume request
     if (bRequestedRunning != running)
     {
@@ -298,6 +304,8 @@ bool CoreApp::beginTimeStep(bool running)
 
 void CoreApp::endTimeStep(bool running)
 {
+    // ofsLogger->info("End time updates\n");
+
     if (running)
         universe->finalizeUpdate();
 

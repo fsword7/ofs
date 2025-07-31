@@ -27,12 +27,17 @@ void Object::update(bool force)
 
 void Object::beginUpdate()
 {
+    // ofsLogger->info("{}: Begin updates\n", getsName());
+
     // Enable updates in progress status
     s1.bUpdates = true;
 }
 
 void Object::endUpdate()
 {
+    // ofsLogger->info("{}: End updates - {},{},{}\n",
+    //     getsName(), s1.pos.x, s1.pos.y, s1.pos.z);
+
     s0.bUpdates = false;    // All done - clear updates flag
     s0 = s1;                // Move all to S0 for on the air
     s1 = {};                // Clear all for next update
