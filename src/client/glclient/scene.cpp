@@ -65,7 +65,7 @@ void Scene::resize(int w, int h)
 
 glm::dvec3 Scene::getAstrocentricPosition(const Object *object, const glm::dvec3 &vpos, int time)
 {
-    return vpos - object->getuPosition(time);
+    return vpos - object->getgPosition();
 }
 
 void Scene::updateAutoMag()

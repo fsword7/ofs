@@ -12,15 +12,15 @@
             "target": "Sol/Earth",
             "location": [ 28.632307, -80.705774 ],
             "heading": 150
-        },
-        {
-            "name": "SG-02:Space Glider 2",
-            "module": "glider",
-            "status": "landed",
-            "target": "Sol/Earth",
-            "location": [ 28.632307, -80.705774 ],
-            "heading": 150
         }
+        // {
+        //     "name": "SG-02:Space Glider 2",
+        //     "module": "glider",
+        //     "status": "landed",
+        //     "target": "Sol/Earth",
+        //     "location": [ 28.632307, -80.705774 ],
+        //     "heading": 150
+        // }
     ],
 
     "player": {

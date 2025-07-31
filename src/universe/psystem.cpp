@@ -155,6 +155,10 @@ glm::dvec3 pSystem::addGravityIntermediate(const glm::dvec3 &gpos, double step, 
 
 void pSystem::update(bool force)
 {
+    // Enable update states
+    for (auto body : bodies)
+        body->beginUpdate();
+
     // Updating solar/planetary system
     for (auto star : stars)
         star->updateEphemeris();
@@ -163,25 +167,29 @@ void pSystem::update(bool force)
     for (auto cel : celestials)
         cel->updateCelestial(force);
 
+    ofsLogger->info("{} system: {} super vehicles {} vehicles\n",
+        primaryStar->getsName(), svehicles.size(), vehicles.size());
+
     // Updating vehicles within solar system
-    // for (auto veh : vehicles)
-    //     veh->updateBodyForces();
-    // for (auto sveh : svehicles)
-    //     sveh->update(force);
-    // for (auto veh : vehicles)
-    //     veh->update(force);
+    for (auto veh : vehicles)
+        veh->updateBodyForces();
+    for (auto sveh : svehicles)
+        sveh->update(force);
+    for (auto veh : vehicles)
+        veh->update(force);
 }
 
 void pSystem::finalizeUpdate()
 {
+    // Finalize vehicle updates
+    for (auto sveh : svehicles)
+        sveh->updatePost();
+    for (auto veh : vehicles)
+        veh->updatePost();
+
     // Finalize updates
     for (auto body : bodies)
         body->endUpdate();
-
-    // for (auto sveh : svehicles)
-    //     sveh->updatePost();
-    // for (auto veh : vehicles)
-    //     veh->updatePost();
 }
 
 struct {

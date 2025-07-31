@@ -37,8 +37,10 @@ CelestialStar *CelestialStar::createTheSun()
 
     star->hip           = 0;
     star->spos          = { 0, 0, 0 };
-    star->objPosition   = { 0, 0, 0 };
-    star->objVelocity   = { 0, 0, 0 };
+    star->s0.pos        = { 0, 0, 0 };
+    star->s0.vel        = { 0, 0, 0 };
+    // star->objPosition   = { 0, 0, 0 };
+    // star->objVelocity   = { 0, 0, 0 };
     // star->orbitFrame    = nullptr;
 
     return star;
@@ -51,7 +53,7 @@ CelestialStar *CelestialStar::create(double ra, double de, double pc,
     int temp;
 
     star->spos = astro::convertEquatorialToEcliptic(ra, de, pc);
-    star->objPosition = star->spos * KM_PER_PC;
+    star->s0.pos = star->spos * KM_PER_PC;
 
     temp = (int)(4600 * (1.0 / ((ci * 0.92) + 1.7) + 1.0 / ((ci * 0.92) + 0.62)));
 

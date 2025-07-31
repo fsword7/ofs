@@ -19,7 +19,7 @@ void Scene::setupPrimaryLightSources(const std::vector<const CelestialStar *> ne
     {
         LightSource ls;
 
-        ls.spos       = star->getoPosition() - obs;
+        ls.spos       = star->getgPosition() - obs;
         ls.luminosity = star->getLuminosity();
         ls.radius     = star->getRadius();
         ls.color      = starColors->lookup(star->getTemperature());

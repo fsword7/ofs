@@ -6,7 +6,6 @@
 #define OPSAPI_SERVER_BUILD
 
 #include "main/core.h"
-// #include "yaml-cpp/yaml.h"
 #include "engine/object.h"
 #include "utils/json.h"
 
@@ -28,48 +27,21 @@ void Object::update(bool force)
 
 void Object::beginUpdate()
 {
+    // Enable updates in progress status
+    s1.bUpdates = true;
 }
 
 void Object::endUpdate()
 {
-    s0 = s1; // Move all to S0 for on the air
-    s1 = {}; // Clear all for next update
+    s0.bUpdates = false;    // All done - clear updates flag
+    s0 = s1;                // Move all to S0 for on the air
+    s1 = {};                // Clear all for next update
 
     // Set identity for R and Q rotations
     s1.R = glm::dmat3(1.0);
     s1.Q = glm::dquat();
 }
 
-glm::dvec3 Object::getuPosition(double tjd) const
-{
-    return objPosition;
-}
-
-glm::dvec3 Object::getuVelocity(double tjd) const
-{
-    return objPosition;
-}
-
-glm::dmat3 Object::getuOrientation(double tjd) const
-{
-    return objRotation;
-}
-
-glm::dquat Object::getqOrientation(double tjd) const
-{
-    return objqRotation;
-}
-
-
-glm::dvec3 Object::getoPosition(double tjd) const
-{
-    return objPosition;
-}
-
-glm::dvec3 Object::getoVelocity(double tjd) const
-{
-    return objVelocity;
-}
 
 void Object::updateCullingRadius()
 {

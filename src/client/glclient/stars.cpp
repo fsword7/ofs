@@ -155,7 +155,7 @@ void StarRenderer::process(CelestialStar &star, double dist, double appMag) cons
     // Calculate relative position between star and
     // camera position in universal reference frame
     // spos  = star.getStarPosition() * KM_PER_PC;
-    spos  = star.getoPosition();
+    spos  = star.getgPosition();
     vpos  = spos - cpos;
     vdist = glm::length(vpos);
 

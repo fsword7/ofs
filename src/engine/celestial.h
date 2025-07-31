@@ -106,6 +106,11 @@ public:
         return (gpos - s0.pos) * glm::transpose(s0.R);
     }
 
+    inline glm::dvec3 convertGlobalToLocalS1(const glm::dvec3 &gpos) const
+    {
+        return (gpos - s1.pos) * glm::transpose(s1.R);
+    }
+
     inline void convertGlobalToLocal(const glm::dvec3 &gpos, glm::dvec3 &lpos) const
     {
         lpos = (gpos - s0.pos) * glm::transpose(s0.R);
@@ -114,6 +119,11 @@ public:
     inline glm::dvec3 convertLocalToGlobal(const glm::dvec3 &lpos) const
     {
         return (lpos * s0.R) + s0.pos;
+    }
+
+    inline glm::dvec3 convertLocalToGlobalS1(const glm::dvec3 &lpos) const
+    {
+        return (lpos * s1.R) + s1.pos;
     }
 
     inline void convertLocalToEquatorial(const glm::dvec3 &lpos, double &lat, double &lng, double &rad) const
@@ -131,12 +141,17 @@ public:
         return { asin(w.y), atan2(-w.z, w.x), glm::length(lpos) };
     }
 
-    inline void convertGlobalToEquatorial(const glm::dvec3 &gpos, double &lat, double &lng, double &rad)
+    inline void convertGlobalToEquatorialS1(const glm::dvec3 &gpos, double &lat, double &lng, double &rad) const
     {
          return convertLocalToEquatorial(convertGlobalToLocal(gpos), lat, lng, rad);
     }
 
-    inline glm::dvec3 convertEquatorialToLocal(double lat, double lng, double rad)
+    inline glm::dvec3 convertGlobalToEquatorialS1(const glm::dvec3 &gpos) const
+    {
+        return convertLocalToEquatorial(convertGlobalToLocalS1(gpos));
+    }
+
+    inline glm::dvec3 convertEquatorialToLocal(double lat, double lng, double rad) const
     {
         double slat = sin(lat), clat = cos(lat);
         double slng = sin(lng), clng = cos(lng);
@@ -145,13 +160,13 @@ public:
         return { xz*clng, rad*slat, xz*-slng };
     }
 
-    inline glm::dvec3 convertEquatorialToLocal(double slat, double clat, double slng, double clng, double rad)
+    inline glm::dvec3 convertEquatorialToLocal(double slat, double clat, double slng, double clng, double rad) const
     {
         double xz = rad * clat;
         return { xz*clng, rad*slat, xz*-slng };
     }
 
-    inline glm::dvec3 convertEquatorialToLocal(glm::dvec3 &epos)
+    inline glm::dvec3 convertEquatorialToLocal(glm::dvec3 &epos) const
     {
         return convertEquatorialToLocal(epos.x, epos.y, epos.z);
         // double slat = sin(epos.x), clat = cos(epos.x);
@@ -161,7 +176,7 @@ public:
         // return { xz*clng, epos.z*slat, xz*-slng };
     }
 
-    inline glm::dvec3 convertEquatorialToGlobal(double lat, double lng, double rad)
+    inline glm::dvec3 convertEquatorialToGlobal(double lat, double lng, double rad) const
     {
         return convertLocalToGlobal(convertEquatorialToLocal(lat, lng, rad));
     }

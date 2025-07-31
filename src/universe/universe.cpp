@@ -85,12 +85,13 @@ void Universe::configureVehicles(cjson &config)
             continue;
         }
 
+        Celestial *sun = cbody->getStar();
         pSystem *psys = nullptr;
-        if (cbody->hasSystem())
-            psys = cbody->getSystem();
+        if (sun->hasSystem())
+            psys = sun->getSystem();
         else {
             ofsLogger->error("JSON: {} system does not have solar/planetary system - aborted.\n",
-                cbody->getsName());
+                sun->getsName());
             continue;
         }
 
@@ -102,8 +103,10 @@ void Universe::configureVehicles(cjson &config)
 void Universe::start()
 {
     // Initiializing solar systems with time
-    for (auto &psys : systemList)
+    for (auto &psys : systemList) {
         psys->update(true);
+        psys->finalizeUpdate();
+    }
 }
 
 void Universe::update(Player *player, const TimeDate &td)

@@ -125,8 +125,8 @@ void Celestial::attach(Celestial *parent, frameType type)
         bvel += cbody->s0.vel;
 
         // On the air
-        objPosition = s0.pos;
-        objVelocity = s0.vel;
+        // objPosition = s0.pos;
+        // objVelocity = s0.vel;
     }
 }
 
@@ -258,9 +258,6 @@ void Celestial::updateRotation()
     s1.R = rot * Recl;
     // s1.R = rot;
     s1.Q = s1.R;
-
-    objRotation  = s1.R;
-    objqRotation = s1.Q;
 }
 
 void Celestial::updateCelestial(bool force)
@@ -457,8 +454,6 @@ void Celestial::updatePostEphemeris()
         s1.pos += cbody->s1.pos;
         s1.vel += cbody->s1.vel;
     }
-    objPosition = s1.pos;
-    objVelocity = s1.vel;
     baryPosition = bpos;
     baryVelocity = bvel;
 

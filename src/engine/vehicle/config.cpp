@@ -45,6 +45,11 @@ void Vehicle::configure(cjson &config, Celestial *object)
     if (stName == "landed") {
         glm::dvec3 loc = myjson::getFloatArray<glm::dvec3, double>(config, "location");
         double dir = myjson::getFloat<double>(config, "heading");
+
+        // Converted to radians
+        loc.x = ofs::radians(loc.x);
+        loc.y = ofs::radians(loc.y);
+
         initLanded(object, loc, dir);
     } else if (stName == "orbiting") {
 

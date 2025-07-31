@@ -43,10 +43,11 @@ struct surface_t
     void update(const StateVectors &s, const StateVectors &os, const Celestial *object,
         elevTileList_t *etile = nullptr);
 
-    const Celestial *body;     // celestial body reference
+    const Celestial *cbody;     // celestial body reference
 
     glm::dvec3 ploc;        // local planet coordinates
-    
+    glm::dvec3 wloc;        // Latitude/Longtitude coordinates
+
     // ship parameters for flight simulation
     double  lng, lat, rad;  // ship's position in planet's
                             // local equatorial coordinates

@@ -96,8 +96,8 @@ void MFDOrbit::draw(Sketchpad *skpad)
 
     if (bValidShip)
     {
-        glm::dvec3 pos = vehicle->getoPosition() - refOrbit->getoPosition();
-        glm::dvec3 vel = vehicle->getoVelocity() - refOrbit->getoVelocity();
+        glm::dvec3 pos = vehicle->getgPosition() - refOrbit->getgPosition();
+        glm::dvec3 vel = vehicle->getgVelocity() - refOrbit->getgVelocity();
         shpOrbit->calculate(pos, vel, 0);
         scale = pixRadius / (shpOrbit->e < 1.0) ? shpOrbit->getApoapsis() :
             std::max(2.0 * shpOrbit->getPeriapsis(), shpOrbit->getRadius());

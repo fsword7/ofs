@@ -48,8 +48,8 @@ void TaskBar::displayPlanetocentric(double lat, double lng, double alt)
     latHemi = lat < 0.0 ? 'S' : lat > 0.0 ? 'N' : ' ';
     lngHemi = lng < 0.0 ? 'W' : lng > 0.0 ? 'E' : ' ';
 
-    double dlat = abs(ofs::degrees(lat));
-    double dlng = abs(ofs::degrees(lng));
+    double dlat = fabs(ofs::degrees(lat));
+    double dlng = fabs(ofs::degrees(lng));
 
     ipad->print(fmt::format("Location: {:.6f}{} {:.6f}{}",
         dlat, latHemi, dlng, lngHemi));
@@ -69,8 +69,8 @@ void TaskBar::displayPlanetInfo(const Player &player)
     ipad->print(focus->getsName());
 
     ipad->setFont(textFont);
-    ipad->print(fmt::format("Distance: {:.3f} miles", glm::length(focus->getoPosition()) / 1.609));
-    ipad->print(fmt::format("Velocity: {:.3f} mph", ((glm::length(focus->getoVelocity()) * 3600) / 1.609)));
+    ipad->print(fmt::format("Distance: {:.3f} miles", glm::length(focus->getgPosition()) / 1.609));
+    ipad->print(fmt::format("Velocity: {:.3f} mph", ((glm::length(focus->getgVelocity()) * 3600) / 1.609)));
     ipad->print(fmt::format("Radius: {}", focus->getRadius()));
     ipad->print("-----------------");
     ipad->print(fmt::format("Distance: {:.4f}", glm::length(player.getrPosition())));

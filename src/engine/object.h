@@ -14,6 +14,9 @@ class Frame;
 class OFSAPI StateVectors
 {
 public:
+    // Updates in progress status
+    bool bUpdates = false;
+
     // All state vectors in assciated frame
     glm::dvec3 pos;        // position
     glm::dvec3 vel;        // linear velocity
@@ -75,18 +78,13 @@ public:
     virtual Orbit *getOrbit() const = 0;
     virtual Rotation *getRotation() const = 0;
 
-    virtual glm::dvec3 getuPosition(double tjd) const;
-    virtual glm::dvec3 getuVelocity(double tjd) const;
-    virtual glm::dmat3 getuOrientation(double tjd) const;
-    virtual glm::dquat getqOrientation(double tjd) const;
+    virtual glm::dvec3 getgPosition() const     { return s0.pos; }
+    virtual glm::dvec3 getgVelocity() const     { return s0.vel; }
+    virtual glm::dmat3 getgRotation() const     { return s0.R; }
+    virtual glm::dquat getgQRotation() const    { return s0.Q; }
+    // virtual glm::dvec3 getbPosition() const    { return bpos; }
+    // virtual glm::dvec3 getbVelocity() const    { return bvel; }
 
-    virtual glm::dvec3 getoPosition(double tjd) const;
-    virtual glm::dvec3 getoVelocity(double tjd) const;
-
-    virtual glm::dvec3 getoPosition() const     { return objPosition; }
-    virtual glm::dvec3 getoVelocity() const     { return objVelocity; }
-    virtual glm::dmat3 getoRotation() const     { return objRotation; }
-    // virtual glm::dquat getoRotation() const     { return objqRotation; }
     virtual glm::dvec3 getbPosition() const     { return baryPosition; }
     virtual glm::dvec3 getbVelocity() const     { return baryVelocity; }
 
@@ -101,18 +99,10 @@ private:
     std::vector<str_t> objNames{1};
 
 public:
-    // StateVectors sv[2];
-    // StateVectors &s0 = sv[0];   // current state vectors at time t0
-    // StateVectors &s1 = sv[1];   // new state vectors at time t0+dt during update function call
     StateVectors s0;    // current state vectors at time t0
     StateVectors s1;    // new state vectors at time t0+dt during update function call
 
 protected:
-    glm::dvec3 objPosition = { 0, 0, 0 };
-    glm::dvec3 objVelocity = { 0, 0, 0 };
-    glm::dmat3 objRotation = glm::dmat3(1.0);
-    glm::dquat objqRotation = glm::dquat();
-
     glm::dvec3 baryPosition = { 0, 0, 0 };
     glm::dvec3 baryVelocity = { 0, 0, 0 };
 

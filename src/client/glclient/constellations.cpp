@@ -76,10 +76,10 @@ void Scene::renderConstellations()
             if (star1 == nullptr || star2 == nullptr)
                 continue;
 
-            vertices[rLines].spos =  star1->getoPosition() - vpos;
+            vertices[rLines].spos =  star1->getgPosition() - vpos;
             vertices[rLines].color = color_t(0.5, 0.5, 0.5, 1.0);
             rLines++;
-            vertices[rLines].spos =  star2->getoPosition() - vpos;
+            vertices[rLines].spos =  star2->getgPosition() - vpos;
             vertices[rLines].color = color_t(0.5, 0.5, 0.5, 1.0);
             rLines++;
         }

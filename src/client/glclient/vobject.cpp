@@ -67,7 +67,7 @@ void vObject::update(int now)
 {
 
     // gpos  = object->getuPosition(now);
-    gpos  = object->getoPosition();
+    gpos  = object->getgPosition();
     vpos  = gpos - scene.getObserver()->getPosition();
     vdist = glm::length(vpos);
 

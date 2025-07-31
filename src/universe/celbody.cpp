@@ -129,7 +129,7 @@ glm::dvec3 CelestialBody::getvPlanetocentricFromEcliptic(const glm::dvec3 &pos, 
 
 glm::dvec3 CelestialBody::getHeliocentric(double tjd) const
 {
-    glm::dvec3 opos = getuPosition(tjd);
+    glm::dvec3 opos = getgPosition();
     glm::dvec3 hpos = glm::normalize(opos);
 
     double lat = acos(hpos.y) - (pi / 2.0);
