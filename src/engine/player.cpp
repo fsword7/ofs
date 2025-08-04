@@ -466,9 +466,8 @@ void Player::update(const TimeDate &td)
 
                 // Rotate camera in local frame. Negate theta value for 
                 // clockwise rotation. Points to east as default origin
-                // so that adding pi/2.0 to theta value for pointing to 
-                // north with zero heading.  
-                cam.rrot = ofs::xRotate(pgo.phi) * ofs::yRotate(-pgo.theta + pi/2.0);
+                // so that using heading rotation (ofs::hRotate).  
+                cam.rrot = ofs::xRotate(pgo.phi) * ofs::hRotate(pgo.theta);
 
                 // glm::dvec3 wv = go.av * 0.5;
                 // glm::dquat dr = glm::dquat(1.0, wv.x, wv.y, wv.z) * cam.rqrot;
@@ -512,6 +511,8 @@ void Player::update(const TimeDate &td)
             gspos = grot * (cam.rpos + *vcpos);
             gpos  = tgtObject->s1.pos + gspos;
 
+            // ofsLogger->info("{}: T {}, {}, {}\n", tgtObject->getsName(),
+            //     tgtObject->s1.pos.x, tgtObject->s1.pos.y, tgtObject->s1.pos.z);
             // ofsLogger->info("{}: VC {}, {}, {}\n", tgtObject->getsName(),
             //     vcpos->x, vcpos->y, vcpos->z);
             // ofsLogger->info("{}: S {}, {}, {}\n", tgtObject->getsName(),
@@ -638,12 +639,13 @@ void Player::setGroundObserver(Celestial *object, glm::dvec3 loc, double heading
 
     // Set rotation matrix for local horizon frame
     // for right-handed rule (OpenGL). Points
-    // to east as origin at (0, 0).
+    // to east as origin at (0, 0) so that using
+    // heading rotation (ofs::hRotate).
     //
-    //     |  slat  clat   0  | |  clng   0   slng |
-    // R = | -clat  slat   0  | |   0     1    0   |
-    //     |   0     0     1  | | -slng   0   clng |
-    //
+    //     / |  slat -clat   0  | |  clng   0  -slng | \ T
+    // R = | |  clat  slat   0  | |   0     1    0   | |
+    //     \ |   0     0     1  | |  slng   0   clng | /
+
     double clat = cos(go.lat), slat = sin(go.lat);
     double clng = cos(go.lng), slng = sin(go.lng);
     go.R = { slat*clng,  clat*clng, slng,
@@ -676,7 +678,13 @@ void Player::shiftGroundObserver(glm::dvec3 dm, double dh)
     
     // Set rotation matrix for local horizon frame
     // for right-handed rule (OpenGL). Points
-    // to east as origin at (0, 0).
+    // to east as origin at (0, 0) so that using
+    // heading rotation (ofs::hRotate).
+    //
+    //     / |  slat -clat   0  | |  clng   0  -slng | \ T
+    // R = | |  clat  slat   0  | |   0     1    0   | |
+    //     \ |   0     0     1  | |  slng   0   clng | /
+    //
     double clat = cos(go.lat), slat = sin(go.lat);
     double clng = cos(go.lng), slng = sin(go.lng);
     go.R = { slat*clng,  clat*clng, slng,
@@ -714,11 +722,12 @@ void Player::setPersonalObserver(Celestial *object, glm::dvec3 loc, double headi
 
     // Set rotation matrix for local horizon frame
     // for right-handed rule (OpenGL). Points
-    // to east as origin at (0, 0).
+    // to east as origin at (0, 0) so that using
+    // heading rotation (ofs::hRotate).
     //
-    //     |  slat  clat   0  | |  clng   0   slng |
-    // R = | -clat  slat   0  | |   0     1    0   |
-    //     |   0     0     1  | | -slng   0   clng |
+    //     / |  slat -clat   0  | |  clng   0  -slng | \ T
+    // R = | |  clat  slat   0  | |   0     1    0   | |
+    //     \ |   0     0     1  | |  slng   0   clng | /
     //
     double clat = cos(pgo.lat), slat = sin(pgo.lat);
     double clng = cos(pgo.lng), slng = sin(pgo.lng);

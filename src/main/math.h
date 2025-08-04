@@ -151,6 +151,18 @@ namespace ofs
         );
     }
 
+    // special heading rotation for local horizon frame
+    template <typename T>
+    inline glm::dmat3 hRotate(T radians)
+    {
+        double sang = sin(radians), cang = cos(radians);
+        return glm::dmat3(
+            { sang,  0.0,   cang  },
+            { 0.0,   1.0,   0.0   },
+            {-cang,  0.0,   sang  }
+        );
+    }
+
     template <typename T>
     inline glm::dmat3 zRotate(T radians)
     {
