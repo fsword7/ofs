@@ -464,9 +464,9 @@ void Player::update(const TimeDate &td)
                 gspos = cam.rpos * cbody->s1.R;
                 gpos = cbody->s1.pos + gspos;
 
-                // Rotate camera in local frame. Negate theta value for 
-                // clockwise rotation. Points to east as default origin
-                // so that using heading rotation (ofs::hRotate).  
+                // Rotate camera in local frame. Points to east as
+                // default origin so that using heading rotation
+                // (ofs::hRotate).  
                 cam.rrot = ofs::xRotate(pgo.phi) * ofs::hRotate(pgo.theta);
 
                 // glm::dvec3 wv = go.av * 0.5;
