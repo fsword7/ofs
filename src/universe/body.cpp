@@ -36,7 +36,7 @@ CelestialPlanet::CelestialPlanet(json &config, celType type)
     enableSecondaryIlluminator(true);
 
     // Initialize configurations from Yaml database.
-    setup();
+    // setup();
 }
 
 // CelestialPlanet::CelestialPlanet(YAML::Node &config, celType type)
@@ -104,6 +104,10 @@ void CelestialPlanet::setup()
     emgr = new ElevationManager(this);
     for (auto &base : baseList)
         base->setup();
+
+    // Initialize orbiter database accesses.
+    fs::path folder = getPath() + "/orbiter";
+    emgr->setup(folder);
 }
 
 void CelestialPlanet::getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const

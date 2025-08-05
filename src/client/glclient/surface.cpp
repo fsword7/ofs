@@ -482,10 +482,12 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         fs::path folder = body->getPath() + "/orbiter";
     
         emgr = body->getElevationManager();
-        emgr->setup(folder);
+        // emgr->setup(folder);
 
         zTrees[0] = zTreeManager::create(folder, "surf");
-        // zTrees[1] = zTreeManager::create(folder, "mask");
+        zTrees[1] = zTreeManager::create(folder, "mask");
+        // zTrees[0] = emgr->getZTreeDatabase(0); // surface
+        // zTrees[1] = emgr->getZTreeDatabase(1); // mask
 
         for (int idx = 0; idx < 2; idx++)
         {

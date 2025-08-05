@@ -4,7 +4,7 @@
 // Date:    Apr 23, 2022
 
 #include "main/core.h"
-#include "utils/ztreemgr.h"
+#include "ztreemgr.h"
 
 #include <unistd.h>
 #include <zlib.h>
@@ -40,7 +40,7 @@ bool zTreeManager::open(const fs::path &fname)
     zfile.seekg(0, zfile.end);
     auto fileSize = zfile.tellg();
     zfile.seekg(0, zfile.beg);
-    ofsLogger->info("File length = {} bytes\n", (size_t)fileSize);
+    // logger->info("File length = {} bytes\n", fileSize);
 
     zfile.read((char *)&hdr, sizeof(hdr));
     if (zfile.fail())
@@ -73,23 +73,28 @@ bool zTreeManager::open(const fs::path &fname)
 
 int32_t zTreeManager::getIndex(int lod, int lat, int lng)
 {
+    int32_t idx = ZTREE_NIL;
+
     switch (lod)
     {
-    case 1:
-        return hdr.rootPos1;
-    case 2:
-        return hdr.rootPos2;
-    case 3:
-        return hdr.rootPos3;
-    case 4:
-        return hdr.rootPos4[lng];
+    case 1: idx = hdr.rootPos1;         break;
+    case 2: idx = hdr.rootPos2;         break;
+    case 3: idx = hdr.rootPos3;         break;
+    case 4: idx = hdr.rootPos4[lng];    break;
+
     default:
-        uint32_t pidx = getIndex(lod-1, lat/2, lng/2);
+        int32_t pidx = getIndex(lod-1, lat/2, lng/2);
         if (pidx == ZTREE_NIL)
-            return ZTREE_NIL;
+            break;
         int cidx = ((lat & 1) << 1) | (lng & 1);
-        return nodes[pidx].child[cidx];
+        idx = nodes[pidx].child[cidx];
+        break;
     }
+
+    // ofsLogger->info("ztree(index): lod {} lat {} lng {} -> index {}\n",
+    //     lod, lat, lng, idx);
+
+    return idx;
 }
 
 uint32_t zTreeManager::getDeflatedSize(uint32_t idx)
@@ -136,8 +141,8 @@ int zTreeManager::read(int lod, int lat, int lng, uint8_t **data, bool debug)
     uint32_t   zsize, usize;
     int        res;
 
-    if (debug) ofsLogger->debug("Reading LOD {} Latitude {} Longitude {}\n",
-        lod, lat, lng);
+    if (debug) ofsLogger->debug("Reading LOD {} Latitude {} Longitude {} Index {}\n",
+        lod, lat, lng, idx);
 
     if (idx == ZTREE_NIL)
     {

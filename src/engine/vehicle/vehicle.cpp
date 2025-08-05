@@ -173,9 +173,13 @@ void surface_t::update(const StateVectors &s, const StateVectors &os, const Cele
         ElevationManager *emgr = planet->getElevationManager();
         if (emgr != nullptr)
         {
-            int rlod = int(32.0 - log(std::max(alt0, 0.1))*(1.0 / log(2.0)));
-            elev = emgr->getElevationData(ploc, rlod, etile);
+            int rlod = int(21.0 - log(std::max(alt0, 0.1))*(1.0 / log(2.0)));
+            elev = emgr->getElevationData(wloc, rlod, etile);
+            elev /= 1000.0;
             alt -= elev;
+
+            ofsLogger->info("emgr: lat {} lng {} -> elev {} ft\n",
+                ofs::degrees(wloc.x), ofs::degrees(wloc.y), elev * 3280.14);
         }
     }
 
@@ -355,6 +359,8 @@ void Vehicle::setGenericDefaults()
 
     setTouchdownPoints(tdvtx, ARRAY_SIZE(tdvtx));
 
+    vcpos = { 0, 0.006, 0 };
+    vcdir = { 0, 0, 1 };
 }
 
 void Vehicle::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
@@ -447,7 +453,7 @@ void Vehicle::initLanded(Celestial *object, const glm::dvec3 &loc, double dir)
 
     cbody = object;
 
-    dir = ofs::radians(dir); // temporary
+    // dir = ofs::radians(dir); // temporary
 
     double rad = cbody->getRadius();
     double mg = (astro::G * mass * cbody->getMass()) / (rad * rad);

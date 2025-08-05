@@ -5,7 +5,7 @@
 
 #pragma once
 
-#define ZTREE_NIL uint32_t(-1)
+#define ZTREE_NIL -1
 
 inline uint32_t FOURCC(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
 {

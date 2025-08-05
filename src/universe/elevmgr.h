@@ -19,6 +19,8 @@ public:
 
     void setup(const fs::path &folder);
 
+    zTreeManager *getZTreeDatabase(int idx)  { return idx < 5 ? zTrees[idx] : nullptr; };
+
     int16_t *readElevationFile(int lod, int ilat, int ilng, double scale) const;
     bool readElevationModFile(int lod, int ilat, int ilng, double elevScale, int16_t *elev) const;
 
@@ -41,7 +43,7 @@ private:
 
     mutable elevTileList_t localTiles;
 
-    zTreeManager *zTrees[2] = { nullptr, nullptr};
+    zTreeManager *zTrees[2] = { nullptr, nullptr };
 
     // bool own = false;
     // int16_t *elev = nullptr;

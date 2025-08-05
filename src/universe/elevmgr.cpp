@@ -18,9 +18,12 @@ ElevationManager::ElevationManager(CelestialPlanet *obj)
 }
 
 void ElevationManager::setup(const fs::path &folder)
-{ 
+{
+    // zTrees[0] = zTreeManager::create(folder, "surf");
+    // zTrees[1] = zTreeManager::create(folder, "mask"); 
     zTrees[0] = zTreeManager::create(folder, "elev");
     zTrees[1] = zTreeManager::create(folder, "elev_mod");
+    // zTrees[4] = zTreeManager::create(folder, "label");
 }
 
 int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double elevScale) const
@@ -39,7 +42,7 @@ int16_t *ElevationManager::readElevationFile(int lod, int ilat, int ilng, double
     if (zTrees[0] != nullptr)
     {
         szData = zTrees[0]->read(lod, ilat, ilng, &elevData);
-        ofsLogger->info("Read {} bytes from elevation database\n", szData);
+        // ofsLogger->info("Read {} bytes from elevation database\n", szData);
         if (szData > 0 && elevData != nullptr)
         {
             hdr = (elevHeader *)elevData;
@@ -109,7 +112,7 @@ bool ElevationManager::readElevationModFile(int lod, int ilat, int ilng, double 
     if (zTrees[1] != nullptr)
     {
         szData = zTrees[1]->read(lod, ilat, ilng, &elevData);
-        ofsLogger->info("Read {} bytes from elevation (modified) database\n", szData);
+        // ofsLogger->info("Read {} bytes from elevation (modified) database\n", szData);
         if (szData > 0 && elevData != nullptr)
         {
             hdr = (elevHeader *)elevData;

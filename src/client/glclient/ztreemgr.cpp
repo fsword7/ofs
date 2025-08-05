@@ -88,8 +88,12 @@ int32_t zTreeManager::getIndex(int lod, int lat, int lng)
         uint32_t pidx = getIndex(lod-1, lat/2, lng/2);
         if (pidx == ZTREE_NIL)
             return ZTREE_NIL;
-        int cidx = ((lat & 1) << 1) | (lng & 1);
-        return nodes[pidx].child[cidx];
+        if (pidx < hdr.nodeCount)
+        {
+            int cidx = ((lat & 1) << 1) | (lng & 1);
+            return nodes[pidx].child[cidx];
+        } else
+            return ZTREE_NIL;
     }
 }
 
