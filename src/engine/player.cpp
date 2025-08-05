@@ -642,9 +642,9 @@ void Player::setGroundObserver(Celestial *object, glm::dvec3 loc, double heading
     // to east as origin at (0, 0) so that using
     // heading rotation (ofs::hRotate).
     //
-    //     / |  slat -clat   0  | |  clng   0  -slng | \ T
-    // R = | |  clat  slat   0  | |   0     1    0   | |
-    //     \ |   0     0     1  | |  slng   0   clng | /
+    //     ||  slat -clat   0  ||  clng   0  -slng || T
+    // R = ||  clat  slat   0  ||   0     1    0   ||
+    //     ||   0     0     1  ||  slng   0   clng ||
 
     double clat = cos(go.lat), slat = sin(go.lat);
     double clng = cos(go.lng), slng = sin(go.lng);
@@ -681,9 +681,9 @@ void Player::shiftGroundObserver(glm::dvec3 dm, double dh)
     // to east as origin at (0, 0) so that using
     // heading rotation (ofs::hRotate).
     //
-    //     / |  slat -clat   0  | |  clng   0  -slng | \ T
-    // R = | |  clat  slat   0  | |   0     1    0   | |
-    //     \ |   0     0     1  | |  slng   0   clng | /
+    //     ||  slat -clat   0  ||  clng   0  -slng || T
+    // R = ||  clat  slat   0  ||   0     1    0   ||
+    //     ||   0     0     1  ||  slng   0   clng ||
     //
     double clat = cos(go.lat), slat = sin(go.lat);
     double clng = cos(go.lng), slng = sin(go.lng);
@@ -725,9 +725,9 @@ void Player::setPersonalObserver(Celestial *object, glm::dvec3 loc, double headi
     // to east as origin at (0, 0) so that using
     // heading rotation (ofs::hRotate).
     //
-    //     / |  slat -clat   0  | |  clng   0  -slng | \ T
-    // R = | |  clat  slat   0  | |   0     1    0   | |
-    //     \ |   0     0     1  | |  slng   0   clng | /
+    //     ||  slat -clat   0  ||  clng   0  -slng || T
+    // R = ||  clat  slat   0  ||   0     1    0   ||
+    //     ||   0     0     1  ||  slng   0   clng ||
     //
     double clat = cos(pgo.lat), slat = sin(pgo.lat);
     double clng = cos(pgo.lng), slng = sin(pgo.lng);

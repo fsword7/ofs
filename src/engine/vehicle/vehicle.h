@@ -78,6 +78,7 @@ struct surface_t
     double  atmMach;        // atomsphere mach number
 
     glm::dmat3 l2h;         // planet to local horizon [planet frame]
+    glm::dmat3 drot;        // heading matrix [vehicle frame]
 
     glm::dmat3 R;
     glm::dquat Q;
@@ -324,6 +325,9 @@ public:
     inline surface_t *getSurfaceParameters() { return &surfParam; }
     inline csurface_t *getSurfaceParameters() const { return &surfParam; }
     
+    inline double getAltitudeMSL() const { return surfParam.alt0; }
+    inline double getAltitudeAGL() const { return surfParam.alt; }
+
     void updateSurfaceParam();
     void updatePost();
 
@@ -336,7 +340,8 @@ protected:
     surface_t surfParam;    // ship parameters in planet atomsphere
     // surface_t sp;               // surface parameters
 
-    glm::dmat3  landrot;      // Ship orientation in local planet frame
+    glm::dmat3  lhrot;      // Local horizon frame rotation
+    glm::dmat3  drot;       // heading rotation
 
     glm::dvec3 F;      // Linear moment
     glm::dvec3 L;      // Angular moment
@@ -476,8 +481,6 @@ private:
     glm::dvec3 cflin;       // Collecting linear force
     glm::dvec3 camom;       // Collecting torque force
     glm::dvec3 thrust;      // linear thrust force
-
-    glm::dmat3 lhrot;       // local horizon frame rotation
 
     // Collision detection parameters (touchdown points)
     std::vector<tdVertex_t> tpVertices; // touchdown vertices (vessel frame)

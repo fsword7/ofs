@@ -8,6 +8,7 @@
 #include "api/draw.h"
 #include "control/taskbar.h"
 #include "engine/celestial.h"
+#include "engine/vehicle/vehicle.h"
 #include "engine/player.h"
 
 // void Engine::renderOverlay()
@@ -65,7 +66,12 @@ void TaskBar::displayPlanetInfo(const Player &player)
     ipad->setTextPos(5, 3);
     
     const Celestial *focus = player.getReferenceObject();
+    const Vehicle *veh = nullptr;
     assert(focus != nullptr);
+    if (focus->getType() == objVehicle) {
+        veh = dynamic_cast<const Vehicle *>(focus);
+        focus = veh->getOrbitalReference();
+    }
     ipad->print(focus->getsName());
 
     ipad->setFont(textFont);
@@ -73,6 +79,18 @@ void TaskBar::displayPlanetInfo(const Player &player)
     ipad->print(fmt::format("Velocity: {:.3f} mph", ((glm::length(focus->getgVelocity()) * 3600) / 1.609)));
     ipad->print(fmt::format("Radius: {}", focus->getRadius()));
     ipad->print("-----------------");
+    if (veh != nullptr) {
+        ipad->print(fmt::format("Vehicle: {} - {}",
+            veh->getsName(), veh->getsName(1)));
+        ipad->print(fmt::format("Reference: {}",
+            veh->getOrbitalReference()->getsName()));
+        ipad->print(fmt::format("Ground Velocity: {:.3f} mph",
+            ((glm::length(veh->getgVelocity()) * 3600) / 1.609)));
+        ipad->print(fmt::format("Altitude (MSL): {:.3f} ft ({:.3f} m)",
+            veh->getAltitudeMSL() * 3280.84, veh->getAltitudeMSL() * 1000.0));
+        ipad->print(fmt::format("Altitude (AGL): {:.3f} ft ({:.3f} m)",
+            veh->getAltitudeAGL() * 3280.84, veh->getAltitudeAGL() * 1000.0));       
+    }
     ipad->print(fmt::format("Distance: {:.4f}", glm::length(player.getrPosition())));
 
     glm::dvec3 lpos = focus->convertGlobalToLocal(player.getPosition());
