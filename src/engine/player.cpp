@@ -506,8 +506,11 @@ void Player::update(const TimeDate &td)
         switch (modeCamera)
         {
         case camCockpit:
+            // Rotate camera in cockpit frame.
+            cam.rrot = ofs::xRotate(vcphi) * ofs::yRotate(vctheta);
+
             // Set global position/rotation for on the air
-            grot  = tgtObject->s1.R * cam.rrot;
+            grot  = cam.rrot * tgtObject->s1.R;
             gspos = grot * (cam.rpos + *vcpos);
             gpos  = tgtObject->s1.pos + gspos;
 
@@ -537,6 +540,14 @@ void Player::rotateView(double dtheta, double dphi)
         else if (modeCamera == camPersonalObserver)
             rotatePersonalObserver(dtheta, dphi);
     }
+}
+
+void Player::rotateCockpit(double dphi, double dtheta)
+{
+    if (modeCamera != camCockpit)
+        return;
+    vcphi   += dphi;
+    vctheta += dtheta;
 }
 
 void Player::orbit(double phi, double theta, double dist)

@@ -168,6 +168,7 @@ public:
     void orbit(const glm::dquat &drot);
     void orbit(double phi, double theta, double dist);
     void rotateView(double theta, double phi);
+    void rotateCockpit(double phi, double theta);
 
     // void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
     void setGroundObserver(Celestial *object, glm::dvec3 loc, double heading);
@@ -201,6 +202,8 @@ private:
 
     double ephi = 0.0;      // current phi rotation (external)
     double etheta = 0.0;    // current theta rotation (external)
+    double vcphi = 0.0;     // current phi rotation (cockpit)
+    double vctheta = 0.0;   // current theta rotation (cockpit)
     double cphi = 0.0;      // current phi rotation (free)
     double ctheta = 0.0;    // current theta rotation (free)
 

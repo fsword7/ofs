@@ -483,6 +483,8 @@ void CoreApp::keyPress(char32_t code, int mods, bool down)
             shiftStateKey[code] = true;
         else if (mods & ofs::keyButton::keyControl)
             ctrlStateKey[code] = true;
+        else if (mods & ofs::keyButton::keyAlt)
+            altStateKey[code] = true;
         else
             stateKey[code] = true;
 
@@ -501,6 +503,7 @@ void CoreApp::keyPress(char32_t code, int mods, bool down)
         stateKey[code] = false;
         shiftStateKey[code] = false;
         ctrlStateKey[code] = false;
+        altStateKey[code] = false;
         last = -1;
     }
 }
@@ -699,6 +702,18 @@ void CoreApp::keyImmediateSystem()
     else
     {
         // Internal camera view (in cocpkit)
+        double dphi(0.0), dtheta(0.0);
+        
+        if (altStateKey[ofs::keyCode::keyPad4])
+            dtheta += dt * 0.8;
+        if (altStateKey[ofs::keyCode::keyPad6])
+            dtheta += dt * -0.8;
+        if (altStateKey[ofs::keyCode::keyPad2])
+            dphi += dt * -0.8;
+        if (altStateKey[ofs::keyCode::keyPad8])
+            dphi += dt * 0.8;
+
+        player->rotateCockpit(dphi, dtheta);
     }
 }
 
