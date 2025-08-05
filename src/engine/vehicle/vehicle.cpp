@@ -479,14 +479,11 @@ void Vehicle::initLanded(Celestial *object, const glm::dvec3 &loc, double dir)
     // R = |    0     1     0    | || cos(p)  sin(p)   0  ||    0     1     0    ||
     //     | -cos(h)  0   sin(h) | ||   0       0      1  ||  sin(t)  0   cos(t) ||
 
-    double sdir = sin(dir), cdir = cos(dir);
     sp.ploc = cbody->convertEquatorialToLocal(sp.slat, sp.clat, sp.slng, sp.clng, sp.rad);
     lhrot = { sp.slat*sp.clng,  sp.clat*sp.clng, sp.slng,
              -sp.clat,          sp.slat,         0,
              -sp.slat*sp.slng, -sp.clat*sp.slng, sp.clng };
     drot = ofs::hRotate(dir);
-
-    ElevationManager *emgr = planet->getElevationManager();
 
     double gvel = pi2 * sp.rad * sp.clat / cbody->getRotationPeriod();
 

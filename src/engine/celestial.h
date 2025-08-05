@@ -70,6 +70,7 @@ public:
 
     inline Celestial *getStar() const                   { return cstar; }
     inline Celestial *getParent() const                 { return cbody; }
+    inline Celestial *getOrbitalReference() const       { return cbody; }
 
     inline void setVisualObject(vObject *vobj) const    { visualObject = vobj; }
     inline vObject *getVisualObject() const             { return visualObject; }

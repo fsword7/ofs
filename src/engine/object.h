@@ -53,6 +53,7 @@ public:
     inline double getMass() const               { return mass; }
     inline double getAlbedo() const             { return geomAlbedo; }
     inline color_t getColor() const             { return geomColor; }
+    inline StateVectors &getStateVector()       { return s1.bUpdates ? s1 : s0; }
 
     inline bool isSphere() const                { return semiAxes.x == semiAxes.y && semiAxes.x == semiAxes.z; }
 

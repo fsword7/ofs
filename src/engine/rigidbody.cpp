@@ -56,8 +56,6 @@ RigidBody::RigidBody(cjson &config, ObjectType type, celType celtype)
 
 void RigidBody::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double step, double dt)
 {
-    // pSystem *system = nullptr;
-
     assert(system != nullptr);
 
     acc = system->addGravityIntermediate(state.pos, step, this);
@@ -75,31 +73,51 @@ void RigidBody::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const St
 
 void RigidBody::updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel)
 {
-    s0.pos = rposBase = rpos;
-    s0.vel = rvelBase = rvel;
+    StateVectors &s = getStateVector();
+    s.pos = rposBase = rpos;
+    s.vel = rvelBase = rvel;
     rposAdd = {};
     rvelAdd = {};
 }
 
 void RigidBody::update(bool force)
 {
-    // {
-    //     {
-    //         flushPosition();
-    //         flushVelocity();
-    //         s1.pos = cpos;
-    //         s1.vel = cvel;
-    //         // getIntermediateMomentsPert(accp, am, s0, 0, dt, cbody);
-    //         oel.calculate(cpos, cvel, ofsDate->getSimTime0());
-    //     }
-    //     //calculateEncke();
-    //     s1.pos = cbody->s1.pos + cpos;
-    //     s1.vel = cbody->s1.vel + cvel;
-    //     flushPosition();
-    //     flushVelocity();
-    //     s1.R = glm::mat3_cast(s1.Q);
-    //     getIntermediateMoments(acc, am, s1, 1, dt);
-    // }
+    if (bDynamicForce)
+    {
+        if (bOrbitNotInitialized)
+        {
+            flushPosition();
+            flushVelocity();
+            s1.pos = cpos;
+            s1.vel = cvel;
+            // getIntermediateMomentsPert(accp, am, s0, 0, dt, cbody);
+            oel.calculate(cpos, cvel, ofsDate->getSimTime0());
+        }
+
+        // Updating orbital path
+        //calculateEncke();
+        oel.updateOrbiting(cpos, cvel, ofsDate->getSimTime1());
+        // oel.calculate(cpos, cvel, ofsDate->getSimTime1());
+
+        s1.pos = cbody->s1.pos + cpos;
+        s1.vel = cbody->s1.vel + cvel;
+        flushPosition();
+        flushVelocity();
+        s1.R = glm::dmat3(1); // glm::mat3_cast(s1.Q);
+        // getIntermediateMoments(acc, am, s1, 1, dt);
+        bOrbitNotInitialized = false;
+
+        // ofsLogger->info("RigidBody - updates\n");
+        // ofsLogger->info("{}: cpos {},{},{} time {}\n",
+        //     getsName(), cpos.x, cpos.y, cpos.z, ofsDate->getSimTime1());
+        // ofsLogger->info("{}: cvel {},{},{}\n", getsName(), cvel.x, cvel.y, cvel.z);
+        // ofsLogger->info("{}: s1pos {},{},{}\n", getsName(), s1.pos.x, s1.pos.y, s1.pos.z);
+        // ofsLogger->info("{}: s1vel {},{},{}\n", getsName(), s1.vel.x, s1.vel.y, s1.vel.z);
+    }
     
-    Object::update(force);
+    // Object::update(force);
+    if (cbody != nullptr) {
+        cpos = s1.pos - cbody->s1.pos;
+        cvel = s1.vel - cbody->s1.vel;
+    }
 }

@@ -49,6 +49,7 @@ void Vehicle::configure(cjson &config, Celestial *object)
         // Converted to radians
         loc.x = ofs::radians(loc.x);
         loc.y = ofs::radians(loc.y);
+        dir = ofs::radians(dir);
 
         initLanded(object, loc, dir);
     } else if (stName == "orbiting") {
@@ -72,8 +73,13 @@ void Vehicle::configure(cjson &config, Celestial *object)
             // initialize orbital elements
             oel.configure(el, mjd);
             oel.setup(mass, cbody->getMass(), mjd);
-            oel.update(ofsDate->getMJD1(), rpos, rvel);
+            oel.update(rpos, rvel, ofsDate->getSimTime0());
             orbitValid = true;
+
+            // ofsLogger->info("{}: rpos {},{},{} - {}\n", getsName(), rpos.x, rpos.y, rpos.z, ofsDate->getSimTime0());
+            // ofsLogger->info("{}: rvel {},{},{} - {} mph\n", getsName(),
+            //     rvel.x, rvel.y, rvel.z, glm::length(rvel) * 0.621);
+
         } else {
             rpos = myjson::getFloatArray<glm::dvec3, double>(config, "rpos");
             rvel = myjson::getFloatArray<glm::dvec3, double>(config, "rvel");
@@ -101,6 +107,8 @@ void Vehicle::configure(cjson &config, Celestial *object)
             vrot.z = ofs::radians(vrot.z);
         }
 
+        // ofsLogger->info("{}: rpos {},{},{}\n", getsName(), rpos.x, rpos.y, rpos.z);
+        // ofsLogger->info("{}: rvel {},{},{}\n", getsName(), rvel.x, rvel.y, rvel.z);
         initOrbiting(rpos, rvel, arot, &vrot);
 
     } else {

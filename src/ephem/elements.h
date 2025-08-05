@@ -59,12 +59,12 @@ public:
     void reset(const double *el, double mjd);
     void setup(double m, double M, double mjd);
     void calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t);
-    void update(double mjd, glm::dvec3 &pos, glm::dvec3 &vel);
+    void update(glm::dvec3 &pos, glm::dvec3 &vel, double t);
 
-    void getPolarPosition(double t, double &r, double &ta) const;
+    void updatePolarPosition(double &r, double &ta, double t) const;
     glm::dvec3 convertPolarToXYZ(double r, double ta) const;
     glm::dvec3 getPosition(double t) const;
-    void getPositionVelocity(double t, glm::dvec3 &pos, glm::dvec3 &vel) const;
+    void updateOrbiting(glm::dvec3 &pos, glm::dvec3 &vel, double t) const;
 
 public:
     // Primary orbital element parameters

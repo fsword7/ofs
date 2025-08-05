@@ -53,6 +53,9 @@ protected:
     // OrbitalElements oel;
     // bool orbitValid = false;
 
+    bool bDynamicForce = true;
+    bool bOrbitNotInitialized = true; 
+
     glm::dvec3 cpos, cvel;  // state vectors in reference frame
     glm::dvec3 acc;         // current linear accelration
     glm::dvec3 arot;        // current angular accelration

@@ -279,6 +279,8 @@ bool pSystem::loadPlanet(cstr_t &cbName, pSystem *psys, fs::path &cbPath)
 
     cbody->setPath(cbPath);
     // cbody->setFolder(cbFolder);
+    cbody->setup();
+
     psys->addPlanet(cbody, parent);
 
     return true;

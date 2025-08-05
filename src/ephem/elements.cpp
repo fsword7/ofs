@@ -12,14 +12,14 @@ static constexpr const double I_NOINC_LIMIT  = 1e-8;
 
 OrbitalElements::OrbitalElements(double a, double e, double i,
     double theta, double omegab, double L, double mjd)
-: a(a), e(e), i(i), theta(theta), omegab(omegab), L(L),
+: a(a * M_PER_KM), e(e), i(i), theta(theta), omegab(omegab), L(L),
   mjdEpoch(mjd)
 { 
     tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
 }
 
 OrbitalElements::OrbitalElements(const double *el, double mjd)
-: a(el[0]), e(el[1]), i(el[2]), theta(el[3]),
+: a(el[0] * M_PER_KM), e(el[1]), i(el[2]), theta(el[3]),
   omegab(el[4]), L(el[5]), mjdEpoch(mjd)
 {
     tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
@@ -28,7 +28,7 @@ OrbitalElements::OrbitalElements(const double *el, double mjd)
 void OrbitalElements::configure(const double *el, double mjd)
 {
     // Set new orbital elmenets
-    a = el[0];
+    a = el[0] * M_PER_KM;
     e = el[1];
     i = el[2];
     theta = el[3];
@@ -39,13 +39,15 @@ void OrbitalElements::configure(const double *el, double mjd)
     // Set MJD date/time
     mjdEpoch = mjd;
     tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
+
+    // ofsLogger->info("MJD Epoch {} T {} \n", mjdEpoch, tEpoch);
 }
 
 void OrbitalElements::reset(double _a, double _e, double _i, double _theta,
     double _omegab, double _L, double mjd)
 {
     // Reset primary elements
-    a = _a;
+    a = _a * M_PER_KM;
     e = _e;
     i = _i;
     theta = _theta;
@@ -59,7 +61,7 @@ void OrbitalElements::reset(double _a, double _e, double _i, double _theta,
 void OrbitalElements::reset(const double *el, double mjd)
 {
     // Reset primary elements
-    a = el[0];
+    a = el[0] * M_PER_KM;
     e = el[1];
     i = el[2];
     theta = el[3];
@@ -80,7 +82,7 @@ void OrbitalElements::setMasses(double _m, double _M)
 double OrbitalElements::getEccentricAnomaly(double ma) const
 {
 
-    constexpr const double tol = 1e-16;
+    constexpr const double tol = 1e-14;
     constexpr const int maxiter = 16;
 
     double res;
@@ -89,8 +91,10 @@ double OrbitalElements::getEccentricAnomaly(double ma) const
     if (isClosedOrbit(e))
     {
         // closed orbit
-        E = (fabs(ma-ma0) < 1e-2 ? ma0 : ma);
+        E = (fabs(ma-ma0) < 1e-2 ? ea0 : ma);
         res = ma - E + e * sin(E);
+        if (fabs(res) > fabs(ma))
+            E = 0.0, res = ma;
         for (int i = 0; fabs(res) > tol && i < maxiter; i++)
         {
             E += std::max(-1.0, std::min(1.0, res / (1.0 - e * cos(E))));
@@ -101,7 +105,6 @@ double OrbitalElements::getEccentricAnomaly(double ma) const
     {
         // open orbit
         E = ea0, res = 1.0;
-        res = ma - E + e * sin(E);
         for (int i = 0; fabs(res) > tol && i < maxiter; i++)
         {
             E += std::max(-1.0, std::min(1.0, res / (e * cosh(E) - 1.0)));
@@ -121,7 +124,7 @@ double OrbitalElements::getEccentricAnomalyTA(double ta) const
     else
     {
         double costa = cos(ta);
-        double ea = acosh((e*costa)/(e*costa+1.0));
+        double ea = acosh((e+costa)/(e*costa+1.0));
         return (ta >= 0.0) ? ea : -ea;
     }
 }
@@ -169,10 +172,11 @@ void OrbitalElements::setup(double m, double M, double mjd)
     le = a * e;     // linear eccentricity
     ad = a + le;    // apoapsis distance
     pd = a - le;    // periapsis distance
-    omega = omegab - theta;
 
-    p = std::max(0.0, a * (1.0 - a*a));
+    p = std::max(0.0, a * (1.0 - e*e));
     muh = sqrt(mu/p);
+
+    // ofsLogger->info("Elements: p {} muh {}\n", p, muh);
 
     if (isClosedOrbit(e))
     {
@@ -180,6 +184,9 @@ void OrbitalElements::setup(double m, double M, double mjd)
         b = a * sqrt(1.0 - e*e);
         n = sqrt(mu / (a*a*a));
         tmp = sqrt((1.0 + e) / (1.0 - e));
+
+        // ofsLogger->info("Elements: b {} n {} tmp {}  e - closed orbit\n",
+        //     b, n, tmp);
     }
     else
     {
@@ -188,25 +195,85 @@ void OrbitalElements::setup(double m, double M, double mjd)
         n = sqrt(-mu / (a*a*a));
     }
 
+    // set time parameters
+    T = pi2 / n;                            // orbital period
+    L += (mjd - mjdEpoch) * 86400.0 * n;    // mean longitude
+
+    // ofsLogger->info("Elements: T {} L {}\n", T, ofs::degrees(L));
+
+    mjdEpoch = mjd;
+    tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
+    tau = tEpoch - (L - omegab) / n;
+    omega = omegab - theta;
+
     // Calculate sin/cos of theta, inclination and omega
     sint = sin(theta), cost = cos(theta);
     sini = sin(i),     cosi = cos(i);
     sino = sin(omega), coso = cos(omega);
 
-    // set time parameters
-    T = (pi * 2.0) / n;                  // orbital period
-    L += (mjd - mjdEpoch) * 86400.0 * n; // mean longitude
-    mjdEpoch = mjd;
-    tEpoch = (mjdEpoch - ofsDate->getMJDReference()) * 86400.0;
-    tau = tEpoch - (L - omegab) / n;
+    // Angular momentum
+    double h = sqrt(mu*p);
+    H = { h*sini*sint, h*cosi, -h*sini*cost};
+}
+
+// updating position and velocity periodically
+void OrbitalElements::update(glm::dvec3 &pos, glm::dvec3 &vel, double t)
+{
+    double sinto, costo;
+    double vx, vz;
+    double thetav;
+
+    if (e < E_CIRCLE_LIMIT)
+        ma = ea = tra = n * fmod(t - tau, T);
+    else
+    {
+        ma = getMeanAnomaly(t);
+        if (e < 1.0)
+            ma = ofs::posangle(ma);
+        ea = getEccentricAnomaly(ma);
+        tra = getTrueAnomalyE(ea);
+    }
+
+    r = p / (1.0 + e * cos(tra));
+
+    vx = -muh * sin(tra);
+    vz = muh * (e + cos(tra));
+    thetav = atan2(vz, vx);
+    v = sqrt(vx*vx + vz*vz);
+
+    sinto = sin(tra + omega);
+    costo = cos(tra + omega);
+    R.x = (cost*costo - sint*sinto*cosi) * r;
+    R.z = (sint*costo + cost*sinto*cosi) * r;
+    R.y = (sinto * sini) * r;
+    
+    sinto = sin(thetav + omega);
+    costo = cos(thetav + omega);
+    V.x = (cost*costo - sint*sinto*cosi) * v;
+    V.z = (sint*costo + cost*sinto*cosi) * v;
+    V.y = (sinto * sini) * v;
+
+    ml = ofs::posangle(ma + omegab);
+    trl = ofs::posangle(tra + omegab);
+
+    // Update time countdown for next
+    // periaspsis/apoaspsis passage
+    if ((Tpe = -ma/n) < 0.0)
+        Tpe += T;
+    if ((Tap = Tpe-0.5 * T) < 0.0)
+        Tap += T;
+
+    // Return new position/velocity
+    pos = R / M_PER_KM;
+    vel = V / M_PER_KM;
 }
 
 // determine new orbital path
 void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, double t)
 {
     // Set radius/velocity vectors
-    R = pos;
-    V = vel;
+    R = pos * M_PER_KM;
+    V = vel * M_PER_KM;
     r = glm::length(R);
     v = glm::length(V);
 
@@ -233,14 +300,14 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
     {
         ad = a + le;
         b = a * sqrt(1.0 - e*e);
-        tmp = sqrt(1.0 + e) / (1.0 - e);
+        tmp = sqrt((1.0 + e) / (1.0 - e));
         n = sqrt(mu / (a*a*a));
-        T = (pi*2)/n;
+        T = pi2/n;
     }
     else
     {
         b = a * sqrt(e*e - 1.0);
-        n = sqrt(mu * (-a*a*a));
+        n = sqrt(mu / (-a*a*a));
     }
 
     // Longitude of ascending node
@@ -250,11 +317,11 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
         N = { -H.z*tmp, 0.0, H.x*tmp };
         theta = acos(N.x);
         if (N.z < 0.0)
-            theta = (pi*2) - theta;
+            theta = pi2 - theta;
     }
     else
     {
-        N = { 0, 0, 0 };
+        N = { 1, 0, 0 };
         theta = 0.0;
     }
     sint = sin(theta), cost = cos(theta);
@@ -269,27 +336,27 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
                     (arg >  1.0) ? omega = 0.0 :
                                    omega = acos(arg);
             if (E.y < 0.0)
-                omega = (pi*2) - omega;
+                omega = pi2 - omega;
         }
         else
         {
             if ((omega = atan2(E.z, E.x)) < 0.0)
-                omega += pi*2;
+                omega += pi2;
         }
     } else
         omega = 0.0;
     sino = sin(omega), coso = cos(omega);
 
     // Longitude of periapsis
-    if ((omegab = theta + omega) >= pi*2)
-        omegab -= pi*2;
+    if ((omegab = theta + omega) >= pi2)
+        omegab -= pi2;
 
     // True anomaly
     if (e > E_CIRCLE_LIMIT)
     {
         tra = acos(std::clamp(glm::dot(E, R) / (e * r), -1.0, 1.0));
         if (rv < 0.0)
-            tra = (pi*2) - tra;
+            tra = pi2 - tra;
     }
     else
     {
@@ -297,19 +364,20 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
         {
             tra = acos(glm::dot(N, R)/r);
             if (glm::dot(N, V) > 0.0)
-                tra = (pi*2) - tra;
+                tra = pi2 - tra;
         }
         else
         {
             tra = acos(R.x/r);
             if (V.x > 0.0)
-                tra = (pi*2) - tra;
+                tra = pi2 - tra;
         }
     }
 
     // True longitude
-    if ((trl = omegab + tra) >= pi*2)
-        trl -= pi*2;
+    if ((trl = omegab + tra) >= pi2)
+        trl -= pi2;
+
     if (isClosedOrbit(e))
     {
         // Closed orbit
@@ -364,58 +432,6 @@ void OrbitalElements::calculate(const glm::dvec3 &pos, const glm::dvec3 &vel, do
     }
 }
 
-// updating position and velocity periodically
-void OrbitalElements::update(double mjd, glm::dvec3 &pos, glm::dvec3 &vel)
-{
-    double sinto, costo;
-    double vx, vz;
-    double thetav;
-
-    if (e < E_CIRCLE_LIMIT)
-        ma = ea = tra = n * fmod(mjd - tau, T);
-    else
-    {
-        ma = getMeanAnomaly(mjd);
-        if (e < 1.0)
-            ma = ofs::posangle(ma);
-        ea = getEccentricAnomaly(ma);
-        tra = getTrueAnomalyE(ea);
-    }
-
-    r = p / (1.0 + e * cos(tra));
-
-    vx = -muh * sin(tra);
-    vz = muh * (e + cos(tra));
-    thetav = atan2(vz, vx);
-    v = sqrt(vx*vx + vz*vz);
-
-    sinto = sin(tra + omega);
-    costo = cos(tra + omega);
-    R.x = (cost*costo - sint*sinto*cosi) * r;
-    R.z = (sint*costo + cost*sinto*cosi) * r;
-    R.y = (sinto * sini) * r;
-    
-    sinto = sin(thetav + omega);
-    costo = cos(thetav + omega);
-    V.x = (cost*costo - sint*sinto*cosi) * v;
-    V.z = (sint*costo + cost*sinto*cosi) * v;
-    V.y = (sinto * sini) * v;
-
-    ml = ofs::posangle(ma + omegab);
-    trl = ofs::posangle(tra + omegab);
-
-    // Update time countdown for next
-    // periaspsis/apoaspsis passage
-    if ((Tpe = -ma/n) < 0.0)
-        Tpe += T;
-    if ((Tap = Tpe-0.5 * T) < 0.0)
-        Tap += T;
-
-    // Return new position/velocity
-    pos = R;
-    vel = V;
-}
-
 glm::dvec3 OrbitalElements::convertPolarToXYZ(double r, double ta) const
 {
     double sinto = sin(ta * omega);
@@ -430,7 +446,7 @@ glm::dvec3 OrbitalElements::convertPolarToXYZ(double r, double ta) const
     return pos;
 }
 
-void OrbitalElements::getPolarPosition(double t, double &r, double &ta) const
+void OrbitalElements::updatePolarPosition(double &r, double &ta, double t) const
 {
     if (e < E_CIRCLE_LIMIT)
         ta = n * fmod(t-tau, T);
@@ -449,18 +465,18 @@ glm::dvec3 OrbitalElements::getPosition(double t) const
     glm::dvec3 pos;
     double r, ta;
 
-    getPolarPosition(t, r, ta);
+    updatePolarPosition(r, ta, t);
     pos = convertPolarToXYZ(r, ta);
 
     return pos;
 }
 
-void OrbitalElements::getPositionVelocity(double t, glm::dvec3 &pos, glm::dvec3 &vel) const
+void OrbitalElements::updateOrbiting(glm::dvec3 &pos, glm::dvec3 &vel, double t) const
 {
     double r, ta;
 
-    getPolarPosition(t, r, ta);
-    pos = convertPolarToXYZ(r, ta);
+    updatePolarPosition(r, ta, t);
+    pos = convertPolarToXYZ(r, ta) / M_PER_KM;
 
     double vx = -muh * sin(ta);
     double vz = muh * (e * cos(ta));
@@ -472,4 +488,5 @@ void OrbitalElements::getPositionVelocity(double t, glm::dvec3 &pos, glm::dvec3 
     vel.x = (cost*costo - sint*sinto*cosi) * rv;
     vel.z = (sint*costo + cost*sinto*cosi) * rv;
     vel.y = (sinto*sini) * rv;
+    vel /= M_PER_KM;
 }
