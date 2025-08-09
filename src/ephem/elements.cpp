@@ -142,22 +142,19 @@ void OrbitalElements::determine(const glm::dvec3 &pos, const glm::dvec3 &vel, do
     if (r == 0 || v == 0)
         return;
 
-    // right-hand - R x V
-    // left-hand  - V x R 
-    H = glm::cross(R, V);
-    double h = glm::length(H);
-    double rv = glm::dot(R, V);
-
     // semi-major axis
     a = r * mu / (2.0*mu - r*v2);
 
     // eccentricity
+    double rv = glm::dot(R, V);
     E = (R * (1.0/r - 1.0/a) - V * (rv/mu));
     e = glm::length(E);
 
     // inclination
-    // right-hand - acos(-H.y/h)
-    // left-hand  - acos(H.y/h)
+    // right-hand - R x V, acos(-H.y/h)
+    // left-hand  - V x R, acos(H.y/h)
+    H = glm::cross(R, V);
+    double h = glm::length(H);
     i = acos(-H.y/h);
     sini = sin(i), cosi = cos(i);
 
