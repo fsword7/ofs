@@ -56,13 +56,14 @@ void OrbitalElements::setMasses(double _m, double _M)
 void OrbitalElements::updatePolar(double t, double &r, double &ta)
 {
     if (e < E_CIRCLE_LIMIT)
-        ta = m * fmod(t - tau, P);
+        ta = n * fmod(t - tau, P);
     else {
         double ma = calculateMeanAnomaly(t);
         if (e < 1.0)
             ma = ofs::posangle(ma);
         ta = calculateTrueAnomalyE(ma);
     }
+
     r = p / (1.0 + e*cos(ta)); 
 }
 
@@ -151,11 +152,9 @@ void OrbitalElements::determine(const glm::dvec3 &pos, const glm::dvec3 &vel, do
     e = glm::length(E);
 
     // inclination
-    // right-hand - R x V, acos(-H.y/h)
-    // left-hand  - V x R, acos(H.y/h)
     H = glm::cross(R, V);
     double h = glm::length(H);
-    i = acos(-H.y/h);
+    i = acos(H.z/h);
     sini = sin(i), cosi = cos(i);
 
     le = a * e;     // linear eccentricity
@@ -344,7 +343,7 @@ void OrbitalElements::start(double t, glm::dvec3 &pos, glm::dvec3 &vel)
     double thetav;
 
     if (e < E_CIRCLE_LIMIT)
-        ma = ea = tra = m * fmod(t - tau, P);
+        ma = ea = tra = n * fmod(t - tau, P);
     else {
         ma = calculateMeanAnomaly(t);
         if (e < 1.0)
@@ -389,7 +388,6 @@ void OrbitalElements::start(double t, glm::dvec3 &pos, glm::dvec3 &vel)
 void OrbitalElements::update(double t, glm::dvec3 &pos, glm::dvec3 &vel)
 {
     double r, ta;
-    glm::dvec3 R, V;
     double vx, vz, thetav;
     double sinto, costo;
 

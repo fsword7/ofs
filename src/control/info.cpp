@@ -59,13 +59,15 @@ void TaskBar::displayPlanetocentric(double lat, double lng, double alt)
 
 void TaskBar::displayOrbitalElements(const OrbitalElements &oel, double rad)
 {
-    double alt = glm::length(oel.getoPosition()) / M_PER_KM;
+    glm::dvec3 pos = oel.getoPosition() / M_PER_KM;
+    double alt = glm::length(pos);
     double ad = oel.getApoapsisDistance() / M_PER_KM;
     double pd = oel.getPeriapsisDistance() / M_PER_KM;
     double major = oel.getSemiMajorAxis() / M_PER_KM;
     double minor = oel.getSemiMinorAxis() / M_PER_KM;
 
     ipad->print("---- orbital elements ----");
+    // ipad->print(fmt::format("Position: {:.4f},{:.4f},{:.4f}", pos.x, pos.y, pos.z));
     ipad->print(fmt::format("Altitude:          {:.4f} km", alt - rad));
     ipad->print(fmt::format("Apoapsis:          {:.4f} km", ad - rad));
     ipad->print(fmt::format("Periapsos:         {:.4f} km", pd - rad));
