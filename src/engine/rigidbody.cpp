@@ -96,7 +96,7 @@ void RigidBody::update(bool force)
 
         // Updating orbital path
         //calculateEncke();
-        oel.update(ofsDate->getSimDeltaTime1(), cpos, cvel);
+        oel.update(ofsDate->getSimTime1(), cpos, cvel);
         // oel.calculate(cpos, cvel, ofsDate->getSimTime1());
 
         // ofsLogger->info("RigidBody - updates\n");
