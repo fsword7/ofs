@@ -13,13 +13,22 @@
         //     "location": [ 28.632307, -80.705774 ],
         //     "heading": 150
         // }
+        // {
+        //     "name": "SG-01:Space Glider",
+        //     "module": "glider",
+        //     "status": "orbiting",
+        //     "target": "Sol/Earth",
+        //     "elements": [ 6628.0, 0.005, 25.0, 0, 0, 0 ],
+        //     "arot": [0, 0, 0]
+        // }
         {
             "name": "SG-01:Space Glider",
             "module": "glider",
             "status": "orbiting",
             "target": "Sol/Earth",
-            "elements": [ 6628.0, 0.005, 50.0, 0, 0, 0 ],
-            "arot": [0, 0, 0]
+            "rpos": [ 6628.0, 0, 0 ],
+            "rvel": [ 0, 0, 7.79432 ],
+            "arot": [ 0, 0, 0 ]
         }
     ],
 

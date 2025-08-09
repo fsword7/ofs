@@ -547,6 +547,7 @@ void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const g
 
     // Determine new orbital path
     oel.determine(cpos, cvel, ofsDate->getSimTime0());
+    bOrbitalValid = true;
 
     s0.R = ofs::rotation<glm::dmat3, double>(arot);
     s0.Q = s0.R;

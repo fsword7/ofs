@@ -32,6 +32,8 @@ void Vehicle::configure(cjson &config, Celestial *object)
     setsName(tagName);
     addName(descName);
 
+    cbody = object;
+
     // Loading vehicle module
     str_t modName = myjson::getString<str_t>(config, "module");
     if (modName.empty()) {
@@ -59,8 +61,6 @@ void Vehicle::configure(cjson &config, Celestial *object)
             double el[NELEMENTS] = DEFAULT_ELEMENTS;
             double mjd, mjdref = ofsDate->getMJDReference();
 
-            cbody = object;
-
             myjson::setFloatArray(config, "elements", el, ARRAY_SIZE(el));
             mjd = myjson::getFloat<double>(config, "mjd", mjdref);
 
@@ -73,9 +73,8 @@ void Vehicle::configure(cjson &config, Celestial *object)
             // initialize orbital elements
             el[0] *= M_PER_KM;
             oel.configure(el, mjd);
-            oel.setup(mass, cbody->getMass(), mjd);
+            oel.setup(mass, cbody->getMass(), ofsDate->getMJDReference());
             oel.start(ofsDate->getSimDeltaTime0(), rpos, rvel);
-            bOrbitalValid = true;
     
             ofsLogger->info("{}: rpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
                 rpos.x, rpos.y, rpos.z, glm::length(rpos));
@@ -85,6 +84,7 @@ void Vehicle::configure(cjson &config, Celestial *object)
         } else {
             rpos = myjson::getFloatArray<glm::dvec3, double>(config, "rpos");
             rvel = myjson::getFloatArray<glm::dvec3, double>(config, "rvel");
+            oel.setup(mass, cbody->getMass(), ofsDate->getMJDReference());
         }
 
         double alt = myjson::getFloat<double>(config, "alt");
