@@ -5,6 +5,7 @@
 
 #pragma once
 
+class OrbitalElements;
 class Panel;
 class GraphicsClient;
 class Sketchpad;
@@ -25,6 +26,7 @@ public:
     void initPlanetInfo();
     void cleanPlanetInfo();
     void displayPlanetocentric(double lat, double lng, double alt);
+    void displayOrbitalElements(const OrbitalElements &oel, double rad);
     void displayPlanetInfo(const Player &player);
 
 private:

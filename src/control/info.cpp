@@ -7,6 +7,7 @@
 #include "api/graphics.h"
 #include "api/draw.h"
 #include "control/taskbar.h"
+#include "ephem/elements.h"
 #include "engine/celestial.h"
 #include "engine/vehicle/vehicle.h"
 #include "engine/player.h"
@@ -54,7 +55,30 @@ void TaskBar::displayPlanetocentric(double lat, double lng, double alt)
 
     ipad->print(fmt::format("Location: {:.6f}{} {:.6f}{}",
         dlat, latHemi, dlng, lngHemi));
- }
+}
+
+void TaskBar::displayOrbitalElements(const OrbitalElements &oel, double rad)
+{
+    double alt = glm::length(oel.getoPosition()) / M_PER_KM;
+    double ad = oel.getApoapsisDistance() / M_PER_KM;
+    double pd = oel.getPeriapsisDistance() / M_PER_KM;
+    double major = oel.getSemiMajorAxis() / M_PER_KM;
+    double minor = oel.getSemiMinorAxis() / M_PER_KM;
+
+    ipad->print("---- orbital elements ----");
+    ipad->print(fmt::format("Altitude:          {:.4f} km", alt - rad));
+    ipad->print(fmt::format("Apoapsis:          {:.4f} km", ad - rad));
+    ipad->print(fmt::format("Periapsos:         {:.4f} km", pd - rad));
+    ipad->print(fmt::format("Semi-Major Axis:   {:.4f} km", major - rad));
+    ipad->print(fmt::format("Semi-Minor Axis:   {:.4f} km", minor - rad));
+    ipad->print(fmt::format("Eccentricity:      {:.6f}", oel.getEccentricity()));
+    ipad->print(fmt::format("Inclination:       {:.2f}", ofs::degrees(oel.getInclination())));
+    ipad->print(fmt::format("Long of asc node:  {:.2f}", ofs::degrees(oel.getLongitudeOfAcendingNode())));
+    ipad->print(fmt::format("Long of perapsis:  {:.2f}", ofs::degrees(oel.getLongitudeOfPerapsis())));
+    ipad->print(fmt::format("Mean longitude:    {:.2f}", ofs::degrees(oel.getMeanLongitude())));
+    ipad->print(fmt::format("Orbital Period:    {:.2f} min", oel.getOrbitalPeriod() / 60));
+    ipad->print("--------------------------");
+}
 
 void TaskBar::displayPlanetInfo(const Player &player)
 {
@@ -84,6 +108,8 @@ void TaskBar::displayPlanetInfo(const Player &player)
             veh->getsName(), veh->getsName(1)));
         ipad->print(fmt::format("Reference: {}",
             veh->getOrbitalReference()->getsName()));
+        if (veh->isOrbitalValid())
+            displayOrbitalElements(veh->getOrbitalElements(), focus->getRadius());
         ipad->print(fmt::format("Ground Velocity: {:.3f} mph",
             ((glm::length(veh->getgVelocity()) * 3600) / 1.609)));
         ipad->print(fmt::format("Altitude (MSL): {:.3f} ft ({:.3f} m)",

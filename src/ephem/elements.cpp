@@ -272,22 +272,22 @@ void OrbitalElements::determine(const glm::dvec3 &pos, const glm::dvec3 &vel, do
         ml = ma + omegab;
     }
 
-    ofsLogger->info("Orbital determination:\n");
-    ofsLogger->info("Position:            ({:.3f}, {:.3f}, {:.3f}) - {:.3f} km\n",
-        pos.x, pos.y, pos.z, glm::length(pos));
-    ofsLogger->info("Velocity:            ({:.3f}, {:.3f}, {:.3f}) - {:.3f} mph\n",
-        vel.x, vel.y, vel.z, glm::length(vel) * 3600 * 0.621);
-    ofsLogger->info("---- orbital elements ----\n");
-    ofsLogger->info("Semi-major Axis:     {:.2f} km\n", a / M_PER_KM);
-    ofsLogger->info("Semi-minor Axis:     {:.2f} km\n", b / M_PER_KM);
-    ofsLogger->info("Apoapsis:            {:.2f} km\n", ad / M_PER_KM);
-    ofsLogger->info("Periapsis:           {:.2f} km\n", pd / M_PER_KM);
-    ofsLogger->info("Eccentricity:        {:.6f}\n", e);
-    ofsLogger->info("Inclination:         {:.2f}\n", ofs::degrees(i));
-    ofsLogger->info("Long of asc node:    {:.2f}\n", ofs::degrees(theta));
-    ofsLogger->info("Long of perapsis:    {:.2f}\n", ofs::degrees(omegab));
-    ofsLogger->info("Mean longitude:      {:.2f}\n", ofs::degrees(L0));
-    ofsLogger->info("Orbital period:      {:.2f} mins ({:.1f} s)\n", P / 60.0, P);
+    // ofsLogger->info("Orbital determination:\n");
+    // ofsLogger->info("Position:            ({:.3f}, {:.3f}, {:.3f}) - {:.3f} km\n",
+    //     pos.x, pos.y, pos.z, glm::length(pos));
+    // ofsLogger->info("Velocity:            ({:.3f}, {:.3f}, {:.3f}) - {:.3f} mph\n",
+    //     vel.x, vel.y, vel.z, glm::length(vel) * 3600 * 0.621);
+    // ofsLogger->info("---- orbital elements ----\n");
+    // ofsLogger->info("Semi-major Axis:     {:.2f} km\n", a / M_PER_KM);
+    // ofsLogger->info("Semi-minor Axis:     {:.2f} km\n", b / M_PER_KM);
+    // ofsLogger->info("Apoapsis:            {:.2f} km\n", ad / M_PER_KM);
+    // ofsLogger->info("Periapsis:           {:.2f} km\n", pd / M_PER_KM);
+    // ofsLogger->info("Eccentricity:        {:.6f}\n", e);
+    // ofsLogger->info("Inclination:         {:.2f}\n", ofs::degrees(i));
+    // ofsLogger->info("Long of asc node:    {:.2f}\n", ofs::degrees(theta));
+    // ofsLogger->info("Long of perapsis:    {:.2f}\n", ofs::degrees(omegab));
+    // ofsLogger->info("Mean longitude:      {:.2f}\n", ofs::degrees(L0));
+    // ofsLogger->info("Orbital period:      {:.2f} mins ({:.1f} s)\n", P / 60.0, P);
 
 }
 
@@ -329,11 +329,11 @@ void OrbitalElements::setup(double m, double M, double mjd)
     double h = sqrt(mu * p);    // magnitude of momentum
     H = { h*sini*sint, h*cosi, h*sini*cost };
 
-    ofsLogger->info("Apoapsis Distance:   {}\n", ad / M_PER_KM);
-    ofsLogger->info("Periapsis Distance:  {}\n", pd / M_PER_KM);
-    ofsLogger->info("Semi-major Axis:     {}\n", a / M_PER_KM);
-    ofsLogger->info("Semi-minor Axis:     {}\n", b / M_PER_KM);
-    ofsLogger->info("Orbital period:      {:.1f} ({:.2f} mins)\n", P, P / 60.0);
+    // ofsLogger->info("Apoapsis Distance:   {}\n", ad / M_PER_KM);
+    // ofsLogger->info("Periapsis Distance:  {}\n", pd / M_PER_KM);
+    // ofsLogger->info("Semi-major Axis:     {}\n", a / M_PER_KM);
+    // ofsLogger->info("Semi-minor Axis:     {}\n", b / M_PER_KM);
+    // ofsLogger->info("Orbital period:      {:.1f} ({:.2f} mins)\n", P, P / 60.0);
 }
 
 void OrbitalElements::start(double t, glm::dvec3 &pos, glm::dvec3 &vel)

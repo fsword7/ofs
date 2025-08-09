@@ -33,6 +33,9 @@ public:
     inline double getSemiMinorAxis() const                  { return b; }
     inline double getEccentricity() const                   { return e; }
     inline double getInclination() const                    { return i; }
+    inline double getLongitudeOfAcendingNode() const        { return theta; }
+    inline double getLongitudeOfPerapsis() const            { return omegab; }
+    inline double getMeanLongitude() const                  { return L0; }
     inline double getOrbitalPeriod() const                  { return P; }
 
     inline double getMJDEpoch() const                       { return mjdEpoch; }

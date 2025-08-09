@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "api/graphics.h"
 #include "api/draw.h"
+#include "ephem/elements.h"
 #include "control/panel.h"
 #include "control/taskbar.h"
 #include "engine/player.h"

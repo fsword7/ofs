@@ -75,6 +75,10 @@ public:
     inline void setVisualObject(vObject *vobj) const    { visualObject = vobj; }
     inline vObject *getVisualObject() const             { return visualObject; }
 
+    inline bool isOrbitalValid() const                  { return bOrbitalValid; }
+    inline const OrbitalElements &getOrbitalElements() const 
+                                                        { return oel; }
+
     inline void flushPosition()                 { brpos = irpos, irpos = {}; }
     inline void flushVelocity()                 { brvel = irvel, irvel = {}; }
     
@@ -193,7 +197,7 @@ protected:
     mutable vObject   *visualObject = nullptr;
 
     OrbitalElements oel;
-    bool orbitValid = false;
+    bool bOrbitalValid = false;
 
     bool bIlluminator = false;
     double reflectivity = 0.5;

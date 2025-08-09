@@ -75,7 +75,7 @@ void Vehicle::configure(cjson &config, Celestial *object)
             oel.configure(el, mjd);
             oel.setup(mass, cbody->getMass(), mjd);
             oel.start(ofsDate->getSimDeltaTime0(), rpos, rvel);
-            orbitValid = true;
+            bOrbitalValid = true;
     
             ofsLogger->info("{}: rpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
                 rpos.x, rpos.y, rpos.z, glm::length(rpos));
