@@ -177,13 +177,13 @@ void MFDInstrument::updateHyperboa(int xCenter, int yCenter, int iWidth, int iHe
     glm::dvec3 an, dn;
     double phi, cphi, sphi;
     double r, x, y, len;
-    double p = orbit.getPeriapsis() * (1.0 + orbit.e);
+    double p = orbit.getPeriapsisDistance() * (1.0 + orbit.e);
     double radMax = 1.5 * xCenter / scale;
     double phiMax = acos((p / radMax - 1.0) / orbit.e);
     double fac = phiMax / (double)(NOREL2-1);
     bool anok, dnok;
 
-    vtx[idxh].x = orbit.getPeriapsis();
+    vtx[idxh].x = orbit.getPeriapsisDistance();
     vtx[idxh].y = 0.0;
 
     for (int idx = 1; idx < NOREL2; idx++)

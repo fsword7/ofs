@@ -91,13 +91,19 @@ void RigidBody::update(bool force)
             s1.pos = cpos;
             s1.vel = cvel;
             // getIntermediateMomentsPert(accp, am, s0, 0, dt, cbody);
-            oel.calculate(cpos, cvel, ofsDate->getSimTime0());
+            oel.determine(cpos, cvel, ofsDate->getSimTime0());
         }
 
         // Updating orbital path
         //calculateEncke();
-        oel.updateOrbiting(cpos, cvel, ofsDate->getSimTime1());
+        oel.update(ofsDate->getSimDeltaTime1(), cpos, cvel);
         // oel.calculate(cpos, cvel, ofsDate->getSimTime1());
+
+        ofsLogger->info("RigidBody - updates\n");
+        ofsLogger->info("{}: rpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
+            cpos.x, cpos.y, cpos.z, glm::length(cpos));
+        ofsLogger->info("{}: rvel {:.4f},{:.4f},{:.4f} - {:.4f} mph\n", getsName(),
+            cvel.x, cvel.y, cvel.z, glm::length(cvel) * 3600 * 0.621);
 
         s1.pos = cbody->s1.pos + cpos;
         s1.vel = cbody->s1.vel + cvel;

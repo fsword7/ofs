@@ -98,9 +98,9 @@ void MFDOrbit::draw(Sketchpad *skpad)
     {
         glm::dvec3 pos = vehicle->getgPosition() - refOrbit->getgPosition();
         glm::dvec3 vel = vehicle->getgVelocity() - refOrbit->getgVelocity();
-        shpOrbit->calculate(pos, vel, 0);
-        scale = pixRadius / (shpOrbit->e < 1.0) ? shpOrbit->getApoapsis() :
-            std::max(2.0 * shpOrbit->getPeriapsis(), shpOrbit->getRadius());
+        shpOrbit->determine(pos, vel, 0);
+        scale = pixRadius / (shpOrbit->e < 1.0) ? shpOrbit->getApoapsisDistance() :
+            std::max(2.0 * shpOrbit->getPeriapsisDistance(), shpOrbit->getRadius());
 
         // if (bValidTarget)
         // {
@@ -111,7 +111,7 @@ void MFDOrbit::draw(Sketchpad *skpad)
         // }
 
         rad = (int)(refOrbit->getRadius() * scale + 0.5);
-        instable = shpOrbit->getPeriapsis() < refOrbit->getRadius();
+        instable = shpOrbit->getPeriapsisDistance() < refOrbit->getRadius();
     }
 
     // Draw orbit paths

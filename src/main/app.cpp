@@ -524,6 +524,8 @@ void CoreApp::keyBufferedSystem(char32_t key, int mods)
 {
     if (stateKey[ofs::keyF5] || stateKey[ofs::key5])
         guimgr->showControl<DialogCamera>();
+    if (altStateKey[ofs::keyHome])
+        player->resetCockpitDir();
 }
 
 void CoreApp::keyBufferedOnRunning(char32_t key, int mods)

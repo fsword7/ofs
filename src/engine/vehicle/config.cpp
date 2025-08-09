@@ -71,14 +71,16 @@ void Vehicle::configure(cjson &config, Celestial *object)
             el[5] = ofs::radians(el[5]); // mean longtitude at epoch
 
             // initialize orbital elements
+            el[0] *= M_PER_KM;
             oel.configure(el, mjd);
             oel.setup(mass, cbody->getMass(), mjd);
-            oel.update(rpos, rvel, ofsDate->getSimTime0());
+            oel.start(ofsDate->getSimDeltaTime0(), rpos, rvel);
             orbitValid = true;
-
-            // ofsLogger->info("{}: rpos {},{},{} - {}\n", getsName(), rpos.x, rpos.y, rpos.z, ofsDate->getSimTime0());
-            // ofsLogger->info("{}: rvel {},{},{} - {} mph\n", getsName(),
-            //     rvel.x, rvel.y, rvel.z, glm::length(rvel) * 0.621);
+    
+            ofsLogger->info("{}: rpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
+                rpos.x, rpos.y, rpos.z, glm::length(rpos));
+            ofsLogger->info("{}: rvel {:.4f},{:.4f},{:.4f} - {:.4f} mph\n", getsName(),
+                rvel.x, rvel.y, rvel.z, glm::length(rvel) * 3600 * 0.621);
 
         } else {
             rpos = myjson::getFloatArray<glm::dvec3, double>(config, "rpos");

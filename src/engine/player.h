@@ -23,6 +23,12 @@ enum cameraMode {
     camCockpit
 };
 
+enum cameraAction {
+    camNormal,
+    camRecenter,
+    camRecenterCont
+};
+
 enum travelMode
 {
     travelFreeFlight,
@@ -180,6 +186,12 @@ public:
     void shiftPersonalObserver(glm::dvec3 dm, double dh);
     void rotatePersonalObserver(double dtheta, double dphi);
 
+    // Cockpit function calls
+    void setDefaultCockpitDir(const glm::dvec3 &dir = {}, double tilt = 0.0);
+    void setCockpitDir(double phi, double theta);
+    void resetCockpitDir(double phi, double theta, bool smooth = true);
+    void resetCockpitDir(bool smooth = true);
+
 private:
     Camera cam;
     // PlayerFrame *frame = nullptr;
@@ -200,12 +212,21 @@ private:
     glm::dvec3 *vcpos = nullptr;    // virtual cockpit position
     glm::dvec3 *vcdir = nullptr;    // virtual cockpit direction
 
+    double cphi, ctheta;        // current cockpit phi/theta
+    double tcphi, tctheta;
+    double cphi0, ctheta0;      // default cockpit phi/theta
+    glm::dmat3 rrot0;           // default cockpit rotation
+    glm::dvec3 eyeofs, eyeofs0; // eye offset [vehicle frame]
+    bool isCenterDir = false;   // center direction path [vehicle frame]
+
     double ephi = 0.0;      // current phi rotation (external)
     double etheta = 0.0;    // current theta rotation (external)
-    double vcphi = 0.0;     // current phi rotation (cockpit)
-    double vctheta = 0.0;   // current theta rotation (cockpit)
-    double cphi = 0.0;      // current phi rotation (free)
-    double ctheta = 0.0;    // current theta rotation (free)
+    // double vcphi = 0.0;     // current phi rotation (cockpit)
+    // double vctheta = 0.0;   // current theta rotation (cockpit)
+    // double tcphi = 0.0;     // current smooth phi rotation (cockpit)
+    // double tctheta = 0.0;   // current smooth theta rotation (cockpit)
+    // double cphi = 0.0;      // current phi rotation (free)
+    // double ctheta = 0.0;    // current theta rotation (free)
 
     GroundObserver go;      // Ground observer - watching vehicle from tower or ground.
     GroundObserver pgo;     // Personal observer - walking around.
@@ -217,9 +238,10 @@ private:
     glm::dvec3 tv = { 0, 0, 0 };    // travel velocity control
 
     bool modeExternal = true;
-    travelMode modeTravel = travelFreeFlight;
-    cameraMode modeCamera = camGlobalFrame;
-
+    travelMode modeTravel  = travelFreeFlight;
+    cameraMode modeCamera  = camGlobalFrame;
+    cameraAction camAction = camNormal;
+ 
     TimeDate *td = nullptr;
 
     // Projection/view matrix

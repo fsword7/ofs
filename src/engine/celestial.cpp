@@ -109,7 +109,7 @@ void Celestial::attach(Celestial *parent, frameType type)
         }
         else
         {
-            oel.updateOrbiting(s0.pos, s0.vel, ofsDate->getSimTime0());
+            oel.determine(s0.pos, s0.vel, ofsDate->getSimTime0());
             // s0.pos = cbody->Recl * s0.pos;
             // s0.vel = cbody->Recl * s0.vel;
             // oel.calculate(0, s0.pos, s0.vel);
@@ -383,7 +383,7 @@ bool Celestial::updateEphemeris()
     else
     {
         // Updating orbital elements
-        oel.update(bpos, bvel, ofsDate->getSimTime1());
+        oel.update(ofsDate->getSimTime1(), bpos, bvel);
         hbary = true;
     }
 

@@ -545,10 +545,8 @@ void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const g
     //     cpos.x, cpos.y, cpos.z, ofsDate->getSimTime0());
     // ofsLogger->info("{}: cvel {},{},{}\n", getsName(), cvel.x, cvel.y, cvel.z);
 
-    oel.calculate(cpos, cvel, ofsDate->getSimTime0());
-
-    // ofsLogger->info("{}: cpos {},{},{}\n", getsName(), cpos.x, cpos.y, cpos.z);
-    // ofsLogger->info("{}: cvel {},{},{}\n", getsName(), cvel.x, cvel.y, cvel.z);
+    // Determine new orbital path
+    oel.determine(cpos, cvel, ofsDate->getSimTime0());
 
     s0.R = ofs::rotation<glm::dmat3, double>(arot);
     s0.Q = s0.R;

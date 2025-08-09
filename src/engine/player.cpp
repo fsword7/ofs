@@ -506,8 +506,12 @@ void Player::update(const TimeDate &td)
         switch (modeCamera)
         {
         case camCockpit:
+            // switch (camAction) {
+
+            // }
+
             // Rotate camera in cockpit frame.
-            cam.rrot = ofs::xRotate(vcphi) * ofs::yRotate(vctheta);
+            cam.rrot = ofs::xRotate(cphi) * ofs::yRotate(ctheta);
 
             // Set global position/rotation for on the air
             grot  = cam.rrot * tgtObject->s1.R;
@@ -540,14 +544,6 @@ void Player::rotateView(double dtheta, double dphi)
         else if (modeCamera == camPersonalObserver)
             rotatePersonalObserver(dtheta, dphi);
     }
-}
-
-void Player::rotateCockpit(double dphi, double dtheta)
-{
-    if (modeCamera != camCockpit)
-        return;
-    vcphi   += dphi;
-    vctheta += dtheta;
 }
 
 void Player::orbit(double phi, double theta, double dist)
@@ -805,4 +801,67 @@ void Player::rotatePersonalObserver(double dtheta, double dphi)
         return;
     pgo.theta += dtheta;
     pgo.phi   += dphi;
+}
+
+void Player::rotateCockpit(double dphi, double dtheta)
+{
+    if (modeCamera != camCockpit)
+        return;
+    cphi   += dphi;
+    ctheta += dtheta;
+}
+
+void Player::setDefaultCockpitDir(const glm::dvec3 &dir, double tilt)
+{
+    isCenterDir = (dir.x == 0 && dir.y == 0 && dir.z > 0 && tilt == 0.0);
+    if (isCenterDir) {
+        cphi0 = ctheta0 = 0.0;
+        rrot0 = glm::dmat3(1);
+    } else {
+        cphi0   = atan2(-dir.x, -dir.z);
+        ctheta0 = asin(dir.y);
+        rrot0 = ofs::xRotate(cphi) * ofs::yRotate(ctheta);
+        if (tilt != 0.0)
+            rrot0 *= ofs::zRotate(tilt);
+    }
+    if (!modeExternal) {
+        cphi = cphi0;
+        ctheta = ctheta0;
+        cam.rrot = rrot0;
+    }
+}
+
+void Player::setCockpitDir(double phi, double theta)
+{
+    if (!modeExternal) {
+        cphi = ofs::normangle(phi);
+        ctheta = ofs::normangle(theta);
+        cam.rrot = ofs::xRotate(cphi) * ofs::yRotate(ctheta);
+    }
+}
+
+void Player::resetCockpitDir(double phi, double theta, bool smooth)
+{
+    // if (!modeExternal) {
+    //     tcphi = phi;
+    //     tctheta = theta;
+    //     if (smooth) {
+    //         camAction = camRecenter;
+    //         rotSmooth = true;
+    //     } else
+    //         setCockpitDir(tcphi, tctheta);
+    // }
+}
+
+void Player::resetCockpitDir(bool smooth)
+{
+    // if (!modeExternal) {
+    //     tcphi = 0.0;
+    //     tctheta = 0.0;
+    //     if (smooth) {
+    //         camAction = camRecenter;
+    //         rotSmooth = true;
+    //     } else
+    //         setCockpitDir(0, 0);
+    // }
 }

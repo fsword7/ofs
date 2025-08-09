@@ -50,9 +50,6 @@ protected:
     Orbit *orbit = nullptr;
     Rotation *rotation = nullptr;
 
-    // OrbitalElements oel;
-    // bool orbitValid = false;
-
     bool bDynamicForce = true;
     bool bOrbitNotInitialized = true; 
 

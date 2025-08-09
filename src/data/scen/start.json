@@ -18,7 +18,7 @@
             "module": "glider",
             "status": "orbiting",
             "target": "Sol/Earth",
-            "elements": [ 6938.0, 0, 50.0, 0, 0, 0 ],
+            "elements": [ 6628.0, 0.005, 50.0, 0, 0, 0 ],
             "arot": [0, 0, 0]
         }
     ],
@@ -26,9 +26,9 @@
     "player": {
         "mode": {
             // Observe rotating Earth
-            "type": "target-sync",
-            "target": "Sol/Earth", "sync-target": "Sol",
-            "direction": [0, 0, 1], "scale": 4
+            // "type": "target-sync",
+            // "target": "Sol/Earth", "sync-target": "Sol",
+            // "direction": [0, 0, 1], "scale": 4
 
             // Observe Luna (moon)
             // "type": "target-sync",
@@ -71,8 +71,8 @@
             // "heading": 0
      
             // Space plane cockpit
-            // "type": "cockpit",
-            // "target": "SG-01"
+            "type": "cockpit",
+            "target": "SG-01"
         },
         "travel": "free",
         "fov": 50.0
