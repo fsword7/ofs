@@ -84,6 +84,7 @@ protected:
     double pd;      // periapsis distance
     double p;       // parameter of conic section
     double n;
+    double h;
     double tmp;
     double omega;
 

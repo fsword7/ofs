@@ -151,9 +151,11 @@ void OrbitalElements::determine(const glm::dvec3 &pos, const glm::dvec3 &vel, do
     E = (R * (1.0/r - 1.0/a) - V * (rv/mu));
     e = glm::length(E);
 
-    // inclination
+    // angular momentum
     H = glm::cross(R, V);
-    double h = glm::length(H);
+    h = glm::length(H);
+
+    // inclination
     i = acos(H.z/h);
     sini = sin(i), cosi = cos(i);
 
