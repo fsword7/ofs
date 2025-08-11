@@ -238,7 +238,7 @@ void CoreApp::renderScene()
 void CoreApp::drawHUD()
 {
     if (bSession && panel != nullptr)
-        panel->drawHUD();
+        panel->drawHUD(*player);
 }
 
 void CoreApp::displayFrame()

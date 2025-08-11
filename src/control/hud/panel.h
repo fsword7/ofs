@@ -29,13 +29,13 @@ public:
 
     inline virtual int getMode() const = 0;
 
-    void draw(Sketchpad *pad);
+    void draw(const Player &player, Sketchpad *pad);
 
     void drawDefault(Sketchpad *pad);
 
 protected:
     virtual void configure(cjson &config) = 0;
-    virtual void display(Sketchpad *pad) = 0;
+    virtual void display(const Player &player, Sketchpad *pad) = 0;
 
     virtual void drawLadderBar(Sketchpad *pad, double lcosa, double lsina,
         double dcosa, double dsina, double phi0);
@@ -69,7 +69,7 @@ public:
     void configure(cjson &config) override;
 
 protected:
-    void display(Sketchpad *pad) override;
+    void display(const Player &platyer, Sketchpad *pad) override;
 
 };
 
@@ -84,6 +84,6 @@ public:
     void configure(cjson &config) override;
 
 protected:
-    void display(Sketchpad *pad) override;
+    void display(const Player &player, Sketchpad *pad) override;
 
 };

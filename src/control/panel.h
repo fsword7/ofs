@@ -39,7 +39,7 @@ public:
 
     void toggleHUDMode();
     void setHUDMode(int mode);
-    void drawHUD();
+    void drawHUD(const Player &player);
 
 private:
     int width, height;  // screen size

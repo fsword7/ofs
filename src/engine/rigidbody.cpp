@@ -63,6 +63,26 @@ void RigidBody::setOrbitReference(Celestial *body)
     }
 }
 
+glm::dvec3 RigidBody::computeEulerInverseZero(const glm::dvec3 &tau, const glm::dvec3 &omega)
+{
+    // domega/dt = 0
+    return { 0, 0, 0 };
+}
+
+glm::dvec3 RigidBody::computeEulerInverseSimple(const glm::dvec3 &tau, const glm::dvec3 &omega)
+{
+    // domega/dt = tau
+    return { tau.x/pmi.x, tau.y/pmi.y, tau.z/pmi.z };
+}
+
+glm::dvec3 RigidBody::computeEulerInverseFull(const glm::dvec3 &tau, const glm::dvec3 &omega)
+{
+    // domega/dt + domega x omega = tau
+    return { (tau.x - (pmi.y-pmi.z) * omega.y*omega.z) / pmi.x,
+             (tau.y - (pmi.z-pmi.x) * omega.z*omega.x) / pmi.y,
+             (tau.z - (pmi.x-pmi.y) * omega.x*omega.y) / pmi.z };
+}
+
 void RigidBody::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double step, double dt)
 {
     assert(system != nullptr);

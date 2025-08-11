@@ -53,9 +53,9 @@ void HUDPanel::resize(int w, int h)
 
 }
 
-void HUDPanel::draw(Sketchpad *pad)
+void HUDPanel::draw(const Player &player, Sketchpad *pad)
 {
-
+    display(player, pad);
 }
 
 void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
@@ -188,14 +188,14 @@ void HUDSurfacePanel::configure(cjson &config)
 
 }
 
-void HUDSurfacePanel::display(Sketchpad *pad)
+void HUDSurfacePanel::display(const Player &player, Sketchpad *pad)
 {
-    csurface_t *sp;
+    ofsLogger->info("Yes, here surface HUD display\n");
 
-
-    if ((sp = vehicle->getSurfaceParameters()) == nullptr)
+    vehicle = player.getVehicleTarget();
+    csurface_t *sp = vehicle->getSurfaceParameters();
+    if (sp == nullptr)
         return;
-    
 
     drawCompassRibbon(pad, glm::degrees(sp->heading));
 
@@ -224,7 +224,7 @@ void HUDOrbitPanel::configure(cjson &config)
 
 }
 
-void HUDOrbitPanel::display(Sketchpad *pad)
+void HUDOrbitPanel::display(const Player &player, Sketchpad *pad)
 {
 
 }

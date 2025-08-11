@@ -123,15 +123,11 @@ void Panel::render(const Player &player)
         bar->render(player);
 }
 
-void Panel::drawHUD()
+void Panel::drawHUD(const Player &player)
 {
-    // if (hud != nullptr && !camera->isExternal())
-    // {
-    //     Sketchpad *pad = nullptr; // gc->getSketchpad();
-    //     if (pad != nullptr)
-    //     {
-    //         // hud->draw(pad);
-    //         // gc->releaseSketchpad();
-    //     }
-    // }
+    if (player.isInternal()) {
+        // Sketchpad *pad = gc->getSketchpad();
+        // if (hud != nullptr && pad != nullptr)
+        //     hud->draw(player, pad);
+    }
 }

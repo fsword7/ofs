@@ -138,6 +138,7 @@ public:
     inline glm::dvec3 getGroundAngularControl() const   { return go.av; }
     inline glm::dvec3 getGroundTravelControl() const    { return go.tv; }
 
+    inline Vehicle *getVehicleTarget() const            { return vehObject; }
     inline Celestial *getReferenceObject()              { return tgtObject; }
     inline const Celestial *getReferenceObject() const  { return tgtObject; }
     inline Celestial *getSyncObject()                   { return syncObject; }
@@ -194,6 +195,7 @@ private:
     Celestial *tgtObject = nullptr;
     Celestial *syncObject = nullptr;
     Celestial *focusObject = nullptr;
+    Vehicle   *vehObject = nullptr;
 
     // Global (universal) parmeters
     glm::dvec3 gspos = {};   // Relative to target in global coordinates

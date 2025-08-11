@@ -39,7 +39,11 @@ public:
     void updateGlobal(const glm::dvec3 &rpos, const::glm::dvec3 &rvel);
 
     void setOrbitReference(Celestial *cbody);
-    
+
+    glm::dvec3 computeEulerInverseZero(const glm::dvec3 &tau, const glm::dvec3 &omega);
+    glm::dvec3 computeEulerInverseSimple(const glm::dvec3 &tau, const glm::dvec3 &omega);
+    glm::dvec3 computeEulerInverseFull(const glm::dvec3 &tau, const glm::dvec3 &omega);
+
     virtual void update(bool force);
 
     virtual void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);

@@ -267,6 +267,8 @@ void Player::attach(Celestial *object, cameraMode mode, Celestial *sobject)
     tgtObject = object;
     if (sobject != nullptr && mode == camTargetSync)
         syncObject = sobject;
+    if (object->getType() == objVehicle)
+        vehObject = dynamic_cast<Vehicle *>(object);
 
     modeCamera = mode;
 
