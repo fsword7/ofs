@@ -162,19 +162,12 @@ public:
 
     void update(const TimeDate &td);
 
-    void rotatePhi(double phi);     // X rotation
-    void rotateTheta(double theta); // Y rotation
-
-    void addPhi(double dphi);     // X rotation
-    void addTheta(double dtheta); // Y rotation
-
     void look(Celestial *object);
 
     void dolly(double dz);
     void orbit(const glm::dquat &drot);
     void orbit(double phi, double theta, double dist);
     void rotateView(double theta, double phi);
-    void rotateCockpit(double phi, double theta);
 
     // void setGroundObserver(Object *object, double lng, double lat, double heading, double alt);
     void setGroundObserver(Celestial *object, glm::dvec3 loc, double heading);
@@ -187,10 +180,11 @@ public:
     void rotatePersonalObserver(double dtheta, double dphi);
 
     // Cockpit function calls
-    void setDefaultCockpitDir(const glm::dvec3 &dir = {}, double tilt = 0.0);
+    void rotateCockpit(double phi, double theta);
+    void setDefaultCockpitDir(const glm::dvec3 &dir = {0, 0, 1}, double tilt = 0.0);
     void setCockpitDir(double phi, double theta);
-    void resetCockpitDir(double phi, double theta, bool smooth = true);
-    void resetCockpitDir(bool smooth = true);
+    void resetCockpitDir(double phi, double theta, bool smooth = false);
+    void resetCockpitDir(bool smooth = false);
 
 private:
     Camera cam;

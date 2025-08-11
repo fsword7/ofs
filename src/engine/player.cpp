@@ -223,7 +223,9 @@ void Player::configure(json &config)
             vcdir = veh->getCameraDirection();
 
             modeExternal = false;
+            setDefaultCockpitDir();
             attach(primary, camCockpit);
+
             break;
         }
     }
@@ -602,30 +604,6 @@ void Player::dolly(double dz)
     updateCamera();
 }
 
-// X (phi) rotation
-void Player::addPhi(double dphi)
-{
-
-}
-
-// Y (theta) rotation
-void Player::addTheta(double dtheta)
-{
-
-}
-
-// X (phi) rotation
-void Player::rotatePhi(double phi)
-{
-
-}
-
-// Y (theta) rotation
-void Player::rotateTheta(double theta)
-{
-
-}
-
 void Player::setGroundObserver(Celestial *object, glm::dvec3 loc, double heading)
 {
     if (object == nullptr)
@@ -834,34 +812,34 @@ void Player::setDefaultCockpitDir(const glm::dvec3 &dir, double tilt)
 void Player::setCockpitDir(double phi, double theta)
 {
     if (!modeExternal) {
-        cphi = ofs::normangle(phi);
-        ctheta = ofs::normangle(theta);
+        cphi = cphi0 + ofs::normangle(phi);
+        ctheta = ctheta0 + ofs::normangle(theta);
         cam.rrot = ofs::xRotate(cphi) * ofs::yRotate(ctheta);
     }
 }
 
 void Player::resetCockpitDir(double phi, double theta, bool smooth)
 {
-    // if (!modeExternal) {
-    //     tcphi = phi;
-    //     tctheta = theta;
-    //     if (smooth) {
-    //         camAction = camRecenter;
-    //         rotSmooth = true;
-    //     } else
-    //         setCockpitDir(tcphi, tctheta);
-    // }
+    if (!modeExternal) {
+        tcphi = phi;
+        tctheta = theta;
+        if (smooth) {
+            camAction = camRecenter;
+            // rotSmooth = true;
+        } else
+            setCockpitDir(tcphi, tctheta);
+    }
 }
 
 void Player::resetCockpitDir(bool smooth)
 {
-    // if (!modeExternal) {
-    //     tcphi = 0.0;
-    //     tctheta = 0.0;
-    //     if (smooth) {
-    //         camAction = camRecenter;
-    //         rotSmooth = true;
-    //     } else
-    //         setCockpitDir(0, 0);
-    // }
+    if (!modeExternal) {
+        tcphi = 0.0;
+        tctheta = 0.0;
+        if (smooth) {
+            camAction = camRecenter;
+            // rotSmooth = true;
+        } else
+            setCockpitDir(0, 0);
+    }
 }
