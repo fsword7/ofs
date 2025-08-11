@@ -38,6 +38,8 @@ public:
 
     void updateGlobal(const glm::dvec3 &rpos, const::glm::dvec3 &rvel);
 
+    void setOrbitReference(Celestial *cbody);
+    
     virtual void update(bool force);
 
     virtual void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
@@ -52,6 +54,7 @@ protected:
 
     bool bDynamicForce = true;
     bool bOrbitNotInitialized = true; 
+    bool bIgnoreGravTorque = false;
 
     glm::dvec3 cpos, cvel;  // state vectors in reference frame
     glm::dvec3 acc;         // current linear accelration

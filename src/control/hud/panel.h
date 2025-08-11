@@ -9,7 +9,7 @@
 // #define HUD_PINFO       1               // Planet information
 #define HUD_SURFACE     1               // Surface HUD panel
 #define HUD_ORBIT       2               // Orbit HUD panel
-#define HUD_MAX         HUD_ORBIT       // Maximum number of HUD panels
+#define HUD_MAX         3               // Maximum number of HUD panels
 
 class GraphicsClient;
 class Sketchpad;
@@ -23,6 +23,8 @@ class HUDPanel
 public:
     HUDPanel(const Panel *panel);
 
+    static HUDPanel *create(cjson &config, GraphicsClient *gc, Panel *panel);
+
     void resize(int w, int h);
 
     inline virtual int getMode() const = 0;
@@ -32,6 +34,7 @@ public:
     void drawDefault(Sketchpad *pad);
 
 protected:
+    virtual void configure(cjson &config) = 0;
     virtual void display(Sketchpad *pad) = 0;
 
     virtual void drawLadderBar(Sketchpad *pad, double lcosa, double lsina,
@@ -43,7 +46,6 @@ protected:
     int lwidth; // ladder width
     int lrange; // ladder range
 
-private:
     const Panel *panel;
 
     GraphicsClient *gc = nullptr;
@@ -60,8 +62,11 @@ class HUDSurfacePanel : public HUDPanel
 {
 public:
     HUDSurfacePanel(const Panel *panel);
+    ~HUDSurfacePanel();
 
     inline int getMode() const override { return HUD_SURFACE; }
+
+    void configure(cjson &config) override;
 
 protected:
     void display(Sketchpad *pad) override;
@@ -72,8 +77,11 @@ class HUDOrbitPanel : public HUDPanel
 {
 public:
     HUDOrbitPanel(const Panel *panel);
+    ~HUDOrbitPanel();
 
     inline int getMode() const override { return HUD_ORBIT; }
+
+    void configure(cjson &config) override;
 
 protected:
     void display(Sketchpad *pad) override;

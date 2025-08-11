@@ -9,6 +9,7 @@
 #include "api/draw.h"
 #include "engine/vehicle/vehicle.h"
 #include "control/panel.h"
+#include "utils/json.h"
 
 HUDPanel::HUDPanel(const Panel *panel)
 : panel(panel)
@@ -18,6 +19,26 @@ HUDPanel::HUDPanel(const Panel *panel)
 
     // titleFont = gc->createFont("Arial", 20, false, Font::Bold);
     // textFont = gc->createFont("Arial", 12, false);
+}
+
+HUDPanel *HUDPanel::create(cjson &config, GraphicsClient *gc, Panel *panel)
+{
+    str_t hudName = myjson::getString<str_t>(config, "type");
+    if (hudName.empty())
+        return nullptr;
+    HUDPanel *hud = nullptr;
+    if (hudName == "surface")
+        hud = new HUDSurfacePanel(panel);
+    else if (hudName == "orbit")
+        hud = new HUDOrbitPanel(panel);
+    else {
+
+    }
+
+    if (hud != nullptr)
+        hud->configure(config);
+
+    return hud;
 }
 
 void HUDPanel::resize(int w, int h)
@@ -156,6 +177,14 @@ void HUDPanel::drawDefault(Sketchpad *pad)
 HUDSurfacePanel::HUDSurfacePanel(const Panel *panel)
 : HUDPanel(panel)
 {
+}
+
+HUDSurfacePanel::~HUDSurfacePanel()
+{
+}
+
+void HUDSurfacePanel::configure(cjson &config)
+{
 
 }
 
@@ -184,7 +213,15 @@ void HUDSurfacePanel::display(Sketchpad *pad)
 HUDOrbitPanel::HUDOrbitPanel(const Panel *panel)
 : HUDPanel(panel)
 {
-    
+}
+
+HUDOrbitPanel::~HUDOrbitPanel()
+{
+}
+
+void HUDOrbitPanel::configure(cjson &config)
+{
+
 }
 
 void HUDOrbitPanel::display(Sketchpad *pad)

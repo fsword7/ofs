@@ -5,22 +5,21 @@
     ],
 
     "ships": [
-        // {
-        //     "name": "SG-01:Space Glider",
-        //     "module": "glider",
-        //     "status": "landed",
-        //     "target": "Sol/Earth",
-        //     "location": [ 28.632307, -80.705774 ],
-        //     "heading": 150
-        // }
         {
             "name": "SG-01:Space Glider",
             "module": "glider",
-            "status": "orbiting",
+            "status": "landed",
             "target": "Sol/Earth",
-            "elements": [ 6628.0, 0.01, 35.0, 0, 0, 0 ],
-            "arot": [0, 0, 0]
+            "location": [ 28.632307, -80.705774 ],
+            "heading": 150
         }
+        // {
+        //     "name": "SG-01:Space Glider",
+        //     "module": "glider",
+        //     "status": "orbiting",
+        //     "target": "Sol/Earth",
+        //     "elements": [ 6628.0, 0.01, 35.0, 0, 0, 0 ],
+        // }
         // {
         //     "name": "SG-01:Space Glider",
         //     "module": "glider",
@@ -28,8 +27,12 @@
         //     "target": "Sol/Earth",
         //     "rpos": [ 6628.0, 0, 0 ],
         //     "rvel": [ 0, 0, 7.79432 ],
-        //     "arot": [ 0, 0, 0 ]
         // }
+    ],
+
+    "huds": [
+        { "type": "surface" },
+        { "type": "orbit" }
     ],
 
     "player": {

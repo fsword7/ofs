@@ -91,7 +91,14 @@ void CoreApp::setFocusingObject(Celestial *object)
 void CoreApp::launch()
 {
     fs::path homePath = OFS_HOME_DIR;
+    fs::path startPath = homePath / "scen/start.json";
+    ofsLogger->info("Open file: {}\n", startPath.c_str());
     std::ifstream inFile(homePath / "scen/start.json");
+    if (!inFile.is_open()) {
+        ofsLogger->info("File {}: {} - aborted\n",
+            startPath.c_str(), strerror(errno));
+        abort();
+    }
     json config = json::parse(inFile, nullptr, false, true);
 
     universe = new Universe();
@@ -140,13 +147,12 @@ void CoreApp::openSession(json &config)
     }
     player->configure(pconfig);
 
-    // player->update(td);
-    // universe->update(player, td);
-
     if (gclient != nullptr) {
         gclient->cbStart(universe);
         gclient->showWindow();
     }
+
+    panel->init(config);
 
     bSession = true;
 
@@ -524,8 +530,17 @@ void CoreApp::keyBufferedSystem(char32_t key, int mods)
 {
     if (stateKey[ofs::keyF5] || stateKey[ofs::key5])
         guimgr->showControl<DialogCamera>();
-    if (altStateKey[ofs::keyHome])
-        player->resetCockpitDir();
+    if (player->isInternal()) {
+        if (altStateKey[ofs::keyHome])
+            player->resetCockpitDir();
+        if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
+            panel->toggleHUDMode();
+    }
+    if (player->isExternal() ||
+        player->getCameraMode() == camPersonalObserver) {
+        if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
+            panel->togglePersonalPanelMode();
+    }
 }
 
 void CoreApp::keyBufferedOnRunning(char32_t key, int mods)

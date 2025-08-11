@@ -361,7 +361,7 @@ void OrbitalElements::start(double t, glm::dvec3 &pos, glm::dvec3 &vel)
     R.x = r * (cost*costo - sint*sinto*cosi);
     R.y = r * (sint*costo + cost*sinto*cosi);
     R.z = r * (sinto*sini);
-
+        
     vx = -muh * sin(tra);
     vz = muh * (e + cos(tra));
     thetav = atan2(vz, vx);

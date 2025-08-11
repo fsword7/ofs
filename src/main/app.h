@@ -40,8 +40,9 @@ public:
     virtual void run();
 
     inline GraphicsClient *getClient() { return gclient; }
-    inline Camera    *getCamera() { return player->getCamera(); }
-    inline Player    *getPlayer() { return player; }
+    inline Camera    *getCamera()   { return player->getCamera(); }
+    inline Player    *getPlayer()   { return player; }
+    inline Panel     *getPanel()    { return panel; }
     inline Universe  *getUniverse() { return universe; }
 
     void launch();

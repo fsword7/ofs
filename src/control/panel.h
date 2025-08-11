@@ -24,13 +24,20 @@ public:
     void initResources();
     void cleanResources();
 
+    void init(cjson &config);
+
     inline void switchHUDMode()     { setHUDMode(hudMode++ < HUD_MAX ? hudMode : HUD_NONE); }
     inline int getHUDMode() const   { return (hud != nullptr) ? hud->getMode() : HUD_NONE; }
+
+    void togglePanelMode();
+    void togglePersonalPanelMode();
+    void setPanelMode(int mode);
 
     void resize(int w, int h);
     void update(const Player &player, double simt, double syst);
     void render(const Player &player);
 
+    void toggleHUDMode();
     void setHUDMode(int mode);
     void drawHUD();
 
@@ -40,8 +47,11 @@ private:
 
     GraphicsClient *gc = nullptr;
     // Camera *camera = nullptr;
-    HUDPanel *hud = nullptr;
     int hudMode = HUD_NONE;
+    HUDPanel *hud = nullptr;
+
+    std::vector<HUDPanel *> hudList;
+    HUDPanel *huds[HUD_MAX];
 
     TaskBar *bar = nullptr;
 };

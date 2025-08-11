@@ -574,7 +574,7 @@ void Vehicle::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const Stat
     glm::dvec3 M = Ladd;
 
     // Check for surface forces and collision detection
-    addSurfaceForces(F, M, state, tfrac, dt);
+    // addSurfaceForces(F, M, state, tfrac, dt);
 
     // Computing with N-body gravitional pull.
     RigidBody::getIntermediateMoments(acc, am, state, tfrac, dt);

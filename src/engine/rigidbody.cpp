@@ -54,21 +54,30 @@ RigidBody::RigidBody(cjson &config, ObjectType type, celType celtype)
 //     return orbit->getPosition(tjd);
 // }
 
+void RigidBody::setOrbitReference(Celestial *body)
+{
+    if (body != nullptr && body != cbody) {
+        cbody = body;
+        oel.setup(mass, cbody->getMass(), oel.getMJDEpoch());
+        bOrbitalValid = false;
+    }
+}
+
 void RigidBody::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double step, double dt)
 {
     assert(system != nullptr);
 
     acc = system->addGravityIntermediate(state.pos, step, this);
-    am = {};
 
-    if (cbody != nullptr)
-    {
+    // Gravity Torque
+    if (cbody != nullptr && !bIgnoreGravTorque) {
         glm::dvec3 R0 = state.Q * cbody->interpolatePosition(step) - state.pos;
         double r0 = glm::length(R0);
         glm::dvec3 Re = R0/r0;
         double mag = 3.0 * (astro::G * cbody->getMass()) / (r0*r0*r0);
         am = glm::cross(pmi*Re, Re) * mag;
-    }
+    } else
+        am = {};
 }
 
 void RigidBody::updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel)
