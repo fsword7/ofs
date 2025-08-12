@@ -11,14 +11,14 @@
 #include "control/panel.h"
 #include "utils/json.h"
 
-HUDPanel::HUDPanel(const Panel *panel)
+HUDPanel::HUDPanel(Panel *panel)
 : panel(panel)
 {
 
     gc = ofsAppCore->getClient();
+    hudFont = gc->createFont("Arial", 25, false);
 
-    // titleFont = gc->createFont("Arial", 20, false, Font::Bold);
-    // textFont = gc->createFont("Arial", 12, false);
+    panel->setHUDColor({0, 255, 0});
 }
 
 HUDPanel *HUDPanel::create(cjson &config, GraphicsClient *gc, Panel *panel)
@@ -55,49 +55,75 @@ void HUDPanel::resize(int w, int h)
 
 void HUDPanel::draw(const Player &player, Sketchpad *pad)
 {
+    pad->beginDraw();
     display(player, pad);
+    pad->endDraw();
 }
 
 void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
 {
     const int x0 = hres05;
-    const int xmin = x0 - width / 5;
-    const int xmax = x0 + width / 5;
+    const int xmin = x0-(width/5);
+    const int xmax = x0+(width/5);
+    const int ymin = 20;
+    const int ymax1 = height/80;
+    const int ymax2 = ymax1*2;
     const int tsep2 = 16;
 
-    int dx0 = int(val * tsep2);
-    int d2 = int(val + 0.5);
+    double val2 = floor(val/2);
+    val /= 2;
+    int dx0 = int((val-val2) * tsep2 + 0.5);
+    int d2 = int(val2 + 0.5);
     str_t sbuf;
+
+    // ofsLogger->debug("Screen: width {} height {}\n", width, height);
+    // ofsLogger->debug("Compass: x0 {} xmin {} xmax {}\n", x0, xmin, xmax);
+    // ofsLogger->debug("Compass: ymin {} ymax1 {} ymax2 {}\n", ymin, ymax1, ymax2);
+    // ofsLogger->debug("Heading: {} -> {}\n", val, dx0);
+
+    pad->setFont(hudFont);
+    pad->setTextColor({0, 255, 0});
+    pad->setTextAlign(Sketchpad::CENTER);
+    int fh = pad->getCharSize() & 0xFFFF;
+
+    // draw arrow
+    pad->moveTo(x0-5, ymin/2-3);
+    pad->drawLineTo(x0, ymin-3);
+    pad->drawLineTo(x0+5, ymin/2-3);
 
     for (int x = x0 - dx0, d = d2; x >= xmin; x -= tsep2, d--)
     {
-        pad->moveTo(x, 10);
+        pad->moveTo(x, ymin);
         if (d % 5)
-            pad->drawLineTo(x, 15);
+            pad->drawLineTo(x, ymin+ymax1);
         else
         {
-            pad->drawLineTo(x, 20);
+            pad->drawLineTo(x, ymin+ymax2);
             if (d < 0)
                 d += 180;
-            sbuf = fmt::format("{:03d}", d);
-            pad->text(x, 20, sbuf.c_str(), 3);
+            sbuf = fmt::format("{:03d}", d*2);
+            int w = pad->getTextWidth(sbuf.c_str(), 3) / 2;
+            pad->text(x-w, ymax2+fh, sbuf.c_str(), 3);
         }
     }
 
-    for (int x = x0 - dx0 + tsep2, d = d2; x <= xmax; x += tsep2, d++)
+    for (int x = x0 - dx0 + tsep2, d = d2+1; x <= xmax; x += tsep2, d++)
     {
-        pad->moveTo(x, 10);
+        pad->moveTo(x, ymin);
         if (d % 5)
-            pad->drawLineTo(x, 15);
+            pad->drawLineTo(x, ymin+ymax1);
         else
         {
-            pad->drawLineTo(x, 20);
+            pad->drawLineTo(x, ymin+ymax2);
             if (d >= 180)
                 d -= 180;
-            sbuf = fmt::format("{:03d}", d);
-            pad->text(x, 20, sbuf.c_str(), 3);
+            sbuf = fmt::format("{:03d}", d*2);
+            int w = pad->getTextWidth(sbuf.c_str(), 3) / 2;
+            pad->text(x-w, ymax2+fh, sbuf.c_str(), 3);
         }
     }
+
+    pad->setTextAlign(Sketchpad::LEFT);
 }
 
 void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosa, double lsina,
@@ -174,7 +200,7 @@ void HUDPanel::drawDefault(Sketchpad *pad)
 
 // ******** HUD Surface Panel ********
 
-HUDSurfacePanel::HUDSurfacePanel(const Panel *panel)
+HUDSurfacePanel::HUDSurfacePanel(Panel *panel)
 : HUDPanel(panel)
 {
 }
@@ -190,14 +216,15 @@ void HUDSurfacePanel::configure(cjson &config)
 
 void HUDSurfacePanel::display(const Player &player, Sketchpad *pad)
 {
-    ofsLogger->info("Yes, here surface HUD display\n");
-
     vehicle = player.getVehicleTarget();
     csurface_t *sp = vehicle->getSurfaceParameters();
     if (sp == nullptr)
         return;
 
-    drawCompassRibbon(pad, glm::degrees(sp->heading));
+    pad->setPen(panel->getHUDPen());
+    double heading = sp->heading - player.getCockpitTheta();
+
+    drawCompassRibbon(pad, glm::degrees(heading));
 
     double pitch0 = glm::degrees(sp->pitch);
     static double step = glm::radians(10.0);
@@ -210,7 +237,7 @@ void HUDSurfacePanel::display(const Player &player, Sketchpad *pad)
 
 // ******** HUD Orbit Panel ********
 
-HUDOrbitPanel::HUDOrbitPanel(const Panel *panel)
+HUDOrbitPanel::HUDOrbitPanel(Panel *panel)
 : HUDPanel(panel)
 {
 }

@@ -371,11 +371,10 @@ bool glPad::text(int x, int y, cchar_t *str, int len)
         len = strlen(str);
 
     nvgResetTransform(ctx);
-    nvgTranslate(ctx, xOrigin + x, yOrigin + y);
     nvgRotate(ctx, cFont->rotRadians);
 
     nvgFillColor(ctx, textNVGColor);
-    nvgText(ctx, 0, 0, str, str+len);
+    nvgText(ctx, xOrigin+x, yOrigin+y, str, str+len);
 
     nvgResetTransform(ctx);
 

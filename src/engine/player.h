@@ -138,6 +138,11 @@ public:
     inline glm::dvec3 getGroundAngularControl() const   { return go.av; }
     inline glm::dvec3 getGroundTravelControl() const    { return go.tv; }
 
+    inline double getCockpitPhi() const                 { return cphi; }
+    inline double getCockpitTheta() const               { return ctheta; }
+    inline double getCockpitPhi0() const                { return cphi0; }
+    inline double getCockpitTheta0() const              { return ctheta0; }
+
     inline Vehicle *getVehicleTarget() const            { return vehObject; }
     inline Celestial *getReferenceObject()              { return tgtObject; }
     inline const Celestial *getReferenceObject() const  { return tgtObject; }

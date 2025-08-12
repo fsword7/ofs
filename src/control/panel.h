@@ -28,10 +28,12 @@ public:
 
     inline void switchHUDMode()     { setHUDMode(hudMode++ < HUD_MAX ? hudMode : HUD_NONE); }
     inline int getHUDMode() const   { return (hud != nullptr) ? hud->getMode() : HUD_NONE; }
+    inline Pen *getHUDPen() const   { return hudPen; }
 
     void togglePanelMode();
     void togglePersonalPanelMode();
     void setPanelMode(int mode);
+    void setHUDColor(color_t color);
 
     void resize(int w, int h);
     void update(const Player &player, double simt, double syst);
@@ -46,9 +48,12 @@ private:
     int depth;          // color depth
 
     GraphicsClient *gc = nullptr;
+    Sketchpad *pad = nullptr;
     // Camera *camera = nullptr;
     int hudMode = HUD_NONE;
     HUDPanel *hud = nullptr;
+
+    Pen *hudPen = nullptr;
 
     std::vector<HUDPanel *> hudList;
     HUDPanel *huds[HUD_MAX];

@@ -49,6 +49,7 @@ void Panel::init(cjson &config)
             int mode = hud->getMode();
             assert(mode < HUD_MAX);
             huds[mode] = hud;
+            hud->resize(width, height);
         }
 
         // Turn HUD mode off as default
@@ -58,18 +59,23 @@ void Panel::init(cjson &config)
 
 void Panel::initResources()
 {
-
+    pad = gc->createSketchpad(nullptr);
 }
 
 void Panel::cleanResources()
 {
-
+    if (pad != nullptr)
+        delete pad;
 }
 
 void Panel::resize(int w, int h)
 {
     width = w;
     height = h;
+
+    for (int idx = 0; idx < HUD_MAX; idx++)
+        if (huds[idx] != nullptr)
+            huds[idx]->resize(w, h);
 }
 
 void Panel::togglePanelMode()
@@ -111,6 +117,13 @@ void Panel::setHUDMode(int mode)
     }
 }
 
+void Panel::setHUDColor(color_t penColor)
+{
+    if (hudPen != nullptr)
+        delete hudPen;
+    hudPen = gc->createPen(penColor, 0, 1);
+}
+
 void Panel::update(const Player &player, double simt, double syst)
 {
     if (bar != nullptr)
@@ -126,8 +139,7 @@ void Panel::render(const Player &player)
 void Panel::drawHUD(const Player &player)
 {
     if (player.isInternal()) {
-        // Sketchpad *pad = gc->getSketchpad();
-        // if (hud != nullptr && pad != nullptr)
-        //     hud->draw(player, pad);
+        if (hud != nullptr && pad != nullptr)
+            hud->draw(player, pad);
     }
 }

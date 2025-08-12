@@ -21,7 +21,7 @@ class Player;
 class HUDPanel
 {
 public:
-    HUDPanel(const Panel *panel);
+    HUDPanel(Panel *panel);
 
     static HUDPanel *create(cjson &config, GraphicsClient *gc, Panel *panel);
 
@@ -46,7 +46,7 @@ protected:
     int lwidth; // ladder width
     int lrange; // ladder range
 
-    const Panel *panel;
+    Panel *panel;
 
     GraphicsClient *gc = nullptr;
 
@@ -54,14 +54,13 @@ protected:
     int hres05, vres05;
     int cx, cy;
 
-    Font *titleFont = nullptr;
-    Font *textFont = nullptr;
+    Font *hudFont = nullptr;
 };
 
 class HUDSurfacePanel : public HUDPanel
 {
 public:
-    HUDSurfacePanel(const Panel *panel);
+    HUDSurfacePanel(Panel *panel);
     ~HUDSurfacePanel();
 
     inline int getMode() const override { return HUD_SURFACE; }
@@ -76,7 +75,7 @@ protected:
 class HUDOrbitPanel : public HUDPanel
 {
 public:
-    HUDOrbitPanel(const Panel *panel);
+    HUDOrbitPanel(Panel *panel);
     ~HUDOrbitPanel();
 
     inline int getMode() const override { return HUD_ORBIT; }
