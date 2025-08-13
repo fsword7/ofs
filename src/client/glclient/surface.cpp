@@ -962,42 +962,45 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
         }
     }
 
-    if (elev != nullptr)
-    {
-        double dy, dz, dydz, nx1, ny1, nz1;
-        int en;
+    // if (elev != nullptr)
+    // {
+    //     double dy, dz, dydz, nx1, ny1, nz1;
+    //     int en;
 
-        dy = radius * pi/(nlat*grid);
+    //     dy = radius * pi/(nlat*grid);
 
-        for (int y = 0, n = 0; y <= grid; y++)
-        {
-            lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
-            slat = sin(lat), clat = cos(lat);
-            dz = radius * pi2*cos(lat) / (nlng * grid);
-            dydz = dy*dz;
+    //     for (int y = 0, n = 0; y <= grid; y++)
+    //     {
+    //         lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
+    //         slat = sin(lat), clat = cos(lat);
+    //         dz = radius * pi2*cos(lat) / (nlng * grid);
+    //         dydz = dy*dz;
 
-            for (int x = 0; x <= grid; x++)
-            {
-                lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
-                slng = sin(lng), clng = cos(lng);
-                en = (y+1)*ELEV_STRIDE + (x+1);
+    //         for (int x = 0; x <= grid; x++)
+    //         {
+    //             lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
+    //             slng = sin(lng), clng = cos(lng);
+    //             en = (y+1)*ELEV_STRIDE + (x+1);
 
-                nml = glm::dvec3(2.0*dydz,
-                    dz*escale*(elev[en-ELEV_STRIDE]-elev[en+ELEV_STRIDE]),
-                    dy*escale*(elev[en-1]-elev[en+1]));
-                nml = glm::normalize(nml);
+    //             nml = glm::dvec3(2.0*dydz,
+    //                 dz*escale*(elev[en-ELEV_STRIDE]-elev[en+ELEV_STRIDE]),
+    //                 dy*escale*(elev[en-1]-elev[en+1]));
+    //             nml = glm::normalize(nml);
+    //             nml = ofs::zRotate(lat) * ofs::yRotate(lng) * nml;
+    //             // nx1 = nml.x*clat - nml.y*-slat;
+    //             // ny1 = nml.x*slat + nml.y*clat;
+    //             // nz1 = nml.z;
 
-                nx1 = nml.x*clat - nml.y*-slat;
-                ny1 = nml.x*slat + nml.y*clat;
-                nz1 = nml.z;
-
-                vtx[n].nx = nx1*clng - nz1*slng;
-                vtx[n].ny = ny1;
-                vtx[n].nz = nx1*-slng + nz1*clng;
-                n++;
-            }
-        }
-    }
+    //             // vtx[n].nx = nx1*clng - nz1*slng;
+    //             // vtx[n].ny = ny1;
+    //             // vtx[n].nz = nx1*-slng + nz1*clng;
+    //             vtx[n].nx = nml.x;
+    //             vtx[n].ny = nml.y;
+    //             vtx[n].nz = nml.z;
+    //             n++;
+    //         }
+    //     }
+    // }
 
     for (int idx = 0, cvtx = nvtx; idx <= grid; idx++)
         vtx[cvtx++] = vtx[idx*(grid+1) + ((ilng & 1) ? grid : 0)];
