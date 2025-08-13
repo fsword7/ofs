@@ -185,11 +185,6 @@ Pen *glPad::setPen(Pen *pen)
         return nullptr;
     }
 
-    nvgStrokeColor(ctx, getNVGColor(cPen->color));    
-    nvgStrokeWidth(ctx, std::max(1, cPen->width));
-    nvgStrokeDash(ctx, cPen->style == 2 ? 1 : 0);
-    nvgStroke(ctx);
-
     return ret;
 }
 
@@ -202,9 +197,6 @@ Brush *glPad::setBrush(Brush *brush)
         cBrush = ret;
         return nullptr;
     }
-
-    nvgFillColor(ctx, getNVGColor(cPen->color));
-    nvgFill(ctx);
 
     return ret;
 }
@@ -225,6 +217,27 @@ color_t glPad::setBackgroundColor(color_t color)
     return ret;
 }
 
+
+void glPad::endStrokeFromBrush()
+{
+    if (cBrush == nullptr)
+        return;
+    
+    nvgFillColor(ctx, getNVGColor(cBrush->color));
+    nvgFill(ctx);
+}
+
+void glPad::endStrokeFromPen()
+{
+    if (cPen == nullptr)
+        return;
+
+    nvgStrokeColor(ctx, getNVGColor(cPen->color));    
+    nvgStrokeWidth(ctx, std::max(1, cPen->width));
+    nvgStrokeDash(ctx, cPen->style == 2 ? 1 : 0);
+    nvgStroke(ctx);
+}
+
 void glPad::setOrigin(int x, int y)
 {
     xOrigin = x;
@@ -237,48 +250,47 @@ void glPad::getOrigin(int &x, int &y)
     y = yOrigin;
 }
 
-
-void glPad::beginPath()
-{
-    nvgBeginPath(ctx);
-}
-
-void glPad::endPath()
-{
-    nvgClosePath(ctx);
-}
-
-
 void glPad::moveTo(int x, int y)
 {
-    nvgMoveTo(ctx, xOrigin + x, yOrigin + y);
     xCurrent = x;
     yCurrent = y;
 }
 
 void glPad::drawLineTo(int x, int y)
 {
-    nvgLineTo(ctx, xOrigin + x, yOrigin + y);
+    if (cPen->style != 0) {
+        nvgBeginPath(ctx);
+        nvgMoveTo(ctx, xOrigin + xCurrent, yOrigin + yCurrent);
+        nvgLineTo(ctx, xOrigin + x, yOrigin + y);
+        endStrokeFromPen();
+    }
+
     xCurrent = x;
     yCurrent = y;
 }
 
 void glPad::drawLine(int x0, int y0, int x1, int y1)
 {
+    nvgBeginPath(ctx);
     moveTo(x0, y0);
     drawLineTo(x1, y1);
+    nvgClosePath(ctx);
 }
 
 void glPad::drawRectangle(int x0, int y0, int x1, int y1)
 {
     nvgBeginPath(ctx);
     nvgRect(ctx, xOrigin+x0, yOrigin+y0, x1, y1);
+    endStrokeFromBrush();
+    endStrokeFromPen();
 }
 
 void glPad::drawEllipse(int cx, int cy, int x1, int y1)
 {
     nvgBeginPath(ctx);
     nvgEllipse(ctx, xOrigin+cx, yOrigin+cy, x1, y1);
+    endStrokeFromBrush();
+    endStrokeFromPen();
 }
 
 void glPad::drawPolygon(const glm::dvec2 *vtx, int nvtx)
@@ -288,6 +300,8 @@ void glPad::drawPolygon(const glm::dvec2 *vtx, int nvtx)
     for (int idx = 1; idx < nvtx; idx++)
         nvgLineTo(ctx, xOrigin+vtx[idx].x, yOrigin+vtx[idx].y);
     nvgClosePath(ctx);
+    endStrokeFromBrush();
+    endStrokeFromPen();
 }
 
 void glPad::drawPolygonLine(const glm::dvec2 *vtx, int nvtx)
@@ -296,7 +310,9 @@ void glPad::drawPolygonLine(const glm::dvec2 *vtx, int nvtx)
     nvgMoveTo(ctx, xOrigin+vtx[0].x, yOrigin+vtx[0].y);
     for (int idx = 1; idx < nvtx; idx++)
         nvgLineTo(ctx, xOrigin+vtx[idx].x, yOrigin+vtx[idx].y);
+    endStrokeFromPen();
 }
+
 
 NVGalign glPad::toNVGTextAlign(TAHorizontal tah)
 {

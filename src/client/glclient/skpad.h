@@ -76,8 +76,8 @@ public:
     void beginDraw() override;
     void endDraw() override;
 
-    void beginPath();
-    void endPath();
+    void endStrokeFromPen();
+    void endStrokeFromBrush();
 
     void setOrigin(int x, int y);
     void getOrigin(int &x, int &y);
