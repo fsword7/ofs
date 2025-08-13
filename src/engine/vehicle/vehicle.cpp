@@ -184,10 +184,12 @@ void surface_t::update(const StateVectors &s, const StateVectors &os, const Cele
     }
 
     // Update vehicle orientation at horizon level
-    glm::vec3 nml = glm::normalize(glm::transpose(s.R) * rpos);
-    pitch = asin(nml.z);
-    bank = (fabs(nml.x) > eps) && (fabs(nml.y) > eps)
-        ? atan2(-nml.x, nml.y) : 0.0;
+    // glm::vec3 nml = glm::normalize(glm::transpose(s.R) * rpos);
+    // pitch = asin(nml.z);
+    // bank = (fabs(nml.x) > eps) && (fabs(nml.y) > eps)
+    //     ? atan2(-nml.x, nml.y) : 0.0;
+    pitch = 0.0;
+    bank = 0.0;
 
     // Ground speed
     glm::dvec3 vrel = s.vel - os.vel;
