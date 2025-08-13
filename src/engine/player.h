@@ -69,6 +69,7 @@ public:
     inline double getAspect()           { return aspect; }
     inline double getFOV()              { return fov; }
     inline double getAperature()        { return tan(fov); }
+    inline double getScale()            { return h05 / tan(fov); }
     inline glm::vec2 getClip()          { return glm::vec2(zNear, zFar); }
 
     inline glm::dvec3 getGlobalPosition() { return rpos; }
@@ -90,6 +91,7 @@ public:
 
 private:
     int    width, height;
+    int    w05, h05;
     int    wx = 0, wy = 0;
     double aspect;
     double fov;
@@ -142,6 +144,8 @@ public:
     inline double getCockpitTheta() const               { return ctheta; }
     inline double getCockpitPhi0() const                { return cphi0; }
     inline double getCockpitTheta0() const              { return ctheta0; }
+    inline double getCockpitTilt() const                { return ctilt; }
+    inline double getCOckpitTilt0() const               { return ctilt0; }
 
     inline Vehicle *getVehicleTarget() const            { return vehObject; }
     inline Celestial *getReferenceObject()              { return tgtObject; }
@@ -186,9 +190,9 @@ public:
     void rotatePersonalObserver(double dtheta, double dphi);
 
     // Cockpit function calls
-    void rotateCockpit(double phi, double theta);
+    void rotateCockpit(double phi, double theta, double tilt = 0.0);
     void setDefaultCockpitDir(const glm::dvec3 &dir = {0, 0, 1}, double tilt = 0.0);
-    void setCockpitDir(double phi, double theta);
+    void setCockpitDir(double phi, double theta, double tilt = 0.0);
     void resetCockpitDir(double phi, double theta, bool smooth = false);
     void resetCockpitDir(bool smooth = false);
 
@@ -213,9 +217,10 @@ private:
     glm::dvec3 *vcpos = nullptr;    // virtual cockpit position
     glm::dvec3 *vcdir = nullptr;    // virtual cockpit direction
 
-    double cphi, ctheta;        // current cockpit phi/theta
-    double tcphi, tctheta;
-    double cphi0, ctheta0;      // default cockpit phi/theta
+    double cphi, ctheta, ctilt;     // current cockpit phi/theta
+    double tcphi, tctheta, tctilt;
+    double cphi0, ctheta0, ctilt0;  // default cockpit phi/theta
+
     glm::dmat3 rrot0;           // default cockpit rotation
     glm::dvec3 eyeofs, eyeofs0; // eye offset [vehicle frame]
     bool isCenterDir = false;   // center direction path [vehicle frame]

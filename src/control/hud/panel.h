@@ -17,6 +17,7 @@ class Font;
 class Panel;
 class Vehicle;
 class Player;
+class Camera;
 
 class HUDPanel
 {
@@ -29,24 +30,26 @@ public:
 
     inline virtual int getMode() const = 0;
 
-    void draw(const Player &player, Sketchpad *pad);
+    void draw(Player &player, Sketchpad *pad);
 
     void drawDefault(Sketchpad *pad);
 
 protected:
     virtual void configure(cjson &config) = 0;
-    virtual void display(const Player &player, Sketchpad *pad) = 0;
+    virtual void display(Player &player, Sketchpad *pad) = 0;
 
-    virtual void drawLadderBar(Sketchpad *pad, double lcosa, double lsina,
-        double dcosa, double dsina, double phi0);
+    virtual void drawLadderBar(Sketchpad *pad, double lcosb, double lsinb,
+        double dcosb, double dsinb, double phi0, bool markSubzero);
     virtual void drawCompassRibbon(Sketchpad *pad, double val);
 
     const Vehicle *vehicle = nullptr;
     
     int lwidth; // ladder width
     int lrange; // ladder range
+    glm::dvec3 hudofs;
 
     Panel *panel;
+    Camera *cam = nullptr;
 
     GraphicsClient *gc = nullptr;
 
@@ -68,7 +71,7 @@ public:
     void configure(cjson &config) override;
 
 protected:
-    void display(const Player &platyer, Sketchpad *pad) override;
+    void display(Player &platyer, Sketchpad *pad) override;
 
 };
 
@@ -83,6 +86,6 @@ public:
     void configure(cjson &config) override;
 
 protected:
-    void display(const Player &player, Sketchpad *pad) override;
+    void display(Player &player, Sketchpad *pad) override;
 
 };

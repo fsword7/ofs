@@ -30,8 +30,8 @@ Camera::Camera(int width, int height)
 
 void Camera::resize(int w, int h)
 {
-    width  = w;
-    height = h;
+    width  = w, w05 = w / 2;
+    height = h, h05 = h / 2;
     aspect = (double)width / (double)height;
 }
 
@@ -515,7 +515,7 @@ void Player::update(const TimeDate &td)
             // }
 
             // Rotate camera in cockpit frame.
-            cam.rrot = ofs::xRotate(cphi) * ofs::yRotate(ctheta);
+            cam.rrot = ofs::xRotate(cphi) * ofs::yRotate(ctheta) * ofs::zRotate(ctilt);
 
             // Set global position/rotation for on the air
             grot  = cam.rrot * tgtObject->s1.R;
@@ -783,40 +783,42 @@ void Player::rotatePersonalObserver(double dtheta, double dphi)
     pgo.phi   += dphi;
 }
 
-void Player::rotateCockpit(double dphi, double dtheta)
+void Player::rotateCockpit(double dphi, double dtheta, double dtilt)
 {
     if (modeCamera != camCockpit)
         return;
     cphi   += dphi;
     ctheta += dtheta;
+    ctilt += dtilt;
 }
 
 void Player::setDefaultCockpitDir(const glm::dvec3 &dir, double tilt)
 {
     isCenterDir = (dir.x == 0 && dir.y == 0 && dir.z > 0 && tilt == 0.0);
     if (isCenterDir) {
-        cphi0 = ctheta0 = 0.0;
+        cphi0 = ctheta0 = ctilt0 = 0.0;
         rrot0 = glm::dmat3(1);
     } else {
         cphi0   = atan2(-dir.x, -dir.z);
         ctheta0 = asin(dir.y);
-        rrot0 = ofs::xRotate(cphi) * ofs::yRotate(ctheta);
-        if (tilt != 0.0)
-            rrot0 *= ofs::zRotate(tilt);
+        ctilt0  = tilt;
+        rrot0 = ofs::xRotate(cphi0) * ofs::yRotate(ctheta0) * ofs::zRotate(ctilt0);
     }
     if (!modeExternal) {
         cphi = cphi0;
         ctheta = ctheta0;
+        ctilt = ctilt0;
         cam.rrot = rrot0;
     }
 }
 
-void Player::setCockpitDir(double phi, double theta)
+void Player::setCockpitDir(double phi, double theta, double tilt)
 {
     if (!modeExternal) {
         cphi = cphi0 + ofs::normangle(phi);
         ctheta = ctheta0 + ofs::normangle(theta);
-        cam.rrot = ofs::xRotate(cphi) * ofs::yRotate(ctheta);
+        ctilt = ctilt0 + ofs::normangle(tilt);
+        cam.rrot = ofs::xRotate(cphi) * ofs::yRotate(ctheta) * ofs::zRotate(ctilt);
     }
 }
 

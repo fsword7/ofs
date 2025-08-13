@@ -16,7 +16,7 @@ HUDPanel::HUDPanel(Panel *panel)
 {
 
     gc = ofsAppCore->getClient();
-    hudFont = gc->createFont("Arial", 25, false);
+    hudFont = gc->createFont("Arial", 30, false);
 
     panel->setHUDColor({0, 255, 0});
 }
@@ -46,14 +46,17 @@ void HUDPanel::resize(int w, int h)
     width = w;
     height = h;
 
+    cx = width / 2;
+    cy = height / 2;
+
     hres05 = width / 2;
     vres05 = height / 2;
-    lwidth = hres05 * 60 / 128;
-    lrange = 250;
-
+    lwidth = width * 0.12;
+    lrange = height * 0.40;
+    // hudofs = { 0, 0, cam->getScale() };
 }
 
-void HUDPanel::draw(const Player &player, Sketchpad *pad)
+void HUDPanel::draw(Player &player, Sketchpad *pad)
 {
     pad->beginDraw();
     display(player, pad);
@@ -126,33 +129,41 @@ void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
     pad->setTextAlign(Sketchpad::LEFT);
 }
 
-void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosa, double lsina,
-    double dcosa, double dsina, double phi0)
+void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosb, double lsinb,
+    double dcosb, double dsinb, double phi0, bool markSubzero)
 {
     int x1, x2, y1, y2;
     int dx, dy;
     int dx1, dy1;
     int dx2, dy2;
 
-    bool markSubzero;
+    // bool markSubzero;
     bool isSubzero = (phi0 < 0);
+    bool revert = false;
+
+    if (phi0 > 9)
+        phi0 = 18-phi0, revert = true;
+    else if (phi0 < -9)
+        phi0 = -18-phi0, revert = true;
     int lab = abs(phi0);
 
-    x1 = cx + (int)( lcosa - dsina + 0.5);
-    x2 = cx + (int)(-lcosa - dsina + 0.5);
-    y1 = cy + (int)( lsina + dcosa + 0.5);
-    y2 = cy + (int)(-lsina + dcosa + 0.5);
+    x1 = cx + (int)( lcosb - dsinb + 0.5);
+    x2 = cx + (int)(-lcosb - dsinb + 0.5);
+    y1 = cy + (int)( lsinb + dcosb + 0.5);
+    y2 = cy + (int)(-lsinb + dcosb + 0.5);
     dx = (x2 - x1);
     dy = (y2 - y1);
     dx1 = dx*3 / 8;
     dy1 = dy*3 / 8;
 
-    if (lab != 9)
-    {
-        if (lab != 0)
-        {
-            if (isSubzero)
-            {
+    pad->setFont(hudFont);
+    pad->setTextColor({0, 255, 0});
+    pad->setTextAlign(Sketchpad::CENTER);
+    int fh = pad->getCharSize() & 0xFFFF;
+
+    if (lab != 9) {
+        if (lab != 0) {
+            if (isSubzero) {
                 dx2 = -dy / 20, dy2 = dx / 20;
                 if (markSubzero)
                 {
@@ -161,36 +172,36 @@ void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosa, double lsina,
                     dx1 = dx / 8;
                     dy1 = dy / 8;
                 }
-            }
-            else
+            } else
                 dx2 = dy / 20, dy2 = -dx / 20;
         }
+        if (revert)
+            dx2 = -dx2, dy2 = -dy2;
         pad->drawLine(x1+dx1, y1+dy1, x1, y1);
         if (lab != 0)
             pad->drawLineTo(x1+dx2, y1+dy2);
         pad->drawLine(x2-dx1, y2-dy1, x2, y2);
         if (lab != 0)
             pad->drawLineTo(x2+dx2, y2+dy2);
-    }
-    else
-    {
+    } else {
         pad->drawLine(x1+dx1, y1+dy1, x1+dx/4, y1+dy/4);
         pad->drawLine(x2-dx1, y2-dy1, x2-dx/4, y2-dy/4);
         pad->drawLine(x1+dx/2+dy/8, y1+dy/2-dx/8, x1+dx/2+dy/4, y1+dy/2-dx/4);
-        pad->drawLine(x1+dx/2-dy/8, y1+dy/2+dx/8, x1+dx/2-dy/4, y1+dy/2+dx+4);
+        pad->drawLine(x1+dx/2-dy/8, y1+dy/2+dx/8, x1+dx/2-dy/4, y1+dy/2+dx/4);
     }
 
     str_t sbuf;
-    if (markSubzero)
-    {
-        sbuf = fmt::format("{:.0f}", phi0);
-        // pad->text(x1+dx/2-(3*fw)/2, y1+dy2-fh/2, sbuf.c_str(), 3);
+    if (markSubzero) {
+        sbuf = fmt::format("{:.0f}", phi0*10);
+        int fw = pad->getTextWidth(sbuf.c_str(), 3) / 2;
+        pad->text(x1+dx/2-fw, y1+dy/2-fh/2, sbuf.c_str(), 3);
+    } else {
+        sbuf = fmt::format("{:02d}", lab*10);
+        int fw = pad->getTextWidth(sbuf.c_str(), 2) / 2;
+        pad->text(x1+dx/2-fw, y1+dy/2-fh/2, sbuf.c_str(), 2);
     }
-    else
-    {
-        sbuf = fmt::format("{:d}", lab);
-        // pad->text(x1+dx/21-fw, y1+dy/2-fh/2, sbuf.c_str(), 2);
-    }
+
+    pad->setTextAlign(Sketchpad::LEFT);
 }
 
 void HUDPanel::drawDefault(Sketchpad *pad)
@@ -214,25 +225,40 @@ void HUDSurfacePanel::configure(cjson &config)
 
 }
 
-void HUDSurfacePanel::display(const Player &player, Sketchpad *pad)
+void HUDSurfacePanel::display(Player &player, Sketchpad *pad)
 {
     vehicle = player.getVehicleTarget();
     csurface_t *sp = vehicle->getSurfaceParameters();
     if (sp == nullptr)
         return;
+    cam = player.getCamera();
 
     pad->setPen(panel->getHUDPen());
     double heading = sp->heading - player.getCockpitTheta();
 
     drawCompassRibbon(pad, glm::degrees(heading));
 
-    double pitch0 = glm::degrees(sp->pitch);
-    static double step = glm::radians(10.0);
+    // draw horizon elevation ladder
+    static double step = tan(glm::radians(10.0));
+    double d = cam->getScale() * step;
 
-    double cosb = cos(sp->bank), sinb = sin(sp->bank);
-
+    double phi0 = ofs::degrees(sp->pitch + player.getCockpitPhi())*0.1;
+    double phi0f = floor(phi0);
+    double bank0 = sp->bank + player.getCockpitTilt();
+    double cosb = cos(bank0), sinb = sin(bank0);
     double lwcosb = lwidth * cosb, lwsinb = lwidth * sinb;
 
+    if (d > lrange*0.1) {
+        double d1, d0 = (phi0-phi0f) * d;
+        int iphi, iphi0;
+        iphi0 = iphi = (int)phi0;
+    
+        for (d1 = d0; d1 < lrange; d1 += d)
+            drawLadderBar(pad, lwcosb, lwsinb, d1*cosb, d1*sinb, iphi--, true);
+        iphi = iphi0+1;
+        for (d1 = d0-d; d1 > -lrange; d1 -= d)
+            drawLadderBar(pad, lwcosb, lwsinb, d1*cosb, d1*sinb, iphi++, true);
+    }
 }
 
 // ******** HUD Orbit Panel ********
@@ -251,7 +277,7 @@ void HUDOrbitPanel::configure(cjson &config)
 
 }
 
-void HUDOrbitPanel::display(const Player &player, Sketchpad *pad)
+void HUDOrbitPanel::display(Player &player, Sketchpad *pad)
 {
 
 }

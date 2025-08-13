@@ -121,7 +121,7 @@ void Panel::setHUDColor(color_t penColor)
 {
     if (hudPen != nullptr)
         delete hudPen;
-    hudPen = gc->createPen(penColor, 0, 1);
+    hudPen = gc->createPen(penColor, 4, 1);
 }
 
 void Panel::update(const Player &player, double simt, double syst)
@@ -136,7 +136,7 @@ void Panel::render(const Player &player)
         bar->render(player);
 }
 
-void Panel::drawHUD(const Player &player)
+void Panel::drawHUD(Player &player)
 {
     if (player.isInternal()) {
         if (hud != nullptr && pad != nullptr)

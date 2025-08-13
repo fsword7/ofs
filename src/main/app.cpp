@@ -659,7 +659,6 @@ void CoreApp::keyImmediateSystem()
                 dtheta += dt * -0.8;
             if (stateKey[ofs::keyCode::keyPad8])
                 dtheta += dt * 0.8;
-
             player->rotateView(dphi, dtheta);
         }
 
@@ -719,7 +718,7 @@ void CoreApp::keyImmediateSystem()
     else
     {
         // Internal camera view (in cocpkit)
-        double dphi(0.0), dtheta(0.0);
+        double dphi(0.0), dtheta(0.0), dtilt(0.0);
         
         if (altStateKey[ofs::keyCode::keyPad4])
             dtheta += dt * 0.8;
@@ -729,8 +728,12 @@ void CoreApp::keyImmediateSystem()
             dphi += dt * -0.8;
         if (altStateKey[ofs::keyCode::keyPad8])
             dphi += dt * 0.8;
+        if (altStateKey[ofs::keyCode::keyPad7])
+            dtilt += dt * -0.8;
+        if (altStateKey[ofs::keyCode::keyPad9])
+            dtilt += dt * 0.8;
 
-        player->rotateCockpit(dphi, dtheta);
+        player->rotateCockpit(dphi, dtheta, dtilt);
     }
 }
 
