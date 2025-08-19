@@ -599,8 +599,9 @@ void SurfaceManager::setRenderParams(const ObjectListEntry &ole)
 
     prm.urot = ole.orot;
 
-    prm.dmViewProj = camera->getProjMatrix() * camera->getViewMatrix();
+    // prm.dmViewProj = camera->getProjMatrix() * camera->getViewMatrix();
     // prm.dmWorld = dmWorld;
+    prm.dmViewProj = camera->getProjViewMatrix();
 
     // logMatrix(prm.dmViewProj, "View/Projection");
     // logMatrix(prm.dmWorld, "Model");

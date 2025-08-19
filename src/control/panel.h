@@ -1,4 +1,4 @@
-// panel.h - Instrumental panel package
+// ipanel.h - Instrumental panel package
 //
 // Author:  Tim Stark
 // Date:    Nov 11, 2023
@@ -8,14 +8,25 @@
 #include "control/hud/panel.h"
 // #include "control/mfd/panel.h"
 
+#define PANEL_NONE      0
+#define PANEL_PLANET    1
+#define PANEL_GENERIC   2
+#define PANEL_MAX       3
+
 class GraphicsClient;
 class Player;
 
 class TaskBar;
+class Panel;
+class PanelEx;
+class GenericPanel;
 
 class Panel
 {
     friend class TaskBar;
+    friend class PanelEx;
+    friend class GenericPanel;
+    friend class PlanetPanel;
 
 public:
     Panel(GraphicsClient *gclient, int w, int h, int d);
@@ -26,12 +37,13 @@ public:
 
     void init(cjson &config);
 
-    inline void switchHUDMode()     { setHUDMode(hudMode++ < HUD_MAX ? hudMode : HUD_NONE); }
+    // inline void switchHUDMode()     { setHUDMode(hudMode++ < HUD_MAX ? hudMode : HUD_NONE); }
     inline int getHUDMode() const   { return (hud != nullptr) ? hud->getMode() : HUD_NONE; }
     inline Pen *getHUDPen() const   { return hudPen; }
 
     void togglePanelMode();
     void togglePersonalPanelMode();
+    void createPanel(int mode);
     void setPanelMode(int mode);
     void setHUDColor(color_t color);
 
@@ -39,7 +51,8 @@ public:
     void update(const Player &player, double simt, double syst);
     void render(const Player &player);
 
-    void toggleHUDMode();
+    void toggleHUD();
+    void switchHUDMode();
     void setHUDMode(int mode);
     void drawHUD(Player &player);
 
@@ -50,6 +63,13 @@ private:
     GraphicsClient *gc = nullptr;
     Sketchpad *pad = nullptr;
     // Camera *camera = nullptr;
+
+    int panelMode = 0;
+    GenericPanel *gpanel = nullptr;
+    PanelEx *panels[PANEL_MAX];
+    PanelEx *panel = nullptr; 
+
+    bool hudEnable = true;
     int hudMode = HUD_NONE;
     HUDPanel *hud = nullptr;
 
@@ -60,3 +80,21 @@ private:
 
     TaskBar *bar = nullptr;
 };
+
+class PanelEx
+{
+public:
+    PanelEx(Panel *panel)
+    : panel(panel)
+    { 
+        gc = panel->gc;
+    }
+
+    virtual void draw(Player &player, Sketchpad *pad) {};
+
+protected:
+    Panel *panel = nullptr;
+    GraphicsClient *gc = nullptr;
+
+};
+

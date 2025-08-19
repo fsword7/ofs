@@ -37,6 +37,10 @@
 
     "player": {
         "mode": {
+            // Space plane cockpit
+            "type": "cockpit",
+            "target": "SG-01"
+
             // Observe rotating Earth
             // "type": "target-sync",
             // "target": "Sol/Earth", "sync-target": "Sol",
@@ -80,11 +84,7 @@
             // "type": "personal-observer",
             // "target": "Sol/Earth",
             // "location": [ 21.059613, -157.957629, 3 ],
-            // "heading": 0
-     
-            // Space plane cockpit
-            "type": "cockpit",
-            "target": "SG-01"
+            // "heading": 0     
         },
         "travel": "free",
         "fov": 50.0

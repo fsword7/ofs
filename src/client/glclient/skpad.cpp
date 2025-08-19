@@ -274,21 +274,23 @@ void glPad::drawLine(int x0, int y0, int x1, int y1)
     nvgBeginPath(ctx);
     moveTo(x0, y0);
     drawLineTo(x1, y1);
-    nvgClosePath(ctx);
+    endStrokeFromPen();
 }
 
 void glPad::drawRectangle(int x0, int y0, int x1, int y1)
 {
     nvgBeginPath(ctx);
-    nvgRect(ctx, xOrigin+x0, yOrigin+y0, x1, y1);
+    nvgRect(ctx, xOrigin+x0, yOrigin+y0, abs(x1-x0), abs(y1-y0));
     endStrokeFromBrush();
     endStrokeFromPen();
 }
 
-void glPad::drawEllipse(int cx, int cy, int x1, int y1)
+void glPad::drawEllipse(int x0, int y0, int x1, int y1)
 {
     nvgBeginPath(ctx);
-    nvgEllipse(ctx, xOrigin+cx, yOrigin+cy, x1, y1);
+    int cx = (x0+x1)/2;
+    int cy = (y0+y1)/2;
+    nvgEllipse(ctx, xOrigin+cx, yOrigin+cy, abs(x1-x0)/2, abs(y1-y0)/2);
     endStrokeFromBrush();
     endStrokeFromPen();
 }

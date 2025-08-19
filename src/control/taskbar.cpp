@@ -62,5 +62,5 @@ void TaskBar::render(const Player &player)
 
     ipad->endDraw();
 
-    displayPlanetInfo(player);
+    // displayPlanetInfo(player);
 }

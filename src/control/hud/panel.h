@@ -15,6 +15,7 @@ class GraphicsClient;
 class Sketchpad;
 class Font;
 class Panel;
+class Celestial;
 class Vehicle;
 class Player;
 class Camera;
@@ -38,9 +39,16 @@ protected:
     virtual void configure(cjson &config) = 0;
     virtual void display(Player &player, Sketchpad *pad) = 0;
 
+    bool checkVisualArea(const glm::dvec3 &gpos, glm::dvec3 &vscr);
+    
+    bool getXY(Celestial *obj, const glm::dvec3 &dir, int &x, int &y);
+    bool getXY(Celestial *obj, const glm::dvec3 &dir, double &x, double &y);
+
     virtual void drawLadderBar(Sketchpad *pad, double lcosb, double lsinb,
         double dcosb, double dsinb, double phi0, bool markSubzero);
     virtual void drawCompassRibbon(Sketchpad *pad, double val);
+    virtual bool drawMarker(Sketchpad *pad, Celestial *obj, const glm::dvec3 &dir, int style);
+    virtual bool drawOffscreenDirMarker(Sketchpad *pad, const glm::dvec3 &dir);
 
     const Vehicle *vehicle = nullptr;
     
@@ -56,6 +64,7 @@ protected:
     int width, height;
     int hres05, vres05;
     int cx, cy;
+    int markerSize;
 
     Font *hudFont = nullptr;
 };

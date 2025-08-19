@@ -534,7 +534,11 @@ void CoreApp::keyBufferedSystem(char32_t key, int mods)
         if (altStateKey[ofs::keyHome])
             player->resetCockpitDir();
         if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
-            panel->toggleHUDMode();
+            panel->togglePanelMode();
+        if (ctrlStateKey[ofs::keyH])
+            panel->toggleHUD();
+        if (stateKey[ofs::keyH])
+            panel->switchHUDMode();
     }
     if (player->isExternal() ||
         player->getCameraMode() == camPersonalObserver) {

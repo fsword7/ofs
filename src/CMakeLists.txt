@@ -4,8 +4,10 @@ set(OFS_CPP_SRCS
     control/mfd/orbit.cpp
     control/mfd/panel.cpp
     control/mfd/surface.cpp
+    control/gpanel.cpp
     control/info.cpp
     control/panel.cpp
+    control/ppanel.cpp
     control/taskbar.cpp
     engine/vehicle/animation.cpp
     engine/vehicle/config.cpp
@@ -108,7 +110,9 @@ set(OFS_H_SRCS
     control/mfd/orbit.h
     control/mfd/panel.h
     control/mfd/surface.h
+    control/gpanel.h
     control/panel.h
+    control/ppanel.h
     control/taskbar.h
     engine/vehicle/svehicle.h
     engine/vehicle/vehicle.h

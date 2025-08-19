@@ -1,4 +1,4 @@
-// panel.cpp - Instrumental panel package
+// ipanel.cpp - Instrumental panel package
 //
 // Author:  Tim Stark
 // Date:    Nov 11, 2023
@@ -9,6 +9,8 @@
 #include "utils/json.h"
 #include "control/taskbar.h"
 #include "control/panel.h"
+#include "control/ppanel.h"
+#include "control/gpanel.h"
 #include "hud/panel.h"
 
 Panel::Panel(GraphicsClient *gclient, int w, int h, int d)
@@ -53,8 +55,15 @@ void Panel::init(cjson &config)
         }
 
         // Turn HUD mode off as default
-        setHUDMode(0);
-    }   
+        setHUDMode(HUD_SURFACE);
+    }
+
+    // initialize internal panels
+    createPanel(PANEL_PLANET);
+    createPanel(PANEL_GENERIC);
+
+    // Generic panel mode as default
+    setPanelMode(PANEL_GENERIC); 
 }
 
 void Panel::initResources()
@@ -78,33 +87,49 @@ void Panel::resize(int w, int h)
             huds[idx]->resize(w, h);
 }
 
-void Panel::togglePanelMode()
-{
-
-}
-
 // personal observer
 void Panel::togglePersonalPanelMode()
 {
 
 }
 
-void Panel::setPanelMode(int mode)
+
+void Panel::createPanel(int mode)
 {
+    switch (mode)
+    {
+    case PANEL_PLANET:
+        panels[PANEL_PLANET] = new PlanetPanel(this);
+        break;
+    case PANEL_GENERIC:
+        panels[PANEL_GENERIC] = new GenericPanel(this);
+        break;
+    }
 }
 
-void Panel::toggleHUDMode()
+void Panel::setPanelMode(int mode)
 {
-    hudMode++;
-    for (int idx = 0; idx < HUD_MAX; idx++, hudMode++) {
-        if (hudMode == HUD_MAX)
-            hudMode = 0;
-        if (hudMode == 0 || huds[hudMode] != nullptr)
+    if (mode < PANEL_MAX && panels[mode] != nullptr) {
+        panel = panels[mode];
+        panelMode = mode;
+    } else {
+        panel = nullptr;
+        panelMode = PANEL_NONE;
+    }
+}
+
+void Panel::togglePanelMode()
+{
+    panelMode++;
+    for (int idx = 0; idx < PANEL_MAX; idx++, panelMode++) {
+        if (panelMode == PANEL_MAX)
+            panelMode = 0;
+        if (panelMode == 0 || panels[panelMode] != nullptr)
             break;
     }
-    hud = huds[hudMode];
-    // ofsLogger->info("HUD Mode: {}\n", hudMode);
+    panel = panels[panelMode];
 }
+
 
 void Panel::setHUDMode(int mode)
 {
@@ -117,12 +142,30 @@ void Panel::setHUDMode(int mode)
     }
 }
 
+void Panel::toggleHUD()
+{
+    hudEnable = !hudEnable;
+}
+
+void Panel::switchHUDMode()
+{
+    hudMode++;
+    for (int idx = 0; idx < HUD_MAX; idx++, hudMode++) {
+        if (hudMode == HUD_MAX)
+            hudMode = 0;
+        if (hudMode == 0 || huds[hudMode] != nullptr)
+            break;
+    }
+    hud = huds[hudMode];
+}
+
 void Panel::setHUDColor(color_t penColor)
 {
     if (hudPen != nullptr)
         delete hudPen;
     hudPen = gc->createPen(penColor, 4, 1);
 }
+
 
 void Panel::update(const Player &player, double simt, double syst)
 {
@@ -138,8 +181,27 @@ void Panel::render(const Player &player)
 
 void Panel::drawHUD(Player &player)
 {
-    if (player.isInternal()) {
-        if (hud != nullptr && pad != nullptr)
+    if (player.isExternal())
+        return;
+
+    switch (panelMode) {
+    case PANEL_NONE:
+        if (hudEnable && hud != nullptr)
             hud->draw(player, pad);
+        break;
+
+    case PANEL_PLANET:
+        if (panel == nullptr || pad == nullptr)
+            break;
+        panel->draw(player, pad);
+        break;
+
+    case PANEL_GENERIC:
+        if (panel == nullptr || pad == nullptr)
+            break;
+        if (hudEnable && hud != nullptr)
+            hud->draw(player, pad);
+        panel->draw(player, pad);
+        break;
     }
 }

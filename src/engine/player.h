@@ -75,8 +75,9 @@ public:
     inline glm::dvec3 getGlobalPosition() { return rpos; }
     inline glm::dmat3 getGlobalRotation() { return rrot; }
 
-    inline glm::dmat4 getProjMatrix() { return proj; }
-    inline glm::dmat4 getViewMatrix() { return view; }
+    inline glm::dmat4 getProjMatrix()       { return proj; }
+    inline glm::dmat4 getViewMatrix()       { return view; }
+    inline glm::dmat4 getProjViewMatrix()   { return proj*view; }
 
     double getPixelSize() const;
     void mapMouse(float wx, float wy, float &vx, float &vy) const;

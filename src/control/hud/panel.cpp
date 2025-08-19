@@ -7,6 +7,7 @@
 #include "main/app.h"
 #include "api/graphics.h"
 #include "api/draw.h"
+#include "engine/celestial.h"
 #include "engine/vehicle/vehicle.h"
 #include "control/panel.h"
 #include "utils/json.h"
@@ -18,7 +19,7 @@ HUDPanel::HUDPanel(Panel *panel)
     gc = ofsAppCore->getClient();
     hudFont = gc->createFont("Arial", 30, false);
 
-    panel->setHUDColor({0, 255, 0});
+    panel->setHUDColor({0, 1, 0});
 }
 
 HUDPanel *HUDPanel::create(cjson &config, GraphicsClient *gc, Panel *panel)
@@ -53,6 +54,9 @@ void HUDPanel::resize(int w, int h)
     vres05 = height / 2;
     lwidth = width * 0.12;
     lrange = height * 0.40;
+
+    markerSize = std::max(20, height/28);
+
     // hudofs = { 0, 0, cam->getScale() };
 }
 
@@ -61,6 +65,11 @@ void HUDPanel::draw(Player &player, Sketchpad *pad)
     pad->beginDraw();
     display(player, pad);
     pad->endDraw();
+}
+
+void HUDPanel::drawDefault(Sketchpad *pad)
+{
+
 }
 
 void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
@@ -204,9 +213,87 @@ void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosb, double lsinb,
     pad->setTextAlign(Sketchpad::LEFT);
 }
 
-void HUDPanel::drawDefault(Sketchpad *pad)
+bool HUDPanel::checkVisualArea(const glm::dvec3 &gdir, glm::dvec3 &vscr)
 {
+    vscr = cam->getProjViewMatrix() * glm::dvec4(gdir, 1.0);
+    ofsLogger->debug("Visual: {},{},{}\n", vscr.x, vscr.y, vscr.z);
+    return (vscr.x >= -1.0 && vscr.x <= 1.0) &&
+           (vscr.y >= -1.0 && vscr.y <= 1.0) &&
+           (vscr.z >= 0.0);
+}
 
+bool HUDPanel::getXY(Celestial *obj, const glm::dvec3 &dir, int &x, int &y)
+{
+    bool vis = false;
+
+    // glm::dvec3 ldir = glm::transpose(obj->getgRotation()) * dir;
+    // if (ldir.z > 0) {
+    //     double fac = hudofs.z / ldir.z;
+    //     if (fabs(fac) > 10000.0)
+    //         return false;
+    //     x = cx + int(fac * ldir.x);
+    //     y = cy + int(fac * ldir.y);
+    // } else
+    //     vis = false;
+
+    // glm::dvec3 vscr;
+    // if (vis = checkVisualArea(dir, vscr)) {
+    //     x = width/2 + (1.0+vscr.x);
+    //     y = height/2 + (1.0+vscr.y);
+    // }
+    // return vis;
+    x = width/2;
+    y = height/2;
+    return true;
+}
+
+bool HUDPanel::getXY(Celestial *obj, const glm::dvec3 &dir, double &x, double &y)
+{
+    bool vis = false;
+
+    // glm::dvec3 ldir = glm::transpose(obj->getgRotation()) * dir;
+    // if (ldir.z > 0) {
+    //     double fac = hudofs.z / ldir.z;
+    //     if (fabs(fac) > 10000.0)
+    //         return false;
+    //     x = cx + int(fac * ldir.x);
+    //     y = cy + int(fac * ldir.y);
+    // } else
+    //     vis = false;
+
+    glm::dvec3 vscr;
+    if (vis = checkVisualArea(dir, vscr)) {
+        x = width/2 + (1.0+vscr.x);
+        y = height/2 + (1.0+vscr.y);
+    }
+    return vis;
+}
+
+bool HUDPanel::drawMarker(Sketchpad *pad, Celestial *obj, const glm::dvec3 &dir, int style)
+{
+    int x, y;
+    if (getXY(obj, dir, x, y)) {
+        if (style & 1) {
+            // Draw a square marker
+            pad->drawRectangle(x-markerSize, y-markerSize, x+markerSize+1, y+markerSize+1);
+        }
+        if (style & 2) {
+            // Draw a circle marker
+            pad->drawEllipse(x-markerSize, y-markerSize, x+markerSize+1, y+markerSize+1);
+        }
+        if (style & 4) {
+            // Draw a cross marker
+            pad->drawLine(x-markerSize, y, x+markerSize+1, y);
+            pad->drawLine(x, y-markerSize, x, y+markerSize+1);
+        }
+        return true;
+    }
+    return false;
+}
+
+bool HUDPanel::drawOffscreenDirMarker(Sketchpad *pad, const glm::dvec3 &dir)
+{
+    return false;
 }
 
 // ******** HUD Surface Panel ********
@@ -237,6 +324,8 @@ void HUDSurfacePanel::display(Player &player, Sketchpad *pad)
     double heading = sp->heading - player.getCockpitTheta();
 
     drawCompassRibbon(pad, glm::degrees(heading));
+
+    // drawMarker(pad, nullptr, {}, 6);
 
     // draw horizon elevation ladder
     static double step = tan(glm::radians(10.0));
