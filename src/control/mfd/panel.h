@@ -5,6 +5,7 @@
 
 #pragma once
 
+class OrbitalElements;
 class Vehicle;
 class Panel;
 class Pen;

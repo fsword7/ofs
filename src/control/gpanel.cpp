@@ -6,6 +6,7 @@
 #include "main/core.h"
 #include "api/graphics.h"
 #include "engine/player.h"
+#include "control/mfd/panel.h"
 #include "control/panel.h"
 #include "control/gpanel.h"
 #include "hud/panel.h"
