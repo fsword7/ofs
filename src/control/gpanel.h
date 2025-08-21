@@ -32,7 +32,7 @@ protected:
     Brush *brushOn = nullptr;
     Brush *brushOff = nullptr;
     Pen *hudPen = nullptr;
-    Pen *hudPen0 = nullptr;
+    Pen *hudBarPen = nullptr;
 
     color_t pwrColor = { 1, 0, 0, .75 };
     color_t btnTextOn = { 1, 1, 1, .75 };

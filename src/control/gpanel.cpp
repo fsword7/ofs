@@ -34,7 +34,7 @@ void GenericPanel::initResources()
     brushOff = gc->createBrush({0, 1, 0, .25});
     brushOn = gc->createBrush({0, 1, 0, .5});
     hudPen = gc->createPen({0, 1, 0}, 4, 1);
-    hudPen0 = gc->createPen({0, 0, 0, .5}, 4, 1);
+    hudBarPen = gc->createPen({0, 0, 0, .5}, 4, 1);
 }
 
 void GenericPanel::render()
@@ -67,7 +67,8 @@ void GenericPanel::drawEngines(Sketchpad *pad, Vehicle *veh)
     double thRetro = veh->getThrustGroupLevel(thgRetro);
     double thHover = veh->getThrustGroupLevel(thgHover);
 
-    pad->setPen(hudPen0);
+    // display engine control bar
+    pad->setPen(hudBarPen);
     pad->setBrush(brushOn);
     pad->drawRectangle(150, 50, 150+(thMain*350), 100);
     pad->drawRectangle(150, 120, 150+(thRetro*350), 170);
