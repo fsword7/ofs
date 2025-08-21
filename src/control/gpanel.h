@@ -21,6 +21,7 @@ public:
     void draw(Player &player, Sketchpad *pad) override;
 
     void drawButton(Sketchpad *pad, int x0, int y0, int x1, int y1, bool on);
+    void drawEngines(Sketchpad *pad, Vehicle *veh);
 
 protected:
     GraphicsClient *gc = nullptr;
@@ -31,6 +32,7 @@ protected:
     Brush *brushOn = nullptr;
     Brush *brushOff = nullptr;
     Pen *hudPen = nullptr;
+    Pen *hudPen0 = nullptr;
 
     color_t pwrColor = { 1, 0, 0, .75 };
     color_t btnTextOn = { 1, 1, 1, .75 };

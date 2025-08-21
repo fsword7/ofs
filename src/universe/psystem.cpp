@@ -192,6 +192,14 @@ void pSystem::finalizeUpdate()
         body->endUpdate();
 }
 
+void pSystem::finalizePostCreation()
+{
+    for (auto veh : vehicles)
+        veh->finalizePostCreation();
+    for (auto veh : vehicles)
+        veh->finalizePostCreationModule();
+}
+
 struct {
     const char *name;
     celType type;

@@ -32,6 +32,7 @@ public:
     void configureVehicles(cjson &config);
     void update(Player *player, const TimeDate &td);
     void finalizeUpdate();
+    void finalizePostCreation();
 
     pSystem *createSolarSystem(cstr_t &sysName);
     pSystem *getSolarSystem(cstr_t &sysName) const;

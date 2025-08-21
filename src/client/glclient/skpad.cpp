@@ -179,7 +179,7 @@ Pen *glPad::setPen(Pen *pen)
 {
     glPen *ret = cPen;
     cPen = dynamic_cast<glPen *>(pen);
-    if (cPen == nullptr)
+    if (cPen == nullptr && pen != nullptr)
     {
         cPen = ret;
         return nullptr;
@@ -192,7 +192,7 @@ Brush *glPad::setBrush(Brush *brush)
 {
     glBrush *ret = cBrush;
     cBrush = dynamic_cast<glBrush *>(brush);
-    if (cBrush == nullptr)
+    if (cBrush == nullptr && brush != nullptr)
     {
         cBrush = ret;
         return nullptr;

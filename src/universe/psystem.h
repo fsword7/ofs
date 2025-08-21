@@ -51,6 +51,7 @@ public:
 
     void update(bool force);
     void finalizeUpdate();
+    void finalizePostCreation();
 
 private:
     cstr_t sysName;

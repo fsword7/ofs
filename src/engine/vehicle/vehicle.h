@@ -7,6 +7,7 @@
 
 #include "engine/rigidbody.h"
 #include "api/elevmgr.h"
+#include "api/vehicle.h"
 
 // class SuperVessel
 // {
@@ -153,6 +154,7 @@ struct tank_t
 {
     double maxMass;         // maximum propellant mass
     double mass;            // current propellant mass
+    double pmass;           // previous propellant mass (last time)
     double efficiency;      // fuel efficiency factor
 };
 
@@ -206,30 +208,30 @@ struct thrustgrp_t
 };
 using tglist_t = std::vector<thrustgrp_t *>;
 
-enum thrustType_t
-{
-    thgMain = 0,            // main thruster
-    thgRetro,               // retro thruster
-    thgHover,               // hover thruster
+// enum thrustType_t
+// {
+//     thgMain = 0,            // main thruster
+//     thgRetro,               // retro thruster
+//     thgHover,               // hover thruster
 
-    thgRotPitchUp,          // Rotation Attitude: Rotate pitch up
-    thgRotPitchDown,        // Rotation Attitude: Rotate pitch down
-    thgRotYawLeft,          // Rotation Attitude: Rotate yaw left
-    thgRotYawRight,         // Rotation Attitude: Rotate yaw right
-    thgRotBankLeft,         // Rotation Attitude: Rotate bank left
-    thgRotBankRight,        // Rotation Attitude: Rotate bank right
+//     thgRotPitchUp,          // Rotation Attitude: Rotate pitch up
+//     thgRotPitchDown,        // Rotation Attitude: Rotate pitch down
+//     thgRotYawLeft,          // Rotation Attitude: Rotate yaw left
+//     thgRotYawRight,         // Rotation Attitude: Rotate yaw right
+//     thgRotBankLeft,         // Rotation Attitude: Rotate bank left
+//     thgRotBankRight,        // Rotation Attitude: Rotate bank right
     
-    thgLinMoveUp,           // Linear Attitude: Move up
-    thgLinMoveDown,         // Linear Attitude: Move down
-    thgLinMoveLeft,         // Linear Attitude: Move Left
-    thgLinMoveRight,        // Linear Attitude: Move right
-    thgLinMoveForward,      // Linear Attitude: Move forward
-    thgLinMoveBackward,     // Linear Attitude: Move backward
+//     thgLinMoveUp,           // Linear Attitude: Move up
+//     thgLinMoveDown,         // Linear Attitude: Move down
+//     thgLinMoveLeft,         // Linear Attitude: Move Left
+//     thgLinMoveRight,        // Linear Attitude: Move right
+//     thgLinMoveForward,      // Linear Attitude: Move forward
+//     thgLinMoveBackward,     // Linear Attitude: Move backward
 
-    thgMaxThrusters,
+//     thgMaxThrusters,
 
-    thgUser = 0x80          // User-definable thrusters
-};
+//     thgUser = 0x80          // User-definable thrusters
+// };
 
 // touchdown points for collision detection
 struct tdVertex_t
@@ -367,6 +369,13 @@ public:
     bool registerModule(cstr_t &name);
     bool loadModule(cstr_t &name);
 
+    // Vehicle module function calls
+    // inline void setClassCaps()                  { vif.module->setClassCaps(); }
+    void setClassCaps();
+
+    void finalizePostCreation();
+    void finalizePostCreationModule();
+
     inline void clearTouchdownPoints()          { tpVertices.clear(); }
 
     inline glm::dvec3 *getCameraPosition()      { return &vcpos; }
@@ -380,9 +389,13 @@ public:
     void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt) override;
     bool addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt) override;
     
+    void setSize(double val)    { radius = (val / M_PER_KM) / 2; }
+
     void setGenericDefaults();
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
     void setSurfaceFriction(double lat, double lng);
+    
+    inline void enableWheelSteering(bool enable)       { bSteeringEnable = enable; }
 
     inline void addForce(const glm::dvec3 &F, const glm::dvec3 &r)   { flin += F, amom += glm::cross(F, r); }
 
@@ -404,6 +417,9 @@ public:
 
     void drawHUD(HUDPanel *hud, Sketchpad *pad);
 
+    tank_t *createPropellant(double maxMass, double mass = -1.0, double efficiency = 1.0);
+    inline void setDefaultPropellant(tank_t *ts)        { dTank = ts; }
+
     thrust_t *createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank = nullptr);
     bool deleteThruster(thrust_t *th);
 
@@ -412,19 +428,23 @@ public:
     // void setThrustOverride(thrust_t *th, double level);
     // void adjustThrustOverride(thrust_t *th, double dlevel);
 
-    void createThrusterGroup(thrust_t **th, int nThrusts, thrustType_t type);
+    thrustgrp_t *createThrusterGroup(thrust_t **th, int nThrusts, thrustType_t type);
 
     void setThrustGroupLevel(thrustgrp_t *tg, double level);
-    void adjustThrustGroupLevel(thrustgrp_t *tg, double dlevel);
+    void throttleThrustGroupLevel(thrustgrp_t *tg, double dlevel);
     void setThrustGroupOverride(thrustgrp_t *tg, double level);
-    void adjustThrustGroupOverride(thrustgrp_t *tg, double dlevel);
+    void throttleThrustGroupOverride(thrustgrp_t *tg, double dlevel);
 
     void setThrustGroupLevel(thrustType_t type, double level);
-    void adjustThrustGroupLevel(thrustType_t type, double dlevel);
+    void throttleThrustGroupLevel(thrustType_t type, double dlevel);
     void setThrustGroupOverride(thrustType_t type, double level);
-    void adjustThrustGroupOverride(thrustType_t type, double dlevel);
+    void throttleThrustGroupOverride(thrustType_t type, double dlevel);
 
     double getThrustGroupLevel(thrustgrp_t *tg);
+    double getThrustGroupLevel(thrustType_t type);
+
+    void throttleMainRetroThruster(double dlevel);
+    void overrideMainRetroThruster(double level);
 
     void createDefaultEngine(thrustType_t type, double power);
     void createDefaultAttitudeSet(double maxth);
@@ -487,12 +507,16 @@ private:
     glm::dvec3 tpNormal;                   // upward normal of touchdown plane (vessel frame)
     glm::dvec3 tpCGravity;                 // center of gravity projection
     double  cogElev;
-
+    bool bSteeringEnable = false;
+    
     double mulat, mulng;
     glm::dvec3 cs;
 
+    tank_t *dTank = nullptr; // default propellant tank
+
     std::vector<port_t *> ports;        // docking port list
 
+    std::vector<tank_t *> tankList;             // Propellant tank list
     std::vector<thrust_t *> thrustList;         // Individual thruster list
     std::vector<thrustgrp_t *> thgrpList;       // Main thruster group list
     std::vector<thrustgrp_t *> thgrpUserList;   // User thruster group list

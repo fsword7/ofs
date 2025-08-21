@@ -6,11 +6,26 @@
 #include "main/core.h"
 #include "engine/vehicle/vehicle.h"
 
+tank_t *Vehicle::createPropellant(double maxMass, double mass, double efficiency)
+{
+    tank_t *ts = new tank_t;
+    ts->maxMass = maxMass;
+    ts->mass = (mass >= 0.0 ? mass : maxMass);
+    ts->pmass = ts->mass;
+    ts->efficiency = efficiency;
+
+    if (tankList.empty())
+        dTank = ts;
+    tankList.push_back(ts);
+
+    return ts;
+}
+
 thrust_t *Vehicle::createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank)
 {
     thrust_t *th = new thrust_t();
 
-    th->pos = pos;
+    th->pos = pos / M_PER_KM;
     th->dir = dir;
     th->maxth = maxth;
     th->tank = tank;
@@ -62,14 +77,15 @@ bool Vehicle::deleteThruster(thrust_t *th)
 
 // Thruster Group
 
-void Vehicle::createThrusterGroup(thrust_t **th, int nThrusts, thrustType_t type)
+thrustgrp_t *Vehicle::createThrusterGroup(thrust_t **th, int nThrusts, thrustType_t type)
 {
-    thrustgrp_t *tg = new thrustgrp_t();
+    thrustgrp_t *thg = new thrustgrp_t();
 
     for (int idx = 0; idx < nThrusts; idx++)
-        tg->thrusters.push_back(th[idx]);
+        thg->thrusters.push_back(th[idx]);
 
-    thgrpList.push_back(tg);
+    thgrpList[type] = thg;
+    return thg;
 }
 
 void Vehicle::createDefaultEngine(thrustType_t type, double power)
@@ -143,7 +159,7 @@ void Vehicle::setThrustGroupLevel(thrustgrp_t *tg, double level)
         th->setThrustLevel(level);
 }
 
-void Vehicle::adjustThrustGroupLevel(thrustgrp_t *tg, double dlevel)
+void Vehicle::throttleThrustGroupLevel(thrustgrp_t *tg, double dlevel)
 {
     for (auto th : tg->thrusters)
         th->adjustThrustLevel(dlevel);
@@ -155,7 +171,7 @@ void Vehicle::setThrustGroupOverride(thrustgrp_t *tg, double level)
         th->setThrustOverride(level);
 }
 
-void Vehicle::adjustThrustGroupOverride(thrustgrp_t *tg, double dlevel)
+void Vehicle::throttleThrustGroupOverride(thrustgrp_t *tg, double dlevel)
 {
     for (auto th : tg->thrusters)
         th->adjustThrustOverride(dlevel);
@@ -164,22 +180,26 @@ void Vehicle::adjustThrustGroupOverride(thrustgrp_t *tg, double dlevel)
 
 void Vehicle::setThrustGroupLevel(thrustType_t type, double level)
 {
-    setThrustGroupLevel(thgrpList[type], level);
+    if (thgrpList[type] != nullptr)
+        setThrustGroupLevel(thgrpList[type], level);
 }
 
-void Vehicle::adjustThrustGroupLevel(thrustType_t type, double dlevel)
+void Vehicle::throttleThrustGroupLevel(thrustType_t type, double dlevel)
 {
-    adjustThrustGroupLevel(thgrpList[type], dlevel);
+    if (thgrpList[type] != nullptr)
+        throttleThrustGroupLevel(thgrpList[type], dlevel);
 }
 
 void Vehicle::setThrustGroupOverride(thrustType_t type, double level)
 {
-    setThrustGroupOverride(thgrpList[type], level);
+    if (thgrpList[type] != nullptr)
+        setThrustGroupOverride(thgrpList[type], level);
 }
 
-void Vehicle::adjustThrustGroupOverride(thrustType_t type, double dlevel)
+void Vehicle::throttleThrustGroupOverride(thrustType_t type, double dlevel)
 {
-    setThrustGroupOverride(thgrpList[type], dlevel);
+    if (thgrpList[type] != nullptr)
+        throttleThrustGroupOverride(thgrpList[type], dlevel);
 }
 
 
@@ -191,35 +211,73 @@ double Vehicle::getThrustGroupLevel(thrustgrp_t *tg)
     return tg->thrusters.size() > 0 ? level / tg->thrusters.size() : 0.0;
 }
 
+double Vehicle::getThrustGroupLevel(thrustType_t type)
+{
+    return (thgrpList[type] != nullptr)
+        ? getThrustGroupLevel(thgrpList[type]) : 0.0;
+}
+
+void Vehicle::throttleMainRetroThruster(double dlevel)
+{
+    double thMain = getThrustGroupLevel(thgMain);
+    double thRetro = getThrustGroupLevel(thgRetro);
+
+    if (dlevel > 0.0) {
+         if (thRetro == 0.0) {
+            setThrustGroupLevel(thgMain, std::min(thMain+dlevel, 1.0));
+        } else {
+            setThrustGroupLevel(thgRetro, std::max(thRetro-dlevel, 0.0));
+            setThrustGroupLevel(thgMain, 0.0);
+        }
+    } else if (dlevel < 0.0) {
+        if (thMain == 0.0) {
+            setThrustGroupLevel(thgRetro, std::min(thRetro-dlevel, 1.0));
+        } else {
+            setThrustGroupLevel(thgMain, std::max(thMain+dlevel, 0.0));
+            setThrustGroupLevel(thgRetro, 0.0);
+        }
+    }
+}
+
+void Vehicle::overrideMainRetroThruster(double level)
+{
+    if (level > 0.0) {
+        setThrustGroupOverride(thgMain, level);
+        setThrustGroupOverride(thgRetro, -1.0);
+    } else {
+        setThrustGroupOverride(thgMain, -1.0);
+        setThrustGroupOverride(thgRetro, -level);
+    }
+}
 
 void Vehicle::updateUserAttitudeControls(int *ctrlKeyboard)
 {
 
     // Main engine controls
-    adjustThrustGroupOverride(thgMain,   0.001 * ctrlKeyboard[thgMain]);
-    adjustThrustGroupOverride(thgRetro,  0.001 * ctrlKeyboard[thgRetro]);
-    adjustThrustGroupOverride(thgHover,  0.001 * ctrlKeyboard[thgHover]);
+    throttleThrustGroupOverride(thgMain,   0.001 * ctrlKeyboard[thgMain]);
+    throttleThrustGroupOverride(thgRetro,  0.001 * ctrlKeyboard[thgRetro]);
+    throttleThrustGroupOverride(thgHover,  0.001 * ctrlKeyboard[thgHover]);
  
     if (rcsMode & 1)
     {
         // RCS Attitude rotational controls
-        adjustThrustGroupOverride(thgRotPitchUp,      0.001 * ctrlKeyboard[thgRotPitchUp]);
-        adjustThrustGroupOverride(thgRotPitchDown,    0.001 * ctrlKeyboard[thgRotPitchDown]);
-        adjustThrustGroupOverride(thgRotYawLeft,      0.001 * ctrlKeyboard[thgRotYawLeft]);
-        adjustThrustGroupOverride(thgRotYawRight,     0.001 * ctrlKeyboard[thgRotYawRight]);
-        adjustThrustGroupOverride(thgRotBankLeft,     0.001 * ctrlKeyboard[thgRotBankLeft]);
-        adjustThrustGroupOverride(thgRotBankRight,    0.001 * ctrlKeyboard[thgRotBankRight]);
+        throttleThrustGroupOverride(thgRotPitchUp,      0.001 * ctrlKeyboard[thgRotPitchUp]);
+        throttleThrustGroupOverride(thgRotPitchDown,    0.001 * ctrlKeyboard[thgRotPitchDown]);
+        throttleThrustGroupOverride(thgRotYawLeft,      0.001 * ctrlKeyboard[thgRotYawLeft]);
+        throttleThrustGroupOverride(thgRotYawRight,     0.001 * ctrlKeyboard[thgRotYawRight]);
+        throttleThrustGroupOverride(thgRotBankLeft,     0.001 * ctrlKeyboard[thgRotBankLeft]);
+        throttleThrustGroupOverride(thgRotBankRight,    0.001 * ctrlKeyboard[thgRotBankRight]);
     }
 
     if (rcsMode & 2) 
     {
         // RCS Attitude linear controls
-        adjustThrustGroupOverride(thgLinMoveUp,       0.001 * ctrlKeyboard[thgLinMoveUp]);
-        adjustThrustGroupOverride(thgLinMoveDown,     0.001 * ctrlKeyboard[thgLinMoveDown]);
-        adjustThrustGroupOverride(thgLinMoveLeft,     0.001 * ctrlKeyboard[thgLinMoveLeft]);
-        adjustThrustGroupOverride(thgLinMoveRight,    0.001 * ctrlKeyboard[thgLinMoveRight]);
-        adjustThrustGroupOverride(thgLinMoveForward,  0.001 * ctrlKeyboard[thgLinMoveForward]);
-        adjustThrustGroupOverride(thgLinMoveBackward, 0.001 * ctrlKeyboard[thgLinMoveBackward]);
+        throttleThrustGroupOverride(thgLinMoveUp,       0.001 * ctrlKeyboard[thgLinMoveUp]);
+        throttleThrustGroupOverride(thgLinMoveDown,     0.001 * ctrlKeyboard[thgLinMoveDown]);
+        throttleThrustGroupOverride(thgLinMoveLeft,     0.001 * ctrlKeyboard[thgLinMoveLeft]);
+        throttleThrustGroupOverride(thgLinMoveRight,    0.001 * ctrlKeyboard[thgLinMoveRight]);
+        throttleThrustGroupOverride(thgLinMoveForward,  0.001 * ctrlKeyboard[thgLinMoveForward]);
+        throttleThrustGroupOverride(thgLinMoveBackward, 0.001 * ctrlKeyboard[thgLinMoveBackward]);
     }
 }
 

@@ -42,6 +42,8 @@ void Vehicle::configure(cjson &config, Celestial *object)
     }
     loadModule(modName);
 
+    setClassCaps();
+    
     // Setup flight status
     str_t stName = myjson::getString<str_t>(config, "status");
     if (stName == "landed") {

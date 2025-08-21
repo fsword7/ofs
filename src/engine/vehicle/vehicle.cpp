@@ -280,6 +280,16 @@ Vehicle::~Vehicle()
         clearModule();
 }
 
+void Vehicle::finalizePostCreation()
+{
+
+}
+
+void Vehicle::finalizePostCreationModule()
+{
+    vif.module->finalizePostCreation();
+}
+
 bool Vehicle::registerModule(cstr_t &name)
 {
     assert(handle == nullptr);
@@ -337,6 +347,11 @@ bool Vehicle::loadModule(cstr_t &name)
         vif.module = vif.ovcInit(this);
     
     return true;
+}
+
+void Vehicle::setClassCaps()
+{
+    vif.module->setClassCaps();
 }
 
 void Vehicle::setGenericDefaults()

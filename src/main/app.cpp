@@ -154,6 +154,9 @@ void CoreApp::openSession(json &config)
 
     panel->init(config);
 
+    // Finalize all vehicles after creation
+    universe->finalizePostCreation();
+
     bSession = true;
 
     // beginTimeStep(true);
@@ -743,6 +746,7 @@ void CoreApp::keyImmediateSystem()
 
 void CoreApp::keyImmediateOnRunning()
 {
+    double dt = td.getSysDeltaTime();
 
     // Clear all keyboard controls for thrusters
     // for (int idx = 0; idx < thgMaxThrusters; idx++)
@@ -787,6 +791,26 @@ void CoreApp::keyImmediateOnRunning()
     //     decreaseTimeWarp();
     // else if (stateKey[ofs::keyF2])
     //     setWarpFactor(1.0);
+
+    Vehicle *veh = player->getVehicleTarget();
+    if (stateKey[ofs::keyPadAdd])
+        veh->throttleMainRetroThruster(0.2*dt);
+    if (stateKey[ofs::keyPadSubtract])
+        veh->throttleMainRetroThruster(-0.2*dt);
+    if (ctrlStateKey[ofs::keyPadAdd])
+        veh->overrideMainRetroThruster(1.0);
+    if (ctrlStateKey[ofs::keyPadSubtract])
+        veh->overrideMainRetroThruster(-1.0);
+    if (stateKey[ofs::keyPadMultiply]) {
+        veh->setThrustGroupLevel(thgMain, 0.0);
+        veh->setThrustGroupLevel(thgRetro, 0.0);
+    }
+
+    if (stateKey[ofs::keyPad0])
+        veh->throttleThrustGroupLevel(thgHover, 0.2*dt);
+    if (stateKey[ofs::keyPadDecimal])
+        veh->throttleThrustGroupLevel(thgHover, -0.2*dt);
+
 }
 
 // ******** Mouse Controls ********

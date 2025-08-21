@@ -100,6 +100,12 @@ void Universe::configureVehicles(cjson &config)
     }
 }
 
+void Universe::finalizePostCreation()
+{
+    for (auto &psys : systemList)
+        psys->finalizePostCreation();
+}
+
 void Universe::start()
 {
     // Initiializing solar systems with time
