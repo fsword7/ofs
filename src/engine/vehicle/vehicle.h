@@ -164,8 +164,8 @@ struct thrust_t
     glm::dvec3 dir;            // thrister direction
 
     double maxth;           // Maximum thrust force [N]
-    double isp;
-    double pfac;
+    double isp;             // Vacuum isp setting [m/s]
+    double pfac;            // Pressure-dependency of thrust and isp
 
     double level;           // level [0..1]
     double lvperm;          // level permament
@@ -419,8 +419,15 @@ public:
 
     tank_t *createPropellant(double maxMass, double mass = -1.0, double efficiency = 1.0);
     inline void setDefaultPropellant(tank_t *ts)        { dTank = ts; }
+    inline tank_t *getDefaultPropellant()               { return dTank; }
+    inline double getPropellantLevel(tank_t *ts)
+        { return ts->maxMass ? (ts->mass/ts->maxMass) : 0.0; }
 
-    thrust_t *createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank = nullptr);
+    inline double computeAtmThrustScale(thrust_t *eng, double p) const
+        { return (!eng->pfac) ? std::max(0.0, 1.0 - p * eng->pfac) : 1.0; }
+
+    thrust_t *createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth,
+         tank_t *tank = nullptr, double isp = 0.0, double ispref = 0.0, double pref = 101.4e3);
     bool deleteThruster(thrust_t *th);
 
     // void setThrustLevel(thrust_t *th, double level);
@@ -443,6 +450,7 @@ public:
     double getThrustGroupLevel(thrustgrp_t *tg);
     double getThrustGroupLevel(thrustType_t type);
 
+    void setMainRetroThruster(double level);
     void throttleMainRetroThruster(double dlevel);
     void overrideMainRetroThruster(double level);
 
@@ -513,6 +521,7 @@ private:
     glm::dvec3 cs;
 
     tank_t *dTank = nullptr; // default propellant tank
+    bool bEnableBurnFuel = false;
 
     std::vector<port_t *> ports;        // docking port list
 

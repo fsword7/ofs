@@ -793,19 +793,26 @@ void CoreApp::keyImmediateOnRunning()
     //     setWarpFactor(1.0);
 
     Vehicle *veh = player->getVehicleTarget();
-    if (stateKey[ofs::keyPadAdd])
-        veh->throttleMainRetroThruster(0.2*dt);
-    if (stateKey[ofs::keyPadSubtract])
-        veh->throttleMainRetroThruster(-0.2*dt);
+
+    // Main/Retro thruster controls
     if (ctrlStateKey[ofs::keyPadAdd])
-        veh->overrideMainRetroThruster(1.0);
+        veh->throttleMainRetroThruster(0.2*dt);
     if (ctrlStateKey[ofs::keyPadSubtract])
+        veh->throttleMainRetroThruster(-0.2*dt);
+    if (altStateKey[ofs::keyPadAdd])
+        veh->setMainRetroThruster(1.0);
+    if (altStateKey[ofs::keyPadSubtract])
+        veh->setMainRetroThruster(-1.0);
+    if (stateKey[ofs::keyPadAdd])
+        veh->overrideMainRetroThruster(1.0);
+    if (stateKey[ofs::keyPadSubtract])
         veh->overrideMainRetroThruster(-1.0);
     if (stateKey[ofs::keyPadMultiply]) {
         veh->setThrustGroupLevel(thgMain, 0.0);
         veh->setThrustGroupLevel(thgRetro, 0.0);
     }
 
+    // Hover thruster controls
     if (stateKey[ofs::keyPad0])
         veh->throttleThrustGroupLevel(thgHover, 0.2*dt);
     if (stateKey[ofs::keyPadDecimal])

@@ -21,7 +21,8 @@ tank_t *Vehicle::createPropellant(double maxMass, double mass, double efficiency
     return ts;
 }
 
-thrust_t *Vehicle::createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth, tank_t *tank)
+thrust_t *Vehicle::createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, double maxth,
+    tank_t *tank, double isp, double ispref, double pref)
 {
     thrust_t *th = new thrust_t();
 
@@ -29,6 +30,10 @@ thrust_t *Vehicle::createThruster(const glm::dvec3 &pos, const glm::dvec3 &dir, 
     th->dir = dir;
     th->maxth = maxth;
     th->tank = tank;
+
+    // Atmospheric pressure dependency of thrust
+    th->isp = isp; // (isp > 0.0) ? isp : disp;
+    th->pfac = (ispref > 0.0) ? (isp-ispref)/(pref/isp) : 0.0;
 
     thrustList.push_back(th);
 
@@ -217,6 +222,17 @@ double Vehicle::getThrustGroupLevel(thrustType_t type)
         ? getThrustGroupLevel(thgrpList[type]) : 0.0;
 }
 
+void Vehicle::setMainRetroThruster(double level)
+{
+    if (level >= 0.0) {
+        setThrustGroupLevel(thgMain, level);
+        setThrustGroupLevel(thgRetro, 0.0);
+    } else {
+        setThrustGroupLevel(thgRetro, -level);
+        setThrustGroupLevel(thgMain, 0.0);
+    }
+}
+
 void Vehicle::throttleMainRetroThruster(double dlevel)
 {
     double thMain = getThrustGroupLevel(thgMain);
@@ -283,24 +299,42 @@ void Vehicle::updateUserAttitudeControls(int *ctrlKeyboard)
 
 void Vehicle::updateThrustForces()
 {
+    // Nagivation computer sequences
 
-    glm::dvec3 thrust = { 0, 0, 0 };
+
+    // Record previous fuel mass
+    for (auto &ts : tankList)
+        ts->pmass = ts->mass;
+
+    glm::dvec3 thrust = {};
     glm::dvec3 F;
 
-    for (auto th : thrustList)
-    {
-        th->level = std::max(0.0, std::min(1.0, th->lvperm + th->lvover));
-        if (th->level > 0.0)
-        {   
-            tank_t *tank = th->tank;
-
-            double th0 = th->level * th->maxth;
-            F = th->dir * th0;
+    double dt = ofsDate->getSimDeltaTime1();
+    bool bThrustEngaged = false;
+    for (auto eng : thrustList) {
+        eng->level = std::max(0.0, std::min(1.0, eng->lvperm + eng->lvover));
+        tank_t *ts = eng->tank;
+        if (ts != nullptr && ts->mass > 0.0) {
+            double th = eng->maxth * eng->level;
+            if (bEnableBurnFuel) {
+                ts->mass -= th / (ts->efficiency * eng->isp) * dt;
+                if (ts->mass < 0.0)
+                    ts->mass = 0.0;
+            }
+            th *= computeAtmThrustScale(eng, surfParam.atmPressure);
+            F = eng->dir * th;
             thrust += F;
-            camom += glm::cross(F, th->pos);
+            camom += glm::cross(F, eng->pos);
+            bThrustEngaged = true;
+        } else {
+            // Run out of fuel so that
+            // reset levels to zero.
+            eng->level = 0.0;
+            eng->lvperm = 0.0;
         }
-        th->lvover = 0.0;
+        eng->lvover = 0.0;
     }
 
-    cflin += thrust;
+    if (bThrustEngaged)
+        cflin += thrust;
 }

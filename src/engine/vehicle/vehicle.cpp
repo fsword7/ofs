@@ -678,7 +678,7 @@ void Vehicle::updateBodyForces()
 {
     surface_t &sp = surfParam;
 
-    // updateThrustForces();
+    updateThrustForces();
     if (sp.isInAtomsphere) {
         // updateAerodynamicForces();
     }
