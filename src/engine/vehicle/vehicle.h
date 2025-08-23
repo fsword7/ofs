@@ -509,6 +509,8 @@ private:
     glm::dvec3 cflin;       // Collecting linear force
     glm::dvec3 camom;       // Collecting torque force
     glm::dvec3 thrust;      // linear thrust force
+    bool bActiveForce = false;
+    bool bCollisionUpdate = false;      // Collision detection flag
 
     // Collision detection parameters (touchdown points)
     std::vector<tdVertex_t> tpVertices; // touchdown vertices (vessel frame)

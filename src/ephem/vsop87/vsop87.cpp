@@ -151,7 +151,7 @@ void OrbitVSOP87::getEphemeris(double mjd, double *res)
 		for (int idx = 3; idx < 6; idx++)
 			res[idx] *= vscl;
 
-		// swap Y and Z for mapping left-handed cordinates
+		// swap Y and Z for mapping OpenGL coordinates
 		double tmp;
 		tmp = res[1]; res[1] = res[2]; res[2] = tmp;
 		tmp = res[4]; res[4] = res[5]; res[5] = tmp;

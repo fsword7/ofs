@@ -78,13 +78,24 @@ void Vehicle::configure(cjson &config, Celestial *object)
             oel.setup(mass, cbody->getMass(), ofsDate->getMJDReference());
             oel.start(ofsDate->getSimDeltaTime0(), rpos, rvel);
     
-            ofsLogger->info("{}: rpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
-                rpos.x, rpos.y, rpos.z, glm::length(rpos));
-            ofsLogger->info("{}: rvel {:.4f},{:.4f},{:.4f} - {:.4f} mph\n", getsName(),
-                rvel.x, rvel.y, rvel.z, glm::length(rvel) * 3600 * 0.621);
+            // ofsLogger->info("{}: rpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
+            //     rpos.x, rpos.y, rpos.z, glm::length(rpos));
+            // ofsLogger->info("{}: rvel {:.4f},{:.4f},{:.4f} - {:.4f} mph\n", getsName(),
+            //     rvel.x, rvel.y, rvel.z, glm::length(rvel) * 3600 * 0.621);
 
         } else {
-            rpos = myjson::getFloatArray<glm::dvec3, double>(config, "rpos");
+            // if (config.contains("location")) {
+            //     glm::dvec3 loc = myjson::getFloatArray<glm::dvec3, double>(config, "location");
+
+            //     double rad = cbody->getRadius();
+            //     loc.x = ofs::radians(loc.x);
+            //     loc.y = ofs::radians(loc.y);
+            //     loc.z += (loc.z < rad) ? rad : 0;
+
+            //     rpos = cbody->convertEquatorialToLocal(loc);
+            // } else
+                rpos = myjson::getFloatArray<glm::dvec3, double>(config, "rpos");
+
             rvel = myjson::getFloatArray<glm::dvec3, double>(config, "rvel");
             oel.setup(mass, cbody->getMass(), ofsDate->getMJDReference());
         }

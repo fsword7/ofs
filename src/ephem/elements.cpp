@@ -69,10 +69,12 @@ void OrbitalElements::updatePolar(double t, double &r, double &ta)
 
 void OrbitalElements::convertPolarToXYZ(double r, double ta, glm::dvec3 &R)
 {
+    // Swap Y and Z for mapping OpenGL coordinates
+    // Negate Z for right-handed rule
     double sinto = sin(ta + omega);
     double costo = cos(ta + omega);
     R.x = r * (cost*costo - sint*sinto*cosi);
-    R.z = r * (sint*costo + cost*sinto*cosi);
+    R.z = -r * (sint*costo + cost*sinto*cosi);
     R.y = r * (sinto*sini);
 }
 
@@ -156,8 +158,13 @@ void OrbitalElements::determine(const glm::dvec3 &pos, const glm::dvec3 &vel, do
     h = glm::length(H);
 
     // inclination
-    i = acos(H.z/h);
+    // Using -H.y instead of H.z for mapping OpenGL
+    // coordinates with right-handed rule.
+    i = acos(-H.y/h);
     sini = sin(i), cosi = cos(i);
+
+    // ofsLogger->info("R: {},{},{} V: {},{},{}\n", R.x, R.y, R.z, V.x, V.y, V.z);
+    // ofsLogger->info("H: {},{},{} h {} -> i {}\n", H.x, H.y, H.z, h, glm::degrees(i));
 
     le = a * e;     // linear eccentricity
     pd = a - le;    // periapsis distance
@@ -356,22 +363,26 @@ void OrbitalElements::start(double t, glm::dvec3 &pos, glm::dvec3 &vel)
 
     r = p / (1.0 + e*cos(tra));
 
+    // Swap Y and Z for mapping OpenGL coordinates
+    // Negate Z for right-handed rule
     sinto = sin(tra + omega);
     costo = cos(tra + omega);
     R.x = r * (cost*costo - sint*sinto*cosi);
-    R.y = r * (sint*costo + cost*sinto*cosi);
-    R.z = r * (sinto*sini);
-        
+    R.z = -r * (sint*costo + cost*sinto*cosi);
+    R.y = r * (sinto*sini);
+
     vx = -muh * sin(tra);
     vz = muh * (e + cos(tra));
     thetav = atan2(vz, vx);
-    v = sqrt(vx*vx + vz*vz); 
+    v = sqrt(vx*vx + vz*vz);
 
+    // Swap Y and Z for mapping OpenGL coordinates
+    // Negate Z for right-handed rule
     sinto = sin(thetav + omega);
     costo = cos(thetav + omega);
     V.x = v * (cost*costo - sint*sinto*cosi);
-    V.y = v * (sint*costo + cost*sinto*cosi);
-    V.z = v * (sinto*sini);
+    V.z = -v * (sint*costo + cost*sinto*cosi);
+    V.y = v * (sinto*sini);
 
     ml = ofs::posangle(ma + omegab);
     trl = ofs::posangle(tra + omegab);
@@ -399,13 +410,15 @@ void OrbitalElements::update(double t, glm::dvec3 &pos, glm::dvec3 &vel)
     vx = -muh * sin(ta);
     vz = muh * (e + cos(ta));
     thetav = atan2(vz, vx);
-    v = sqrt(vx*vx + vz*vz); 
+    v = sqrt(vx*vx + vz*vz);
 
+    // Swap Y and Z for mapping OpenGL coordinates
+    // Negate Z for right-handed rule
     sinto = sin(thetav + omega);
     costo = cos(thetav + omega);
     V.x = v * (cost*costo - sint*sinto*cosi);
-    V.y = v * (sint*costo + cost*sinto*cosi);
-    V.z = v * (sinto*sini);
+    V.z = -v * (sint*costo + cost*sinto*cosi);
+    V.y = v * (sinto*sini);
 
     pos = R / M_PER_KM;
     vel = V / M_PER_KM;

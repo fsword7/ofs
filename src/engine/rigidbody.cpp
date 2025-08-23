@@ -125,13 +125,19 @@ void RigidBody::update(bool force)
 
         // Updating orbital path
         //calculateEncke();
+        // ofsLogger->info("RigidBody - before\n");
+        // ofsLogger->info("{}: cpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
+        //     cpos.x, cpos.y, cpos.z, glm::length(cpos));
+        // ofsLogger->info("{}: cvel {:.4f},{:.4f},{:.4f} - {:.4f} mph\n", getsName(),
+        //     cvel.x, cvel.y, cvel.z, glm::length(cvel) * 3600 * 0.621);
+
         oel.update(ofsDate->getSimTime1(), cpos, cvel);
         // oel.calculate(cpos, cvel, ofsDate->getSimTime1());
 
-        // ofsLogger->info("RigidBody - updates\n");
-        // ofsLogger->info("{}: rpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
+        // ofsLogger->info("RigidBody - after\n");
+        // ofsLogger->info("{}: cpos {:.3f},{:.3f},{:.3f} ({:.3f})\n", getsName(),
         //     cpos.x, cpos.y, cpos.z, glm::length(cpos));
-        // ofsLogger->info("{}: rvel {:.4f},{:.4f},{:.4f} - {:.4f} mph\n", getsName(),
+        // ofsLogger->info("{}: cvel {:.4f},{:.4f},{:.4f} - {:.4f} mph\n", getsName(),
         //     cvel.x, cvel.y, cvel.z, glm::length(cvel) * 3600 * 0.621);
 
         s1.pos = cbody->s1.pos + cpos;

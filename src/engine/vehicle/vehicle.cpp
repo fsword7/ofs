@@ -587,11 +587,11 @@ void Vehicle::initDocked()
 
 void Vehicle::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt)
 {
-    glm::dvec3 F = Fadd;
-    glm::dvec3 M = Ladd;
+    glm::dvec3 F = cflin;
+    glm::dvec3 M = camom;
 
     // Check for surface forces and collision detection
-    // addSurfaceForces(F, M, state, tfrac, dt);
+    bCollisionUpdate |= addSurfaceForces(F, M, state, tfrac, dt);
 
     // Computing with N-body gravitional pull.
     RigidBody::getIntermediateMoments(acc, am, state, tfrac, dt);
@@ -620,7 +620,7 @@ bool Vehicle::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVecto
 
     // Check any touchdown points to touch ground
     double tdymin = std::numeric_limits<double>::infinity();
-    int rlod = int(32.0 - log(std::max(sp.alt0, 0.1))*(1.0 / log(2.0)));
+    int rlod = int(21.0 - log(std::max(sp.alt0, 0.1))*(1.0 / log(2.0)));
     glm::dmat3 T = glm::transpose(ps.R) * s.R;
     glm::dvec3 shift = glm::transpose(ps.R) * (s.pos - ps.pos);
 
@@ -639,7 +639,7 @@ bool Vehicle::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVecto
     // No, did not touch ground
     if (tdymin >= 0.0)
         return false;
-
+    ofsLogger->info("Collision detected!\n");
 
     return false;
 }
@@ -682,19 +682,18 @@ void Vehicle::updateBodyForces()
     if (sp.isInAtomsphere) {
         // updateAerodynamicForces();
     }
+
+    bActiveForce |= (cflin.x || cflin.y || cflin.z ||
+                     camom.x || camom.y || camom.z);
 }
 
 void Vehicle::update(bool force)
 {
     surface_t &sp = surfParam;
 
-    if (fsType == fsFlight)
-    {
-        // ofsLogger->info("Yes, Orbiting here\n");
+    if (fsType == fsFlight) {
         RigidBody::update(force);
-    } 
-    else if (fsType == fsLanded)
-    {
+    } else if (fsType == fsLanded) {
         // ofsLogger->info("{}: S0 {}, {}, {}\n", cbody->getsName(),
         //     cbody->s0.pos.x, cbody->s0.pos.y, cbody->s0.pos.z);
         // ofsLogger->info("{}: S1 {}, {}, {} Flag: {}\n", cbody->getsName(),
@@ -711,12 +710,11 @@ void Vehicle::update(bool force)
         // ofsLogger->info("{}: V {},{},{}\n", cbody->getsName(),
         //     ofs::degrees(loc.x), ofs::degrees(loc.y), loc.z);
 
-        // {
+        // if (bActiveForce) {
         //     // Whenever the user engages engine,
-        //     // switch to flight status
+        //     // change status to orbital flight.
         //     fsType = fsFlight;
 
-        //     s1.vel += irvel;
         //     brpos = s1.pos, irpos = {};
         //     brvel = s1.vel, irvel = {};
         //     s1.omega = {};
@@ -729,10 +727,11 @@ void Vehicle::update(bool force)
 
     // Reset linear and angular forces
     // for next update phase
-    F = Fadd;
-    L = Ladd;
-    F = { 0, 0, 0 };
-    L = { 0, 0, 0 };
+    flin += cflin;
+    amom += camom;
+    cflin = {};
+    camom = {};
+    bActiveForce = false;
 
     // Update mass for fuel consumption
     updateMass();
