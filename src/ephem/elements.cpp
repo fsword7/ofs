@@ -159,7 +159,8 @@ void OrbitalElements::determine(const glm::dvec3 &pos, const glm::dvec3 &vel, do
 
     // inclination
     // Using -H.y instead of H.z for mapping OpenGL
-    // coordinates with right-handed rule.
+    // coordinates (swapped Y/Z) with right-handed 
+    // rule.
     i = acos(-H.y/h);
     sini = sin(i), cosi = cos(i);
 
@@ -183,6 +184,9 @@ void OrbitalElements::determine(const glm::dvec3 &pos, const glm::dvec3 &vel, do
         n = sqrt(mu/(-a*a*a));
     }
 
+    // TODO: Fix retro orbit issues
+    //       (inclination 180 degrees)
+
     // longitude of ascending node
     if (i > I_NOINC_LIMIT) {
         double tmp = 1.0/std::hypot(H.z, H.x);
@@ -190,10 +194,13 @@ void OrbitalElements::determine(const glm::dvec3 &pos, const glm::dvec3 &vel, do
         theta = acos(N.x);
         if (N.z < 0.0)
             theta = pi2 - theta;
-    } else {
+        // ofsLogger->info("tmp {} N {},{},{} theta {}\n",
+        //     tmp, N.x, N.y, N.z, theta);
+    } else if (i <= I_NOINC_LIMIT) {
         N = { 1.0, 0.0, 0.0 };
         theta = 0.0;
     }
+
     sint = sin(theta), cost = cos(theta);
 
     // argument of periapsis

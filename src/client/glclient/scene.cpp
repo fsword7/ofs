@@ -165,7 +165,7 @@ void Scene::render(Player *player)
 
     for (auto sun : nearStars)
     {
-        glLogger->info("Sun: {}\n", sun->getsName());
+        // glLogger->info("Sun: {}\n", sun->getsName());
 
         if (!sun->hasSystem())
             continue;

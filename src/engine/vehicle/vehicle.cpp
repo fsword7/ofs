@@ -527,6 +527,19 @@ void Vehicle::initLanded(Celestial *object, const glm::dvec3 &loc, double dir)
     fsType = fsLanded;
 }
 
+void Vehicle::initFlight(const glm::dvec3 &loc, const glm::dvec2 &att,
+    double speed, double dir)
+{
+    glm::dvec3 lloc = loc;
+
+    double rad = cbody->getRadius();
+    lloc.z += (lloc.z < rad) ? rad : 0;
+
+    glm::dvec3 pos = cbody->convertEquatorialToLocal(lloc);
+
+    fsType = fsFlight;
+}
+
 void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const glm::dvec3 &arot, const glm::dvec3 *vrot)
 {
     // Assign current position/velocity
@@ -640,8 +653,102 @@ bool Vehicle::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVecto
     if (tdymin >= 0.0)
         return false;
     ofsLogger->info("Collision detected!\n");
+    if (!enableGroundContact)
+        return true;
 
-    return false;
+    glm::dvec3 d1 = tpVertices[0].pos - (tpVertices[1].pos + tpVertices[2].pos) * 0.5;
+    glm::dvec3 hn = {};
+    glm::dvec3 d1h = glm::normalize(d1 - hn * glm::dot(d1, hn));
+    glm::dvec3 d2h = glm::cross(hn, d1h);
+
+    double gvn, gvlng, gvlat;
+    double tflng = 0;
+    double tflat = 0;
+    double tfn = 0;
+    double tfnu = 0;
+    double mu;
+    double massdt = mass/dt;
+
+    // if (bDynamicGroundContact) {
+    //     for (auto tp : tpVertices) {
+    //         if (tp.tdy < 0.0) {
+
+    //             glm::dvec3 gv = sp.gvlocal + glm::cross(tp.pos, s.omega);
+    //             gvn = glm::dot(gv, hn);
+    //             gvlng = glm::dot(gv, d1h);
+    //             gvlat = glm::dot(gv, d2h);
+
+    //             tp.fn = -tp.tdy * tp.stiffness;
+    //             double maxpress = std::min(-tp.tdy, 0.1)*tp.stiffness;
+    //             // if (tp.bTire) {
+    //             // } else {
+    //             // }
+    //             tp.flng = mu * maxpress;
+    //             if (gvlng > 0.0)
+    //                 tp.flng = -tp.flng;
+    //             tflng += tp.flng;
+
+    //             mu = tp.mu;
+    //             tp.flat = mu * maxpress;
+    //             if (fabs(gvlat) < 10.0)
+    //                 tp.flat *= sqrt(fabs(gvlat*0.1));
+    //             if (gvlat > 0.0)
+    //                 tp.flat = -tp.flat;
+    //             tflat += tp.flat;
+
+    //             // Ecomp -= tp.fn * tp.tdy * 0.5;
+    //             tfnu += tp.fn;
+    //             tp.fn -= gvn*tp.damping;
+    //             tfn += tp.fn;
+
+    //         } else {
+    //             tp.flng = 0;
+    //             tp.flat = 0;
+    //             tp.fn = 0;
+    //         }
+    //     }
+
+    //     gvlng = glm::dot(sp.gvlocal, d1h);
+    //     gvlat = glm::dot(sp.gvlocal, d2h);
+    //     gvn = glm::dot(sp.gvlocal, hn);
+
+    //     double mflng = -gvlng * massdt;
+    //     if ((mflng >= 0.0 && tflng > mflng) ||
+    //         (mflng <= 0.0 && tflng < mflng)) {
+    //         for (auto tp : tpVertices)
+    //             tp.flng *= mflng/tflng;
+    //         tflng = mflng;
+    //     }
+
+    //     double mflat = -gvlat * massdt;
+    //     if ((mflat >= 0.0 && tflat > mflat) ||
+    //         (mflat <= 0.0 && tflat < mflat)) {
+    //         for (auto tp : tpVertices)
+    //             tp.flat *= mflat/tflat;
+    //         tflat = mflat;
+    //     }
+
+    //     glm::dvec3 Fsurf = hn*tfn + d1h*tflng + d2h*tflat;
+    //     glm::dvec3 Msurf;
+
+    //     for (auto tp : tpVertices) {
+    //         int j = tp.tidx;
+    //         Msurf += glm::cross(hn*tpVertices[j].flng + d2h*tpVertices[j].flat, tpVertices[j].pos);
+    //     }
+
+    //     glm::dvec3 dA = computeInverseEulerFull(Msurf/mass, s.omega)*dt*dt;
+    //     double da = glm::length(dA);
+    //     static double damax = 0.0;
+    //     if (da > damax)
+    //         damax = da;
+    //     if (da > glm::radians(10.0))
+    //         Msurf *= glm::radians(10.0)/da;
+
+    //     acc += Fsurf;
+    //     am += Msurf;
+    // }
+
+    return true;
 }
 
 void Vehicle::updateMass()

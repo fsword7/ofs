@@ -87,6 +87,11 @@ struct surface_t
 
 using csurface_t = const surface_t;
 
+struct windprm_t {
+    double     tpert;   // time for wind perturbation vector
+    glm::dvec3 vpert;   // wind perturbation vector
+};
+
 enum airfoilType_t
 {
     afVertical,           // lift is vetical (elevator, aileron, etc)
@@ -243,11 +248,15 @@ struct tdVertex_t
     double  damping;        // suspension - damping
     double  compression;    // suspension - compression factor
 
-    double mulat, mulng;    // Lateral/Longitudinal friction
+    double mulat, mulng;    // Longitudinal friction
     
+    bool isWheel;
+
     // surface force parameters
     double tdy;
     double fn, flat, flng;
+
+    tdVertex_t *tdx = nullptr;
 };
 
 // docking port definition
@@ -383,6 +392,7 @@ public:
 
     void initLanded(Object *object, double lat, double lng, double dir);
     void initLanded(Celestial *object, const glm::dvec3 &loc, double dir);
+    void initFlight(const glm::dvec3 &loc, const glm::dvec2 &att, double speed, double dir);
     void initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const glm::dvec3 &rot, const glm::dvec3 *vrot);
     void initDocked();
 
@@ -511,11 +521,13 @@ private:
     glm::dvec3 thrust;      // linear thrust force
     bool bActiveForce = false;
     bool bCollisionUpdate = false;      // Collision detection flag
+    bool enableGroundContact = false;
 
     // Collision detection parameters (touchdown points)
     std::vector<tdVertex_t> tpVertices; // touchdown vertices (vessel frame)
     glm::dvec3 tpNormal;                   // upward normal of touchdown plane (vessel frame)
     glm::dvec3 tpCGravity;                 // center of gravity projection
+    int tpTires;
     double  cogElev;
     bool bSteeringEnable = false;
     

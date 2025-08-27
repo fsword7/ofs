@@ -28,6 +28,16 @@
             "rpos": [ 6628.0, 0, 0 ],
             "rvel": [ 0, 0, 7.8 ]
         }
+        // {
+        //     "name": "SG-01:Space Glider",
+        //     "module": "glider",
+        //     "status": "flight",
+        //     "target": "Sol/Earth",
+        //     "location": [ 28.632307, -80.705774, 10 ],
+        //     "attitude": [ 0, 0 ],
+        //     "airspeed": 200,
+        //     "heading": 150
+        // }
     ],
 
     "huds": [
@@ -38,17 +48,22 @@
     "player": {
         "mode": {
             // Space plane cockpit
-            "type": "cockpit",
-            "target": "SG-01"
+            // "type": "cockpit",
+            // "target": "SG-01"
 
             // Observe rotating Earth
-            // "type": "target-sync",
-            // "target": "Sol/Earth", "sync-target": "Sol",
-            // "direction": [0, 0, 1], "scale": 4
+            "type": "target-sync",
+            "target": "Sol/Earth", "sync-target": "Sol",
+            "direction": [0, 0, 1], "scale": 4
 
             // Observe Luna (moon)
             // "type": "target-sync",
             // "target": "Sol/Earth/Luna", "sync-target": "Sol/Earth",
+            // "direction": [0, 0, 1], "scale": 4
+
+            // Observe Mars
+            // "type": "target-sync",
+            // "target": "Sol/Mars", "sync-target": "Sol",
             // "direction": [0, 0, 1], "scale": 4
 
             // Observe Cape Kennedy Space Force

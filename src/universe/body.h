@@ -10,6 +10,7 @@
 #include "universe/atmo.h"
 
 class Base;
+struct windprm_t;
 
 struct GroundPOI
 {
@@ -41,7 +42,8 @@ public:
 
     double getElevation(glm::dvec3 ploc);
     glm::dvec3 getGroundVelocity(const glm::dvec3 &ploc);
-    glm::dvec3 getWindVelocity(const glm::dvec3 &ploc, double alt);
+    glm::dvec3 getWindVelocity(const glm::dvec3 &ploc, double alt,
+        int frame = 0, windprm_t *prm = nullptr, double *wspd = nullptr);
 
     void getAtmParam(const glm::dvec3 &loc, atmprm_t *prm) const;
 
@@ -63,6 +65,7 @@ private:
 
     Atmosphere *atm = nullptr;
     atmconst_t atmc;
+    bool enableWindVelocity = false;
 
     std::vector<Base *> baseList;
     poiList_t poiList;

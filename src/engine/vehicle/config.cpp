@@ -84,18 +84,7 @@ void Vehicle::configure(cjson &config, Celestial *object)
             //     rvel.x, rvel.y, rvel.z, glm::length(rvel) * 3600 * 0.621);
 
         } else {
-            // if (config.contains("location")) {
-            //     glm::dvec3 loc = myjson::getFloatArray<glm::dvec3, double>(config, "location");
-
-            //     double rad = cbody->getRadius();
-            //     loc.x = ofs::radians(loc.x);
-            //     loc.y = ofs::radians(loc.y);
-            //     loc.z += (loc.z < rad) ? rad : 0;
-
-            //     rpos = cbody->convertEquatorialToLocal(loc);
-            // } else
-                rpos = myjson::getFloatArray<glm::dvec3, double>(config, "rpos");
-
+            rpos = myjson::getFloatArray<glm::dvec3, double>(config, "rpos");
             rvel = myjson::getFloatArray<glm::dvec3, double>(config, "rvel");
             oel.setup(mass, cbody->getMass(), ofsDate->getMJDReference());
         }
@@ -125,6 +114,29 @@ void Vehicle::configure(cjson &config, Celestial *object)
         // ofsLogger->info("{}: rpos {},{},{}\n", getsName(), rpos.x, rpos.y, rpos.z);
         // ofsLogger->info("{}: rvel {},{},{}\n", getsName(), rvel.x, rvel.y, rvel.z);
         initOrbiting(rpos, rvel, arot, &vrot);
+
+    } else if (stName == "flight") {
+        glm::dvec3 loc;
+        glm::dvec2 att;
+
+        if (config.contains("location")) {
+            loc = myjson::getFloatArray<glm::dvec3, double>(config, "location");
+            loc.x = ofs::radians(loc.x);
+            loc.y = ofs::radians(loc.y);
+        }
+
+        if (config.contains("attitude")) {
+            att = myjson::getFloatArray<glm::dvec2, double>(config, "attitude");
+            att.x = ofs::radians(att.x); // pitch
+            att.y = ofs::radians(att.y); // bank
+        }
+
+        double speed = myjson::getFloat<double>(config, "airpseed");
+        double heading = myjson::getFloat<double>(config, "heading");
+
+        speed = (speed / M_PER_KM) / 3600;
+
+        initFlight(loc, att, speed, heading);
 
     } else {
         ofsLogger->info("{}: Unknown flight status: {} - aborted\n",

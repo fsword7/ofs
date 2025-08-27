@@ -171,7 +171,7 @@ public:
         return { xz*clng, rad*slat, xz*-slng };
     }
 
-    inline glm::dvec3 convertEquatorialToLocal(glm::dvec3 &epos) const
+    inline glm::dvec3 convertEquatorialToLocal(const glm::dvec3 &epos) const
     {
         return convertEquatorialToLocal(epos.x, epos.y, epos.z);
         // double slat = sin(epos.x), clat = cos(epos.x);

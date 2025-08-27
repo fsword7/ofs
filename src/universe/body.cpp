@@ -5,6 +5,7 @@
 
 #include "main/core.h"
 #include "engine/base.h"
+#include "engine/vehicle/vehicle.h"
 #include "universe/body.h"
 #include "utils/json.h"
 
@@ -140,8 +141,21 @@ glm::dvec3 CelestialPlanet::getGroundVelocity(const glm::dvec3 &ploc)
     return {-vel*sin(lng), 0.0, -vel*cos(lng) };
 }
 
-glm::dvec3 CelestialPlanet::getWindVelocity(const glm::dvec3 &ploc, double alt)
+glm::dvec3 CelestialPlanet::getWindVelocity(const glm::dvec3 &ploc, double alt,
+    int frame, windprm_t *prm, double *wspd)
 {
+    if (hasAtmosphere() && enableWindVelocity) {
+        glm::dvec3 wvel0[4];
+
+        // double alt0 = floor(alt);
+        // t = alt-alt0;
+        // h00 = 2.0*t3 - 3.0*t2 + 1.0;
+        // h10 = t3 - 2.0*t2 + t;
+        // h01 = -2.0*t3 + 3.0*t2;
+        // h11 = t3-t2;
+
+    }
+
     return {0, 0, 0};
 }
 

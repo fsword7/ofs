@@ -26,7 +26,7 @@
     "LAN": 1.71817749,
     "LAN-MJD": 51544.5,
     "obliquity": 0.02692416821,
-    "sid-rot-offset": 4.769465382,
+    "sid-rot-offset": 1.6278727284, // 93.270236922 //4.769465382,
     "sid-rot-period": 2360588.15
 
     // SidRotPeriod (days): 27.3216221
