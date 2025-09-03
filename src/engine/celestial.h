@@ -48,7 +48,6 @@ public:
     virtual ~Celestial();
 
     void setup(cjson &config);
-
     void updateCelestial(bool force);
 
     inline celType getCelestialType() const { return cbType; }
@@ -248,7 +247,8 @@ private:
     double      precT;              // precission period (days) or 0 if infinite
     double      precOmega;          // precission angular velocity [rad/day]
 
-    double      Dphi = 0.0;         // Rotation offset at t=0.
+    double      Dphi0 = 0.0;        // Rotation offset at t=0.
+    double      Dphi = 0.0;         // Rotation offset at current time.
     double      rotT = 0.0;         // Rotation Period
     double      rotOmega = 0.0;     // Angular velocity
 

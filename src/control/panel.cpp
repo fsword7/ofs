@@ -87,13 +87,6 @@ void Panel::resize(int w, int h)
             huds[idx]->resize(w, h);
 }
 
-// personal observer
-void Panel::togglePersonalPanelMode()
-{
-
-}
-
-
 void Panel::createPanel(int mode)
 {
     switch (mode)
@@ -130,6 +123,22 @@ void Panel::togglePanelMode()
     panel = panels[panelMode];
 }
 
+void Panel::togglePlanetariumPanelMode()
+{
+    if (panelMode == 0) {
+        panel = panels[PANEL_PLANET];
+        panelMode = PANEL_PLANET;
+    } else {
+        panel = nullptr;
+        panelMode = PANEL_NONE;
+    }
+}
+
+// personal observer
+void Panel::togglePersonalPanelMode()
+{
+
+}
 
 void Panel::setHUDMode(int mode)
 {
@@ -181,7 +190,7 @@ void Panel::render(const Player &player)
 
 void Panel::drawHUD(Player &player)
 {
-    if (player.isExternal())
+    if (player.isExternal() && panelMode != PANEL_PLANET)
         return;
 
     switch (panelMode) {

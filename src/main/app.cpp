@@ -153,6 +153,8 @@ void CoreApp::openSession(json &config)
     }
 
     panel->init(config);
+    if (player->isExternal())
+        panel->setPanelMode(PANEL_PLANET);
 
     // Finalize all vehicles after creation
     universe->finalizePostCreation();
@@ -533,6 +535,7 @@ void CoreApp::keyBufferedSystem(char32_t key, int mods)
 {
     if (stateKey[ofs::keyF5] || stateKey[ofs::key5])
         guimgr->showControl<DialogCamera>();
+
     if (player->isInternal()) {
         if (altStateKey[ofs::keyHome])
             player->resetCockpitDir();
@@ -543,10 +546,15 @@ void CoreApp::keyBufferedSystem(char32_t key, int mods)
         if (stateKey[ofs::keyH])
             panel->switchHUDMode();
     }
-    if (player->isExternal() ||
-        player->getCameraMode() == camPersonalObserver) {
-        if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
-            panel->togglePersonalPanelMode();
+
+    if (player->isExternal()) {
+        if (player->getCameraMode() == camPersonalObserver) {
+            if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
+                panel->togglePersonalPanelMode();
+        } else {
+             if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
+                panel->togglePlanetariumPanelMode();           
+        }
     }
 }
 

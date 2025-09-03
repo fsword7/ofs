@@ -42,6 +42,7 @@ public:
     inline Pen *getHUDPen() const   { return hudPen; }
 
     void togglePanelMode();
+    void togglePlanetariumPanelMode();
     void togglePersonalPanelMode();
     void createPanel(int mode);
     void setPanelMode(int mode);

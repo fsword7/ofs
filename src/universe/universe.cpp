@@ -110,6 +110,7 @@ void Universe::start()
 {
     // Initiializing solar systems with time
     for (auto &psys : systemList) {
+        psys->reset();
         psys->update(true);
         psys->finalizeUpdate();
     }

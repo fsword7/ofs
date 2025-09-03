@@ -153,6 +153,12 @@ glm::dvec3 pSystem::addGravityIntermediate(const glm::dvec3 &gpos, double step, 
     return acc;
 }
 
+void pSystem::reset()
+{
+    for (auto body : bodies)
+        body->setupRotation();
+}
+
 void pSystem::update(bool force)
 {
     // Enable update states

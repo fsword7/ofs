@@ -16,7 +16,6 @@ Celestial::Celestial(cjson &config, ObjectType type, celType ctype)
 : Object(config, type), cbType(ctype)
 {
     setup(config);
-    setupRotation();
 }
 
 Celestial::~Celestial()
@@ -27,7 +26,6 @@ Celestial::~Celestial()
 
 void Celestial::setup(cjson &config)
 {
-
     if (getType() == objCelestialBody || getType() == objCelestialStar)
     {
         // Set up precession parameters
@@ -39,12 +37,8 @@ void Celestial::setup(cjson &config)
         mjd_rel = myjson::getFloat<double>(config, "LAN-MJD", astro::MJD2000);
 
         // Set up rotation parameters
-        Dphi = myjson::getFloat<double>(config, "sid-rot-offset");
-        rotT = myjson::getFloat<double>(config, "sid-rot-period");
-
-        Dphi += (ofsDate->getMJD0() - oel.getMJDEpoch() * ((86400.0/rotT)*pi2));
-        Dphi += Lrel0 * cos(eps_rel);
-        Dphi = fmod(Dphi, pi2);
+        Dphi0 = myjson::getFloat<double>(config, "sid-rot-offset");
+        rotT  = myjson::getFloat<double>(config, "sid-rot-period");
 
         str_t epName = myjson::getString<str_t>(config, "orbit");
         if (!epName.empty())
@@ -65,6 +59,11 @@ void Celestial::setup(cjson &config)
 
 void Celestial::setupRotation()
 {
+    // Dphi = Dphi0 + (ofsDate->getMJD0() - oel.getMJDEpoch()) * (86400.0/rotT) * pi2;
+    Dphi = Dphi0 + (ofsDate->getMJD0() - mjd_rel) * (86400.0/rotT) * pi2;
+    Dphi += Lrel0 * cos(eps_rel);
+    Dphi = fmod(Dphi, pi2);
+
     Rref = glm::dmat3();
     if (eps_ref)
     {

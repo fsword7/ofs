@@ -49,6 +49,7 @@ public:
     static bool loadPlanet(cstr_t &cbName, pSystem *psys, fs::path &cbPath);
     static bool loadSystem(Universe *univ, cstr_t &sysName, const fs::path &path);
 
+    void reset();
     void update(bool force);
     void finalizeUpdate();
     void finalizePostCreation();
