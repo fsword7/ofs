@@ -20,9 +20,10 @@ struct ObjectProperties;
 
 struct Vertex
 {
-    float vx, vy, vz;   // Vertex position
-    float nx, ny, nz;   // Normal position
-    float tu, tv;       // Texture coordinates
+    float vxh, vyh, vzh;    // Vertex position (high)
+    float vxl, vyl, vzl;    // Vertex position (low)
+    float nx, ny, nz;       // Normal position
+    float tu, tv;           // Texture coordinates
 };
 
 struct Mesh
@@ -116,6 +117,8 @@ public:
     int16_t *getElevationData();
 
 private:
+    void getTwoFloats(const glm::dvec3 &val, glm::fvec3 &high, glm::fvec3 &low);
+
     SurfaceManager &mgr;
 
     tileType type = tileInvalid;
@@ -227,6 +230,9 @@ public:
     
         glm::dmat4  dmWorld;        // model matrix
         glm::dmat4  dmViewProj;     // view/projection matrix
+        glm::dmat4  dmView;         // view matrix
+        glm::dmat4  dmProj;         // projection matrix
+        glm::dmat4  dmRTE;          // model/view RTE matrix
         glm::dvec2  clip;           // camera clip for logarthmic depth
    
     } prm;
@@ -249,6 +255,10 @@ private:
     mat4Uniform uViewProj;
     mat4Uniform uView;
     mat4Uniform uModel;
+    mat4Uniform uRTE;
+
+    vec3Uniform uCamEyeHigh;
+    vec3Uniform uCamEyeLow;
 
     floatUniform uTime;
     floatUniform uRadius;
@@ -269,7 +279,7 @@ private:
     float dTime = 0.0;
     
     ObjectType objType = objUnknown;
-    double     objSize = 0.0;
+    double     objSize = 1.0;
     double     resScale;
     double     resBias;
 

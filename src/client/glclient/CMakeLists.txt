@@ -66,6 +66,7 @@ set (OGL_SHADERS
     shaders/lib/logdepth.glsl
     shaders/lib/snoise3.glsl
     shaders/lib/snoise4.glsl
+    shaders/atmo.glsl
     shaders/body.fs
     shaders/body.vs
     shaders/corona.fs

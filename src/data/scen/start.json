@@ -69,7 +69,7 @@
             // Observe Cape Kennedy Space Force
             // "type": "target-relative",
             // "target": "Sol/Earth",
-            // "location": [ 28.632307, -80.705774, 50 ]
+            // "location": [ 28.632307, -80.705774, 25000 /* 50 */ ]
 
             // On Runway 15 at Cape Kennedy Space Force
             // "type": "personal-observer",
