@@ -182,11 +182,11 @@ void addLight(in lightSource light, in vec3 normal, in vec3 fragPos, in vec3 vie
     in float specPower, inout vec3 diffuse, inout vec3 specular)
 {
     vec3 lightDir = normalize(light.spos - fragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
 
-    float diff = clamp(dot(normal, lightDir), 0.0, 1.0);
-    float spec = 0.0;
+    float diff = max(dot(normal, lightDir), 0.0);
+    float spec = max(dot(reflectDir, viewDir), 0.0);
 
-    // vec3 reflectDir = reflect(-lightDir, normal);
     // if (specPower != 0 && diff > 0)
     //     spec = pow(clamp(dot(viewDir, reflectDir), 0.0, 1.0), specPower);
 
@@ -210,7 +210,7 @@ void main()
         addLight(lights[idx], norm, fragPos, vdir,
             0.0, diff, spec);
 
-    fragColor.rgb *= diff;
+    fragColor.rgb *= diff + spec;
 
     gl_FragDepth = getDepth(uCamClip.y, uCameraK);
 }

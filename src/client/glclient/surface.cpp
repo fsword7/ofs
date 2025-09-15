@@ -1017,34 +1017,34 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
         }
     }
 
-    // if (elev != nullptr)
-    // {
-    //     glm::dmat3 lhrot;
-    //     int en;
+    if (elev != nullptr)
+    {
+        glm::dmat3 lhrot;
+        int en;
 
-    //     for (int y = 0, n = 0; y <= grid; y++)
-    //     {
-    //         lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
-    //         // slat = sin(lat), clat = cos(lat);
-    //         for (int x = 0; x <= grid; x++)
-    //         {
-    //             lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
-    //             // slng = sin(lng+pi/2), clng = cos(lng+pi/2);
-    //             en = (y+1)*ELEV_STRIDE + (x+1);
+        for (int y = 0, n = 0; y <= grid; y++)
+        {
+            lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
+            // slat = sin(lat), clat = cos(lat);
+            for (int x = 0; x <= grid; x++)
+            {
+                lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
+                // slng = sin(lng+pi/2), clng = cos(lng+pi/2);
+                en = (y+1)*ELEV_STRIDE + (x+1);
 
-    //             nml = { escale*(elev[en-1]-elev[en+1]),
-    //                     escale*(elev[en+ELEV_STRIDE]-elev[en-ELEV_STRIDE]),
-    //                     2.0};
-    //             nml = glm::normalize(nml);
-    //             nml = ofs::xRotate(lat) * ofs::hRotate(lng-pi) * nml;
+                nml = { escale*(elev[en-1]-elev[en+1]),
+                        escale*(elev[en+ELEV_STRIDE]-elev[en-ELEV_STRIDE]),
+                        2.0};
+                nml = glm::normalize(nml);
+                nml = ofs::xRotate(lat) * ofs::hRotate(lng-pi) * nml;
 
-    //             vtx[n].nx = nml.x;
-    //             vtx[n].ny = nml.y;
-    //             vtx[n].nz = nml.z;
-    //             n++;
-    //         }
-    //     }
-    // }
+                vtx[n].nx = nml.x;
+                vtx[n].ny = nml.y;
+                vtx[n].nz = nml.z;
+                n++;
+            }
+        }
+    }
 
     for (int idx = 0, cvtx = nvtx; idx <= grid; idx++)
         vtx[cvtx++] = vtx[idx*(grid+1) + ((ilng & 1) ? grid : 0)];
