@@ -1,4 +1,4 @@
-#version 430
+#version 430 core
 layout (triangles) in;
 layout (line_strip, max_vertices = 6) out;
 
@@ -10,10 +10,10 @@ uniform mat4 uProj;
 
 void generateLine(int idx)
 {
-    gl_Position = uProj * vs[idx].gl_Position;
+    gl_Position = uProj * gl_in[idx].gl_Position;
     EmitVertex();
 
-    gl_Position = uProj * (vs[idx].gl_Position + 
+    gl_Position = uProj * (gl_in[idx].gl_Position + 
         vec4(vs[idx].normal, 0.0) * MAGNITUDE);
     EmitVertex();
 

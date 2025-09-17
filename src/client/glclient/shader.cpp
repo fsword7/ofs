@@ -131,6 +131,7 @@ void ShaderSource::dump(cstr_t &source)
     bool newLine = true;
     int lineNumber = 0;
 
+    glLogger->verbose("Source: {:d} bytes\n", source.length());
     for (int idx = 0; idx < source.length(); idx++)
     {
         if (newLine == true)
@@ -228,12 +229,12 @@ ShaderStatus ShaderSource::create(ShaderManager *shmgr, ShaderType type, const s
     ShaderStatus status;
     str_t log;
 
-    // for (unsigned int idx = 0; idx < source.size(); idx++)
-    //     newShader->dump(source[idx]);
-
     status = newShader->compile(source);
     if (status != shrSuccessful)
     {
+        for (unsigned int idx = 0; idx < source.size(); idx++)
+            newShader->dump(source[idx]);
+
         log = newShader->getLogInfo();
         glLogger->verbose("Compiling shader source error:\n\n{}\n", log);
         delete newShader;

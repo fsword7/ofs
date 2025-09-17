@@ -244,6 +244,7 @@ private:
     bool bPolygonLines = false;
 
     ShaderProgram *pgm = nullptr;
+    ShaderProgram *pgmNormals = nullptr;
     ShaderProgram *pgmStar = nullptr;
     ShaderProgram *pgmCorona = nullptr;
     ShaderProgram *pgmGlow = nullptr;

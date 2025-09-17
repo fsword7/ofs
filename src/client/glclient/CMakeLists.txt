@@ -73,6 +73,9 @@ set (OGL_SHADERS
     shaders/corona.vs.glsl
     shaders/line.fs.glsl
     shaders/line.vs.glsl
+    shaders/normals.fs.glsl
+    shaders/normals.gs.glsl
+    shaders/normals.vs.glsl
     shaders/point.fs.glsl
     shaders/point.vs.glsl
     shaders/star.fs.glsl

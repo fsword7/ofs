@@ -531,6 +531,8 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         if (pgm == nullptr)
             return;
 
+        pgmNormals = shmgr.createShader("normals", glslNormals, ARRAY_SIZE(glslNormals));
+
         pgm->use();
 
         pgm->initLightParameters();
