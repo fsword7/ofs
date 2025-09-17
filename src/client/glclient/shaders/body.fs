@@ -181,14 +181,12 @@ out vec4 fragColor;
 void addLight(in lightSource light, in vec3 normal, in vec3 fragPos, in vec3 viewDir,
     in float specPower, inout vec3 diffuse, inout vec3 specular)
 {
+    float diff, spec;
     vec3 lightDir = normalize(light.spos - fragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
 
-    float diff = max(dot(normal, lightDir), 0.0);
-    float spec = max(dot(reflectDir, viewDir), 0.0);
-
-    // if (specPower != 0 && diff > 0)
-    //     spec = pow(clamp(dot(viewDir, reflectDir), 0.0, 1.0), specPower);
+    diff = clamp(dot(normal, lightDir), 0.0, 1.0);
+    spec = pow(clamp(dot(viewDir, -reflectDir), 0.0, 1.0), specPower);
 
     diffuse += light.diffuse * diff;
     specular += light.diffuse * spec;
@@ -208,7 +206,7 @@ void main()
 
     for (int idx = 0; idx < unLights; idx++)
         addLight(lights[idx], norm, fragPos, vdir,
-            0.0, diff, spec);
+            1.0, diff, spec);
 
     fragColor.rgb *= diff + spec;
 

@@ -6,7 +6,7 @@ layout (location = 2) in vec3 vNormal;
 layout (location = 3) in vec2 vTexCoord;
 
 uniform mat4 uViewProj;
-// uniform mat4 uView;
+uniform mat4 uView;
 uniform mat4 uModel;
 uniform mat4 urte;
 
