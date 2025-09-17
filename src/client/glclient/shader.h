@@ -13,6 +13,7 @@ enum ShaderType
 {
     shrUnknown = 0,
     shrVertexProcessor,
+    shrGeometryProcessor,
     shrFragmentProcessor
 };
 
@@ -23,6 +24,23 @@ enum ShaderStatus
     shrLinkError,
     shrOutOfMemory,
     shrEmptyProgram
+};
+
+// struct ShaderPackage
+// {
+//     cstr_t glslName;
+//     int nFiles;
+//     struct {
+//         cstr_t glslFilename;
+//         ShaderType glslType;
+//     } list[];
+// };
+
+struct ShaderPackage
+{
+    cstr_t glslFilename;
+    bool glslFinal;
+    ShaderType glslType;
 };
 
 class Uniform
@@ -236,6 +254,7 @@ class ShaderProgram
 {
 public:
     ShaderProgram();
+    ShaderProgram(cstr_t &name);
     ~ShaderProgram();
 
     void attach(const ShaderSource &shader);
@@ -288,9 +307,7 @@ public:
     ShaderManager(cstr_t &folder);
     ~ShaderManager() = default;
 
-    ShaderStatus createProgram(cstr_t &vsSource, cstr_t &fsSource, ShaderProgram **program);
-    ShaderProgram *buildPrograms(cstr_t &name, cstr_t &vsSource, cstr_t &fsSource);
-    ShaderProgram *createShader(cstr_t &name);
+    ShaderProgram *createShader(cstr_t &name, const ShaderPackage list[], int size);
 
 private:
     cstr_t shaderFolder;

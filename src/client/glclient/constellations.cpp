@@ -11,12 +11,18 @@
 #include "scene.h"
 #include "buffer.h"
 
+static ShaderPackage glslLine[] = {
+    { "line.vs.glsl", true, shrVertexProcessor },
+    { "line.fs.glsl", true, shrFragmentProcessor }
+};
+
 void Scene::initConstellations()
 {
     const Constellations &constellations = universe->getConstellations();
     const std::vector<Asterism *> &asterisms = constellations.getAsterisms();
 
-    pgmAsterism = shmgr.createShader("line");
+    // pgmAsterism = shmgr.createShader("line");
+    pgmAsterism = shmgr.createShader("line", glslLine, ARRAY_SIZE(glslLine));
 
     pgmAsterism->use();
 

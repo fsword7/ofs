@@ -436,6 +436,40 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
 // Global parameters
 SurfaceHandler *SurfaceManager::loader = nullptr;
 
+// ShaderPackage glslStar = 
+// {
+//     "star", 2,
+//     {
+//         { "star.vs.glsl", shrVertexProcessor },
+//         { "star.fs.glsl", shrFragmentProcessor }
+//     }
+// };
+
+static ShaderPackage glslStar[] = 
+{
+    { "star.vs.glsl", true, shrVertexProcessor },
+    { "star.fs.glsl", true, shrFragmentProcessor }
+};
+
+static ShaderPackage glslCorona[] = 
+{
+    { "corona.vs.glsl", true, shrVertexProcessor },
+    { "corona.fs.glsl", true, shrFragmentProcessor }
+};
+
+static ShaderPackage glslBody[] = 
+{
+    { "body.vs.glsl", true, shrVertexProcessor },
+    { "body.fs.glsl", true, shrFragmentProcessor }
+};
+
+static ShaderPackage glslNormals[] =
+{
+    { "normals.vs.glsl", true, shrVertexProcessor },
+    { "normals.gs.glsl", true, shrGeometryProcessor },
+    { "normals.fs.glsl", true, shrFragmentProcessor }
+};
+
 SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
 : object(object), scene(scene)
 {
@@ -447,11 +481,13 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
     switch (objType)
     {
     case objCelestialStar:
-        pgm = shmgr.createShader("star");
+        // pgm = shmgr.createShader("star");
+        pgm = shmgr.createShader("star", glslStar, ARRAY_SIZE(glslStar));
         if (pgm == nullptr)
             return;
 
-        pgmCorona = shmgr.createShader("corona");
+        // pgmCorona = shmgr.createShader("corona");
+        pgmCorona = shmgr.createShader("corona", glslCorona, ARRAY_SIZE(glslCorona));
         if (pgmCorona == nullptr)
             return;
 
@@ -493,7 +529,8 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         break;
   
     case objCelestialBody:
-        pgm = shmgr.createShader("body");
+        // pgm = shmgr.createShader("body");
+        pgm = shmgr.createShader("body", glslBody, ARRAY_SIZE(glslBody));
         if (pgm == nullptr)
             return;
 

@@ -219,12 +219,18 @@ void StarRenderer::process(CelestialStar &star, double dist, double appMag) cons
 
 // ******** Scene (star rendering section) ********
 
+static ShaderPackage glslPoint[] = {
+    { "point.vs.glsl", true, shrVertexProcessor },
+    { "point.fs.glsl", true, shrFragmentProcessor }
+};
+
 void Scene::initStarRenderer()
 {
     starColors = new StarColors();
     starColors->load(ofsPath / "data/stars/bbr_color_D58.txt");
 
-    pgmStar = shmgr.createShader("point");
+    // pgmStar = shmgr.createShader("point");
+    pgmStar = shmgr.createShader("point", glslPoint, ARRAY_SIZE(glslPoint));
 
     StarVertex *starBuffer = new StarVertex(*this);
     starBuffer->pgm = pgmStar;

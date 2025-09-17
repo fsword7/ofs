@@ -23,6 +23,9 @@ ShaderSource::ShaderSource(ShaderManager &shmgr, ShaderType type)
         case shrVertexProcessor:
             idType = GL_VERTEX_SHADER;
             break;
+        case shrGeometryProcessor:
+            idType = GL_GEOMETRY_SHADER;
+            break;
         case shrFragmentProcessor:
             idType = GL_FRAGMENT_SHADER;
             break;
@@ -248,6 +251,12 @@ ShaderProgram::ShaderProgram()
     id = glCreateProgram();
 }
 
+ShaderProgram::ShaderProgram(cstr_t &name)
+: pgmName(name)
+{
+    id = glCreateProgram();
+}
+
 ShaderProgram::~ShaderProgram()
 {
     glDeleteProgram(id);
@@ -373,93 +382,60 @@ ShaderManager::ShaderManager(cstr_t &folder)
     programs.clear();
 }
 
-ShaderStatus ShaderManager::createProgram(cstr_t &vsSource, cstr_t &fsSource, ShaderProgram **program)
+ShaderProgram *ShaderManager::createShader(cstr_t &name, const ShaderPackage list[], int size)
 {
-    std::vector<str_t> vsSourcev;
-    std::vector<str_t> fsSourcev;
-    ShaderSource *vsShader = nullptr;
-    ShaderSource *fsShader = nullptr;
-    ShaderStatus st;
+    ShaderProgram *npgm = nullptr;
+    ShaderSource *shader = nullptr;
+    ShaderStatus pgmst;
 
-    vsSourcev.push_back(vsSource);
-    fsSourcev.push_back(fsSource);
-
-    st = ShaderSource::create(this, shrVertexProcessor, vsSourcev, &vsShader);
-    st = ShaderSource::create(this, shrFragmentProcessor, fsSourcev, &fsShader);
-
-    ShaderProgram *npgm = new ShaderProgram();
-    if (vsShader != nullptr)
-        npgm->attach(*vsShader);
-    if (fsShader != nullptr)
-        npgm->attach(*fsShader);
-    
-    st = npgm->link();
-    if (st == shrSuccessful)
-        *program = npgm;
-    return shrSuccessful;
-}
-
-ShaderProgram *ShaderManager::buildPrograms(cstr_t &name, cstr_t &vsSource, cstr_t &fsSource)
-{
-    ShaderProgram *program;
-    ShaderStatus st;
-
-    st = createProgram(vsSource, fsSource, &program);
-    if (st != shrSuccessful || program == nullptr)
-        return nullptr;
-    
-    program->setName(name);
-    programs.push_back(program);
-
-    return program;
-}
-
-ShaderProgram *ShaderManager::createShader(cstr_t &name)
-{
     for (int idx = 0; idx < programs.size(); idx++)
         if (programs[idx]->getName() == name)
             return programs[idx];
+ 
+    npgm = new ShaderProgram(name);
 
-    auto vsName = fmt::format("{}/{}.vs", shaderFolder, name);
-    auto fsName = fmt::format("{}/{}.fs", shaderFolder, name);
+    for (int idx = 0; idx < size; idx++) {
+        std::vector<str_t> vSource;
+        str_t source;
+        struct stat st;
 
-    // glLogger->debug("Vertex path:   {}\n", vsName);
-    // glLogger->debug("Fragment path: {}\n", fsName);
+        fs::path path = shaderFolder + "/" + list[idx].glslFilename;
 
-    str_t vsSource, fsSource;
-    struct stat st;
-
-    if (!stat(vsName.c_str(), &st))
-    {
-        auto vsSize = st.st_size;
-        std::ifstream vsFile(vsName);
-        if (!vsFile.good())
+        if (!stat(path.c_str(), &st))
         {
-            glLogger->verbose("Failed to open '%s' file: '%s'\n",
-                vsName, strerror(errno));
-            return nullptr;
-        }
+            auto srcSize = st.st_size;
+            std::ifstream srcFile(path);
+            if (!srcFile.good())
+            {
+                glLogger->verbose("Failed to open '%s' file: '%s'\n",
+                    path.filename().c_str(), strerror(errno));
+                return nullptr;
+            }
 
-        vsSource = std::string(vsSize, '\0');
-        vsFile.read(&vsSource[0], vsSize);
-        vsFile.close();
+            source = std::string(srcSize, '\0');
+            srcFile.read(&source[0], srcSize);
+            srcFile.close();
+
+            vSource.push_back(source);
+        }
+ 
+        if (!list[idx].glslFinal)
+            continue;
+
+        pgmst = ShaderSource::create(this, list[idx].glslType, vSource, &shader);
+        if (shader != nullptr)
+            npgm->attach(*shader);
+
+        // Clear all sources for next unique processor
+        vSource.clear();
     }
 
-    if (!stat(fsName.c_str(), &st))
-    {
-        auto fsSize = st.st_size;
-        std::ifstream fsFile(fsName);
-        if (!fsFile.good())
-        {
-            glLogger->verbose("Failed to open '%s' file: '%s'\n",
-                fsName, strerror(errno));
-            return nullptr;
-        }
-
-        fsSource = std::string(fsSize, '\0');
-        fsFile.read(&fsSource[0], fsSize);
-        fsFile.close();
+    pgmst = npgm->link();
+    if (pgmst != shrSuccessful) {
+        delete npgm;
+        return nullptr;
     }
 
-    return buildPrograms(name, vsSource, fsSource);
+    programs.push_back(npgm);
+    return npgm;
 }

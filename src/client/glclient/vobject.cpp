@@ -26,10 +26,16 @@ vObject::~vObject()
     //     delete pgmObjectAsPoint;
 }
 
+static ShaderPackage glslPoint[] = {
+    { "point.vs.glsl", true, shrVertexProcessor },
+    { "point.fs.glsl", true, shrFragmentProcessor }
+};
+
 void vObject::init()
 {
     ShaderManager &shmgr = scene.getShaderManager();
-    pgmObjectAsPoint = shmgr.createShader("point");
+    // pgmObjectAsPoint = shmgr.createShader("point");
+    pgmObjectAsPoint = shmgr.createShader("point", glslPoint, ARRAY_SIZE(glslPoint));
 
     pgmObjectAsPoint->use();
 

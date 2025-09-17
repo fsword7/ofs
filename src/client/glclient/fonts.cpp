@@ -45,6 +45,11 @@ void TextureFont::gexit()
         FT_Done_FreeType(font);
 }
 
+static ShaderPackage glslText[] = {
+    { "text.vs.glsl", true, shrVertexProcessor },
+    { "text.fs.glsl", true, shrFragmentProcessor }
+};
+
 void TextureFont::initGlyphs()
 {
     FT_GlyphSlot slot = face->glyph;
@@ -93,7 +98,8 @@ void TextureFont::initGlyphs()
 
     ShaderManager &shmgr = scene.getShaderManager();
 
-    pgm = shmgr.createShader("text");
+    // pgm = shmgr.createShader("text");
+    pgm = shmgr.createShader("text", glslText, ARRAY_SIZE(glslText));
 
     pgm->use();
 
