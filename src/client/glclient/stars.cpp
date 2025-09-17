@@ -229,7 +229,6 @@ void Scene::initStarRenderer()
     starColors = new StarColors();
     starColors->load(ofsPath / "data/stars/bbr_color_D58.txt");
 
-    // pgmStar = shmgr.createShader("point");
     pgmStar = shmgr.createShader("point", glslPoint, ARRAY_SIZE(glslPoint));
 
     StarVertex *starBuffer = new StarVertex(*this);

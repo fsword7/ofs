@@ -21,7 +21,6 @@ void Scene::initConstellations()
     const Constellations &constellations = universe->getConstellations();
     const std::vector<Asterism *> &asterisms = constellations.getAsterisms();
 
-    // pgmAsterism = shmgr.createShader("line");
     pgmAsterism = shmgr.createShader("line", glslLine, ARRAY_SIZE(glslLine));
 
     pgmAsterism->use();

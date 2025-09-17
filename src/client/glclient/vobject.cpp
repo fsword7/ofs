@@ -34,7 +34,6 @@ static ShaderPackage glslPoint[] = {
 void vObject::init()
 {
     ShaderManager &shmgr = scene.getShaderManager();
-    // pgmObjectAsPoint = shmgr.createShader("point");
     pgmObjectAsPoint = shmgr.createShader("point", glslPoint, ARRAY_SIZE(glslPoint));
 
     pgmObjectAsPoint->use();

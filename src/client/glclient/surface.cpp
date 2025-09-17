@@ -481,12 +481,10 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
     switch (objType)
     {
     case objCelestialStar:
-        // pgm = shmgr.createShader("star");
         pgm = shmgr.createShader("star", glslStar, ARRAY_SIZE(glslStar));
         if (pgm == nullptr)
             return;
 
-        // pgmCorona = shmgr.createShader("corona");
         pgmCorona = shmgr.createShader("corona", glslCorona, ARRAY_SIZE(glslCorona));
         if (pgmCorona == nullptr)
             return;
@@ -529,7 +527,6 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         break;
   
     case objCelestialBody:
-        // pgm = shmgr.createShader("body");
         pgm = shmgr.createShader("body", glslBody, ARRAY_SIZE(glslBody));
         if (pgm == nullptr)
             return;

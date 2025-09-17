@@ -98,7 +98,6 @@ void TextureFont::initGlyphs()
 
     ShaderManager &shmgr = scene.getShaderManager();
 
-    // pgm = shmgr.createShader("text");
     pgm = shmgr.createShader("text", glslText, ARRAY_SIZE(glslText));
 
     pgm->use();
