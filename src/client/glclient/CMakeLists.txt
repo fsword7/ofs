@@ -67,16 +67,16 @@ set (OGL_SHADERS
     shaders/lib/snoise3.glsl
     shaders/lib/snoise4.glsl
     shaders/atmo.glsl
-    shaders/body.fs
-    shaders/body.vs
-    shaders/corona.fs
-    shaders/corona.vs
-    shaders/line.fs
-    shaders/line.vs
-    shaders/point.fs
-    shaders/point.vs
-    shaders/star.fs
-    shaders/star.vs
+    shaders/body.fs.glsl
+    shaders/body.vs.glsl
+    shaders/corona.fs.glsl
+    shaders/corona.vs.glsl
+    shaders/line.fs.glsl
+    shaders/line.vs.glsl
+    shaders/point.fs.glsl
+    shaders/point.vs.glsl
+    shaders/star.fs.glsl
+    shaders/star.vs.glsl
 )
 
 set (SOIL2_SRCS
