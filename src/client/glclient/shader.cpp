@@ -399,7 +399,7 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name, const ShaderPackage lis
         str_t source;
         struct stat st;
 
-        fs::path path = shaderFolder + "/" + list[idx].glslFilename;
+        fs::path path = shaderFolder + list[idx].glslFilename;
 
         if (!stat(path.c_str(), &st))
         {
