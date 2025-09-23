@@ -20,8 +20,9 @@ struct ObjectProperties;
 
 struct Vertex
 {
-    float vxh, vyh, vzh;    // Vertex position (high)
-    float vxl, vyl, vzl;    // Vertex position (low)
+    // float vxh, vyh, vzh;    // Vertex position (high)
+    // float vxl, vyl, vzl;    // Vertex position (low)
+    float vx, vy, vz;       // Vertex position
     float nx, ny, nz;       // Normal position
     float tu, tv;           // Texture coordinates
 };
@@ -94,7 +95,7 @@ public:
 
     SurfaceTile *createChild(int idx);
 
-    void setCenter(glm::dvec3 &center, glm::dvec3 &wpos);
+    void setCenter(glm::dvec3 &cnml, glm::dvec3 &wpos);
     void setSubregionRange(const tcRange &range);
 
     void load();
@@ -117,7 +118,7 @@ public:
     int16_t *getElevationData();
 
 private:
-    void getTwoFloats(const glm::dvec3 &val, glm::fvec3 &high, glm::fvec3 &low);
+    // void getTwoFloats(const glm::dvec3 &val, glm::fvec3 &high, glm::fvec3 &low);
 
     SurfaceManager &mgr;
 
@@ -127,6 +128,7 @@ private:
     int ilat, ilng;
     int nlat, nlng;
     glm::dvec3 center;
+    glm::dvec3 cnml;
     glm::dvec3 wpos;
 
     SurfaceTile *parentTile = nullptr;
@@ -193,7 +195,7 @@ public:
 
     SurfaceTile *findTile(int lod, int ilat, int ilng);
 
-    glm::dmat4 getWorldMatrix(int ilat, int nlat, int ilng, int nlng);
+    glm::dmat4 getWorldMatrix(const SurfaceTile *tile);
 
     // bool getTileIndex(double lat, double lng, int lod, int &ilat, int &ilng) const;
     // int16_t *readElevationFile(int lod, int ilat, int ilng, double eres) const;
@@ -202,7 +204,8 @@ public:
 
     // Creating planet surface - quadsphere
     Mesh *createHemisphere(int grid, int16_t *elev, double gelev);
-    Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
+    Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, 
+        bool rtcEnable, const glm::dvec3 &center, const tcRange &range,
         int16_t *elev = nullptr, double selev = 1.0, double gelev = 0.0);
 
     // Creating star surface - icosphere
@@ -229,6 +232,7 @@ public:
         double viewap;
     
         glm::dmat4  dmWorld;        // model matrix
+        glm::dmat4  dmWorldt;       // per-tile model/view matrix
         glm::dmat4  dmViewProj;     // view/projection matrix
         glm::dmat4  dmView;         // view matrix
         glm::dmat4  dmProj;         // projection matrix
@@ -254,9 +258,8 @@ private:
     Mesh *meshGlow = nullptr;
 
     mat4Uniform uViewProj;
-    mat4Uniform uView;
     mat4Uniform uModel;
-    mat4Uniform uRTE;
+    mat4Uniform uWorld;
 
     vec3Uniform uCamEyeHigh;
     vec3Uniform uCamEyeLow;

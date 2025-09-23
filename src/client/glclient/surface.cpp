@@ -26,7 +26,8 @@ SurfaceTile::SurfaceTile(SurfaceManager &mgr, int lod, int ilat, int ilng, Surfa
 : Tree(parent), mgr(mgr), lod(lod), ilat(ilat), nlat(1 << lod), ilng(ilng), nlng(2 << lod),
   txRange(range)
 {
-    setCenter(center, wpos);
+    setCenter(cnml, wpos);
+    center = cnml * mgr.objSize;
 }
 
 SurfaceTile::~SurfaceTile()
@@ -164,21 +165,21 @@ void SurfaceTile::load()
         mesh = createHemisphere(mgr.elevGrids, elev, mgr.elevScale);
     else
         mesh = mgr.createSpherePatch(mgr.elevGrids, lod, ilat, ilng,
-            txRange, elev, mgr.elevScale, 0.0);
+            (lod >= 4), center, txRange, elev, mgr.elevScale, 0.0);
     type = tileInactive;
 }
 
-void SurfaceTile::getTwoFloats(const glm::dvec3 &val, glm::fvec3 &high, glm::fvec3 &low)
-{
-    // high = glm::fvec3(val);
-    // low = glm::fvec3(val - glm::dvec3(high));
-    high.x = float(val.x);
-    high.y = float(val.y);
-    high.z = float(val.z);
-    low.x = float(val.x - high.x);
-    low.y = float(val.y - high.y);
-    low.z = float(val.z - high.z);
-}
+// void SurfaceTile::getTwoFloats(const glm::dvec3 &val, glm::fvec3 &high, glm::fvec3 &low)
+// {
+//     // high = glm::fvec3(val);
+//     // low = glm::fvec3(val - glm::dvec3(high));
+//     high.x = float(val.x);
+//     high.y = float(val.y);
+//     high.z = float(val.z);
+//     low.x = float(val.x - high.x);
+//     low.y = float(val.y - high.y);
+//     low.z = float(val.z - high.z);
+// }
 
 void SurfaceTile::render()
 {
@@ -206,17 +207,20 @@ void SurfaceTile::render()
         glCullFace(GL_BACK);
     }
 
-    mgr.uViewProj = glm::mat4(mgr.prm.dmViewProj);
+    // mgr.uViewProj = glm::mat4(mgr.prm.dmViewProj);
 
     // Load per-tile model matrix into GLSL space
+    // mgr.uModel = glm::mat4(mgr.prm.dmWorld);
     mgr.uModel = glm::mat4(mgr.prm.dmWorld);
-    mgr.uView = glm::mat4(mgr.prm.dmView);
+    // mgr.uView = glm::mat4(mgr.prm.dmView);
+    // mgr.uWorld = glm::mat4(mgr.prm.dmProj * mgr.prm.dmRTE);
+    mgr.uWorld = glm::mat4(mgr.prm.dmProj * mgr.prm.dmWorldt);
     // mgr.uRTE = mgr.prm.dmViewProj * mgr.prm.dmRTE;
     // mgr.uRTE = mgr.prm.dmRTE * mgr.prm.dmView * mgr.prm.dmProj;
     // mgr.uRTE = mgr.prm.dmProj * mgr.prm.dmView * mgr.prm.dmRTE;
 
     // glm::vec3 high, low;
-    // getTwoFloats(-mgr.prm.cpos, high, low);
+    // getTwoFloats(mgr.prm.cpos, high, low);
     // mgr.uCamEyeHigh = high;
     // mgr.uCamEyeLow = low;
 
@@ -274,14 +278,19 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
             pos = nml * erad;
             tu = a * x + du;
 
-            // vertex (high)
-            vtx[cvtx].vxh = float(pos.x);
-            vtx[cvtx].vyh = float(pos.y);
-            vtx[cvtx].vzh = float(pos.z);
-            // vertex (low)
-            vtx[cvtx].vxl = float(pos.x - vtx[cvtx].vxh);
-            vtx[cvtx].vyl = float(pos.y - vtx[cvtx].vyh);
-            vtx[cvtx].vzl = float(pos.z - vtx[cvtx].vzh);
+            // // vertex (high)
+            // vtx[cvtx].vxh = float(pos.x);
+            // vtx[cvtx].vyh = float(pos.y);
+            // vtx[cvtx].vzh = float(pos.z);
+            // // vertex (low)
+            // vtx[cvtx].vxl = float(pos.x - vtx[cvtx].vxh);
+            // vtx[cvtx].vyl = float(pos.y - vtx[cvtx].vyh);
+            // vtx[cvtx].vzl = float(pos.z - vtx[cvtx].vzh);
+
+            // vertex
+            vtx[cvtx].vx = float(pos.x);
+            vtx[cvtx].vy = float(pos.y);
+            vtx[cvtx].vz = float(pos.z);
 
             vtx[cvtx].nx = float(nml.x);
             vtx[cvtx].ny = float(nml.y);
@@ -362,14 +371,18 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
         nml = { 0, 1, 0 };
         pos = nml * erad;
         
-        // vertex (high)
-        vtx[cvtx].vxh = pos.x;
-        vtx[cvtx].vyh = pos.y;
-        vtx[cvtx].vzh = pos.z;
-        // vertex (low)
-        vtx[cvtx].vxl = float(pos.x - vtx[cvtx].vxh);
-        vtx[cvtx].vyl = float(pos.y - vtx[cvtx].vyh);
-        vtx[cvtx].vzl = float(pos.z - vtx[cvtx].vzh);
+        // // vertex (high)
+        // vtx[cvtx].vxh = pos.x;
+        // vtx[cvtx].vyh = pos.y;
+        // vtx[cvtx].vzh = pos.z;
+        // // vertex (low)
+        // vtx[cvtx].vxl = float(pos.x - vtx[cvtx].vxh);
+        // vtx[cvtx].vyl = float(pos.y - vtx[cvtx].vyh);
+        // vtx[cvtx].vzl = float(pos.z - vtx[cvtx].vzh);
+
+        vtx[cvtx].vx = float(pos.x);
+        vtx[cvtx].vy = float(pos.y);
+        vtx[cvtx].vz = float(pos.z);
 
         vtx[cvtx].nx = nml.x;
         vtx[cvtx].ny = nml.y;
@@ -394,14 +407,18 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
         nml = { 0, -1, 0 };
         pos = nml * erad;
         
-        // vertex (high)
-        vtx[cvtx].vxh = pos.x;
-        vtx[cvtx].vyh = pos.y;
-        vtx[cvtx].vzh = pos.z;
-        // vertex (low)
-        vtx[cvtx].vxl = float(pos.x - vtx[cvtx].vxh);
-        vtx[cvtx].vyl = float(pos.y - vtx[cvtx].vyh);
-        vtx[cvtx].vzl = float(pos.z - vtx[cvtx].vzh);
+        // // vertex (high)
+        // vtx[cvtx].vxh = pos.x;
+        // vtx[cvtx].vyh = pos.y;
+        // vtx[cvtx].vzh = pos.z;
+        // // vertex (low)
+        // vtx[cvtx].vxl = float(pos.x - vtx[cvtx].vxh);
+        // vtx[cvtx].vyl = float(pos.y - vtx[cvtx].vyh);
+        // vtx[cvtx].vzl = float(pos.z - vtx[cvtx].vzh);
+
+        vtx[cvtx].vx = float(pos.x);
+        vtx[cvtx].vy = float(pos.y);
+        vtx[cvtx].vz = float(pos.z);
 
         vtx[cvtx].nx = nml.x;
         vtx[cvtx].ny = nml.y;
@@ -536,10 +553,10 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         pgm->use();
 
         pgm->initLightParameters();
-        uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
-        uView = mat4Uniform(pgm->getID(), "uView");
+        // uViewProj = mat4Uniform(pgm->getID(), "uViewProj");
+        // uView = mat4Uniform(pgm->getID(), "uView");
         uModel = mat4Uniform(pgm->getID(), "uModel");
-        uRTE = mat4Uniform(pgm->getID(), "urte");
+        uWorld = mat4Uniform(pgm->getID(), "uWorld");
 
         uCamEyeHigh = vec3Uniform(pgm->getID(), "uCamEyeHigh");
         uCamEyeLow = vec3Uniform(pgm->getID(), "uCamEyeLow");
@@ -620,36 +637,15 @@ SurfaceTile *SurfaceManager::findTile(int lod, int ilat, int ilng)
     return tile;
 }
 
-glm::dmat4 SurfaceManager::getWorldMatrix(int ilat, int nlat, int ilng, int nlng)
+glm::dmat4 SurfaceManager::getWorldMatrix(const SurfaceTile *tile)
 {
-    // glm::dmat4 lrot(1.0);
+    // Return with RTW method as default.
+    if (tile->lod < 4)
+        return prm.dmView * prm.dmWorld;
 
-    // lrot = { { clng,  0,   slng, 0   },
-    //          { 0,     1.0, 0,    0   },
-    //          { -slng, 0,   clng, 0   },  
-    //          { 0,     0,   0,    1.0 }};
-
-    if (nlng <= 8)
-        return prm.dmWorld;
-
-    double lat, lng;
-    if (ilat < nlat/2)
-        lat = pi * double(nlat/2 - ilat-1) / double(nlat);
-    else
-        lat = pi * double(nlat/2 - ilat) / double(nlat);
-    lng = (pi*2.0) * (double(ilng) / double(nlng)) + pi;
-
-    double dx = objSize * cos(lng) * cos(lat);
-    double dy = objSize * sin(lat);
-    double dz = objSize * sin(lng) * cos(lat);
-
-    // Calculate translation with per-tile model matrix
-    // Move a center from body center to tile by eliminating
-    // jiffery due to round-off errors.
-    glm::dmat4 wrot = prm.dmWorld;
-    wrot[3][0] = (dx*prm.urot[0][0] + dy*prm.urot[0][1] + dz*prm.urot[0][2] + prm.cpos.x) * prm.scale;
-    wrot[3][1] = (dx*prm.urot[1][0] + dy*prm.urot[1][1] + dz*prm.urot[1][2] + prm.cpos.y) * prm.scale;
-    wrot[3][2] = (dx*prm.urot[2][0] + dy*prm.urot[2][1] + dz*prm.urot[2][2] + prm.cpos.z) * prm.scale;
+    // Set RTC world matrix with center of tile.
+    glm::dmat4 wrot = prm.dmView * prm.dmWorld;
+    wrot[3] = prm.dmView * prm.dmWorld * glm::dvec4(tile->center, 1.0);
 
     return wrot;
 }
@@ -705,6 +701,9 @@ void SurfaceManager::setRenderParams(const ObjectListEntry &ole)
                     prm.urot[0][2], prm.urot[1][2], prm.urot[2][2], 0,
                     prm.cpos.x,     prm.cpos.y,     prm.cpos.z,     1 };
 
+    // prm.dmRTE = prm.dmView * prm.dmWorld;
+    // prm.dmRTE[3] = { 0, 0, 0, 1 };
+
     // prm.dmRTE   = { prm.urot[0][0], prm.urot[1][0], prm.urot[2][0], 0,
     //                 prm.urot[0][1], prm.urot[1][1], prm.urot[2][1], 0,
     //                 prm.urot[0][2], prm.urot[1][2], prm.urot[2][2], 0,
@@ -731,7 +730,7 @@ void SurfaceManager::process(SurfaceTile *tile)
     
     static const double trad0 = sqrt(3.0)*(pi/2.0);
     double trad  = trad0 / double(nlat);
-    double alpha = acos(glm::dot(prm.cdir, tile->center));
+    double alpha = acos(glm::dot(prm.cdir, tile->cnml));
     double adist = alpha - trad;
     double bias = 4;
 
@@ -838,7 +837,8 @@ void SurfaceManager::process(SurfaceTile *tile)
         }
     }
 
-    // prm.dmWorld = tile->mgr.getWorldMatrix(tile->ilat, nlat, tile->ilng, nlng);
+    // prm.dmWorldt = tile->mgr.getWorldMatrix(tile->ilat, nlat, tile->ilng, nlng);
+    // prm.dmWorld = tile->mgr.getWorldMatrix2(tile);
 
     // Release all old tiles.
     if (bStepdown == false)
@@ -850,6 +850,7 @@ void SurfaceManager::render(SurfaceTile *tile)
     if (tile->type == SurfaceTile::tileRendering)
     {
         // tile->matchEdges();
+        prm.dmWorldt = getWorldMatrix(tile);
         tile->render();
     }
     else if (tile->type == SurfaceTile::tileActive)
@@ -909,7 +910,8 @@ void SurfaceManager::renderStar(const ObjectListEntry &ole)
     pgm->release();
 }
 
-Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
+Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, 
+    bool rtcEnable, const glm::dvec3 &center, const tcRange &range,
     int16_t *elev, double escale, double gelev)
 {
     int nlat = 1 << lod;
@@ -923,17 +925,34 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
     // double mlng1  = (pi*2.0) / double(nlng);
 
     glm::dvec3 pos, nml;
-    double  radius = objSize;
-    
+    double radius = objSize;
+
     double slat, clat, slng, clng;
     double lat, lng;
     double erad;
+    // double dx, dy, dz;
 
     // Initialize vertices
     int nvtx  = (grid+1)*(grid+1);
     int nvtxe = nvtx + grid+1 + grid+1;
     Vertex *vtx = new Vertex[nvtxe];
     int cvtx = 0;
+
+    double clat0 = cos(mlat0), clat1 = cos(mlat1);
+    double slat0 = sin(mlat0), slat1 = sin(mlat1);
+    double clng0 = cos(mlng0), clng1 = cos(mlng1);
+    double slng0 = sin(mlng0), slng1 = sin(mlng1);
+    bool north = ilat < nlat/2;
+
+    // Recalculate tile position with tile corner origin 
+    // from planet center for RTC method.
+    // if (rtcEnable) {
+    //     // dx = (north ? clat0 : clat1) * radius;
+    //     // dy = (north ? slat0 : slat1) * radius;
+    //     rtcShift = { clat*clng, slat, clat*-slng };
+    // } else
+    //     rtcShift = { 0, 0, 0 };
+    // rtcShift *= radius;
 
     float tur = range.tumax - range.tumin;
     float tvr = range.tvmax - range.tvmin;
@@ -964,15 +983,22 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng, c
                 erad += (double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * escale) / 1000.0;
             nml = glm::dvec3(clat*clng, slat, clat*-slng);
             pos = nml * erad;
+            if (rtcEnable)
+                pos -= center;
 
+            // // vertex (high)
+            // vtx[cvtx].vxh = float(pos.x);
+            // vtx[cvtx].vyh = float(pos.y);
+            // vtx[cvtx].vzh = float(pos.z);
+            // // vertex (low)
+            // vtx[cvtx].vxl = float(pos.x - vtx[cvtx].vxh);
+            // vtx[cvtx].vyl = float(pos.y - vtx[cvtx].vyh);
+            // vtx[cvtx].vzl = float(pos.z - vtx[cvtx].vzh);
+         
             // vertex (high)
-            vtx[cvtx].vxh = float(pos.x);
-            vtx[cvtx].vyh = float(pos.y);
-            vtx[cvtx].vzh = float(pos.z);
-            // vertex (low)
-            vtx[cvtx].vxl = float(pos.x - vtx[cvtx].vxh);
-            vtx[cvtx].vyl = float(pos.y - vtx[cvtx].vyh);
-            vtx[cvtx].vzl = float(pos.z - vtx[cvtx].vzh);
+            vtx[cvtx].vx = float(pos.x);
+            vtx[cvtx].vy = float(pos.y);
+            vtx[cvtx].vz = float(pos.z);
 
             vtx[cvtx].nx = float(nml.x);
             vtx[cvtx].ny = float(nml.y);
@@ -1269,9 +1295,9 @@ Mesh *SurfaceManager::createIcosphere(int maxlod)
     {
         glLogger->debug("Vertex {:04d}: {} {} {}\n" ,ivtx, vertices[ivtx].x, vertices[ivtx].y, vertices[ivtx].z);
 
-        vtx[ivtx].vxh = float(vertices[ivtx].x * objSize);
-        vtx[ivtx].vyh = float(vertices[ivtx].y * objSize);
-        vtx[ivtx].vzh = float(vertices[ivtx].z * objSize);
+        vtx[ivtx].vx = float(vertices[ivtx].x * objSize);
+        vtx[ivtx].vy = float(vertices[ivtx].y * objSize);
+        vtx[ivtx].vz = float(vertices[ivtx].z * objSize);
 
         vtx[ivtx].nx = float(vertices[ivtx].x);
         vtx[ivtx].ny = float(vertices[ivtx].y);
@@ -1469,24 +1495,29 @@ void Mesh::upload()
     vao->addVertices(vbo);
     vbo->bind();
 
-    // Vertex (high)
+    // // Vertex (high)
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+    // glEnableVertexAttribArray(0);
+    // checkErrors();
+
+    // // Vertex (low)
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)12);
+    // glEnableVertexAttribArray(1);
+    // checkErrors();
+
+    // Vertex
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
     glEnableVertexAttribArray(0);
     checkErrors();
 
-    // Vertex (low)
+    // Normal
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)12);
     glEnableVertexAttribArray(1);
     checkErrors();
 
-    // Normal
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)24);
-    glEnableVertexAttribArray(2);
-    checkErrors();
-
     // Texture coordinates
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)36);
-    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)24);
+    glEnableVertexAttribArray(2);
     checkErrors();
 
     if (ibo != nullptr)
