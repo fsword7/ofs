@@ -183,7 +183,6 @@ void SurfaceTile::load()
 
 void SurfaceTile::render()
 {
-    // logger->info("Yes, here 1\n");
     if (mesh == nullptr)
         return;
     if (mesh->vao == nullptr)
@@ -193,8 +192,8 @@ void SurfaceTile::render()
         else
             return;
     }
-    // logger->info("Yes, here 2\n");
 
+    mgr.pgm->use();
     mesh->vao->bind();
 
     if (txImage != nullptr)
@@ -237,8 +236,27 @@ void SurfaceTile::render()
         glDisable(GL_CULL_FACE);
         txImage->unbind();
     }
+    
+    mesh->vao->unbind();
+    mgr.pgm->release();
+}
+
+void SurfaceTile::renderNormals()
+{
+    if (mesh == nullptr)
+        return;
+    mgr.pgmNormals->use();
+    mesh->vao->bind();
+
+    mgr.unWorld = glm::mat4(mgr.prm.dmWorldt);
+    mgr.unProj = glm::mat4(mgr.prm.dmProj);
+    mgr.unColor = { 1.0, 1.0, 0.0, 1.0 };
+    mgr.unCamClip = mgr.prm.clip;
+
+    glDrawElements(GL_TRIANGLES, mesh->ibo->getCount(), GL_UNSIGNED_SHORT, 0);
 
     mesh->vao->unbind();
+    mgr.pgmNormals->release();
 }
 
 Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
@@ -453,15 +471,6 @@ Mesh *SurfaceTile::createHemisphere(int grid, int16_t *elev, double gelev)
 // Global parameters
 SurfaceHandler *SurfaceManager::loader = nullptr;
 
-// ShaderPackage glslStar = 
-// {
-//     "star", 2,
-//     {
-//         { "star.vs.glsl", shrVertexProcessor },
-//         { "star.fs.glsl", shrFragmentProcessor }
-//     }
-// };
-
 static ShaderPackage glslStar[] = 
 {
     { "star.vs.glsl", true, shrVertexProcessor },
@@ -558,12 +567,21 @@ SurfaceManager::SurfaceManager(const Object *object, Scene &scene)
         uModel = mat4Uniform(pgm->getID(), "uModel");
         uWorld = mat4Uniform(pgm->getID(), "uWorld");
 
-        uCamEyeHigh = vec3Uniform(pgm->getID(), "uCamEyeHigh");
-        uCamEyeLow = vec3Uniform(pgm->getID(), "uCamEyeLow");
+        // uCamEyeHigh = vec3Uniform(pgm->getID(), "uCamEyeHigh");
+        // uCamEyeLow = vec3Uniform(pgm->getID(), "uCamEyeLow");
         uCamClip = vec2Uniform(pgm->getID(), "uCamClip");
 
         pgm->release();
 
+        pgmNormals->use();
+
+        unColor = vec4Uniform(pgmNormals->getID(), "uColor");
+        unCamClip = vec2Uniform(pgmNormals->getID(), "uCamClip");
+        unWorld = mat4Uniform(pgmNormals->getID(), "uWorld");
+        unProj = mat4Uniform(pgmNormals->getID(), "uProj");
+
+        pgmNormals->release();
+    
         bPolygonLines = true;
 
         const CelestialPlanet *body = dynamic_cast<const CelestialPlanet *>(object);
@@ -636,6 +654,15 @@ SurfaceTile *SurfaceManager::findTile(int lod, int ilat, int ilng)
 
     return tile;
 }
+
+// Set world matrix with using RTC (relative to center) and
+// apply it to each tile during rendering. Geometry objects
+// must be within a boundary radius of 131,071 meters to avoid
+// jittering due to roundoff errors. Also subtract tile vertices
+// with tile center.
+//
+// For more information, read page 164-169 on "3D Engine Design for
+// Virtual Globes" book. 
 
 glm::dmat4 SurfaceManager::getWorldMatrix(const SurfaceTile *tile)
 {
@@ -844,6 +871,8 @@ void SurfaceManager::render(SurfaceTile *tile)
         // tile->matchEdges();
         prm.dmWorldt = getWorldMatrix(tile);
         tile->render();
+        if (showNormals)
+            tile->renderNormals();
     }
     else if (tile->type == SurfaceTile::tileActive)
     {
@@ -866,9 +895,11 @@ void SurfaceManager::renderBody(const ObjectListEntry &ole)
     pgm->use();
     // Set light source parameters
     pgm->setLightParameters(ole.lights);
+    pgm->release();
+
     for (int idx = 0; idx < 2; idx++)
         render(tiles[idx]);
-    pgm->release();
+    // pgm->release();
 }
 
 void SurfaceManager::renderStar(const ObjectListEntry &ole)
@@ -956,6 +987,12 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng,
                 erad += (double(elev[(y+1)*ELEV_STRIDE + (x+1)]) * escale) / 1000.0;
             nml = glm::dvec3(clat*clng, slat, clat*-slng);
             pos = nml * erad;
+
+            // Subtract vertices with tile center
+            // for RTC world matrix to eliminate
+            // jittering. See getWorldMatrix()
+            // above.
+
             if (rtcEnable)
                 pos -= center;
 
@@ -1052,39 +1089,39 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng,
         }
     }
 
-    if (elev != nullptr)
-    {
-        double dy, dz, dydz;
-        glm::dmat3 lhrot;
-        int en;
+    // if (elev != nullptr)
+    // {
+    //     double dy, dz, dydz;
+    //     glm::dmat3 lhrot;
+    //     int en;
 
-        dy = radius * pi/(nlat*grid);
-        for (int y = 0, n = 0; y <= grid; y++)
-        {
-            lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
-            slat = sin(lat), clat = cos(lat);
-            dz = radius * pi2*clat / (nlng*grid);
-            dydz = dy*dz;
-            for (int x = 0; x <= grid; x++)
-            {
-                lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
-                slng = sin(lng+pi/2), clng = cos(lng+pi/2);
-                en = (y+1)*ELEV_STRIDE + (x+1);
+    //     dy = radius * pi/(nlat*grid);
+    //     for (int y = 0, n = 0; y <= grid; y++)
+    //     {
+    //         lat = mlat0 + (mlat1-mlat0) * double(y)/double(grid);       
+    //         slat = sin(lat), clat = cos(lat);
+    //         dz = radius * pi2*clat / (nlng*grid);
+    //         dydz = dy*dz;
+    //         for (int x = 0; x <= grid; x++)
+    //         {
+    //             lng = mlng0 + (mlng1-mlng0) * double(x)/double(grid);
+    //             slng = sin(lng+pi/2), clng = cos(lng+pi/2);
+    //             en = (y+1)*ELEV_STRIDE + (x+1);
 
-                nml = { escale*(elev[en+1]-elev[en-1]),
-                        escale*(elev[en+ELEV_STRIDE]-elev[en-ELEV_STRIDE]),
-                        2.0};
-                nml = glm::normalize(nml);
-                // nml = ofs::zRotate(lat) * ofs::yRotate(lng-pi) * nml;
-                nml = ofs::yRotate(lng-pi) * ofs::zRotate(lat) * nml;
+    //             nml = { escale*(elev[en+1]-elev[en-1]),
+    //                     escale*(elev[en+ELEV_STRIDE]-elev[en-ELEV_STRIDE]),
+    //                     2.0};
+    //             nml = glm::normalize(nml);
+    //             // nml = ofs::zRotate(lat) * ofs::yRotate(lng-pi) * nml;
+    //             nml = ofs::yRotate(lng-pi) * ofs::zRotate(lat) * nml;
 
-                vtx[n].nx = nml.x;
-                vtx[n].ny = nml.y;
-                vtx[n].nz = nml.z;
-                n++;
-            }
-        }
-    }
+    //             vtx[n].nx = nml.x;
+    //             vtx[n].ny = nml.y;
+    //             vtx[n].nz = nml.z;
+    //             n++;
+    //         }
+    //     }
+    // }
 
     for (int idx = 0, cvtx = nvtx; idx <= grid; idx++)
         vtx[cvtx++] = vtx[idx*(grid+1) + ((ilng & 1) ? grid : 0)];

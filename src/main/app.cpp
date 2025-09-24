@@ -555,6 +555,9 @@ void CoreApp::keyBufferedSystem(char32_t key, int mods)
              if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
                 panel->togglePlanetariumPanelMode();           
         }
+        // Celestial *cbody = player->getReferenceObject();
+        // if (altStateKey[ofs::keyN])
+        //     cbody->toggleNormals();
     }
 }
 

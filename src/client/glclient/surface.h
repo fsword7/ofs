@@ -100,6 +100,7 @@ public:
 
     void load();
     void render();
+    void renderNormals();
 
     Mesh *createHemisphere(int grid, int16_t *elev, double gelev);
     // Mesh *createSpherePatch(int grid, int lod, int ilat, int ilng, const tcRange &range,
@@ -261,8 +262,8 @@ private:
     mat4Uniform uModel;
     mat4Uniform uWorld;
 
-    vec3Uniform uCamEyeHigh;
-    vec3Uniform uCamEyeLow;
+    // vec3Uniform uCamEyeHigh;
+    // vec3Uniform uCamEyeLow;
 
     floatUniform uTime;
     floatUniform uRadius;
@@ -270,11 +271,19 @@ private:
     vec3Uniform uCentralDir;
     vec2Uniform uCamClip;
 
+    // Uniforms for normals rendering
+    vec4Uniform unColor;
+    vec2Uniform unCamClip;
+    mat4Uniform unWorld;
+    mat4Uniform unProj;
+
     TextureManager tmgr;
     ElevationManager *emgr = nullptr;
 
     zTreeManager *zTrees[5] = {};
     SurfaceTile *tiles[2];
+
+    bool showNormals = true;
 
     int elevGrids = 32; // 1 << 5
     double elevScale = 1.0;
