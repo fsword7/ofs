@@ -639,24 +639,16 @@ SurfaceTile *SurfaceManager::findTile(int lod, int ilat, int ilng)
 
 glm::dmat4 SurfaceManager::getWorldMatrix(const SurfaceTile *tile)
 {
+    glm::dmat4 dmWorld = prm.dmView * prm.dmWorld;
+
     // Return with RTW method as default.
     if (tile->lod < 4)
-        return prm.dmView * prm.dmWorld;
+        return dmWorld;
 
-    // Set RTC world matrix with center of tile.
-    glm::dmat4 wrot = prm.dmView * prm.dmWorld;
-    wrot[3] = prm.dmView * prm.dmWorld * glm::dvec4(tile->center, 1.0);
+    // Set RTC world matrix with tile center.
+    dmWorld[3] = dmWorld * glm::dvec4(tile->center, 1.0);
 
-    return wrot;
-}
-
-void logMatrix(const glm::dmat4 &m, cstr_t &desc)
-{
-    glLogger->debug("{} matrix:\n", desc);
-    glLogger->debug("{} {} {} {}\n", m[0][0], m[0][1], m[0][2], m[0][3]);
-    glLogger->debug("{} {} {} {}\n", m[1][0], m[1][1], m[1][2], m[1][3]);
-    glLogger->debug("{} {} {} {}\n", m[2][0], m[2][1], m[2][2], m[2][3]);
-    glLogger->debug("{} {} {} {}\n", m[3][0], m[3][1], m[3][2], m[3][3]);
+    return dmWorld;
 }
 
 void SurfaceManager::setRenderParams(const ObjectListEntry &ole)
@@ -921,8 +913,6 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng,
     double mlat1  = pi * double(nlat/2 - ilat) / double(nlat);
     double mlng0 = (pi*2.0) * double(ilng) / double(nlng) + pi;
     double mlng1 = (pi*2.0) * double(ilng+1) / double(nlng) + pi;
-    // double mlng0  = 0.0;
-    // double mlng1  = (pi*2.0) / double(nlng);
 
     glm::dvec3 pos, nml;
     double radius = objSize;
@@ -930,29 +920,12 @@ Mesh *SurfaceManager::createSpherePatch(int grid, int lod, int ilat, int ilng,
     double slat, clat, slng, clng;
     double lat, lng;
     double erad;
-    // double dx, dy, dz;
 
     // Initialize vertices
     int nvtx  = (grid+1)*(grid+1);
     int nvtxe = nvtx + grid+1 + grid+1;
     Vertex *vtx = new Vertex[nvtxe];
     int cvtx = 0;
-
-    double clat0 = cos(mlat0), clat1 = cos(mlat1);
-    double slat0 = sin(mlat0), slat1 = sin(mlat1);
-    double clng0 = cos(mlng0), clng1 = cos(mlng1);
-    double slng0 = sin(mlng0), slng1 = sin(mlng1);
-    bool north = ilat < nlat/2;
-
-    // Recalculate tile position with tile corner origin 
-    // from planet center for RTC method.
-    // if (rtcEnable) {
-    //     // dx = (north ? clat0 : clat1) * radius;
-    //     // dy = (north ? slat0 : slat1) * radius;
-    //     rtcShift = { clat*clng, slat, clat*-slng };
-    // } else
-    //     rtcShift = { 0, 0, 0 };
-    // rtcShift *= radius;
 
     float tur = range.tumax - range.tumin;
     float tvr = range.tvmax - range.tvmin;
