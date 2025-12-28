@@ -52,9 +52,9 @@
             // "target": "SG-01"
 
             // Observe rotating Earth
-            "type": "target-sync",
-            "target": "Sol/Earth", "sync-target": "Sol",
-            "direction": [0, 0, 1], "scale": 4
+            // "type": "target-sync",
+            // "target": "Sol/Earth", "sync-target": "Sol",
+            // "direction": [0, 0, 1], "scale": 4
 
             // Observe Luna (moon)
             // "type": "target-sync",
@@ -69,7 +69,13 @@
             // Observe Cape Kennedy Space Force
             // "type": "target-relative",
             // "target": "Sol/Earth",
-            // "location": [ 28.632307, -80.705774, 25000 /* 50 */ ]
+            // "location": [ 28.632307, -80.705774, 50 ]
+
+            // Observe origin of longtitude/latitude
+            // "type": "personal-observer",
+            // "target": "Sol/Earth",
+            // "location": [ -20, -20, 0.002 ],
+            // "heading": 90
 
             // On Runway 15 at Cape Kennedy Space Force
             // "type": "personal-observer",
@@ -80,14 +86,14 @@
             // On Runway 15 at Cape Kennedy Space Force (1km AGL)
             // "type": "personal-observer",
             // "target": "Sol/Earth",
-            // "location": [ 28.632307, -80.705774, 1 ],
+            // "location": [ 28.632307, -80.705774, 3 ],
             // "heading": 150
 
             // Observe Rocky Mountains in Colorado
-            // "type": "personal-observer",
-            // "target": "Sol/Earth",
-            // "location": [ 39.7309918, -104.7046216, 2 ],
-            // "heading": 270
+            "type": "personal-observer",
+            "target": "Sol/Earth",
+            "location": [ 39.7309918, -104.7046216, 2 ],
+            "heading": 270
 
             // Observe Grand Canyon (south rim) in Arizona
             // "type": "personal-observer",

@@ -182,6 +182,16 @@ void glClient::hideWindow()
     glfwHideWindow(window);
 }
 
+void glClient::showNormals()
+{
+
+}
+
+void glClient::hideNormals()
+{
+
+}
+
 void glClient::startImGuiNewFrame()
 {
     ImGui_ImplOpenGL3_NewFrame();

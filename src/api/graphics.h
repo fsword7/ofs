@@ -78,6 +78,9 @@ public:
     virtual void hideWindow() = 0;
     virtual void showWindow() = 0;
 
+    virtual void showNormals() = 0;
+    virtual void hideNormals() = 0;
+
     virtual void startImGuiNewFrame() = 0;
     virtual void renderImGuiDrawData() = 0;
 

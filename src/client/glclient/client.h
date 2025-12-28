@@ -49,6 +49,9 @@ public:
     void showWindow() override;
     void hideWindow() override;
 
+    void showNormals() override;
+    void hideNormals() override;
+
     void startImGuiNewFrame() override;
     void renderImGuiDrawData() override;
 
