@@ -54,7 +54,7 @@ void Universe::configure(cjson &config)
             //     sysFolder = entry["folder"].get<fs::path>();
             // sysFolder = OFS_HOME_DIR / sysFolder;
 
-            ofsLogger->info("JSON: Name: {}, Folder: {}\n", sysName, sysFolder.c_str());
+            ofsLogger->info("JSON: Name: {}, Folder: {}\n", sysName, sysFolder.string());
 
             sysFolder = OFS_HOME_DIR / sysFolder;
             if (!pSystem::loadSystem(this, sysName, sysFolder));

@@ -398,18 +398,18 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name, const ShaderPackage lis
     for (int idx = 0; idx < size; idx++) {
         std::vector<str_t> vSource;
         str_t source;
-        struct stat st;
+        struct _stat st;
 
         fs::path path = shaderFolder + list[idx].glslFilename;
 
-        if (!stat(path.c_str(), &st))
+        if (!_wstat(path.c_str(), &st))
         {
             auto srcSize = st.st_size;
             std::ifstream srcFile(path);
             if (!srcFile.good())
             {
                 glLogger->verbose("Failed to open '%s' file: '%s'\n",
-                    path.filename().c_str(), strerror(errno));
+                    path.filename().string(), strerror(errno));
                 return nullptr;
             }
 

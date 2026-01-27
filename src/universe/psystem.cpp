@@ -241,7 +241,7 @@ bool pSystem::loadStar(cstr_t &cbName, Universe *univ, pSystem *psys, fs::path &
     }
 
     star->configure(config);
-    star->setPath(cbPath);
+    star->setPath(cbPath.string());
     // star->setFolder(cbFolder);
     psys->addStar(star);
 
@@ -291,7 +291,7 @@ bool pSystem::loadPlanet(cstr_t &cbName, pSystem *psys, fs::path &cbPath)
 
     CelestialPlanet *cbody = new CelestialPlanet(config, type);
 
-    cbody->setPath(cbPath);
+    cbody->setPath(cbPath.string());
     // cbody->setFolder(cbFolder);
     cbody->setup();
 
