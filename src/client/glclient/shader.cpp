@@ -401,13 +401,13 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name, const ShaderPackage lis
 
         fs::path path = shaderFolder + list[idx].glslFilename;
 
-#ifdef _WIN32_
+#ifdef _WIN32
         struct _stat st;
         if (!_wstat(path.c_str(), &st))
 #else
         struct stat st;
         if (!stat(path.c_str(), &st))
-#endif // _WIN32_
+#endif // _WIN32
         {
             auto srcSize = st.st_size;
             std::ifstream srcFile(path);
