@@ -398,11 +398,16 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name, const ShaderPackage lis
     for (int idx = 0; idx < size; idx++) {
         std::vector<str_t> vSource;
         str_t source;
-        struct _stat st;
 
         fs::path path = shaderFolder + list[idx].glslFilename;
 
+#ifdef _WIN32_
+        struct _stat st;
         if (!_wstat(path.c_str(), &st))
+#else
+        struct stat st;
+        if (!stat(path.c_str(), &st))
+#endif // _WIN32_
         {
             auto srcSize = st.st_size;
             std::ifstream srcFile(path);
