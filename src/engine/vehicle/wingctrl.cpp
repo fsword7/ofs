@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Oct 21, 2024
 
+#define OFSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "engine/vehicle/vehicle.h"
 
