@@ -6,6 +6,7 @@
 #pragma once
 
 #include "engine/rigidbody.h"
+#include "api/ofsapi.h"
 #include "api/elevmgr.h"
 #include "api/vehicle.h"
 
@@ -362,7 +363,7 @@ protected:
     mutable elevTileList_t elevTiles;
 };
 
-class Vehicle : public VehicleBase
+class OFSAPI Vehicle : public VehicleBase
 {
     friend class SuperVehicle;
 

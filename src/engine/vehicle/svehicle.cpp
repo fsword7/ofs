@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Apr 25, 2022
 
+#define OFSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "ephem/elements.h"
 #include "engine/celestial.h"

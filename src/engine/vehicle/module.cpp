@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Aug 21, 2025
 
+#define OFSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "api/logger.h"
 #include "api/module.h"

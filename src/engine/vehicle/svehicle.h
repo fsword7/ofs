@@ -6,6 +6,7 @@
 #pragma once
 
 #include "engine/rigidbody.h"
+#include "api/ofsapi.h"
 
 struct VehicleList
 {
@@ -15,7 +16,7 @@ struct VehicleList
     glm::dquat rq;      // relative orientation (quaternion)
 };
 
-class SuperVehicle : public RigidBody
+class OFSAPI SuperVehicle : public RigidBody
 {
 public:
     SuperVehicle();

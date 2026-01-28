@@ -92,11 +92,11 @@ void CoreApp::launch()
 {
     fs::path homePath = OFS_HOME_DIR;
     fs::path startPath = homePath / "scen/start.json";
-    ofsLogger->info("Open file: {}\n", startPath.c_str());
+    ofsLogger->info("Open file: {}\n", startPath.string());
     std::ifstream inFile(homePath / "scen/start.json");
     if (!inFile.is_open()) {
         ofsLogger->info("File {}: {} - aborted\n",
-            startPath.c_str(), strerror(errno));
+            startPath.string(), strerror(errno));
         abort();
     }
     json config = json::parse(inFile, nullptr, false, true);

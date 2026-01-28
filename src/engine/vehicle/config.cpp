@@ -3,6 +3,8 @@
 // Author:  Tim Stark
 // Date:    Jul 23, 2025
 
+#define OFSAPI_SERVER_BUILD
+
 #include "main/core.h"
 #include "api/draw.h"
 #include "control/hud/panel.h"
