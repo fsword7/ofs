@@ -230,6 +230,7 @@ ShaderStatus ShaderSource::create(ShaderManager *shmgr, ShaderType type, const s
     str_t log;
 
     status = newShader->compile(source);
+
     if (status != shrSuccessful)
     {
         for (unsigned int idx = 0; idx < source.size(); idx++)
@@ -400,6 +401,7 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name, const ShaderPackage lis
         str_t source;
 
         fs::path path = shaderFolder + list[idx].glslFilename;
+        glLogger->verbose("Compiling {}...\n", path.filename().string());
 
 #ifdef _WIN32
         struct _stat st;
@@ -418,8 +420,9 @@ ShaderProgram *ShaderManager::createShader(cstr_t &name, const ShaderPackage lis
                 return nullptr;
             }
 
-            source = std::string(srcSize, '\0');
-            srcFile.read(&source[0], srcSize);
+            std::string line;
+            while(std::getline(srcFile, line))
+                source += line + '\n';
             srcFile.close();
 
             vSource.push_back(source);
