@@ -13,6 +13,7 @@
 RigidBody::RigidBody(cjson &config, ObjectType type, celType celtype)
 : Celestial(config, type, celtype)
 {
+    // pmi = { -1, -1, -1 }; // undefined
 }
 
 // glm::dvec3 RigidBody::getuPosition(double tjd) const
@@ -111,6 +112,8 @@ void RigidBody::updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel)
 
 void RigidBody::update(bool force)
 {
+    glm::dvec3 tau;
+
     if (bDynamicForce)
     {
         if (bOrbitNotInitialized)
@@ -145,7 +148,7 @@ void RigidBody::update(bool force)
         flushPosition();
         flushVelocity();
         s1.R = glm::dmat3(1); // glm::mat3_cast(s1.Q);
-        // getIntermediateMoments(acc, am, s1, 1, dt);
+        // getIntermediateMoments(acc, tau, s1, 1, dt);
         bOrbitNotInitialized = false;
 
         // ofsLogger->info("RigidBody - updates\n");
