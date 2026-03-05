@@ -49,9 +49,9 @@ bool ShaderSource::readsFile(const fs::path &fname, std::string &data)
     if (!file.good())
         return false;
 
-    auto size = fs::file_size(fullPath);
-    data = str_t(size, '\0');
-    file.read(&data[0], size);
+    std::string line;
+    while(std::getline(file, line))
+        data += line + '\n';
     file.close();
 
     return true;
@@ -112,16 +112,8 @@ bool ShaderSource::parseInclude(str_t &str, size_t idx)
 
     str.erase(start, idx + 1 - start);
     str_t data;
-    if (readsFile(fname, data))
-    {
-        // fmt::printf("Include file: %s\n", fname);
-        // dump(data);
-        while(data.back() == '\0')
-            data.pop_back();
-
-        if (data.length())
+    if (readsFile(fname, data) && data.length())
             str.insert(start, data.c_str());
-    }
 
     return true;
 }
