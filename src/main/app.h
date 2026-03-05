@@ -7,6 +7,7 @@
 
 #include "main/timedate.h"
 #include "engine/player.h"
+#include "main/keymap.h"
 
 class Engine;
 class Universe;
@@ -44,6 +45,7 @@ public:
     inline Player    *getPlayer()   { return player; }
     inline Panel     *getPanel()    { return panel; }
     inline Universe  *getUniverse() { return universe; }
+    inline Keymap    &getKeymap()   { return keymap; }
 
     void launch();
     void openSession(json &config);
@@ -83,12 +85,11 @@ public:
     inline void togglePause() { pause(bRunning); }
     
     // Keyboard controls
-    void keyPress(char32_t code, int modifiers, bool down);
-    void keyProcess(char32_t ch, int modifiers);
+    void keyPress(uint8_t key, bool down);
 
     void processUserInputs();
-    void keyBufferedSystem(char32_t key, int mods);
-    void keyBufferedOnRunning(char32_t key, int mods);
+    void keyBufferedSystem(uint8_t key);
+    void keyBufferedOnRunning(uint8_t key);
     void keyImmediateSystem();
     void keyImmediateOnRunning();
 
@@ -133,10 +134,8 @@ protected:
 
     TimeDate td;
 
-    bool stateKey[512];
-    bool shiftStateKey[512];
-    bool ctrlStateKey[512];
-    bool altStateKey[512];
+    mutable Keymap keymap;
+    bool keyState[256];
 
     // int ctrlKeyThrusters[thgMaxThrusters];
     // int ctrlJoyThrusters[thgMaxThrusters];

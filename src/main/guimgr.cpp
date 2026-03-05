@@ -6,7 +6,6 @@
 #include "main/core.h"
 #include "api/graphics.h"
 #include "engine/player.h"
-#include "main/keys.h"
 #include "main/app.h"
 #include "main/guimgr.h"
 
@@ -53,114 +52,115 @@ void GUIManager::resetKeys()
     // Clear all key mapping table
     memset(keys, 0, GLFW_KEY_LAST);
 
-    keys[GLFW_KEY_0]                = ofs::keyCode::key0;
-    keys[GLFW_KEY_1]                = ofs::keyCode::key1;
-    keys[GLFW_KEY_2]                = ofs::keyCode::key2;
-    keys[GLFW_KEY_3]                = ofs::keyCode::key3;
-    keys[GLFW_KEY_4]                = ofs::keyCode::key4;
-    keys[GLFW_KEY_5]                = ofs::keyCode::key5;
-    keys[GLFW_KEY_6]                = ofs::keyCode::key6;
-    keys[GLFW_KEY_7]                = ofs::keyCode::key7;
-    keys[GLFW_KEY_8]                = ofs::keyCode::key8;
-    keys[GLFW_KEY_9]                = ofs::keyCode::key9;
+    keys[GLFW_KEY_0]                = ofs::pkey0;
+    keys[GLFW_KEY_1]                = ofs::pkey1;
+    keys[GLFW_KEY_2]                = ofs::pkey2;
+    keys[GLFW_KEY_3]                = ofs::pkey3;
+    keys[GLFW_KEY_4]                = ofs::pkey4;
+    keys[GLFW_KEY_5]                = ofs::pkey5;
+    keys[GLFW_KEY_6]                = ofs::pkey6;
+    keys[GLFW_KEY_7]                = ofs::pkey7;
+    keys[GLFW_KEY_8]                = ofs::pkey8;
+    keys[GLFW_KEY_9]                = ofs::pkey9;
 
-    keys[GLFW_KEY_A]                = ofs::keyCode::keyA;
-    keys[GLFW_KEY_B]                = ofs::keyCode::keyB;
-    keys[GLFW_KEY_C]                = ofs::keyCode::keyC;
-    keys[GLFW_KEY_D]                = ofs::keyCode::keyD;
-    keys[GLFW_KEY_E]                = ofs::keyCode::keyE;
-    keys[GLFW_KEY_F]                = ofs::keyCode::keyF;
-    keys[GLFW_KEY_G]                = ofs::keyCode::keyG;
-    keys[GLFW_KEY_H]                = ofs::keyCode::keyH;
-    keys[GLFW_KEY_I]                = ofs::keyCode::keyI;
-    keys[GLFW_KEY_J]                = ofs::keyCode::keyJ;
-    keys[GLFW_KEY_K]                = ofs::keyCode::keyK;
-    keys[GLFW_KEY_L]                = ofs::keyCode::keyL;
-    keys[GLFW_KEY_M]                = ofs::keyCode::keyM;
-    keys[GLFW_KEY_N]                = ofs::keyCode::keyN;
-    keys[GLFW_KEY_O]                = ofs::keyCode::keyO;
-    keys[GLFW_KEY_P]                = ofs::keyCode::keyP;
-    keys[GLFW_KEY_Q]                = ofs::keyCode::keyQ;
-    keys[GLFW_KEY_R]                = ofs::keyCode::keyR;
-    keys[GLFW_KEY_S]                = ofs::keyCode::keyS;
-    keys[GLFW_KEY_T]                = ofs::keyCode::keyT;
-    keys[GLFW_KEY_U]                = ofs::keyCode::keyU;
-    keys[GLFW_KEY_V]                = ofs::keyCode::keyV;
-    keys[GLFW_KEY_W]                = ofs::keyCode::keyW;
-    keys[GLFW_KEY_X]                = ofs::keyCode::keyX;
-    keys[GLFW_KEY_Y]                = ofs::keyCode::keyY;
-    keys[GLFW_KEY_Z]                = ofs::keyCode::keyZ;
+    keys[GLFW_KEY_A]                = ofs::pkeyA;
+    keys[GLFW_KEY_B]                = ofs::pkeyB;
+    keys[GLFW_KEY_C]                = ofs::pkeyC;
+    keys[GLFW_KEY_D]                = ofs::pkeyD;
+    keys[GLFW_KEY_E]                = ofs::pkeyE;
+    keys[GLFW_KEY_F]                = ofs::pkeyF;
+    keys[GLFW_KEY_G]                = ofs::pkeyG;
+    keys[GLFW_KEY_H]                = ofs::pkeyH;
+    keys[GLFW_KEY_I]                = ofs::pkeyI;
+    keys[GLFW_KEY_J]                = ofs::pkeyJ;
+    keys[GLFW_KEY_K]                = ofs::pkeyK;
+    keys[GLFW_KEY_L]                = ofs::pkeyL;
+    keys[GLFW_KEY_M]                = ofs::pkeyM;
+    keys[GLFW_KEY_N]                = ofs::pkeyN;
+    keys[GLFW_KEY_O]                = ofs::pkeyO;
+    keys[GLFW_KEY_P]                = ofs::pkeyP;
+    keys[GLFW_KEY_Q]                = ofs::pkeyQ;
+    keys[GLFW_KEY_R]                = ofs::pkeyR;
+    keys[GLFW_KEY_S]                = ofs::pkeyS;
+    keys[GLFW_KEY_T]                = ofs::pkeyT;
+    keys[GLFW_KEY_U]                = ofs::pkeyU;
+    keys[GLFW_KEY_V]                = ofs::pkeyV;
+    keys[GLFW_KEY_W]                = ofs::pkeyW;
+    keys[GLFW_KEY_X]                = ofs::pkeyX;
+    keys[GLFW_KEY_Y]                = ofs::pkeyY;
+    keys[GLFW_KEY_Z]                = ofs::pkeyZ;
 
-    keys[GLFW_KEY_SPACE]            = ofs::keyCode::keySpace;
-    keys[GLFW_KEY_SLASH]            = ofs::keyCode::keySlash;
-    keys[GLFW_KEY_PERIOD]           = ofs::keyCode::keyPeriod;
-    keys[GLFW_KEY_COMMA]            = ofs::keyCode::keyComma;
-    keys[GLFW_KEY_MINUS]            = ofs::keyCode::keyMinus;
-    keys[GLFW_KEY_EQUAL]            = ofs::keyCode::keyEqual;
-    keys[GLFW_KEY_SEMICOLON]        = ofs::keyCode::keySemicolon;
-    keys[GLFW_KEY_APOSTROPHE]       = ofs::keyCode::keyApostrophe;
-    keys[GLFW_KEY_BACKSLASH]        = ofs::keyCode::keyBackslash;
-    keys[GLFW_KEY_GRAVE_ACCENT]     = ofs::keyCode::keyGraveAccent;
+    keys[GLFW_KEY_LEFT_BRACKET]     = ofs::pkeyLeftBracket;
+    keys[GLFW_KEY_RIGHT_BRACKET]    = ofs::pkeyRightBracket;
 
-    keys[GLFW_KEY_TAB]              = ofs::keyCode::keyTab;
-    keys[GLFW_KEY_BACKSPACE]        = ofs::keyCode::keyBackspace;
-    keys[GLFW_KEY_ENTER]            = ofs::keyCode::keyEnter;
-    keys[GLFW_KEY_LEFT_BRACKET]     = ofs::keyCode::keyLeftBracket;
-    keys[GLFW_KEY_RIGHT_BRACKET]    = ofs::keyCode::keyRightBracket;
+    keys[GLFW_KEY_SPACE]            = ofs::pkeySpace;
+    keys[GLFW_KEY_SLASH]            = ofs::pkeySlash;
+    keys[GLFW_KEY_PERIOD]           = ofs::pkeyPeriod;
+    keys[GLFW_KEY_COMMA]            = ofs::pkeyComma;
+    keys[GLFW_KEY_MINUS]            = ofs::pkeyMinus;
+    keys[GLFW_KEY_EQUAL]            = ofs::pkeyEqual;
+    keys[GLFW_KEY_SEMICOLON]        = ofs::pkeySemicolon;
+    keys[GLFW_KEY_APOSTROPHE]       = ofs::pkeyApostrophe;
+    keys[GLFW_KEY_BACKSLASH]        = ofs::pkeyBackslash;
+    keys[GLFW_KEY_GRAVE_ACCENT]     = ofs::pkeyGraveAccent;
 
-    keys[GLFW_KEY_ESCAPE]           = ofs::keyCode::keyEscape;
-    keys[GLFW_KEY_LEFT_ALT]         = ofs::keyCode::keyLeftAlt;
-    keys[GLFW_KEY_LEFT_CONTROL]     = ofs::keyCode::keyLeftControl;
-    keys[GLFW_KEY_LEFT_SHIFT]       = ofs::keyCode::keyLeftShift;
-    keys[GLFW_KEY_RIGHT_ALT]        = ofs::keyCode::keyRightAlt;
-    keys[GLFW_KEY_RIGHT_CONTROL]    = ofs::keyCode::keyRightControl;
-    keys[GLFW_KEY_RIGHT_SHIFT]      = ofs::keyCode::keyRightShift;
+    keys[GLFW_KEY_LEFT_SHIFT]       = ofs::pkeyLShift;
+    keys[GLFW_KEY_LEFT_CONTROL]     = ofs::pkeyLControl;
+    keys[GLFW_KEY_LEFT_ALT]         = ofs::pkeyLAlt;
+    keys[GLFW_KEY_RIGHT_SHIFT]      = ofs::pkeyRShift;
+    keys[GLFW_KEY_RIGHT_CONTROL]    = ofs::pkeyRControl;
+    keys[GLFW_KEY_RIGHT_ALT]        = ofs::pkeyRAlt;
 
-    keys[GLFW_KEY_LEFT]             = ofs::keyCode::keyLeft;
-    keys[GLFW_KEY_RIGHT]            = ofs::keyCode::keyRight;
-    keys[GLFW_KEY_UP]               = ofs::keyCode::keyUp;
-    keys[GLFW_KEY_DOWN]             = ofs::keyCode::keyDown;
-    keys[GLFW_KEY_DELETE]           = ofs::keyCode::keyDelete;
-    keys[GLFW_KEY_INSERT]           = ofs::keyCode::keyInsert;
-    keys[GLFW_KEY_PAGE_UP]          = ofs::keyCode::keyPageUp;
-    keys[GLFW_KEY_PAGE_DOWN]        = ofs::keyCode::keyPageDown;
-    keys[GLFW_KEY_HOME]             = ofs::keyCode::keyHome;
-    keys[GLFW_KEY_END]              = ofs::keyCode::keyEnd;
-    keys[GLFW_KEY_CAPS_LOCK]        = ofs::keyCode::keyCapsLock;
-    keys[GLFW_KEY_SCROLL_LOCK]      = ofs::keyCode::keyScrollLock;
-    keys[GLFW_KEY_NUM_LOCK]         = ofs::keyCode::keyNumLock;
-    keys[GLFW_KEY_PRINT_SCREEN]     = ofs::keyCode::keyPrintScreen;
-    keys[GLFW_KEY_PAUSE]            = ofs::keyCode::keyPause;
+    keys[GLFW_KEY_TAB]              = ofs::pkeyTab;
+    keys[GLFW_KEY_BACKSPACE]        = ofs::pkeyBackspace;
+    keys[GLFW_KEY_ENTER]            = ofs::pkeyEnter;
+    keys[GLFW_KEY_ESCAPE]           = ofs::pkeyEscape;
 
-    keys[GLFW_KEY_F1]               = ofs::keyCode::keyF1;
-    keys[GLFW_KEY_F2]               = ofs::keyCode::keyF2;
-    keys[GLFW_KEY_F3]               = ofs::keyCode::keyF3;
-    keys[GLFW_KEY_F4]               = ofs::keyCode::keyF4;
-    keys[GLFW_KEY_F5]               = ofs::keyCode::keyF5;
-    keys[GLFW_KEY_F6]               = ofs::keyCode::keyF6;
-    keys[GLFW_KEY_F7]               = ofs::keyCode::keyF7;
-    keys[GLFW_KEY_F8]               = ofs::keyCode::keyF8;
-    keys[GLFW_KEY_F9]               = ofs::keyCode::keyF9;
-    keys[GLFW_KEY_F10]              = ofs::keyCode::keyF10;
-    keys[GLFW_KEY_F11]              = ofs::keyCode::keyF11;
-    keys[GLFW_KEY_F12]              = ofs::keyCode::keyF12;
+    keys[GLFW_KEY_LEFT]             = ofs::pkeyLeft;
+    keys[GLFW_KEY_RIGHT]            = ofs::pkeyRight;
+    keys[GLFW_KEY_UP]               = ofs::pkeyUp;
+    keys[GLFW_KEY_DOWN]             = ofs::pkeyDown;
+    keys[GLFW_KEY_DELETE]           = ofs::pkeyDelete;
+    keys[GLFW_KEY_INSERT]           = ofs::pkeyInsert;
+    keys[GLFW_KEY_PAGE_UP]          = ofs::pkeyPageUp;
+    keys[GLFW_KEY_PAGE_DOWN]        = ofs::pkeyPageDown;
+    keys[GLFW_KEY_HOME]             = ofs::pkeyHome;
+    keys[GLFW_KEY_END]              = ofs::pkeyEnd;
+    keys[GLFW_KEY_CAPS_LOCK]        = ofs::pkeyCapsLock;
+    keys[GLFW_KEY_SCROLL_LOCK]      = ofs::pkeyScrollLock;
+    keys[GLFW_KEY_NUM_LOCK]         = ofs::pkeyNumLock;
+    keys[GLFW_KEY_PRINT_SCREEN]     = ofs::pkeyPrintScreen;
+    keys[GLFW_KEY_PAUSE]            = ofs::pkeyPause;
 
-    keys[GLFW_KEY_KP_0]             = ofs::keyCode::keyPad0;
-    keys[GLFW_KEY_KP_1]             = ofs::keyCode::keyPad1;
-    keys[GLFW_KEY_KP_2]             = ofs::keyCode::keyPad2;
-    keys[GLFW_KEY_KP_3]             = ofs::keyCode::keyPad3;
-    keys[GLFW_KEY_KP_4]             = ofs::keyCode::keyPad4;
-    keys[GLFW_KEY_KP_5]             = ofs::keyCode::keyPad5;
-    keys[GLFW_KEY_KP_6]             = ofs::keyCode::keyPad6;
-    keys[GLFW_KEY_KP_7]             = ofs::keyCode::keyPad7;
-    keys[GLFW_KEY_KP_8]             = ofs::keyCode::keyPad8;
-    keys[GLFW_KEY_KP_9]             = ofs::keyCode::keyPad9;
-    keys[GLFW_KEY_KP_DECIMAL]       = ofs::keyCode::keyPadDecimal;
-    keys[GLFW_KEY_KP_DIVIDE]        = ofs::keyCode::keyPadDivide;
-    keys[GLFW_KEY_KP_MULTIPLY]      = ofs::keyCode::keyPadMultiply;
-    keys[GLFW_KEY_KP_ADD]           = ofs::keyCode::keyPadAdd;
-    keys[GLFW_KEY_KP_SUBTRACT]      = ofs::keyCode::keyPadSubtract;
-    keys[GLFW_KEY_KP_ENTER]         = ofs::keyCode::keyPadEnter;
+    keys[GLFW_KEY_F1]               = ofs::pkeyF1;
+    keys[GLFW_KEY_F2]               = ofs::pkeyF2;
+    keys[GLFW_KEY_F3]               = ofs::pkeyF3;
+    keys[GLFW_KEY_F4]               = ofs::pkeyF4;
+    keys[GLFW_KEY_F5]               = ofs::pkeyF5;
+    keys[GLFW_KEY_F6]               = ofs::pkeyF6;
+    keys[GLFW_KEY_F7]               = ofs::pkeyF7;
+    keys[GLFW_KEY_F8]               = ofs::pkeyF8;
+    keys[GLFW_KEY_F9]               = ofs::pkeyF9;
+    keys[GLFW_KEY_F10]              = ofs::pkeyF10;
+    keys[GLFW_KEY_F11]              = ofs::pkeyF11;
+    keys[GLFW_KEY_F12]              = ofs::pkeyF12;
+
+    keys[GLFW_KEY_KP_0]             = ofs::pkeyPad0;
+    keys[GLFW_KEY_KP_1]             = ofs::pkeyPad1;
+    keys[GLFW_KEY_KP_2]             = ofs::pkeyPad2;
+    keys[GLFW_KEY_KP_3]             = ofs::pkeyPad3;
+    keys[GLFW_KEY_KP_4]             = ofs::pkeyPad4;
+    keys[GLFW_KEY_KP_5]             = ofs::pkeyPad5;
+    keys[GLFW_KEY_KP_6]             = ofs::pkeyPad6;
+    keys[GLFW_KEY_KP_7]             = ofs::pkeyPad7;
+    keys[GLFW_KEY_KP_8]             = ofs::pkeyPad8;
+    keys[GLFW_KEY_KP_9]             = ofs::pkeyPad9;
+    keys[GLFW_KEY_KP_DECIMAL]       = ofs::pkeyPadDecimal;
+    keys[GLFW_KEY_KP_DIVIDE]        = ofs::pkeyPadDivide;
+    keys[GLFW_KEY_KP_MULTIPLY]      = ofs::pkeyPadMultiply;
+    keys[GLFW_KEY_KP_ADD]           = ofs::pkeyPadAdd;
+    keys[GLFW_KEY_KP_SUBTRACT]      = ofs::pkeyPadSubtract;
+    keys[GLFW_KEY_KP_ENTER]         = ofs::pkeyPadEnter;
 
 }
 
@@ -483,27 +483,15 @@ void GUIManager::processKey(GLFWwindow *window, int gkey, int scancode, int acti
     if (gkey == GLFW_KEY_UNKNOWN)
         return;
 
-    char32_t ch = keys[gkey];
-
-    int omods = 0;
-    if (mods & GLFW_MOD_ALT)
-        omods |= ofs::keyAlt;
-    if (mods & GLFW_MOD_CONTROL)
-        omods |= ofs::keyControl;
-    if (mods & GLFW_MOD_SHIFT)
-        omods |= ofs::keyShift;
+    uint8_t key = keys[gkey];
 
     // Logger::logger->debug("Code: {} -> {} action: {} mods: {}\n", gkey,  int(keys[gkey]), action, mods);
 
-    // Process keyboard movement control
-    ofsAppCore->keyPress(ch, omods, action != GLFW_RELEASE);
-
-    // Just ignore repeating action
+    // Just ignore repeating action (holding keys down)
     if (action == GLFW_REPEAT)
         return;
-
-    // char32_t ch = keys[gkey];
-    // ofsAppCore->keyEntered(key, 0);
+    // Process keyboard movement control
+    ofsAppCore->keyPress(key, action != GLFW_RELEASE);
 }
 
 void GUIManager::setupPrimaryMonitorSize()

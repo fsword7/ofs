@@ -34,6 +34,7 @@ class Vehicle;
 class HUDPanel;
 class Sketchpad;
 class Mesh;
+class Keymap;
 
 // planetary surface parameters for flight simulation (air flight)
 struct surface_t
@@ -410,7 +411,10 @@ public:
 
     inline void addForce(const glm::dvec3 &F, const glm::dvec3 &r)   { flin += F, amom += glm::cross(F, r); }
 
-    void updateUserAttitudeControls(int *ctrlKeyboard);
+    bool processImmediateKeyOnRunning(const bool *keyState, const Keymap &keymap);
+    bool processBufferedKeyOnRunning(uint8_t key);
+
+    void updateUserAttitudeControls();
 
     void updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel);
     void updateGlobalIndividual(const glm::dvec3 &rpos, const glm::dvec3 &rvel);
@@ -537,6 +541,11 @@ private:
 
     tank_t *dTank = nullptr; // default propellant tank
     bool bEnableBurnFuel = false;
+    uint32_t navFlags = 0;              // Navigation controls
+
+    bool bEnableRCS = false;
+    int ctrlKeyThrusters[thgMaxThrusters];
+    int ctrlJoyThrusters[thgMaxThrusters];
 
     std::vector<port_t *> ports;        // docking port list
 

@@ -58,6 +58,7 @@ set(OFS_CPP_SRCS
     main/app.cpp
     main/guimgr.cpp
     main/graphics.cpp
+    main/keymap.cpp
     main/main.cpp
     main/module.cpp
     main/ofsapi.cpp
@@ -155,6 +156,7 @@ set(OFS_H_SRCS
     main/app.h
     main/core.h
     main/guimgr.h
+    main/keymap.h
     main/math.h
     main/timedate.h
     # render/elevmgr.h

@@ -48,8 +48,8 @@
     "player": {
         "mode": {
             // Space plane cockpit
-            // "type": "cockpit",
-            // "target": "SG-01"
+            "type": "cockpit",
+            "target": "SG-01"
 
             // Observe rotating Earth
             // "type": "target-sync",
@@ -90,10 +90,10 @@
             // "heading": 150
 
             // Observe Rocky Mountains in Colorado
-            "type": "personal-observer",
-            "target": "Sol/Earth",
-            "location": [ 39.7309918, -104.7046216, 2 ],
-            "heading": 270
+            // "type": "personal-observer",
+            // "target": "Sol/Earth",
+            // "location": [ 39.7309918, -104.7046216, 2 ],
+            // "heading": 270
 
             // Observe Grand Canyon (south rim) in Arizona
             // "type": "personal-observer",

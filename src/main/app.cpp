@@ -19,7 +19,6 @@
 #include "engine/dlgcam.h"
 #include "main/guimgr.h"
 #include "main/app.h"
-#include "main/keys.h"
 #include "utils/json.h"
 
 // Global variables
@@ -30,13 +29,8 @@ TimeDate *ofsDate = nullptr;
 CoreApp::CoreApp()
 {
     // Initialize state keys
-    for (int idx = 0; idx < 512; idx++)
-    {
-        stateKey[idx] = false;
-        shiftStateKey[idx] = false;
-        ctrlStateKey[idx] = false;
-        altStateKey[idx] = false;
-    }
+    for (int idx = 0; idx < ARRAY_SIZE(keyState); idx++)
+        keyState[idx] = false;
 }
 
 void CoreApp::init()
@@ -479,48 +473,21 @@ void *CoreApp::findModuleProcAddress(ModuleHandle handle, cchar_t *funcName)
 
 // ******** Keyboard Controls ********
 
-void CoreApp::keyPress(char32_t code, int mods, bool down)
+void CoreApp::keyPress(uint8_t key, bool down)
 {
-    static char32_t last = -1;
-
-    if (code >= 512)
-        return;
-
     // Logger::logger->debug("Key pressed {}: {}\n", int(code), down ? "Down" : "Up");
 
-    if (down == true)
-    {
-        if (mods & ofs::keyButton::keyShift)
-            shiftStateKey[code] = true;
-        else if (mods & ofs::keyButton::keyControl)
-            ctrlStateKey[code] = true;
-        else if (mods & ofs::keyButton::keyAlt)
-            altStateKey[code] = true;
-        else
-            stateKey[code] = true;
+    if (!bSession)
+        return;
 
-        // Check a key code while it is pressed down.
-        if (last == code) // repeating - discard it.
-            return;
-        last = code;
+    keyState[key] = down;
 
+    if (down == true) {
         // Process a buffered key code once
-        keyBufferedSystem(code, mods);
+        keyBufferedSystem(key);
         if (bRunning)
-            keyBufferedOnRunning(code, mods);
+            keyBufferedOnRunning(key);
     }
-    else
-    {
-        stateKey[code] = false;
-        shiftStateKey[code] = false;
-        ctrlStateKey[code] = false;
-        altStateKey[code] = false;
-        last = -1;
-    }
-}
-
-void CoreApp::keyProcess(char32_t ch, int mods)
-{
 }
 
 void CoreApp::processUserInputs()
@@ -531,28 +498,28 @@ void CoreApp::processUserInputs()
         keyImmediateOnRunning();
 }
 
-void CoreApp::keyBufferedSystem(char32_t key, int mods)
+void CoreApp::keyBufferedSystem(uint8_t key)
 {
-    if (stateKey[ofs::keyF5] || stateKey[ofs::key5])
-        guimgr->showControl<DialogCamera>();
+    // if (stateKey[ofs::keyF5] || stateKey[ofs::key5])
+    //     guimgr->showControl<DialogCamera>();
 
     if (player->isInternal()) {
-        if (altStateKey[ofs::keyHome])
+        if (keymap.isLogicalKey(key, keyState, ofs::lkeyObserverResetHome))
             player->resetCockpitDir();
-        if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
+        if (keymap.isLogicalKey(key, keyState, ofs::lkeyTogglePanelMode))
             panel->togglePanelMode();
-        if (ctrlStateKey[ofs::keyH])
+        if (keymap.isLogicalKey(key, keyState, ofs::lkeyToggleHUDMode))
             panel->toggleHUD();
-        if (stateKey[ofs::keyH])
+        if (keymap.isLogicalKey(key, keyState, ofs::lkeySwitchHUDMode))
             panel->switchHUDMode();
     }
 
     if (player->isExternal()) {
         if (player->getCameraMode() == camPersonalObserver) {
-            if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
+            if (keymap.isLogicalKey(key, keyState, ofs::lkeyTogglePanelMode))
                 panel->togglePersonalPanelMode();
         } else {
-             if (stateKey[ofs::keyF8] || stateKey[ofs::key8])
+             if (keymap.isLogicalKey(key, keyState, ofs::lkeyTogglePanelMode))
                 panel->togglePlanetariumPanelMode();           
         }
         // Celestial *cbody = player->getReferenceObject();
@@ -561,19 +528,17 @@ void CoreApp::keyBufferedSystem(char32_t key, int mods)
     }
 }
 
-void CoreApp::keyBufferedOnRunning(char32_t key, int mods)
+void CoreApp::keyBufferedOnRunning(uint8_t key)
 {
+    Vehicle *veh = player->getVehicleTarget();
 
-    // if (stateKey[keyCode::keyF3])
-    //     increaseTimeWarp();
-    // else if (stateKey[keyCode::keyF4])
-    //     decreaseTimeWarp();
+    veh->processBufferedKeyOnRunning(key);
 
-    if (stateKey[ofs::keyF4] || stateKey[ofs::key4])
+    if (keymap.isLogicalKey(key, keyState, ofs::lkeyIncWarpTime))
         increaseTimeWarp();
-    else if (stateKey[ofs::keyF3] || stateKey[ofs::key3])
+    else if (keymap.isLogicalKey(key, keyState, ofs::lkeyDecWarpTime))
         decreaseTimeWarp();
-    else if (stateKey[ofs::keyF2] || stateKey[ofs::key2])
+    else if (keymap.isLogicalKey(key, keyState, ofs::lkeyResetWarpTime))
         setWarpFactor(1.0);
 
 }
@@ -594,21 +559,21 @@ void CoreApp::keyImmediateSystem()
 
             // Keyboard angular conrtrol
             // X-axis angular control
-            if (stateKey[ofs::keyCode::keyPad8])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelTurnUp))
                 av += glm::dvec3(dt * -keyAttitudeAccel, 0, 0);
-            if (stateKey[ofs::keyCode::keyPad2])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelTurnDown))
                 av += glm::dvec3(dt * keyAttitudeAccel, 0, 0);
 
             // Y-axis angular control
-            if (stateKey[ofs::keyCode::keyPad4])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelTurnLeft))
                 av += glm::dvec3(0, dt * -keyAttitudeAccel, 0);
-            if (stateKey[ofs::keyCode::keyPad6])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelTurnRight))
                 av += glm::dvec3(0, dt * keyAttitudeAccel, 0);
 
             // Z-axis angular control
-            if (stateKey[ofs::keyCode::keyPad7])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelTiltLeft))
                 av += glm::dvec3(0, 0, dt * -keyAttitudeAccel);
-            if (stateKey[ofs::keyCode::keyPad9])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelTiltRight))
                 av += glm::dvec3(0, 0, dt * keyAttitudeAccel);
 
             // Keyboard movement control
@@ -625,13 +590,13 @@ void CoreApp::keyImmediateSystem()
             //     tv.y() -= dt * keyMovementControl;
 
             // Z-axis move control
-            if (stateKey[ofs::keyCode::keyPad3])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelMoveForward))
                 tv.z += dt * keyMovementControl;
-            if (stateKey[ofs::keyCode::keyPad1])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelMoveBackward))
                 tv.z -= dt * keyMovementControl;
 
             // Braking control
-            if (stateKey[ofs::keyCode::keyPad5] || stateKey[ofs::keyCode::keyb])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyTravelBrake))
             {
                 av *= exp(-dt * keyAttitudeBrake);
                 tv *= exp(-dt * keyMovementBrake);
@@ -645,13 +610,13 @@ void CoreApp::keyImmediateSystem()
                 double coarseness = player->computeCoarseness(1.5);
                 glm::dquat q = { 1, 0, 0, 0 };
 
-                if (stateKey[ofs::keyCode::keyLeft])
+                if (keymap.isLogicalKey(keyState, ofs::lkeyOrbitMoveLeft))
                     q *= yqRotate(dt * -keyRotationAccel * coarseness);
-                if (stateKey[ofs::keyCode::keyRight])
+                if (keymap.isLogicalKey(keyState, ofs::lkeyOrbitMoveRight))
                     q *= yqRotate(dt * keyRotationAccel * coarseness);
-                if (stateKey[ofs::keyCode::keyUp])
+                if (keymap.isLogicalKey(keyState, ofs::lkeyOrbitMoveUp))
                     q *= xqRotate(dt * -keyRotationAccel * coarseness);
-                if (stateKey[ofs::keyCode::keyDown])
+                if (keymap.isLogicalKey(keyState, ofs::lkeyOrbitMoveDown))
                     q *= xqRotate(dt * keyRotationAccel * coarseness);
 
                 if (q != glm::dquat(1, 0, 0, 0))
@@ -659,9 +624,9 @@ void CoreApp::keyImmediateSystem()
             }
 
             // Keyboard dolly control
-            if (stateKey[ofs::keyCode::keyHome])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyDollyMoveForward))
                 player->dolly(-dt * 2.0);
-            if (stateKey[ofs::keyCode::keyEnd])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyDollyMoveBackward))
                 player->dolly(dt * 2.0);
         }
 
@@ -669,13 +634,13 @@ void CoreApp::keyImmediateSystem()
         {
             double dphi(0.0), dtheta(0.0);
         
-            if (stateKey[ofs::keyCode::keyPad4])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnLeft))
                 dphi += dt * -0.8;
-            if (stateKey[ofs::keyCode::keyPad6])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnRight))
                 dphi += dt * 0.8;
-            if (stateKey[ofs::keyCode::keyPad2])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnDown))
                 dtheta += dt * -0.8;
-            if (stateKey[ofs::keyCode::keyPad8])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnUp))
                 dtheta += dt * 0.8;
             player->rotateView(dphi, dtheta);
         }
@@ -684,17 +649,17 @@ void CoreApp::keyImmediateSystem()
             glm::dvec3 dm(0, 0, 0);
             double dh(0.0);
 
-            if (stateKey[ofs::keyCode::keyLeft])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnLeft))
                 dm.z -= dt * panSpeed;
-            if (stateKey[ofs::keyCode::keyRight])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnRight))
                 dm.z += dt * panSpeed;
-            if (stateKey[ofs::keyCode::keyUp])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnUp))
                 dm.x += dt * panSpeed;
-            if (stateKey[ofs::keyCode::keyDown])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnDown))
                 dm.x -= dt * panSpeed;
-            if (ctrlStateKey[ofs::keyCode::keyUp])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverMoveUp))
                 dh += dt;
-            if (ctrlStateKey[ofs::keyCode::keyDown])
+            if (keymap.isLogicalKey(keyState, ofs::lkeyObserverMoveDown))
                 dh -= dt;
 
             if (glm::length(dm) != 0)
@@ -737,18 +702,18 @@ void CoreApp::keyImmediateSystem()
     {
         // Internal camera view (in cocpkit)
         double dphi(0.0), dtheta(0.0), dtilt(0.0);
-        
-        if (altStateKey[ofs::keyCode::keyPad4])
+
+        if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnLeft))
             dtheta += dt * 0.8;
-        if (altStateKey[ofs::keyCode::keyPad6])
+        if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnRight))
             dtheta += dt * -0.8;
-        if (altStateKey[ofs::keyCode::keyPad2])
-            dphi += dt * -0.8;
-        if (altStateKey[ofs::keyCode::keyPad8])
+        if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnUp))
             dphi += dt * 0.8;
-        if (altStateKey[ofs::keyCode::keyPad7])
+        if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTurnDown))
+            dphi += dt * -0.8;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTiltLeft))
             dtilt += dt * -0.8;
-        if (altStateKey[ofs::keyCode::keyPad9])
+        if (keymap.isLogicalKey(keyState, ofs::lkeyObserverTiltRight))
             dtilt += dt * 0.8;
 
         player->rotateCockpit(dphi, dtheta, dtilt);
@@ -759,75 +724,9 @@ void CoreApp::keyImmediateOnRunning()
 {
     double dt = td.getSysDeltaTime();
 
-    // Clear all keyboard controls for thrusters
-    // for (int idx = 0; idx < thgMaxThrusters; idx++)
-    //     ctrlKeyThrusters[idx] = 0;
-
-    // Reaction Control System controls
-    // if (bEnableRCS)
-    // {
-        // rotation controls
-        // if (stateKey[ofs::keyPad8])         ctrlKeyThrusters[thgRotPitchUp]      = 1000;
-        // if (ctrlStateKey[ofs::keyPad8])     ctrlKeyThrusters[thgRotPitchUp]      = 100;
-        // if (stateKey[ofs::keyPad2])         ctrlKeyThrusters[thgRotPitchDown]    = 1000;
-        // if (ctrlStateKey[ofs::keyPad2])     ctrlKeyThrusters[thgRotPitchDown]    = 100;
-        // if (stateKey[ofs::keyPad4])         ctrlKeyThrusters[thgRotYawLeft]      = 1000;
-        // if (ctrlStateKey[ofs::keyPad4])     ctrlKeyThrusters[thgRotYawLeft]      = 100;
-        // if (stateKey[ofs::keyPad6])         ctrlKeyThrusters[thgRotYawRight]     = 1000;
-        // if (ctrlStateKey[ofs::keyPad6])     ctrlKeyThrusters[thgRotYawRight]     = 100;
-        // if (stateKey[ofs::keyPad7])         ctrlKeyThrusters[thgRotBankLeft]     = 1000;
-        // if (ctrlStateKey[ofs::keyPad7])     ctrlKeyThrusters[thgRotBankLeft]     = 100;
-        // if (stateKey[ofs::keyPad9])         ctrlKeyThrusters[thgRotBankRight]    = 1000;
-        // if (ctrlStateKey[ofs::keyPad9])     ctrlKeyThrusters[thgRotBankRight]    = 100;
-
-        // linear controls
-        // if (stateKey[ofs::keyUp])           ctrlKeyThrusters[thgLinMoveUp]       = 1000;
-        // if (ctrlStateKey[ofs::keyUp])       ctrlKeyThrusters[thgLinMoveUp]       = 100;
-        // if (stateKey[ofs::keyDown])         ctrlKeyThrusters[thgLinMoveDown]     = 1000;
-        // if (ctrlStateKey[ofs::keyDown])     ctrlKeyThrusters[thgLinMoveDown]     = 100;
-        // if (stateKey[ofs::keyLeft])         ctrlKeyThrusters[thgLinMoveLeft]     = 1000;
-        // if (ctrlStateKey[ofs::keyLeft])     ctrlKeyThrusters[thgLinMoveLeft]     = 100;
-        // if (stateKey[ofs::keyRight])        ctrlKeyThrusters[thgLinMoveRight]    = 1000;
-        // if (ctrlStateKey[ofs::keyRight])    ctrlKeyThrusters[thgLinMoveRight]    = 100;
-        // if (stateKey[ofs::keyPad1])         ctrlKeyThrusters[thgLinMoveForward]  = 1000;
-        // if (ctrlStateKey[ofs::keyPad1])     ctrlKeyThrusters[thgLinMoveForward]  = 100;
-        // if (stateKey[ofs::keyPad3])         ctrlKeyThrusters[thgLinMoveBackward] = 1000;
-        // if (ctrlStateKey[ofs::keyPad3])     ctrlKeyThrusters[thgLinMoveBackward] = 100;
-
-    // }
-
-    // if (stateKey[ofs::keyF4])
-    //     increaseTimeWarp();
-    // else if (stateKey[ofs::keyF3])
-    //     decreaseTimeWarp();
-    // else if (stateKey[ofs::keyF2])
-    //     setWarpFactor(1.0);
-
     Vehicle *veh = player->getVehicleTarget();
 
-    // Main/Retro thruster controls
-    if (ctrlStateKey[ofs::keyPadAdd])
-        veh->throttleMainRetroThruster(0.2*dt);
-    if (ctrlStateKey[ofs::keyPadSubtract])
-        veh->throttleMainRetroThruster(-0.2*dt);
-    if (altStateKey[ofs::keyPadAdd])
-        veh->setMainRetroThruster(1.0);
-    if (altStateKey[ofs::keyPadSubtract])
-        veh->setMainRetroThruster(-1.0);
-    if (stateKey[ofs::keyPadAdd])
-        veh->overrideMainRetroThruster(1.0);
-    if (stateKey[ofs::keyPadSubtract])
-        veh->overrideMainRetroThruster(-1.0);
-    if (stateKey[ofs::keyPadMultiply]) {
-        veh->setThrustGroupLevel(thgMain, 0.0);
-        veh->setThrustGroupLevel(thgRetro, 0.0);
-    }
-
-    // Hover thruster controls
-    if (stateKey[ofs::keyPad0])
-        veh->throttleThrustGroupLevel(thgHover, 0.2*dt);
-    if (stateKey[ofs::keyPadDecimal])
-        veh->throttleThrustGroupLevel(thgHover, -0.2*dt);
+    veh->processImmediateKeyOnRunning(keyState, keymap);
 
 }
 

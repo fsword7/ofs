@@ -6,6 +6,8 @@
 #define OFSAPI_SERVER_BUILD
 
 #include "main/core.h"
+#include "main/keymap.h"
+#include "main/app.h"
 #include "engine/vehicle/vehicle.h"
 
 tank_t *Vehicle::createPropellant(double maxMass, double mass, double efficiency)
@@ -268,41 +270,119 @@ void Vehicle::overrideMainRetroThruster(double level)
     }
 }
 
-void Vehicle::updateUserAttitudeControls(int *ctrlKeyboard)
+bool Vehicle::processImmediateKeyOnRunning(const bool *keyState, const Keymap &keymap)
+{
+    // Clear all thruster controls
+    for (int idx = 0; idx < thgMaxThrusters; idx++)
+        ctrlKeyThrusters[idx] = 0;
+    
+    // Reaction Control System controls
+    if (bEnableRCS)
+    {
+        // rotation controls
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotPitchUp))            ctrlKeyThrusters[thgRotPitchUp]      = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotPitchUp))           ctrlKeyThrusters[thgRotPitchUp]      = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotPitchDown))          ctrlKeyThrusters[thgRotPitchDown]    = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotPitchDown))         ctrlKeyThrusters[thgRotPitchDown]    = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotYawLeft))            ctrlKeyThrusters[thgRotYawLeft]      = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotYawLeft))           ctrlKeyThrusters[thgRotYawLeft]      = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotYawRight))           ctrlKeyThrusters[thgRotYawRight]     = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotYawRight))          ctrlKeyThrusters[thgRotYawRight]     = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotBankLeft))           ctrlKeyThrusters[thgRotBankLeft]     = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotBankLeft))          ctrlKeyThrusters[thgRotBankLeft]     = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotBankRight))          ctrlKeyThrusters[thgRotBankRight]    = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotBankRight))         ctrlKeyThrusters[thgRotBankRight]    = 100;
+
+        // linear controls
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveUp))             ctrlKeyThrusters[thgLinMoveUp]       = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveUp))            ctrlKeyThrusters[thgLinMoveUp]       = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveDown))           ctrlKeyThrusters[thgLinMoveDown]     = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveDown))          ctrlKeyThrusters[thgLinMoveDown]     = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveLeft))           ctrlKeyThrusters[thgLinMoveLeft]     = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveLeft))          ctrlKeyThrusters[thgLinMoveLeft]     = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveRight))          ctrlKeyThrusters[thgLinMoveRight]    = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveRight))         ctrlKeyThrusters[thgLinMoveRight]    = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveForward))        ctrlKeyThrusters[thgLinMoveForward]  = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveForward))       ctrlKeyThrusters[thgLinMoveForward]  = 100;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveBackward))       ctrlKeyThrusters[thgLinMoveBackward] = 1000;
+        if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveBackward))      ctrlKeyThrusters[thgLinMoveBackward] = 100;
+
+    }
+
+    double dt = ofsDate->getSysDeltaTime();
+
+    // Main/Retro thruster controls
+    if (keymap.isLogicalKey(keyState, ofs::lkeyIncMainThrust))
+        throttleMainRetroThruster(0.2*dt);
+    if (keymap.isLogicalKey(keyState, ofs::lkeyDecMainThrust))
+        throttleMainRetroThruster(-0.2*dt);
+    if (keymap.isLogicalKey(keyState, ofs::lkeyFullMainThrust))
+        setMainRetroThruster(1.0);
+    if (keymap.isLogicalKey(keyState, ofs::lkeyFullRetroThrust))
+        setMainRetroThruster(-1.0);
+    if (keymap.isLogicalKey(keyState, ofs::lkeyBoostMainThrust))
+        overrideMainRetroThruster(1.0);
+    if (keymap.isLogicalKey(keyState, ofs::lkeyBoostRetroThrust))
+        overrideMainRetroThruster(-1.0);
+    if (keymap.isLogicalKey(keyState, ofs::lkeyKillMainThrust)) {
+        setThrustGroupLevel(thgMain, 0.0);
+        setThrustGroupLevel(thgRetro, 0.0);
+    }
+
+    // Hover thruster controls
+    if (keymap.isLogicalKey(keyState, ofs::lkeyIncHoverThrust))
+        throttleThrustGroupLevel(thgHover, 0.2*dt);
+    if (keymap.isLogicalKey(keyState, ofs::lkeyDecHoverThrust))
+        throttleThrustGroupLevel(thgHover, -0.2*dt);
+
+    return false;
+}
+
+bool Vehicle::processBufferedKeyOnRunning(uint8_t key)
+{
+    return false;
+}
+
+void Vehicle::updateUserAttitudeControls()
 {
 
     // Main engine controls
-    throttleThrustGroupOverride(thgMain,   0.001 * ctrlKeyboard[thgMain]);
-    throttleThrustGroupOverride(thgRetro,  0.001 * ctrlKeyboard[thgRetro]);
-    throttleThrustGroupOverride(thgHover,  0.001 * ctrlKeyboard[thgHover]);
+    throttleThrustGroupOverride(thgMain,   0.001 * ctrlKeyThrusters[thgMain]);
+    throttleThrustGroupOverride(thgRetro,  0.001 * ctrlKeyThrusters[thgRetro]);
+    throttleThrustGroupOverride(thgHover,  0.001 * ctrlKeyThrusters[thgHover]);
  
     if (rcsMode & 1)
     {
         // RCS Attitude rotational controls
-        throttleThrustGroupOverride(thgRotPitchUp,      0.001 * ctrlKeyboard[thgRotPitchUp]);
-        throttleThrustGroupOverride(thgRotPitchDown,    0.001 * ctrlKeyboard[thgRotPitchDown]);
-        throttleThrustGroupOverride(thgRotYawLeft,      0.001 * ctrlKeyboard[thgRotYawLeft]);
-        throttleThrustGroupOverride(thgRotYawRight,     0.001 * ctrlKeyboard[thgRotYawRight]);
-        throttleThrustGroupOverride(thgRotBankLeft,     0.001 * ctrlKeyboard[thgRotBankLeft]);
-        throttleThrustGroupOverride(thgRotBankRight,    0.001 * ctrlKeyboard[thgRotBankRight]);
+        throttleThrustGroupOverride(thgRotPitchUp,      0.001 * ctrlKeyThrusters[thgRotPitchUp]);
+        throttleThrustGroupOverride(thgRotPitchDown,    0.001 * ctrlKeyThrusters[thgRotPitchDown]);
+        throttleThrustGroupOverride(thgRotYawLeft,      0.001 * ctrlKeyThrusters[thgRotYawLeft]);
+        throttleThrustGroupOverride(thgRotYawRight,     0.001 * ctrlKeyThrusters[thgRotYawRight]);
+        throttleThrustGroupOverride(thgRotBankLeft,     0.001 * ctrlKeyThrusters[thgRotBankLeft]);
+        throttleThrustGroupOverride(thgRotBankRight,    0.001 * ctrlKeyThrusters[thgRotBankRight]);
     }
 
     if (rcsMode & 2) 
     {
         // RCS Attitude linear controls
-        throttleThrustGroupOverride(thgLinMoveUp,       0.001 * ctrlKeyboard[thgLinMoveUp]);
-        throttleThrustGroupOverride(thgLinMoveDown,     0.001 * ctrlKeyboard[thgLinMoveDown]);
-        throttleThrustGroupOverride(thgLinMoveLeft,     0.001 * ctrlKeyboard[thgLinMoveLeft]);
-        throttleThrustGroupOverride(thgLinMoveRight,    0.001 * ctrlKeyboard[thgLinMoveRight]);
-        throttleThrustGroupOverride(thgLinMoveForward,  0.001 * ctrlKeyboard[thgLinMoveForward]);
-        throttleThrustGroupOverride(thgLinMoveBackward, 0.001 * ctrlKeyboard[thgLinMoveBackward]);
+        throttleThrustGroupOverride(thgLinMoveUp,       0.001 * ctrlKeyThrusters[thgLinMoveUp]);
+        throttleThrustGroupOverride(thgLinMoveDown,     0.001 * ctrlKeyThrusters[thgLinMoveDown]);
+        throttleThrustGroupOverride(thgLinMoveLeft,     0.001 * ctrlKeyThrusters[thgLinMoveLeft]);
+        throttleThrustGroupOverride(thgLinMoveRight,    0.001 * ctrlKeyThrusters[thgLinMoveRight]);
+        throttleThrustGroupOverride(thgLinMoveForward,  0.001 * ctrlKeyThrusters[thgLinMoveForward]);
+        throttleThrustGroupOverride(thgLinMoveBackward, 0.001 * ctrlKeyThrusters[thgLinMoveBackward]);
     }
 }
 
 void Vehicle::updateThrustForces()
 {
     // Nagivation computer sequences
-
+    if (navFlags) {
+        // Kill rotation navigation control
+        if (navFlags & NAVBIT_KILLROT) {
+            
+        }
+    }
 
     // Record previous fuel mass
     for (auto &ts : tankList)
