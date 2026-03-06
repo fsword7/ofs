@@ -532,7 +532,7 @@ void CoreApp::keyBufferedOnRunning(uint8_t key)
 {
     Vehicle *veh = player->getVehicleTarget();
 
-    veh->processBufferedKeyOnRunning(key);
+    veh->processBufferedKeyOnRunning(key, keyState, keymap);
 
     if (keymap.isLogicalKey(key, keyState, ofs::lkeyIncWarpTime))
         increaseTimeWarp();

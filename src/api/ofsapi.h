@@ -244,8 +244,8 @@ namespace ofs {
         lkeyIncHoverThrust,
         lkeyDecHoverThrust,
 
-        lkeyRCSEnable,
-        lkeyRCSMode,
+        lkeyEnableRCSMode,
+        lkeyToggleRCSMode,
 
         lkeyRCSRotPitchUp,
         lkeyRCSRotPitchDown,

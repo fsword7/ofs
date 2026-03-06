@@ -58,8 +58,8 @@ struct {
     { ofs::lkeyIncHoverThrust,          ofs::pkeyPad0,                       "Increase-Hover-Thrust"},
     { ofs::lkeyDecHoverThrust,          ofs::pkeyPadDecimal,                 "Decrease-Hover-Thrust"},
 
-    { ofs::lkeyRCSEnable,               ofs::pkeySlash|KEYM_CTRL,            "RCS-Enable"},
-    { ofs::lkeyRCSMode,                 ofs::pkeySlash,                      "RCS-Mode"},
+    { ofs::lkeyEnableRCSMode,           ofs::pkeySlash|KEYM_CTRL,            "Enable-RCS-Mode"},
+    { ofs::lkeyToggleRCSMode,           ofs::pkeySlash,                      "Toggle-RCS-Mode"},
 
     { ofs::lkeyRCSRotPitchUp,           ofs::pkeyPad8,                       "RCS-PitchUp"},
     { ofs::lkeyRCSRotPitchDown,         ofs::pkeyPad2,                       "RCS-PitchDown"},

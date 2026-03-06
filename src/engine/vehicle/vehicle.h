@@ -407,12 +407,15 @@ public:
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
     void setSurfaceFriction(double lat, double lng);
     
+    void setRCSMode(int mode);
+    int toggleRCSMode();
+
     inline void enableWheelSteering(bool enable)       { bSteeringEnable = enable; }
 
     inline void addForce(const glm::dvec3 &F, const glm::dvec3 &r)   { flin += F, amom += glm::cross(F, r); }
 
     bool processImmediateKeyOnRunning(const bool *keyState, const Keymap &keymap);
-    bool processBufferedKeyOnRunning(uint8_t key);
+    bool processBufferedKeyOnRunning(uint8_t key, const bool *keyState, const Keymap &keymap);
 
     void updateUserAttitudeControls();
 
@@ -543,7 +546,6 @@ private:
     bool bEnableBurnFuel = false;
     uint32_t navFlags = 0;              // Navigation controls
 
-    bool bEnableRCS = false;
     int ctrlKeyThrusters[thgMaxThrusters];
     int ctrlJoyThrusters[thgMaxThrusters];
 

@@ -270,16 +270,36 @@ void Vehicle::overrideMainRetroThruster(double level)
     }
 }
 
+// Reaction Control System
+// 0 = turned off
+// 1 = rotation control
+// 2 = linear control
+
+void Vehicle::setRCSMode(int mode)
+{
+    if (rcsMode != mode)
+        rcsMode = mode;
+}
+
+int Vehicle::toggleRCSMode()
+{
+    // Toggle RCS mode between rotation and linear controls
+    if (rcsMode >= 1) {
+        rcsMode ^= 3;
+    }
+    return rcsMode;
+}
+
 bool Vehicle::processImmediateKeyOnRunning(const bool *keyState, const Keymap &keymap)
 {
+    double dt = ofsDate->getSysDeltaTime();
+
     // Clear all thruster controls
     for (int idx = 0; idx < thgMaxThrusters; idx++)
         ctrlKeyThrusters[idx] = 0;
-    
-    // Reaction Control System controls
-    if (bEnableRCS)
-    {
-        // rotation controls
+
+    // RCS rotstion controls
+    if (rcsMode == 1) {
         if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotPitchUp))            ctrlKeyThrusters[thgRotPitchUp]      = 1000;
         if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotPitchUp))           ctrlKeyThrusters[thgRotPitchUp]      = 100;
         if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotPitchDown))          ctrlKeyThrusters[thgRotPitchDown]    = 1000;
@@ -292,8 +312,10 @@ bool Vehicle::processImmediateKeyOnRunning(const bool *keyState, const Keymap &k
         if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotBankLeft))          ctrlKeyThrusters[thgRotBankLeft]     = 100;
         if (keymap.isLogicalKey(keyState, ofs::lkeyRCSRotBankRight))          ctrlKeyThrusters[thgRotBankRight]    = 1000;
         if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSRotBankRight))         ctrlKeyThrusters[thgRotBankRight]    = 100;
+    }
 
-        // linear controls
+    // RCS linear controls
+    if (rcsMode == 2) {
         if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveUp))             ctrlKeyThrusters[thgLinMoveUp]       = 1000;
         if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveUp))            ctrlKeyThrusters[thgLinMoveUp]       = 100;
         if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveDown))           ctrlKeyThrusters[thgLinMoveDown]     = 1000;
@@ -306,10 +328,7 @@ bool Vehicle::processImmediateKeyOnRunning(const bool *keyState, const Keymap &k
         if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveForward))       ctrlKeyThrusters[thgLinMoveForward]  = 100;
         if (keymap.isLogicalKey(keyState, ofs::lkeyRCSLinMoveBackward))       ctrlKeyThrusters[thgLinMoveBackward] = 1000;
         if (keymap.isLogicalKey(keyState, ofs::lkeyLRCSLinMoveBackward))      ctrlKeyThrusters[thgLinMoveBackward] = 100;
-
     }
-
-    double dt = ofsDate->getSysDeltaTime();
 
     // Main/Retro thruster controls
     if (keymap.isLogicalKey(keyState, ofs::lkeyIncMainThrust))
@@ -338,8 +357,13 @@ bool Vehicle::processImmediateKeyOnRunning(const bool *keyState, const Keymap &k
     return false;
 }
 
-bool Vehicle::processBufferedKeyOnRunning(uint8_t key)
+bool Vehicle::processBufferedKeyOnRunning(uint8_t key, const bool *keyState, const Keymap &keymap)
 {
+    if (keymap.isLogicalKey(key, keyState, ofs::lkeyEnableRCSMode))
+        setRCSMode(rcsMode >= 1 ? 0 : 1);
+    if (keymap.isLogicalKey(key, keyState, ofs::lkeyToggleRCSMode))
+        toggleRCSMode();
+
     return false;
 }
 
