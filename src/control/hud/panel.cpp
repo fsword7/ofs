@@ -321,7 +321,8 @@ void HUDSurfacePanel::display(Player &player, Sketchpad *pad)
     cam = player.getCamera();
 
     pad->setPen(panel->getHUDPen());
-    double heading = sp->heading - player.getCockpitTheta();
+    // double heading = sp->heading - player.getCockpitTheta();
+    double heading = sp->heading;
 
     drawCompassRibbon(pad, glm::degrees(heading));
 
@@ -331,9 +332,11 @@ void HUDSurfacePanel::display(Player &player, Sketchpad *pad)
     static double step = tan(glm::radians(10.0));
     double d = cam->getScale() * step;
 
-    double phi0 = ofs::degrees(sp->pitch + player.getCockpitPhi())*0.1;
+    // double phi0 = ofs::degrees(sp->pitch + player.getCockpitPhi())*0.1;
+    double phi0 = ofs::degrees(sp->pitch)*0.1;
     double phi0f = floor(phi0);
-    double bank0 = sp->bank + player.getCockpitTilt();
+    // double bank0 = sp->bank + player.getCockpitTilt();
+    double bank0 = sp->bank;
     double cosb = cos(bank0), sinb = sin(bank0);
     double lwcosb = lwidth * cosb, lwsinb = lwidth * sinb;
 
@@ -348,6 +351,9 @@ void HUDSurfacePanel::display(Player &player, Sketchpad *pad)
         for (d1 = d0-d; d1 > -lrange; d1 -= d)
             drawLadderBar(pad, lwcosb, lwsinb, d1*cosb, d1*sinb, iphi++, true);
     }
+
+    // ofsLogger->debug("Heading: {}, Pitch: {}, Bank: {}\n",
+    //     ofs::degrees(sp->heading), ofs::degrees(sp->pitch), ofs::degrees(sp->bank));
 }
 
 // ******** HUD Orbit Panel ********
@@ -368,5 +374,20 @@ void HUDOrbitPanel::configure(cjson &config)
 
 void HUDOrbitPanel::display(Player &player, Sketchpad *pad)
 {
+    vehicle = player.getVehicleTarget();
+    const Celestial *center = vehicle->getOrbitalReference();
+    if (center == nullptr)
+        return;
+    cam = player.getCamera();
+
+    pad->setPen(panel->getHUDPen());
+
+    // glm::dvec3 V = vehicle->getgVelocity() - center->getgVelocity();
+    // glm::dvec3 Vunit = glm::normalize(V);
+    // glm::dvec3 Vrel = glm::normalize(vehicle->getgRotation() * Vunit);
+    // if (!drawMarker(pad, nullptr, Vunit, 6) &&
+    //     !drawMarker(pad, nullptr, -Vunit, 4)) {
+    //     // drawOffscreenDirMarker(pad, Vunit);
+    // }
 
 }

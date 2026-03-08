@@ -150,7 +150,6 @@ void surface_t::update(const StateVectors &s, const StateVectors &os, const Cele
 
     alt0 = rad - planet->getRadius();
     elev = 0.0, alt = alt0;
-    snml = { 0, 1, 0};
     
     // Set rotation matrix for local horizon frame
     // for right-handed rule (OpenGL). Points
@@ -185,13 +184,14 @@ void surface_t::update(const StateVectors &s, const StateVectors &os, const Cele
         }
     }
 
-    // Update vehicle orientation at horizon level
-    // glm::vec3 nml = glm::normalize(glm::transpose(s.R) * rpos);
-    // pitch = asin(nml.z);
-    // bank = (fabs(nml.x) > eps) && (fabs(nml.y) > eps)
-    //     ? atan2(-nml.x, nml.y) : 0.0;
-    pitch = 0.0;
-    bank = 0.0;
+    // Mapping vehicle attitude into horizon level
+    snml = glm::normalize(glm::transpose(s.R) * rpos);
+    pitch = asin(snml.z);
+    bank = (fabs(snml.x) > eps) || (fabs(snml.y) > eps)
+        ? atan2(-snml.x, snml.y) : 0.0;
+
+    // ofsLogger->debug("Surface normal: ({}, {}, {}) -> Pitch {} Bank {}\n",
+    //     snml.x, snml.y, snml.z, ofs::degrees(pitch), ofs::degrees(bank));
 
     // Ground speed
     glm::dvec3 vrel = s.vel - os.vel;
@@ -219,6 +219,11 @@ void surface_t::update(const StateVectors &s, const StateVectors &os, const Cele
         atmDensity = prm.rho;
         atmTemp = prm.T;
         atmMach = planet->getSoundSpeed(atmTemp);
+    } else {
+        atmPressure = 0.0;
+        atmDensity = 0.0;
+        atmTemp = 0.0;
+        atmMach = 0.0;
     }
 }
 
@@ -585,12 +590,14 @@ void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const g
     s0.Q = s0.R;
     if (vrot != nullptr)
         s0.omega = *vrot;
-    
+
     updateGlobal(cpos + cbody->getgPosition(), cvel + cbody->getgVelocity());
     // ofsLogger->info("{}: s0pos {},{},{}\n", getsName(),
     //     s0.pos.x, s0.pos.y, s0.pos.z);
     // ofsLogger->info("{}: s0vel {},{},{}\n", getsName(),
     //     s0.vel.x, s0.vel.y, s0.vel.z);
+
+    updateSurfaceParam();
 
     fsType = fsFlight;
 }
@@ -829,6 +836,9 @@ void Vehicle::update(bool force)
         //     s1.omega = {};
         // }
     }
+
+    if (cbody != nullptr && fsType != fsLanded)
+        updateSurfaceParam();
 
     // Update position and velocity in orbit reference frame
     cpos = s1.pos - cbody->s1.pos;
