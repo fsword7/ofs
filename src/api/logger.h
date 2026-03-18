@@ -9,8 +9,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <fmt/format.h>
-#include <fmt/ostream.h>
+#include <format>
 
 #pragma once
 
@@ -58,7 +57,7 @@ public:
     void log(levelType logType, cchar_t *format, const Args&... args) const
     {
         if (logType <= level)
-            vlog(logType, fmt::string_view(format), fmt::make_format_args(args...));
+            vlog(logType, std::string_view(format), std::make_format_args(args...));
     }
 
     template <typename... Args>
@@ -107,14 +106,25 @@ public:
     // }
 
 protected:
-    inline void vlog(levelType level, fmt::string_view format, fmt::format_args args) const
+    // inline void vlog(levelType level, fmt::string_view format, fmt::format_args args) const
+    // {
+    //     if (outLogFile.is_open())
+    //         outLogFile << fmt::vformat(format, args) << std::flush;
+    //     else
+    //     {
+    //         auto &out = (level <= logWarning || level == logDebug) ? outError : outLog;   
+    //         fmt::vprint(out, format, args);
+    //     }
+    // }
+
+    inline void vlog(levelType level, std::string_view format, std::format_args args) const
     {
         if (outLogFile.is_open())
-            outLogFile << fmt::vformat(format, args) << std::flush;
+            outLogFile << std::vformat(format, args) << std::flush;
         else
         {
             auto &out = (level <= logWarning || level == logDebug) ? outError : outLog;   
-            fmt::vprint(out, format, args);
+            out << std::vformat(format, args) << std::flush;
         }
     }
 

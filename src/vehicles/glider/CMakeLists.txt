@@ -2,7 +2,7 @@
 # find_package(OpenGL REQUIRED)
 # find_package(Fontconfig)
 # find_package(Freetype REQUIRED)
-find_package(fmt REQUIRED)
+#find_package(fmt REQUIRED)
 
 set(SG_CPP_SRCS
     glider.cpp
@@ -16,7 +16,6 @@ set(SG_H_SRCS
 add_library(glider SHARED ${SG_CPP_SRCS} ${SG_H_SRCS})
 
 target_link_libraries(glider
-    fmt::fmt
 )
 if (MINGW)
 target_link_libraries(glider

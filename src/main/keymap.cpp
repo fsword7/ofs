@@ -156,18 +156,23 @@ struct {
     { ofs::lkeyDollyMoveForward,        ofs::pkeyHome,                      "Dolly-Move-Forward"},
     { ofs::lkeyDollyMoveBackward,       ofs::pkeyEnd,                       "Dolly-Move-Backward"},
 
-    // { ofs::lkeyTogglePanelMode,         ofs::pkeyF8,                        "Toggle-Panel-Mode"},
+#ifdef __linux__
     { ofs::lkeyTogglePanelMode,         ofs::pkey8,                         "Toggle-Panel-Mode"},
+#else
+    { ofs::lkeyTogglePanelMode,         ofs::pkeyF8,                        "Toggle-Panel-Mode"},
+#endif
     { ofs::lkeyToggleHUDMode,           ofs::pkeyH|KEYM_CTRL,               "Toggle-HUD-Mode"},
     { ofs::lkeySwitchHUDMode,           ofs::pkeyH,                         "Switch-HUD-Mode"},
 
-    // { ofs::lkeyIncWarpTime,             ofs::pkeyF4,                        "Increase-Warp-Time"},
-    // { ofs::lkeyDecWarpTime,             ofs::pkeyF3,                        "Decrease-Warp-Time"},
-    // { ofs::lkeyResetWarpTime,           ofs::pkeyF2,                        "Reset-Warp-Time"},
+#ifdef __linux__
     { ofs::lkeyIncWarpTime,             ofs::pkey4,                        "Increase-Warp-Time"},
     { ofs::lkeyDecWarpTime,             ofs::pkey3,                        "Decrease-Warp-Time"},
     { ofs::lkeyResetWarpTime,           ofs::pkey2,                        "Reset-Warp-Time"},
-
+#else
+    { ofs::lkeyIncWarpTime,             ofs::pkeyF4,                        "Increase-Warp-Time"},
+    { ofs::lkeyDecWarpTime,             ofs::pkeyF3,                        "Decrease-Warp-Time"},
+    { ofs::lkeyResetWarpTime,           ofs::pkeyF2,                        "Reset-Warp-Time"},
+#endif
     { ofs::lkeyIncMainThrust,           ofs::pkeyPadAdd,                     "Increase-Main-Thrust"},
     { ofs::lkeyDecMainThrust,           ofs::pkeyPadSubtract,                "Decrease-Main-Thrust"},
     { ofs::lkeyFullMainThrust,          ofs::pkeyPadAdd|KEYM_CTRL,           "Full-Main-Thrust"},
@@ -229,7 +234,7 @@ bool Keymap::checkKeyModifiers(const bool *keyState, uint16_t lkey) const
 {
     int kmod;
 
-    if (kmod = lkey & KEYM_SHIFT) {
+    if ((kmod = lkey & KEYM_SHIFT)) {
         if (kmod == KEYM_SHIFT && !KEYDOWN_SHIFT(keyState))
             return false;
         else if (kmod == KEYM_LSHIFT && !KEYDOWN_LSHIFT(keyState))
@@ -239,7 +244,7 @@ bool Keymap::checkKeyModifiers(const bool *keyState, uint16_t lkey) const
     } else if (KEYDOWN_SHIFT(keyState))
         return false;
 
-    if (kmod = lkey & KEYM_CTRL) {
+    if ((kmod = lkey & KEYM_CTRL)) {
         if (kmod == KEYM_CTRL && !KEYDOWN_CTRL(keyState))
             return false;
         else if (kmod == KEYM_LCTRL && !KEYDOWN_LCTRL(keyState))
@@ -249,7 +254,7 @@ bool Keymap::checkKeyModifiers(const bool *keyState, uint16_t lkey) const
     } else if (KEYDOWN_CTRL(keyState))
         return false;
 
-    if (kmod = lkey & KEYM_ALT) {
+    if ((kmod = lkey & KEYM_ALT)) {
         if (kmod == KEYM_ALT && !KEYDOWN_ALT(keyState))
             return false;
         else if (kmod == KEYM_LALT && !KEYDOWN_LALT(keyState))

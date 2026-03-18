@@ -24,7 +24,7 @@ public:
     void setOrbitFrame(Frame *frame) override       { orbitFrame = frame; }
     void setBodyFrame(Frame *frame) override        { bodyFrame = frame; }
     void setOrbit(Orbit *nOrbit) override           { orbit = nOrbit; }
-    void setRotation(Rotation *nRotation)           { rotation = nRotation; }
+    void setRotation(Rotation *nRotation) override  { rotation = nRotation; }
 
     Frame *getOrbitFrame() const override   { return orbitFrame; }
     Frame *getBodyFrame() const override    { return bodyFrame; }
@@ -44,7 +44,7 @@ public:
     glm::dvec3 computeEulerInverseSimple(const glm::dvec3 &tau, const glm::dvec3 &omega);
     glm::dvec3 computeEulerInverseFull(const glm::dvec3 &tau, const glm::dvec3 &omega);
 
-    virtual void update(bool force);
+    virtual void update(bool force) override;
 
     virtual void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt);
  

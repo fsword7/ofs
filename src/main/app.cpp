@@ -389,9 +389,9 @@ void CoreApp::loadStartupModules()
 ModuleHandle CoreApp::loadModule(cstr_t &path, cstr_t &name)
 {
 #ifdef __WIN32__
-    std::string fname = fmt::format("{}/lib{}.dll", path, name);
+    std::string fname = std::format("{}/lib{}.dll", path, name);
 #else /* __WIN32__ */
-    std::string fname = fmt::format("{}/lib{}.so", path, name);
+    std::string fname = std::format("{}/lib{}.so", path, name);
 #endif /* __WIN32__ */
     ModuleHandle handle = ofsLoadModule(fname.c_str());
 

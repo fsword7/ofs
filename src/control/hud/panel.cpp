@@ -113,7 +113,7 @@ void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
             pad->drawLineTo(x, ymin+ymax2);
             if (d < 0)
                 d += 180;
-            sbuf = fmt::format("{:03d}", d*2);
+            sbuf = std::format("{:03d}", d*2);
             int w = pad->getTextWidth(sbuf.c_str(), 3) / 2;
             pad->text(x-w, ymax2+fh, sbuf.c_str(), 3);
         }
@@ -129,7 +129,7 @@ void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
             pad->drawLineTo(x, ymin+ymax2);
             if (d >= 180)
                 d -= 180;
-            sbuf = fmt::format("{:03d}", d*2);
+            sbuf = std::format("{:03d}", d*2);
             int w = pad->getTextWidth(sbuf.c_str(), 3) / 2;
             pad->text(x-w, ymax2+fh, sbuf.c_str(), 3);
         }
@@ -267,11 +267,11 @@ void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosb, double lsinb,
 
     str_t sbuf;
     if (markSubzero) {
-        sbuf = fmt::format("{:.0f}", phi0*10);
+        sbuf = std::format("{:.0f}", phi0*10);
         int fw = pad->getTextWidth(sbuf.c_str(), 3) / 2;
         pad->text(x1+dx/2-fw, y1+dy/2-fh/2, sbuf.c_str(), 3);
     } else {
-        sbuf = fmt::format("{:02d}", lab*10);
+        sbuf = std::format("{:02d}", lab*10);
         int fw = pad->getTextWidth(sbuf.c_str(), 2) / 2;
         pad->text(x1+dx/2-fw, y1+dy/2-fh/2, sbuf.c_str(), 2);
     }

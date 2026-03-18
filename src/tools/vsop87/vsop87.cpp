@@ -17,7 +17,8 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
-#include <fmt/format.h>
+#include <cstring>
+#include <format>
 
 using namespace std;
 
@@ -27,7 +28,7 @@ enum fmtType { fmtRect, fmtSph };
 
 void usage(char *name)
 {
-	cout << fmt::format("Usage: {} <path> [planet name] [data type]\n", name);
+	cout << std::format("Usage: {} <path> [planet name] [data type]\n", name);
 	exit(1);
 }
 
@@ -39,16 +40,16 @@ void print(double data[3000][3], const char *planet, fmtType type, int set, int 
 	else if (type == fmtRect)
 		label = "xyz";
 
-	cout << fmt::format("static vsop87_t {}_{}{}[{}] = {{\n",
+	cout << std::format("static vsop87_t {}_{}{}[{}] = {{\n",
 		planet, label[elm], deg, terms);
 
 	for (int idx = 0; idx < terms; idx++) {
-		cout << fmt::format("\t{{ {:18.12f}, {:18.12f}, {:20.12f} }}{}\n",
+		cout << std::format("\t{{ {:18.12f}, {:18.12f}, {:20.12f} }}{}\n",
 			data[idx][0], data[idx][1], data[idx][2],
 			(idx < terms-1) ? ',' : ' ');
 	}
 
-	cout << fmt::format("}};\n\n");
+	cout << std::format("}};\n\n");
 }
 
 void read(fs::path fname, const char *planet, fmtType type)

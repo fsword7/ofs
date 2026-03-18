@@ -57,7 +57,7 @@ void TaskBar::render(const Player &player)
     ipad->setTextPos(xofs, 3);
 
     ipad->print(astro::getMJDDateStr(ofsDate->getMJD1()));
-    ipad->print(fmt::format("MJD {:.5f}  ({}x)",
+    ipad->print(std::format("MJD {:.5f}  ({}x)",
         ofsDate->getMJD1(), ofsDate->getTimeWarp()));
 
     ipad->endDraw();

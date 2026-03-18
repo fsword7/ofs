@@ -303,9 +303,9 @@ bool Vehicle::registerModule(cstr_t &name)
     cstr_t path = OFS_LIB_VEHICLE_DIR;
 
 #ifdef __WIN32__
-    std::string fname = fmt::format("{}/lib{}.dll", path, name);
+    std::string fname = std::format("{}/lib{}.dll", path, name);
 #else /* __WIN32__ */
-    std::string fname = fmt::format("{}/lib{}.so", path, name);
+    std::string fname = std::format("{}/lib{}.so", path, name);
 #endif /* __WIN32__ */
     handle = ofsLoadModule(fname.c_str());
     if (handle == nullptr)

@@ -424,7 +424,7 @@ public:
 
     void updateMass();
 
-    virtual void update(bool force);
+    virtual void update(bool force) override;
 
     void updateRadiationForces();
     void updateAerodynamicForces();
