@@ -3,7 +3,7 @@ find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Fontconfig)
 find_package(Freetype REQUIRED)
-find_package(fmt REQUIRED)
+#find_package(fmt REQUIRED)
 
 set(OGL_CPP_SRCS
     buffer.cpp
@@ -101,7 +101,6 @@ target_link_libraries(glclient
     glfw
     imgui
     OpenGL::GL
-    fmt::fmt
     ZLIB::ZLIB
 )
 if (MINGW)

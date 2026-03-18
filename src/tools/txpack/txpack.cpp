@@ -113,10 +113,10 @@ zTree::zTree(cstr_t &root, cstr_t &layer, ofsMode mode)
     int pos = layer.find(":");
     layerName = layer.substr(0, pos);
     extName = "." + layer.substr(pos+1);
-    pathName = fmt::format("{}/{}", root, layerName);
+    pathName = std::format("{}/{}", root, layerName);
 
-    std::cout << fmt::format("Layer: {}  Ext: {}\n", layerName, extName);
-    std::cout << fmt::format("Root: {}\n", pathName);
+    std::cout << std::format("Layer: {}  Ext: {}\n", layerName, extName);
+    std::cout << std::format("Root: {}\n", pathName);
 }
 
 zTree::~zTree()
@@ -184,12 +184,12 @@ int zTree::countNodes()
 
 bool zTree::addLevel(int lod)
 {
-    str_t rpath = fmt::format("{}/{:02d}", pathName, lod);      // relative path from current working directory
-    str_t lpath = fmt::format("{}/{:02d}", layerName, lod);     // local path from root path
+    str_t rpath = std::format("{}/{:02d}", pathName, lod);      // relative path from current working directory
+    str_t lpath = std::format("{}/{:02d}", layerName, lod);     // local path from root path
 
     if (!fs::exists(rpath) || !fs::is_directory(rpath))
         return false;
-    std::cout << fmt::format("Path: {}\n", lpath);
+    std::cout << std::format("Path: {}\n", lpath);
 
     for(auto &dir : fs::directory_iterator(rpath))
     {
@@ -210,12 +210,12 @@ bool zTree::addLevel(int lod)
                 continue;
 
         int pos = pdirName.find(layerName);
-        std::cout << fmt::format("Path: {}\n", pdirName.substr(pos));
+        std::cout << std::format("Path: {}\n", pdirName.substr(pos));
         ilat = atoi(dirName.c_str());
 
         for (auto &file : fs::directory_iterator(dir))
         {
-            std::cout << fmt::format("Validating {}\n", file.path().string());
+            std::cout << std::format("Validating {}\n", file.path().string());
 
             if (!fs::is_regular_file(file))
                 continue;
@@ -233,7 +233,7 @@ bool zTree::addLevel(int lod)
 
             str_t fileName = file.path().string();
             int pos = fileName.find(layerName);
-            std::cout << fmt::format("File: {}\n", fileName.substr(pos));
+            std::cout << std::format("File: {}\n", fileName.substr(pos));
 
             // Add node to tree data
             zNode *node = insertNode(lod, ilat, ilng);
@@ -253,7 +253,7 @@ void zTree::addLevels(int minlod, int maxlod)
         if (!addLevel(lod))
             break;
 
-    std::cout << fmt::format("Total nodes = {}\n", countNodes());
+    std::cout << std::format("Total nodes = {}\n", countNodes());
 }
 
 uint32_t zTree::deflateData(uint8_t *data, uint32_t dsize, uint8_t *zdata, uint32_t zsize)
@@ -341,12 +341,12 @@ void zTree::writeTreeDB()
         return;
     fs::path treeName = treePath / (layerName + ".tree");
 
-    std::cout << fmt::format("Opening {}\n", treeName.string());
+    std::cout << std::format("Opening {}\n", treeName.string());
 
     std::fstream otree(treeName, std::ios::binary|std::ios::out);
     if (otree.fail())
     {
-        std::cout << fmt::format("{}: {}\n", treeName.string(), strerror(errno));
+        std::cout << std::format("{}: {}\n", treeName.string(), strerror(errno));
         exit(1);
     }
 
@@ -374,12 +374,12 @@ void zTree::extractTreeDB(int maxLOD)
         return;
     fs::path treeName = treePath / (layerName + ".tree");
 
-    std::cout << fmt::format("Opening {}\n", treeName.string());
+    std::cout << std::format("Opening {}\n", treeName.string());
 
     std::fstream itree(treeName, std::ios::binary|std::ios::in);
     if (itree.fail())
     {
-        std::cout << fmt::format("{}: {}\n", treeName.string(), strerror(errno));
+        std::cout << std::format("{}: {}\n", treeName.string(), strerror(errno));
         exit(1);
     }
 
@@ -406,7 +406,7 @@ void zTree::listTreeDB(int maxLOD)
     std::fstream itree(treeName, std::ios::binary|std::ios::in);
     if (itree.fail())
     {
-        std::cout << fmt::format("{}: {}\n", treeName.string(), strerror(errno));
+        std::cout << std::format("{}: {}\n", treeName.string(), strerror(errno));
         exit(1);
     }
 
@@ -472,7 +472,7 @@ void zTree::listTree(std::fstream &tree, int idx, int lod, int maxLOD)
     uint32_t dsize = entry->size;
     uint32_t zsize = (idx < thdr.ntoc-1 ? toc[idx+1].pos : thdr.total) - entry->pos;
 
-    std::cout << fmt::format("Index {}: File {} ({}/{} bytes) [{}%] ilat {} ilng {}\n",
+    std::cout << std::format("Index {}: File {} ({}/{} bytes) [{}%] ilat {} ilng {}\n",
         idx, "(unknown)", zsize, dsize, (zsize * 100) / dsize, entry->ilat, entry->ilng);
 
     if (lod < 4)
@@ -507,14 +507,14 @@ void zTree::extractTree(std::fstream &tree, int idx, int lod, int maxLOD)
 
     // fs::path fileName = fmt::format("{}/{}/{:02d}/{:06d}/{:06d}.{}",
     //     rootPath.string(), layerName, lod, ilat, ilng, extName);
-    fs::path rpath = fmt::format("{}/{}/{:02d}/{:06d}/",
+    fs::path rpath = std::format("{}/{}/{:02d}/{:06d}/",
         rootPath.string(), layerName, lod, ilat);
-    fs::path lpath = fmt::format("{:02d}/{:06d}/{:06d}{}",
+    fs::path lpath = std::format("{:02d}/{:06d}/{:06d}{}",
         lod, ilat, ilng, extName);
-    fs::path fileName = rpath / fmt::format("{:06d}{}",
+    fs::path fileName = rpath / std::format("{:06d}{}",
         ilng, extName);
 
-    std::cout << fmt::format("Inflating {}\n", lpath.string());
+    std::cout << std::format("Inflating {}\n", lpath.string());
     fs::create_directories(rpath);
     std::ofstream ofile(fileName, std::ios::binary|std::ios::out);
 
@@ -546,7 +546,7 @@ int zTree::writeTree(std::fstream &tree, zNode *node)
         ifile.read((char *)data, fsize);
         if (ifile.gcount() < fsize)
         {
-            std::cout << fmt::format("File {}: Unexpected end of file ({}/{} bytes) - aborted\n",
+            std::cout << std::format("File {}: Unexpected end of file ({}/{} bytes) - aborted\n",
                 node->lpath.string(), ifile.gcount(), fsize);
             ifile.close();
             exit(1);
@@ -557,13 +557,13 @@ int zTree::writeTree(std::fstream &tree, zNode *node)
         if (thdr.flags & TREE_DEFLATE)
         {
             dsize = deflateData(data, fsize, zdata, zsize);
-            std::cout << fmt::format("Deflating {} (index {}) ({}/{} bytes) [{}%]\n",
+            std::cout << std::format("Deflating {} (index {}) ({}/{} bytes) [{}%]\n",
                 node->lpath.string(), tidx, dsize, fsize, (dsize * 100)/fsize);
             tree.write((char *)zdata, dsize);
         }
         else
         {
-            std::cout << fmt::format("Copying {} (index {}) ({} bytes)\n",
+            std::cout << std::format("Copying {} (index {}) ({} bytes)\n",
                 node->lpath.string(), tidx, dsize, fsize, (dsize * 100)/fsize);
             tree.write((char *)data, fsize);
             dsize = fsize;
@@ -588,7 +588,7 @@ int zTree::writeTree(std::fstream &tree, zNode *node)
 
 void usage(cchar_t *cmd)
 {
-    std::cout << fmt::format("Usage: texpack [-e] [-l max lod] <path> <layer[:ext]>\n");
+    std::cout << std::format("Usage: texpack [-e] [-l max lod] <path> <layer[:ext]>\n");
 }
 
 int main(int argc, char **argv)
@@ -638,20 +638,20 @@ int main(int argc, char **argv)
     switch(mode)
     {
     case Archive:
-        std::cout << fmt::format("\nBuilding OFS terrain tree ...\n");
+        std::cout << std::format("\nBuilding OFS terrain tree ...\n");
         tree.addLevels(4, maxLOD);
         tree.setupTreeDBw();
         tree.writeTreeDB();
         break;
 
     case Extract:
-        std::cout << fmt::format("\nUnpacking OFS terrain tree ...\n");
+        std::cout << std::format("\nUnpacking OFS terrain tree ...\n");
         tree.setupTreeDBr();
         tree.extractTreeDB(maxLOD);
         break;
     
     case List:
-        std::cout << fmt::format("\nListing OFS terrain tree ...\n");
+        std::cout << std::format("\nListing OFS terrain tree ...\n");
         tree.listTreeDB(maxLOD);
         break;
     }

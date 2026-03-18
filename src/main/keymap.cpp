@@ -229,7 +229,7 @@ bool Keymap::checkKeyModifiers(const bool *keyState, uint16_t lkey) const
 {
     int kmod;
 
-    if (kmod = lkey & KEYM_SHIFT) {
+    if ((kmod = lkey & KEYM_SHIFT)) {
         if (kmod == KEYM_SHIFT && !KEYDOWN_SHIFT(keyState))
             return false;
         else if (kmod == KEYM_LSHIFT && !KEYDOWN_LSHIFT(keyState))
@@ -239,7 +239,7 @@ bool Keymap::checkKeyModifiers(const bool *keyState, uint16_t lkey) const
     } else if (KEYDOWN_SHIFT(keyState))
         return false;
 
-    if (kmod = lkey & KEYM_CTRL) {
+    if ((kmod = lkey & KEYM_CTRL)) {
         if (kmod == KEYM_CTRL && !KEYDOWN_CTRL(keyState))
             return false;
         else if (kmod == KEYM_LCTRL && !KEYDOWN_LCTRL(keyState))
@@ -249,7 +249,7 @@ bool Keymap::checkKeyModifiers(const bool *keyState, uint16_t lkey) const
     } else if (KEYDOWN_CTRL(keyState))
         return false;
 
-    if (kmod = lkey & KEYM_ALT) {
+    if ((kmod = lkey & KEYM_ALT)) {
         if (kmod == KEYM_ALT && !KEYDOWN_ALT(keyState))
             return false;
         else if (kmod == KEYM_LALT && !KEYDOWN_LALT(keyState))

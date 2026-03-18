@@ -221,7 +221,6 @@ set(OFSGL_H_SRCS
 add_executable(ofs ${OFS_CPP_SRCS} ${OFSGL_CPP_SRCS} ${OFS_H_SRCS} ${OFSGL_H_SRCS})
 target_link_libraries(ofs
     Freetype::Freetype
-    fmt::fmt
     ZLIB::ZLIB
     nlohmann_json::nlohmann_json
     imgui

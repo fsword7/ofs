@@ -453,7 +453,7 @@ void GUIManager::processMousePosition(GLFWwindow *window, double xpos, double yp
     // Adjust for aspect ratio
     vx *= cam->getAspect();
 
-    title = fmt::format("{} X: {} Y: {} ({},{})\n", 
+    title = std::format("{} X: {} Y: {} ({},{})\n", 
         APP_SHORT, xpos, ypos, vx, vy);
     glfwSetWindowTitle(window, title.c_str());
 

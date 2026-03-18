@@ -107,6 +107,8 @@ void Vehicle::createDefaultEngine(thrustType_t type, double power)
         break;
     case thgHover:
         break;
+    default:
+        break;
     }
 }
 

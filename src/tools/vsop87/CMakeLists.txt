@@ -17,5 +17,5 @@ set(psys_list
 
 foreach(vsop ${vsop_list})
 	add_executable(${vsop} "${vsop}.cpp")
-	target_link_libraries(${vsop} fmt::fmt)
+	target_link_libraries(${vsop})
 endforeach()

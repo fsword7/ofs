@@ -64,7 +64,7 @@ namespace astro
         min  = (int)(h = 60.0 * (h - hour));
         sec  = (int)(h = 60.0 * (h - min));
 
-        return fmt::format("{} {} {:02d} {:02d}:{:02d}:{:02d} {} {}",
+        return std::format("{} {} {:02d} {:02d}:{:02d}:{:02d} {} {}",
             wdaystr[wday], monstr[mon-1], mday, hour, min, sec, year, "UTC");
     }
 

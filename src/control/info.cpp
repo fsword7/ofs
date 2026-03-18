@@ -53,7 +53,7 @@ void TaskBar::displayPlanetocentric(double lat, double lng, double alt)
     double dlat = fabs(ofs::degrees(lat));
     double dlng = fabs(ofs::degrees(lng));
 
-    ipad->print(fmt::format("Location: {:.6f}{} {:.6f}{}",
+    ipad->print(std::format("Location: {:.6f}{} {:.6f}{}",
         dlat, latHemi, dlng, lngHemi));
 }
 
@@ -67,18 +67,18 @@ void TaskBar::displayOrbitalElements(const OrbitalElements &oel, double rad)
     double minor = oel.getSemiMinorAxis() / M_PER_KM;
 
     ipad->print("---- orbital elements ----");
-    // ipad->print(fmt::format("Position: {:.4f},{:.4f},{:.4f}", pos.x, pos.y, pos.z));
-    ipad->print(fmt::format("Altitude:          {:.4f} km", alt - rad));
-    ipad->print(fmt::format("Apoapsis:          {:.4f} km", ad - rad));
-    ipad->print(fmt::format("Periapsos:         {:.4f} km", pd - rad));
-    ipad->print(fmt::format("Semi-Major Axis:   {:.4f} km", major - rad));
-    ipad->print(fmt::format("Semi-Minor Axis:   {:.4f} km", minor - rad));
-    ipad->print(fmt::format("Eccentricity:      {:.6f}", oel.getEccentricity()));
-    ipad->print(fmt::format("Inclination:       {:.2f}", ofs::degrees(oel.getInclination())));
-    ipad->print(fmt::format("Long of asc node:  {:.2f}", ofs::degrees(oel.getLongitudeOfAcendingNode())));
-    ipad->print(fmt::format("Long of perapsis:  {:.2f}", ofs::degrees(oel.getLongitudeOfPerapsis())));
-    ipad->print(fmt::format("Mean longitude:    {:.2f}", ofs::degrees(oel.getMeanLongitude())));
-    ipad->print(fmt::format("Orbital Period:    {:.2f} min", oel.getOrbitalPeriod() / 60));
+    // ipad->print(std::format("Position: {:.4f},{:.4f},{:.4f}", pos.x, pos.y, pos.z));
+    ipad->print(std::format("Altitude:          {:.4f} km", alt - rad));
+    ipad->print(std::format("Apoapsis:          {:.4f} km", ad - rad));
+    ipad->print(std::format("Periapsos:         {:.4f} km", pd - rad));
+    ipad->print(std::format("Semi-Major Axis:   {:.4f} km", major - rad));
+    ipad->print(std::format("Semi-Minor Axis:   {:.4f} km", minor - rad));
+    ipad->print(std::format("Eccentricity:      {:.6f}", oel.getEccentricity()));
+    ipad->print(std::format("Inclination:       {:.2f}", ofs::degrees(oel.getInclination())));
+    ipad->print(std::format("Long of asc node:  {:.2f}", ofs::degrees(oel.getLongitudeOfAcendingNode())));
+    ipad->print(std::format("Long of perapsis:  {:.2f}", ofs::degrees(oel.getLongitudeOfPerapsis())));
+    ipad->print(std::format("Mean longitude:    {:.2f}", ofs::degrees(oel.getMeanLongitude())));
+    ipad->print(std::format("Orbital Period:    {:.2f} min", oel.getOrbitalPeriod() / 60));
     ipad->print("--------------------------");
 }
 
@@ -101,25 +101,25 @@ void TaskBar::displayPlanetInfo(const Player &player)
     ipad->print(focus->getsName());
 
     ipad->setFont(textFont);
-    ipad->print(fmt::format("Distance: {:.3f} miles", glm::length(focus->getgPosition()) / 1.609));
-    ipad->print(fmt::format("Velocity: {:.3f} mph", ((glm::length(focus->getgVelocity()) * 3600) / 1.609)));
-    ipad->print(fmt::format("Radius: {}", focus->getRadius()));
+    ipad->print(std::format("Distance: {:.3f} miles", glm::length(focus->getgPosition()) / 1.609));
+    ipad->print(std::format("Velocity: {:.3f} mph", ((glm::length(focus->getgVelocity()) * 3600) / 1.609)));
+    ipad->print(std::format("Radius: {}", focus->getRadius()));
     ipad->print("-----------------");
     if (veh != nullptr) {
-        ipad->print(fmt::format("Vehicle: {} - {}",
+        ipad->print(std::format("Vehicle: {} - {}",
             veh->getsName(), veh->getsName(1)));
-        ipad->print(fmt::format("Reference: {}",
+        ipad->print(std::format("Reference: {}",
             veh->getOrbitalReference()->getsName()));
         if (veh->isOrbitalValid())
             displayOrbitalElements(veh->getOrbitalElements(), focus->getRadius());
-        ipad->print(fmt::format("Ground Velocity: {:.3f} mph",
+        ipad->print(std::format("Ground Velocity: {:.3f} mph",
             ((glm::length(veh->getgVelocity()) * 3600) / 1.609)));
-        ipad->print(fmt::format("Altitude (MSL): {:.3f} ft ({:.3f} m)",
+        ipad->print(std::format("Altitude (MSL): {:.3f} ft ({:.3f} m)",
             veh->getAltitudeMSL() * 3280.84, veh->getAltitudeMSL() * 1000.0));
-        ipad->print(fmt::format("Altitude (AGL): {:.3f} ft ({:.3f} m)",
+        ipad->print(std::format("Altitude (AGL): {:.3f} ft ({:.3f} m)",
             veh->getAltitudeAGL() * 3280.84, veh->getAltitudeAGL() * 1000.0));       
     }
-    ipad->print(fmt::format("Distance: {:.4f}", glm::length(player.getrPosition())));
+    ipad->print(std::format("Distance: {:.4f}", glm::length(player.getrPosition())));
 
     glm::dvec3 lpos = focus->convertGlobalToLocal(player.getPosition());
     glm::dvec3 loc = focus->convertLocalToEquatorial(lpos);
