@@ -176,7 +176,7 @@ void HUDPanel::drawTiltedRibbon(Sketchpad *pad, double phi, double alpha)
             pad->drawLine(x0-dty, y0+dtx, x0+dty, y0-dtx);
         } else {
             pad->drawLine(x0-dsy, y0+dsx, x0+dsy, y0-dsx);
-            str_t sbuf = fmt::format("{:03d}", iphin);
+            str_t sbuf = std::format("{:03d}", iphin);
             int fw = pad->getTextWidth(sbuf.c_str(), 3) / 2;
             pad->text(x0-fw, y0-dsx*2-fh/2, sbuf.c_str(), 3);
         }
@@ -195,7 +195,7 @@ void HUDPanel::drawTiltedRibbon(Sketchpad *pad, double phi, double alpha)
             pad->drawLine(x0-dty, y0+dtx, x0+dty, y0-dtx);
         } else {
             pad->drawLine(x0-dsy, y0+dsx, x0+dsy, y0-dsx);
-            str_t sbuf = fmt::format("{:03d}", iphin);
+            str_t sbuf = std::format("{:03d}", iphin);
             int fw = pad->getTextWidth(sbuf.c_str(), 3) / 2;
             pad->text(x0-fw, y0-dsx*2-fh/2, sbuf.c_str(), 3);
         }
