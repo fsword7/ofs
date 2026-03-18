@@ -282,7 +282,7 @@ void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosb, double lsinb,
 bool HUDPanel::checkVisualArea(const glm::dvec3 &gdir, glm::dvec3 &vscr)
 {
     vscr = cam->getProjViewMatrix() * glm::dvec4(gdir, 1.0);
-    ofsLogger->debug("Visual: {},{},{}\n", vscr.x, vscr.y, vscr.z);
+    // ofsLogger->debug("Visual: {},{},{}\n", vscr.x, vscr.y, vscr.z);
     return (vscr.x >= -1.0 && vscr.x <= 1.0) &&
            (vscr.y >= -1.0 && vscr.y <= 1.0) &&
            (vscr.z >= 0.0);
