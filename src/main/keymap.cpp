@@ -156,18 +156,23 @@ struct {
     { ofs::lkeyDollyMoveForward,        ofs::pkeyHome,                      "Dolly-Move-Forward"},
     { ofs::lkeyDollyMoveBackward,       ofs::pkeyEnd,                       "Dolly-Move-Backward"},
 
-    // { ofs::lkeyTogglePanelMode,         ofs::pkeyF8,                        "Toggle-Panel-Mode"},
+#ifdef __linux__
     { ofs::lkeyTogglePanelMode,         ofs::pkey8,                         "Toggle-Panel-Mode"},
+#else
+    { ofs::lkeyTogglePanelMode,         ofs::pkeyF8,                        "Toggle-Panel-Mode"},
+#endif
     { ofs::lkeyToggleHUDMode,           ofs::pkeyH|KEYM_CTRL,               "Toggle-HUD-Mode"},
     { ofs::lkeySwitchHUDMode,           ofs::pkeyH,                         "Switch-HUD-Mode"},
 
-    // { ofs::lkeyIncWarpTime,             ofs::pkeyF4,                        "Increase-Warp-Time"},
-    // { ofs::lkeyDecWarpTime,             ofs::pkeyF3,                        "Decrease-Warp-Time"},
-    // { ofs::lkeyResetWarpTime,           ofs::pkeyF2,                        "Reset-Warp-Time"},
+#ifdef __linux__
     { ofs::lkeyIncWarpTime,             ofs::pkey4,                        "Increase-Warp-Time"},
     { ofs::lkeyDecWarpTime,             ofs::pkey3,                        "Decrease-Warp-Time"},
     { ofs::lkeyResetWarpTime,           ofs::pkey2,                        "Reset-Warp-Time"},
-
+#else
+    { ofs::lkeyIncWarpTime,             ofs::pkeyF4,                        "Increase-Warp-Time"},
+    { ofs::lkeyDecWarpTime,             ofs::pkeyF3,                        "Decrease-Warp-Time"},
+    { ofs::lkeyResetWarpTime,           ofs::pkeyF2,                        "Reset-Warp-Time"},
+#endif
     { ofs::lkeyIncMainThrust,           ofs::pkeyPadAdd,                     "Increase-Main-Thrust"},
     { ofs::lkeyDecMainThrust,           ofs::pkeyPadSubtract,                "Decrease-Main-Thrust"},
     { ofs::lkeyFullMainThrust,          ofs::pkeyPadAdd|KEYM_CTRL,           "Full-Main-Thrust"},
