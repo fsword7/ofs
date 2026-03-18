@@ -138,6 +138,72 @@ void HUDPanel::drawCompassRibbon(Sketchpad *pad, double val)
     pad->setTextAlign(Sketchpad::LEFT);
 }
 
+void HUDPanel::drawTiltedRibbon(Sketchpad *pad, double phi, double alpha)
+{
+    double step = tan(ofs::radians(2.0));
+    double d = cam->getScale() * step;
+    if (d < lrange*0.01)
+        return;
+    double cosa = cos(alpha), sina = sin(alpha);
+    double s = lwidth * 0.094;
+    int dsx = int(s*cosa);
+    int dsy = int(s*sina);
+    int dtx = int(0.5*s*cosa);
+    int dty = int(0.5*s*sina);
+    int x0, y0, iphin;
+
+    double phi0 = floor(ofs::degrees(phi)*0.5);
+    double d0 = (phi0 - ofs::degrees(phi)*0.5) * d, d1;
+
+    pad->setFont(hudFont);
+    pad->setTextColor({0, 255, 0});
+    pad->setTextAlign(Sketchpad::CENTER);
+    int fh = pad->getCharSize() & 0xFFFF;
+
+    int iphi0, iphi;
+    iphi0 = (int)phi0;
+
+    for (d1 = d0, iphi = iphi0; d1 > -lrange*0.7; d1 -= d, iphi--)
+    {
+        iphin = iphi*2;
+        if (iphin >= 360)
+            iphin -= 360;
+        else if (iphin < 0)
+            iphin += 360;
+        x0 = cx + int(d1*cosa);
+        y0 = cy + int(d1*sina);
+        if (iphin % 10) {
+            pad->drawLine(x0-dty, y0+dtx, x0+dty, y0-dtx);
+        } else {
+            pad->drawLine(x0-dsy, y0+dsx, x0+dsy, y0-dsx);
+            str_t sbuf = fmt::format("{:03d}", iphin);
+            int fw = pad->getTextWidth(sbuf.c_str(), 3) / 2;
+            pad->text(x0-fw, y0-dsx*2-fh/2, sbuf.c_str(), 3);
+        }
+    }
+    
+    for (d1 = d0+d, iphi = iphi0+1; d1 < lrange*0.7; d1 += d, iphi++)
+    {
+        iphin = iphi*2;
+        if (iphin >= 360)
+            iphin -= 360;
+        else if (iphin < 0)
+            iphin += 360;
+        x0 = cx + int(d1*cosa);
+        y0 = cy + int(d1*sina);
+        if (iphin % 10) {
+            pad->drawLine(x0-dty, y0+dtx, x0+dty, y0-dtx);
+        } else {
+            pad->drawLine(x0-dsy, y0+dsx, x0+dsy, y0-dsx);
+            str_t sbuf = fmt::format("{:03d}", iphin);
+            int fw = pad->getTextWidth(sbuf.c_str(), 3) / 2;
+            pad->text(x0-fw, y0-dsx*2-fh/2, sbuf.c_str(), 3);
+        }
+    }
+
+    pad->setTextAlign(Sketchpad::LEFT);
+}
+
 void HUDPanel::drawLadderBar(Sketchpad *pad, double lcosb, double lsinb,
     double dcosb, double dsinb, double phi0, bool markSubzero)
 {
@@ -236,15 +302,14 @@ bool HUDPanel::getXY(Celestial *obj, const glm::dvec3 &dir, int &x, int &y)
     // } else
     //     vis = false;
 
-    // glm::dvec3 vscr;
-    // if (vis = checkVisualArea(dir, vscr)) {
-    //     x = width/2 + (1.0+vscr.x);
-    //     y = height/2 + (1.0+vscr.y);
-    // }
-    // return vis;
-    x = width/2;
-    y = height/2;
-    return true;
+    glm::dvec3 vscr;
+    if (vis = checkVisualArea(dir, vscr)) {
+        x = width/2 * (1.0+vscr.x);
+        y = height/2 * (1.0+vscr.y);
+        // ofsLogger->debug("Visual: ({},{}) -> ({},{})\n",
+        //     vscr.x, vscr.y, x, y);
+    }
+    return vis;
 }
 
 bool HUDPanel::getXY(Celestial *obj, const glm::dvec3 &dir, double &x, double &y)
@@ -263,10 +328,26 @@ bool HUDPanel::getXY(Celestial *obj, const glm::dvec3 &dir, double &x, double &y
 
     glm::dvec3 vscr;
     if (vis = checkVisualArea(dir, vscr)) {
-        x = width/2 + (1.0+vscr.x);
-        y = height/2 + (1.0+vscr.y);
+        x = width/2 * (1.0+vscr.x);
+        y = height/2 * (1.0+vscr.y);
+        // ofsLogger->debug("Visual: ({}.{}) -> ({}, {})",
+        //     vscr.x, vscr.y, x, y);
     }
     return vis;
+}
+
+bool HUDPanel::drawCenterMarker(Sketchpad *pad)
+{
+    int d = width/48;
+
+    pad->drawLine(cx-2*d, cy, cx-d, cy);
+    pad->drawLine(cx+2*d, cy, cx+d, cy);
+
+    pad->moveTo(cx-d, cy+d);
+    pad->drawLineTo(cx, cy);
+    pad->drawLineTo(cx+d+1, cy+d+1);
+
+    return true;
 }
 
 bool HUDPanel::drawMarker(Sketchpad *pad, Celestial *obj, const glm::dvec3 &dir, int style)
@@ -291,8 +372,28 @@ bool HUDPanel::drawMarker(Sketchpad *pad, Celestial *obj, const glm::dvec3 &dir,
     return false;
 }
 
-bool HUDPanel::drawOffscreenDirMarker(Sketchpad *pad, const glm::dvec3 &dir)
+bool HUDPanel::drawOffscreenDirMarker(Sketchpad *pad, const glm::dmat3 &grot, const glm::dvec3 &dir, str_t text)
 {
+    static glm::dvec2 pt[4];
+    glm::dvec3 ldir = glm::transpose(grot) * dir;
+
+    double len = std::hypot(ldir.y, ldir.x);
+    double scale = markerSize * 0.6;
+    double dx = ldir.x / len * scale;
+    double dy = ldir.y / len * scale;
+
+    pt[0] = { cx + 10.0*dx, cy - 10.0*dy };
+    pt[1] = { cx + 7.0*dx - dy, cy - 7.0*dy + dx };
+    pt[2] = { cx + 7.0*dx + dy, cy - 7.0*dy - dx };
+    pt[3] = { cx + 8.5*dx, cy - 8.5*dy };
+
+    pad->drawPolygon(pt, 4);
+    if (!text.empty()) {
+        int fw = pad->getTextWidth(text.c_str(), text.size()) / 2;
+        int fh = pad->getCharSize() & 0xFFFF;
+        pad->text(pt[3].x-fw, pt[3].y-markerSize-fh-2, text.c_str(), text.size());
+    }
+
     return false;
 }
 
@@ -375,19 +476,63 @@ void HUDOrbitPanel::configure(cjson &config)
 void HUDOrbitPanel::display(Player &player, Sketchpad *pad)
 {
     vehicle = player.getVehicleTarget();
-    const Celestial *center = vehicle->getOrbitalReference();
+    Celestial *center = vehicle->getOrbitalReference();
     if (center == nullptr)
         return;
     cam = player.getCamera();
 
     pad->setPen(panel->getHUDPen());
 
-    // glm::dvec3 V = vehicle->getgVelocity() - center->getgVelocity();
-    // glm::dvec3 Vunit = glm::normalize(V);
-    // glm::dvec3 Vrel = glm::normalize(vehicle->getgRotation() * Vunit);
-    // if (!drawMarker(pad, nullptr, Vunit, 6) &&
-    //     !drawMarker(pad, nullptr, -Vunit, 4)) {
-    //     // drawOffscreenDirMarker(pad, Vunit);
-    // }
+    glm::dvec3 rvel = vehicle->getgVelocity() - center->getgVelocity();
+    glm::dvec3 dvel = glm::normalize(rvel);
+    glm::dvec3 lvel = glm::normalize(vehicle->getgRotation() * dvel);
+    if (!drawMarker(pad, center, dvel, 6) &&
+        !drawMarker(pad, center, -dvel, 4)) {
+        // glm::dmat3 grot = cam->getGlobalRotation();
+        // drawOffscreenDirMarker(pad, grot, dvel, "PG");
+    }
 
+    glm::dvec3 rpos = glm::transpose(vehicle->getgRotation()) * (vehicle->getgPosition() - center->getgPosition());
+    glm::dvec3 dpos = glm::normalize(rpos);
+    double a = dpos.z*lvel.y - dpos.y*lvel.z;
+    double b = dpos.x*lvel.z - dpos.z*lvel.x;
+    double c = dpos.y*lvel.x - dpos.x*lvel.y;
+
+
+    double h = 1.0 / sqrt(a*a + b*b + c*c);
+    double phi = asin(c * h);
+    double alpha = atan2(a, b);
+    double sina = sin(alpha), cosa = cos(alpha);
+    double lwcosa = lwidth * cosa, lwsina = lwidth * sina;
+
+    double phi0 = floor(ofs::degrees(phi)*0.1);
+    static double step = tan(ofs::radians(10.0));
+    double d0, d1, d = cam->getScale() * step;
+    int iphi, iphi0;
+
+    if (d > lrange*0.1) {
+        d0 = (1.0*ofs::degrees(phi) - phi0) * d;
+        iphi0 = iphi = (int)phi0;
+        for (d1 = d0; d1 < lrange; d1 += d)
+            drawLadderBar(pad, lwcosa, lwsina, d1*cosa, d1*sina, iphi--, true);
+        iphi = iphi0+1;
+        for (d1 = d0-d; d1 > -lrange; d1 -= d)
+            drawLadderBar(pad, lwcosa, lwsina, d1*cosa, d1*sina, iphi++, true);          
+    }
+
+    glm::dvec3 z0 = { -c*a, -c*b, a*a + b*b };
+    if (z0.x || z0.y || z0.z) {
+        z0 = glm::normalize(z0);
+        double cosa = glm::dot(z0, lvel);
+        double phi = acos(cosa);
+        glm::dvec3 vv = { lvel.y*c - lvel.z*b, lvel.z*a - lvel.x*c, lvel.x*b - lvel.y*a };
+        if (glm::dot(vv, z0) > 0)
+            phi = pi2-phi;
+        drawTiltedRibbon(pad, phi, alpha);
+    }
+
+    // drawCenterMarker(pad);
+
+    // ofsLogger->debug("Orbit Direction:   ({}, {}, {})\n", dvel.x, dvel.y, dvel.z);
+    // ofsLogger->debug("Vehicle Direction: ({}, {}, {})\n", lvel.x, lvel.y, lvel.z);
 }

@@ -179,8 +179,8 @@ void surface_t::update(const StateVectors &s, const StateVectors &os, const Cele
             elev /= 1000.0;
             alt -= elev;
 
-            ofsLogger->info("emgr: lat {} lng {} -> elev {} ft\n",
-                ofs::degrees(wloc.x), ofs::degrees(wloc.y), elev * 3280.14);
+            // ofsLogger->info("emgr: lat {} lng {} -> elev {} ft\n",
+            //     ofs::degrees(wloc.x), ofs::degrees(wloc.y), elev * 3280.14);
         }
     }
 

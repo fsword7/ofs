@@ -38,6 +38,7 @@ public:
 protected:
     virtual void configure(cjson &config) = 0;
     virtual void display(Player &player, Sketchpad *pad) = 0;
+    virtual cchar_t *getModeID() = 0;
 
     bool checkVisualArea(const glm::dvec3 &gpos, glm::dvec3 &vscr);
     
@@ -47,8 +48,11 @@ protected:
     virtual void drawLadderBar(Sketchpad *pad, double lcosb, double lsinb,
         double dcosb, double dsinb, double phi0, bool markSubzero);
     virtual void drawCompassRibbon(Sketchpad *pad, double val);
+    virtual void drawTiltedRibbon(Sketchpad *pad, double phi, double alpha);
+    virtual bool drawCenterMarker(Sketchpad *pad);
     virtual bool drawMarker(Sketchpad *pad, Celestial *obj, const glm::dvec3 &dir, int style);
-    virtual bool drawOffscreenDirMarker(Sketchpad *pad, const glm::dvec3 &dir);
+    virtual bool drawOffscreenDirMarker(Sketchpad *pad,
+        const glm::dmat3 &grot, const glm::dvec3 &dir, str_t text = "");
 
     const Vehicle *vehicle = nullptr;
     
@@ -76,6 +80,7 @@ public:
     ~HUDSurfacePanel();
 
     inline int getMode() const override { return HUD_SURFACE; }
+    inline cchar_t *getModeID() override { return "Surface"; }
 
     void configure(cjson &config) override;
 
@@ -91,6 +96,7 @@ public:
     ~HUDOrbitPanel();
 
     inline int getMode() const override { return HUD_ORBIT; }
+    inline cchar_t *getModeID() override { return "Orbit"; }
 
     void configure(cjson &config) override;
 
