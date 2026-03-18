@@ -17,6 +17,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <cstring>
 #include <format>
 
 using namespace std;

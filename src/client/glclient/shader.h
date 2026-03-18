@@ -52,7 +52,7 @@ public:
     {
         slot = glGetUniformLocation(id, name.c_str());
         glLogger->debug("{}: {}\n", name,
-            slot != -1 ? fmt::format("slot {}", slot) : 
+            slot != -1 ? std::format("slot {}", slot) : 
             "not used/found");
         checkError();
     }
@@ -278,7 +278,7 @@ public:
 protected:
     str_t strLightProperty(int idx, cstr_t &name)
     {
-        return fmt::format("lights[{}].{}", idx, name);
+        return std::format("lights[{}].{}", idx, name);
     }
 
 private:
