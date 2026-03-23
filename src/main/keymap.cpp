@@ -203,7 +203,7 @@ struct {
     { ofs::lkeyLRCSRotPitchDown,        ofs::pkeyPad2|KEYM_CTRL,             "RCS-PitchDown-Lean"},
     { ofs::lkeyLRCSRotYawLeft,          ofs::pkeyPad1|KEYM_CTRL,             "RCS-YawLeft-Lean"},
     { ofs::lkeyLRCSRotYawRight,         ofs::pkeyPad3|KEYM_CTRL,             "RCS-YawRight-Lean"},
-    { ofs::lkeyRCSRotBankLeft,          ofs::pkeyPad4|KEYM_CTRL,             "RCS-BankLeft-Lean"},
+    { ofs::lkeyLRCSRotBankLeft,         ofs::pkeyPad4|KEYM_CTRL,             "RCS-BankLeft-Lean"},
     { ofs::lkeyLRCSRotBankRight,        ofs::pkeyPad6|KEYM_CTRL,             "RCS-BankRight-Lean"},
     { ofs::lkeyLRCSLinMoveUp,           ofs::pkeyPad8|KEYM_CTRL,             "RCS-Up-Lean"},
     { ofs::lkeyLRCSLinMoveDown,         ofs::pkeyPad2|KEYM_CTRL,             "RCS-Down-Lean"},

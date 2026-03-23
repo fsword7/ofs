@@ -496,6 +496,11 @@ void CoreApp::processUserInputs()
     keyImmediateSystem();
     if (bRunning)
         keyImmediateOnRunning();
+
+    if (bSession) {
+        Vehicle *veh = player->getVehicleTarget();
+        veh->updateUserAttitudeControls();
+    }
 }
 
 void CoreApp::keyBufferedSystem(uint8_t key)

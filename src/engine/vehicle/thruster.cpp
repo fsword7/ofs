@@ -279,8 +279,10 @@ void Vehicle::overrideMainRetroThruster(double level)
 
 void Vehicle::setRCSMode(int mode)
 {
-    if (rcsMode != mode)
+    if (rcsMode != mode) {
         rcsMode = mode;
+        ofsLogger->debug("{}: Enable RCS Mode {}\n", getsName(), rcsMode);
+    }
 }
 
 int Vehicle::toggleRCSMode()
@@ -288,6 +290,7 @@ int Vehicle::toggleRCSMode()
     // Toggle RCS mode between rotation and linear controls
     if (rcsMode >= 1) {
         rcsMode ^= 3;
+        ofsLogger->debug("{}: Toggle RCS Mode {}\n", getsName(), rcsMode);
     }
     return rcsMode;
 }
@@ -415,7 +418,7 @@ void Vehicle::updateThrustForces()
         ts->pmass = ts->mass;
 
     glm::dvec3 thrust = {};
-    glm::dvec3 F;
+    glm::dvec3 tamom = {};
 
     double dt = ofsDate->getSimDeltaTime1();
     bool bThrustEngaged = false;
@@ -430,9 +433,9 @@ void Vehicle::updateThrustForces()
                     ts->mass = 0.0;
             }
             th *= computeAtmThrustScale(eng, surfParam.atmPressure);
-            F = eng->dir * th;
-            thrust += F;
-            camom += glm::cross(F, eng->pos);
+            glm::dvec3 flin = eng->dir * th;
+            thrust += flin;
+            tamom += glm::cross(flin, eng->pos);
             bThrustEngaged = true;
         } else {
             // Run out of fuel so that
@@ -445,4 +448,10 @@ void Vehicle::updateThrustForces()
 
     if (bThrustEngaged)
         cflin += thrust;
+    camom += tamom;
+
+    ofsLogger->debug("{}: T Thrust ({},{},{}) Angular ({},{},{})\n",
+        getsName(), thrust.x, thrust.y, thrust.z, tamom.x, tamom.y, tamom.z);
+    // ofsLogger->debug("{}: T Thrust ({},{},{}) Angular ({},{},{})\n",
+    //     getsName(), cflin.x, cflin.y, cflin.z, camom.x, camom.y, camom.z);
 }

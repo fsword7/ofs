@@ -385,6 +385,10 @@ void Vehicle::setGenericDefaults()
 
     vcpos = { 0, 0.006, 0 };
     vcdir = { 0, 0, 1 };
+
+    // Initialize all linear and angular controls
+    flin = {},  amom = {};
+    cflin = {}, camom = {};
 }
 
 void Vehicle::setTouchdownPoints(const tdVertex_t *tdvtx, int ntd)
@@ -851,6 +855,9 @@ void Vehicle::update(bool force)
     cflin = {};
     camom = {};
     bActiveForce = false;
+
+    ofsLogger->debug("{}: G Thrust ({},{},{}) Angular ({},{},{})\n",
+        getsName(), flin.x, flin.y, flin.z, amom.x, amom.y, amom.z);
 
     // Update mass for fuel consumption
     updateMass();
