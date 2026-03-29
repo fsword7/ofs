@@ -107,27 +107,27 @@ public:
 
     inline glm::dvec3 convertGlobalToLocal(const glm::dvec3 &gpos) const
     {
-        return (gpos - s0.pos) * glm::transpose(s0.R);
+        return (gpos - s0->pos) * glm::transpose(s0->R);
     }
 
     inline glm::dvec3 convertGlobalToLocalS1(const glm::dvec3 &gpos) const
     {
-        return (gpos - s1.pos) * glm::transpose(s1.R);
+        return (gpos - s1->pos) * glm::transpose(s1->R);
     }
 
     inline void convertGlobalToLocal(const glm::dvec3 &gpos, glm::dvec3 &lpos) const
     {
-        lpos = (gpos - s0.pos) * glm::transpose(s0.R);
+        lpos = (gpos - s0->pos) * glm::transpose(s0->R);
     }
     
     inline glm::dvec3 convertLocalToGlobal(const glm::dvec3 &lpos) const
     {
-        return (lpos * s0.R) + s0.pos;
+        return (lpos * s0->R) + s0->pos;
     }
 
     inline glm::dvec3 convertLocalToGlobalS1(const glm::dvec3 &lpos) const
     {
-        return (lpos * s1.R) + s1.pos;
+        return (lpos * s1->R) + s1->pos;
     }
 
     inline void convertLocalToEquatorial(const glm::dvec3 &lpos, double &lat, double &lng, double &rad) const

@@ -117,12 +117,15 @@ void RigidBody::update(bool force)
 
     if (bDynamicForce)
     {
+        double dt = ofsDate->getSimDeltaTime1();
+        s1->set(*s0);
+
         if (bOrbitNotInitialized)
         {
             flushPosition();
             flushVelocity();
-            s1.pos = cpos;
-            s1.vel = cvel;
+            s1->pos = cpos;
+            s1->vel = cvel;
             // getIntermediateMomentsPert(accp, am, s0, 0, dt, cbody);
             oel.determine(cpos, cvel, ofsDate->getSimTime0());
         }
@@ -144,28 +147,32 @@ void RigidBody::update(bool force)
         // ofsLogger->info("{}: cvel {:.4f},{:.4f},{:.4f} - {:.4f} mph\n", getsName(),
         //     cvel.x, cvel.y, cvel.z, glm::length(cvel) * 3600 * 0.621);
 
-        s1.pos = cbody->s1.pos + cpos;
-        s1.vel = cbody->s1.vel + cvel;
+        s1->pos = cbody->s1->pos + cpos;
+        s1->vel = cbody->s1->vel + cvel;
         flushPosition();
         flushVelocity();
-        s1.Q = glm::normalize(s1.Q);
-        s1.R = glm::mat3_cast(s1.Q);
-        getIntermediateMoments(acc, tau, s1, 1, 0);
+        s1->Q = glm::normalize(s1->Q);
+        s1->R = glm::mat3_cast(s1->Q);
+        getIntermediateMoments(acc, tau, *s1, 1, dt);
         bOrbitNotInitialized = false;
 
-        // arot = computeEulerInverseFull(tau, s1.omega);
-        // cpos += acc;
-        // s1.omega += arot;
-        // s1.Q = glm::rotate(s1.Q, s1.omega);
+        arot = computeEulerInverseFull(tau, s1->omega);
+        cpos += acc;
+        s1->omega += arot;
+        s1->Q = glm::rotate(s1->Q, s1->omega);
 
-        ofsLogger->debug("{}: Q = ({},{},{},{})\n",
-            getsName(), s1.Q.x, s1.Q.y, s1.Q.z, s1.Q.w);
-        ofsLogger->debug("{}: R = {},{},{}\n",
-            getsName(), s1.R[0][0], s1.R[0][1], s1.R[0][2]);
-        ofsLogger->debug("{}:     {},{},{}\n",
-            getsName(), s1.R[1][0], s1.R[1][1], s1.R[1][2]);
-        ofsLogger->debug("{}:     {},{},{}\n",
-            getsName(), s1.R[2][0], s1.R[2][1], s1.R[2][2]);
+        // ofsLogger->debug("{}: acc ({},{},{}) tau ({},{},{})\n",
+        //     getsName(), acc.x, acc.y, acc.z, tau.x, tau.y, tau.z);
+        // ofsLogger->debug("{}: arot ({},{}.{}) -> omega ({},{},{})\n",
+        //     getsName(), arot.x, arot.y, arot.z, s1->omega.x, s1->omega.y, s1->omega.z);
+        // ofsLogger->debug("{}: Q = ({},{},{},{})\n",
+        //     getsName(), s1->Q.x, s1->Q.y, s1->Q.z, s1->Q.w);
+        // ofsLogger->debug("{}: R = {},{},{}\n",
+        //     getsName(), s1.R[0][0], s1.R[0][1], s1.R[0][2]);
+        // ofsLogger->debug("{}:     {},{},{}\n",
+        //     getsName(), s1.R[1][0], s1.R[1][1], s1.R[1][2]);
+        // ofsLogger->debug("{}:     {},{},{}\n",
+        //     getsName(), s1.R[2][0], s1.R[2][1], s1.R[2][2]);
        
     
         // ofsLogger->info("RigidBody - updates\n");
@@ -178,7 +185,7 @@ void RigidBody::update(bool force)
     
     // Object::update(force);
     if (cbody != nullptr) {
-        cpos = s1.pos - cbody->s1.pos;
-        cvel = s1.vel - cbody->s1.vel;
+        cpos = s1->pos - cbody->s1->pos;
+        cvel = s1->vel - cbody->s1->vel;
     }
 }

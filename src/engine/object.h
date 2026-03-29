@@ -14,27 +14,28 @@ class Frame;
 class OFSAPI StateVectors
 {
 public:
-    // Updates in progress status
-    bool bUpdates = false;
-
     // All state vectors in assciated frame
-    glm::dvec3 pos;        // position
-    glm::dvec3 vel;        // linear velocity
-    glm::dvec3 omega;      // angular velocity
+    glm::dvec3 pos = {};        // position
+    glm::dvec3 vel = {};        // linear velocity
+    glm::dvec3 omega = {};      // angular velocity
     
-    glm::dmat3 R;          // rotation matrix
-    glm::dquat Q;          // orientation
+    glm::dmat3 R;               // rotation matrix
+    glm::dquat Q;               // orientation
+
+    void set(const StateVectors &sv)
+    {
+        pos = sv.pos;
+        vel = sv.vel;
+        omega = sv.omega;
+        R = sv.R;
+        Q = sv.Q;
+    }
 };
 
 class OFSAPI Object
 {
 public:
-    Object(const cstr_t &name, ObjectType type)
-    : objType(type)
-    {
-        objNames[0] = name;
-    }
-
+    Object(const cstr_t &name, ObjectType type);
     Object(cjson &config, ObjectType type);
     
     virtual ~Object() = default;
@@ -53,7 +54,7 @@ public:
     inline double getMass() const               { return mass; }
     inline double getAlbedo() const             { return geomAlbedo; }
     inline color_t getColor() const             { return geomColor; }
-    inline StateVectors &getStateVector()       { return s1.bUpdates ? s1 : s0; }
+    inline StateVectors &getStateVector()       { return s1 != nullptr ? *s1 : *s0; }
 
     inline bool isSphere() const                { return semiAxes.x == semiAxes.y && semiAxes.x == semiAxes.z; }
 
@@ -79,10 +80,10 @@ public:
     virtual Orbit *getOrbit() const = 0;
     virtual Rotation *getRotation() const = 0;
 
-    virtual glm::dvec3 getgPosition() const     { return s0.pos; }
-    virtual glm::dvec3 getgVelocity() const     { return s0.vel; }
-    virtual glm::dmat3 getgRotation() const     { return s0.R; }
-    virtual glm::dquat getgQRotation() const    { return s0.Q; }
+    virtual glm::dvec3 getgPosition() const     { return s0->pos; }
+    virtual glm::dvec3 getgVelocity() const     { return s0->vel; }
+    virtual glm::dmat3 getgRotation() const     { return s0->R; }
+    virtual glm::dquat getgQRotation() const    { return s0->Q; }
     // virtual glm::dvec3 getbPosition() const    { return bpos; }
     // virtual glm::dvec3 getbVelocity() const    { return bvel; }
 
@@ -95,13 +96,19 @@ public:
     // void getValueReal(json &data, cstr_t &name, double &value);
     // void getValueString(json &data, cstr_t &name, str_t &value);
 
+    void initStateVectors();
+    void flipStateVectors();
+
 private:
     ObjectType objType = objUnknown;
     std::vector<str_t> objNames{1};
 
 public:
-    StateVectors s0;    // current state vectors at time t0
-    StateVectors s1;    // new state vectors at time t0+dt during update function call
+    // StateVectors s0;    // current state vectors at time t0
+    // StateVectors s1;    // new state vectors at time t0+dt during update function call
+
+    StateVectors sv[2];     // Double-buffer state vectors
+    StateVectors *s0, *s1;  // Currrent state vectors
 
 protected:
     glm::dvec3 baryPosition = { 0, 0, 0 };

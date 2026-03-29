@@ -93,7 +93,7 @@ void Vehicle::configure(cjson &config, Celestial *object)
 
         double alt = myjson::getFloat<double>(config, "alt");
      
-        glm::dvec3 arot;
+        glm::dvec3 arot = {};
         if (config.contains("arot")) {
             glm::dvec3 arot = myjson::getFloatArray<glm::dvec3, double>(config, "arot");
 
@@ -103,7 +103,7 @@ void Vehicle::configure(cjson &config, Celestial *object)
             arot.z = ofs::radians(arot.z);
         }
 
-        glm::dvec3 vrot;
+        glm::dvec3 vrot = {};
         if (config.contains("vrot")) {
             glm::dvec3 vrot = myjson::getFloatArray<glm::dvec3, double>(config, "vrot");
 

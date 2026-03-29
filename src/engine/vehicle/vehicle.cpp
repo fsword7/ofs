@@ -247,7 +247,7 @@ VehicleBase::VehicleBase(cjson &config)
 
 void VehicleBase::updateSurfaceParam()
 {
-    surfParam.update(s1.bUpdates ? s1 : s0, cbody->s1.bUpdates ? cbody->s1 : cbody->s0, cbody, &elevTiles);
+    surfParam.update(s1 != nullptr ? *s1 : *s0, cbody->s1 != nullptr ? *cbody->s1 : *cbody->s0, cbody, &elevTiles);
 }
 
 bool VehicleBase::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt)
@@ -533,16 +533,16 @@ void Vehicle::initLanded(Celestial *object, const glm::dvec3 &loc, double dir)
     // ofsLogger->info("{}: S1 {}, {}, {}\n", cbody->getsName(),
     //     cbody->s1.pos.x, cbody->s1.pos.y, cbody->s1.pos.z);
        
-    s0.pos = (cbody->getgRotation() * sp.ploc) + cbody->getgPosition();
-    s0.vel = { -gvel*sp.slng, 0.0, gvel*sp.clng };
-    s0.vel = (cbody->getgRotation() * s0.vel) + cbody->getgVelocity();
-    s0.R = drot * lhrot * cbody->s0.R;
-    s0.Q = s0.R;
+    s0->pos = (cbody->getgRotation() * sp.ploc) + cbody->getgPosition();
+    s0->vel = { -gvel*sp.slng, 0.0, gvel*sp.clng };
+    s0->vel = (cbody->getgRotation() * s0->vel) + cbody->getgVelocity();
+    s0->R = drot * lhrot * cbody->s0->R;
+    s0->Q = s0->R;
 
-    cpos = s0.pos - cbody->getgPosition();
-    cvel = s0.vel - cbody->getgVelocity();
+    cpos = s0->pos - cbody->getgPosition();
+    cvel = s0->vel - cbody->getgVelocity();
 
-    rvelBase = s0.vel;
+    rvelBase = s0->vel;
     rvelAdd = {};
     amom = {};
 
@@ -603,14 +603,14 @@ void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const g
     oel.determine(cpos, cvel, ofsDate->getSimTime0());
     bOrbitalValid = true;
 
-    s0.R = ofs::rotation<glm::dmat3, double>(arot);
-    s0.Q = s0.R;
-    s0.Q = glm::normalize(s0.Q);
+    s0->R = ofs::rotation<glm::dmat3, double>(arot);
+    s0->Q = s0->R;
+    s0->Q = glm::normalize(s0->Q);
     if (vrot != nullptr)
-        s0.omega = *vrot;
+        s0->omega = *vrot;
 
-    ofsLogger->debug("{}: Q = ({},{},{},{})\n",
-        getsName(), s0.Q.w, s0.Q.x, s0.Q.y, s0.Q.z);
+    // ofsLogger->debug("{}: Q = ({},{},{},{})\n",
+    //     getsName(), s0->Q.w, s0->Q.x, s0->Q.y, s0->Q.z);
 
     updateGlobal(cpos + cbody->getgPosition(), cvel + cbody->getgVelocity());
     // ofsLogger->info("{}: s0pos {},{},{}\n", getsName(),
@@ -811,8 +811,8 @@ void Vehicle::updateGlobal(const glm::dvec3 &rpos, const::glm::dvec3 &rvel)
 void Vehicle::updateGlobalIndividual(const glm::dvec3 &rpos, const::glm::dvec3 &rvel)
 {
     RigidBody::updateGlobal(rpos, rvel);
-    cpos = s0.pos - cbody->s0.pos;
-    cvel = s0.vel - cbody->s0.vel;
+    cpos = s0->pos - cbody->s0->pos;
+    cvel = s0->vel - cbody->s0->vel;
 }
 
 void Vehicle::updateRadiationForces()
@@ -845,12 +845,12 @@ void Vehicle::update(bool force)
         // ofsLogger->info("{}: S1 {}, {}, {} Flag: {}\n", cbody->getsName(),
         //     cbody->s1.pos.x, cbody->s1.pos.y, cbody->s1.pos.z, cbody->s1.bUpdates);
 
-        s1.pos = cbody->convertLocalToGlobalS1(sp.ploc);
+        s1->pos = cbody->convertLocalToGlobalS1(sp.ploc);
         double period = cbody->getRotationPeriod();
         double gvel = (period != 0.0) ? (cbody->getRadius()  * sp.clat * pi2) / period : 0.0;
-        s1.vel = { -gvel * sp.slng, 0.0, gvel * sp.clng};
-        s1.R = drot * lhrot * cbody->s1.R;
-        s1.Q = s1.R;
+        s1->vel = { -gvel * sp.slng, 0.0, gvel * sp.clng};
+        s1->R = drot * lhrot * cbody->s1->R;
+        s1->Q = s1->R;
 
         // glm::dvec3 loc = cbody->convertGlobalToEquatorialS1(s1.pos);
         // ofsLogger->info("{}: V {},{},{}\n", cbody->getsName(),
@@ -871,8 +871,8 @@ void Vehicle::update(bool force)
         updateSurfaceParam();
 
     // Update position and velocity in orbit reference frame
-    cpos = s1.pos - cbody->s1.pos;
-    cvel = s1.vel - cbody->s1.vel;
+    cpos = s1->pos - cbody->s1->pos;
+    cvel = s1->vel - cbody->s1->vel;
 
     // Reset linear and angular forces
     // for next update phase

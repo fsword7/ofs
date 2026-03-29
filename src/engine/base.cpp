@@ -39,7 +39,7 @@ void Base::attach(CelestialPlanet *planet)
 
     rad = cbody->getRadius();
     elev = 0.0;
-    s0.vel = { 0, 0, 0 }; // always fixed to ground
+    s0->vel = { 0, 0, 0 }; // always fixed to ground
 
     // Set rotation matrix for local horizon frame
     // for right-handed rule (OpenGL). Points
@@ -62,8 +62,8 @@ void Base::attach(CelestialPlanet *planet)
 
 void Base::update(bool force)
 {
-    s1.pos = (rpos * cbody->s1.R) + cbody->s1.pos;
-    s1.vel = (rotvel * cbody->s1.R) + cbody->s1.vel;
-    s1.R = rrot * cbody->s1.R;
-    s1.Q = s1.R;
+    s1->pos = (rpos * cbody->s1->R) + cbody->s1->pos;
+    s1->vel = (rotvel * cbody->s1->R) + cbody->s1->vel;
+    s1->R = rrot * cbody->s1->R;
+    s1->Q = s1->R;
 }

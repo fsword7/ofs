@@ -25,6 +25,7 @@
 CoreApp *ofsAppCore = nullptr;
 Logger *ofsLogger = nullptr;
 TimeDate *ofsDate = nullptr;
+bool ofsStateUpdate = false;
 
 CoreApp::CoreApp()
 {
@@ -304,6 +305,7 @@ bool CoreApp::beginTimeStep(bool running)
     // ofsLogger->info("Current MJD Time: {:f} Date: {}\n", td.getMJD1(),
     //     astro::getMJDDateStr(td.getMJD1()));
 
+    ofsStateUpdate = true;
     return true;
 }
 
@@ -313,6 +315,7 @@ void CoreApp::endTimeStep(bool running)
 
     if (running)
         universe->finalizeUpdate();
+    ofsStateUpdate = false;
 
     td.endStep(running);
 

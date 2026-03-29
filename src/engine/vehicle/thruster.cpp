@@ -450,8 +450,8 @@ void Vehicle::updateThrustForces()
         cflin += thrust;
     camom += tamom;
 
-    ofsLogger->debug("{}: T Thrust ({},{},{}) Angular ({},{},{})\n",
-        getsName(), thrust.x, thrust.y, thrust.z, tamom.x, tamom.y, tamom.z);
+    // ofsLogger->debug("{}: T Thrust ({},{},{}) Angular ({},{},{})\n",
+    //     getsName(), thrust.x, thrust.y, thrust.z, tamom.x, tamom.y, tamom.z);
     // ofsLogger->debug("{}: T Thrust ({},{},{}) Angular ({},{},{})\n",
     //     getsName(), cflin.x, cflin.y, cflin.z, camom.x, camom.y, camom.z);
 }

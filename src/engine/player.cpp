@@ -356,7 +356,7 @@ void Player::updateCamera()
 
 void Player::update(const TimeDate &td)
 {
-    if (tgtObject->s1.bUpdates == false)
+    if (tgtObject->s1 == nullptr)
         return;
 
     CelestialPlanet *cbody = nullptr;
@@ -404,15 +404,15 @@ void Player::update(const TimeDate &td)
 
         case camTargetUnlocked:
             gspos = cam.rpos;
-            gpos  = tgtObject->s1.pos + gspos;
+            gpos  = tgtObject->s1->pos + gspos;
             grot  = cam.rrot;
             break;
 
         case camTargetRelative:
             {
-                glm::dmat3 trot = tgtObject->s1.R;
+                glm::dmat3 trot = tgtObject->s1->R;
                 gspos = cam.rpos * trot;
-                gpos  = tgtObject->s1.pos + gspos;
+                gpos  = tgtObject->s1->pos + gspos;
                 grot  = cam.rrot * trot;
                 gqrot = grot;
             }
@@ -427,8 +427,8 @@ void Player::update(const TimeDate &td)
             {
                 glm::dvec3 opos, tpos;
 
-                opos = syncObject->s1.pos;
-                tpos = tgtObject->s1.pos;
+                opos = syncObject->s1->pos;
+                tpos = tgtObject->s1->pos;
 
                 // ofsLogger->info("{}: S0 {}, {}, {}\n", tgtObject->getsName(),
                 //     tgtObject->s0.pos.x, tgtObject->s0.pos.y, tgtObject->s0.pos.z);
@@ -465,8 +465,8 @@ void Player::update(const TimeDate &td)
                 // Calkculating planetocentric coordinates
                 double vcalt = pgo.alt + pgo.vcofs;
                 cam.rpos = cbody->convertEquatorialToLocal(pgo.lat, pgo.lng, vcalt);
-                gspos = cam.rpos * cbody->s1.R;
-                gpos = cbody->s1.pos + gspos;
+                gspos = cam.rpos * cbody->s1->R;
+                gpos = cbody->s1->pos + gspos;
 
                 // Rotate camera in local frame. Points to east as
                 // default origin so that using heading rotation
@@ -480,7 +480,7 @@ void Player::update(const TimeDate &td)
 
                 // cam.rpos -= glm::conjugate(cam.rqrot) * tv;
 
-                grot = cam.rrot * pgo.R * cbody->s1.R;
+                grot = cam.rrot * pgo.R * cbody->s1->R;
                 gqrot = grot;
  
                 // ofsLogger->debug("R = {:f} {:f} {:f}\n", go.R[0][0], go.R[0][1], go.R[0][2]);
@@ -518,9 +518,16 @@ void Player::update(const TimeDate &td)
             cam.rrot = ofs::xRotate(cphi) * ofs::yRotate(ctheta) * ofs::zRotate(ctilt);
 
             // Set global position/rotation for on the air
-            grot  = cam.rrot * tgtObject->s1.R;
+            grot  = cam.rrot * tgtObject->s1->R;
             gspos = grot * (cam.rpos + *vcpos);
-            gpos  = tgtObject->s1.pos + gspos;
+            gpos  = tgtObject->s1->pos + gspos;
+
+            // ofsLogger->debug("{}: R = {},{},{}\n",
+            //     tgtObject->getsName(), tgtObject->s1->R[0][0], tgtObject->s1->R[0][1], tgtObject->s1->R[0][2]);
+            // ofsLogger->debug("{}:     {},{},{}\n",
+            //     tgtObject->getsName(), tgtObject->s1->R[1][0], tgtObject->s1->R[1][1], tgtObject->s1->R[1][2]);
+            // ofsLogger->debug("{}:     {},{},{}\n",
+            //     tgtObject->getsName(), tgtObject->s1->R[2][0], tgtObject->s1->R[2][1], tgtObject->s1->R[2][2]);
 
             // ofsLogger->info("{}: T {}, {}, {}\n", tgtObject->getsName(),
             //     tgtObject->s1.pos.x, tgtObject->s1.pos.y, tgtObject->s1.pos.z);

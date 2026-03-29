@@ -131,7 +131,7 @@ glm::dvec3 pSystem::addGravity(const glm::dvec3 &gpos, const Celestial *exclude)
     {
         if (cel == exclude)
             continue;
-        acc += addSingleGravity(cel->s0.pos - gpos, cel);
+        acc += addSingleGravity(cel->s0->pos - gpos, cel);
     }
 
     return acc;

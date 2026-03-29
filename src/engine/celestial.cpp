@@ -108,20 +108,20 @@ void Celestial::attach(Celestial *parent, frameType type)
         }
         else
         {
-            oel.determine(s0.pos, s0.vel, ofsDate->getSimTime0());
+            oel.determine(s0->pos, s0->vel, ofsDate->getSimTime0());
             // s0.pos = cbody->Recl * s0.pos;
             // s0.vel = cbody->Recl * s0.vel;
             // oel.calculate(0, s0.pos, s0.vel);
 
-            bpos = s0.pos;
-            bvel = s0.vel;
+            bpos = s0->pos;
+            bvel = s0->vel;
         }
 
         // Relative to parent celestial body
-        s0.pos += cbody->s0.pos;
-        s0.vel += cbody->s0.vel;
-        bpos += cbody->s0.pos;
-        bvel += cbody->s0.vel;
+        s0->pos += cbody->s0->pos;
+        s0->vel += cbody->s0->vel;
+        bpos += cbody->s0->pos;
+        bvel += cbody->s0->vel;
 
         // On the air
         // objPosition = s0.pos;
@@ -132,16 +132,16 @@ void Celestial::attach(Celestial *parent, frameType type)
 StateVectors Celestial::interpolateState(double step)
 {
     if (step == 0.0)
-        return s0;
+        return *s0;
     if (step == 1.0)
-        return s1;
+        return *s1;
 
     StateVectors sv;
     sv.pos   = interpolatePosition(step);
-    sv.vel   = (s0.vel*(1.0-step)) + (s1.vel*step);
+    sv.vel   = (s0->vel*(1.0-step)) + (s1->vel*step);
     //sv.R = getRotation(ofsDate.getSimTime0() + ofsDate.getDeltaTime()*step);
     sv.Q     = sv.R;
-    sv.omega = (s0.omega*(1.0-step)) + (s1.omega*step);
+    sv.omega = (s0->omega*(1.0-step)) + (s1->omega*step);
 
     return sv;
 }
@@ -149,9 +149,9 @@ StateVectors Celestial::interpolateState(double step)
 glm::dvec3 Celestial::interpolatePosition(double n) const
 {
     if (n == 0.0)
-        return s0.pos;
+        return s0->pos;
     else if (n == 1.0)
-        return s1.pos;
+        return s1->pos;
     
     const double eps = 1e-2;
     glm::dvec3 refp0(0, 0, 0);
@@ -161,13 +161,13 @@ glm::dvec3 Celestial::interpolatePosition(double n) const
     Celestial *cbody = nullptr; // getReferenceOrbit();
     if (cbody != nullptr)
     {
-        refp0 = cbody->s0.pos;
-        refp1 = cbody->s1.pos;
+        refp0 = cbody->s0->pos;
+        refp1 = cbody->s1->pos;
         refpm = cbody->interpolatePosition(n);
     }
 
-    glm::dvec3 rp0 = s0.pos - refp0;
-    glm::dvec3 rp1 = s1.pos - refp1;
+    glm::dvec3 rp0 = s0->pos - refp0;
+    glm::dvec3 rp1 = s1->pos - refp1;
     double rd0 = glm::length(rp0);
     double rd1 = glm::length(rp1);
     double n0 = 0.0;
@@ -254,9 +254,9 @@ void Celestial::updateRotation()
     rot = {  cosr, 0.0, sinr,
              0.0,  1.0, 0.0,
             -sinr, 0.0, cosr };
-    s1.R = rot * Recl;
+    s1->R = rot * Recl;
     // s1.R = rot;
-    s1.Q = s1.R;
+    s1->Q = s1->R;
 }
 
 void Celestial::updateCelestial(bool force)
@@ -445,13 +445,13 @@ bool Celestial::updateEphemeris()
 
 void Celestial::updatePostEphemeris()
 {
-    s1.pos = cpos;
-    s1.vel = cvel;
+    s1->pos = cpos;
+    s1->vel = cvel;
     if (cbody != nullptr)
     {
         // Relative to origin of barycentre (star)
-        s1.pos += cbody->s1.pos;
-        s1.vel += cbody->s1.vel;
+        s1->pos += cbody->s1->pos;
+        s1->vel += cbody->s1->vel;
     }
     baryPosition = bpos;
     baryVelocity = bvel;
