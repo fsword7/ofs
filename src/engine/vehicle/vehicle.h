@@ -401,12 +401,15 @@ public:
     void getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt) override;
     bool addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double tfrac, double dt) override;
     
-    void setSize(double val)    { radius = (val / M_PER_KM) / 2; }
+    inline void setSize(double val)         { radius = (val / M_PER_KM) / 2; }
+    inline void setEmptyMass(double val)    { emass = val; updateMass(); };
+    inline void setPMI(glm::dvec3 val)      { pmi = val; }
 
     void setGenericDefaults();
     void setTouchdownPoints(const tdVertex_t *tdvtx, int ntd);
     void setSurfaceFriction(double lat, double lng);
-    
+    void setFinal();
+
     void setRCSMode(int mode);
     int toggleRCSMode();
 

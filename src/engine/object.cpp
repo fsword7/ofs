@@ -43,10 +43,19 @@ void Object::endUpdate()
     s1 = {};                // Clear all for next update
 
     // Set identity for R and Q rotations
-    s1.R = glm::dmat3(1.0);
-    s1.Q = glm::dquat();
-}
+    s1.R = glm::identity<glm::dmat3>();
+    // s1.Q = glm::identity<glm::dquat>();
+    s1.Q = s1.R;
 
+    // ofsLogger->debug("{}: Q = ({},{},{},{})\n",
+    //     getsName(), s1.Q.w, s1.Q.x, s1.Q.y, s1.Q.z);
+    // ofsLogger->debug("{}: R = {},{},{}\n",
+    //     getsName(), s1.R[0][0], s1.R[0][1], s1.R[0][2]);
+    // ofsLogger->debug("{}:     {},{},{}\n",
+    //     getsName(), s1.R[1][0], s1.R[1][1], s1.R[1][2]);
+    // ofsLogger->debug("{}:     {},{},{}\n",
+    //     getsName(), s1.R[2][0], s1.R[2][1], s1.R[2][2]);
+}
 
 void Object::updateCullingRadius()
 {

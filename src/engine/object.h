@@ -57,13 +57,13 @@ public:
 
     inline bool isSphere() const                { return semiAxes.x == semiAxes.y && semiAxes.x == semiAxes.z; }
 
-    inline void setMass(double val)             { mass = val; }
     inline void setAlbedo(double val)           { geomAlbedo = val; }
     inline void setColor(color_t color)         { geomColor = color; }
     inline void setRadius(double val)           { radius = val; semiAxes = { val, val, val }; }
     inline void setSemiAxes(glm::dvec3 axes)    { semiAxes = axes; }
 
     // Virtual function calls
+    virtual void setMass(double val)            { mass = val; }
     virtual void setOrbitFrame(Frame *frame) = 0;
     virtual void setBodyFrame(Frame *frame) = 0;
     virtual void setOrbit(Orbit *nOrbit) = 0;

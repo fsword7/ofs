@@ -76,7 +76,8 @@ void Glider::setClassCaps()
     sgLogger->info("Class capabilities initialzation\n");
 
     veh->setSize(10.0);
-    veh->setMass(10000.0);
+    veh->setEmptyMass(10000.0);
+    veh->setPMI({15.5, 22.1, 7.7});
 
     // Propellant tanks
     phMain = veh->createPropellant(10400.0);

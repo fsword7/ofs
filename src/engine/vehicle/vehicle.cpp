@@ -268,6 +268,7 @@ Vehicle::Vehicle(cstr_t &name)
     thgrpList.resize(thgMaxThrusters);
     for (int idx = 0; idx < thgMaxThrusters; idx++)
         thgrpList[idx] = nullptr;
+    setFinal();
 }
 
 Vehicle::Vehicle(cjson &config, Celestial *object)
@@ -279,6 +280,7 @@ Vehicle::Vehicle(cjson &config, Celestial *object)
         thgrpList[idx] = nullptr;
 
     configure(config, object);
+    setFinal();
 }
 
 Vehicle::~Vehicle()
@@ -359,6 +361,17 @@ bool Vehicle::loadModule(cstr_t &name)
 void Vehicle::setClassCaps()
 {
     vif.module->setClassCaps();
+}
+
+void Vehicle::setFinal()
+{
+    if (pmi.x < 0)
+        pmi.x = 2 * radius;
+    if (pmi.y < 0)
+        pmi.y = 2 * radius;
+    if (pmi.z < 0)
+        pmi.z = radius;
+    updateMass();
 }
 
 void Vehicle::setGenericDefaults()
@@ -592,8 +605,12 @@ void Vehicle::initOrbiting(const glm::dvec3 &pos, const glm::dvec3 &vel, const g
 
     s0.R = ofs::rotation<glm::dmat3, double>(arot);
     s0.Q = s0.R;
+    s0.Q = glm::normalize(s0.Q);
     if (vrot != nullptr)
         s0.omega = *vrot;
+
+    ofsLogger->debug("{}: Q = ({},{},{},{})\n",
+        getsName(), s0.Q.w, s0.Q.x, s0.Q.y, s0.Q.z);
 
     updateGlobal(cpos + cbody->getgPosition(), cvel + cbody->getgVelocity());
     // ofsLogger->info("{}: s0pos {},{},{}\n", getsName(),
@@ -617,14 +634,20 @@ void Vehicle::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const Stat
     glm::dvec3 M = camom;
 
     // Check for surface forces and collision detection
-    bCollisionUpdate |= addSurfaceForces(F, M, state, tfrac, dt);
+    // bCollisionUpdate |= addSurfaceForces(F, M, state, tfrac, dt);
 
     // Computing with N-body gravitional pull.
-    RigidBody::getIntermediateMoments(acc, am, state, tfrac, dt);
+    // RigidBody::getIntermediateMoments(acc, am, state, tfrac, dt);
 
     // Update linear and angular moments in vehicle reference frame
     acc += state.Q * F/mass;
     am  += M/mass;
+
+    // ofsLogger->debug("{}: Intermediate Moments Update:\n", getsName());
+    // ofsLogger->debug("{}:   Force ({},{},{}) Angular ({},{},{})\n",
+    //     getsName(), F.x, F.y, F.z, M.x, M.y, M.z);
+    // ofsLogger->debug("{}:   Force ({},{},{}) Angular ({},{},{}) Mass: {}\n",
+    //     getsName(), acc.x, acc.y, acc.z, am.x, am.y, am.z, mass);
 }
 
 bool Vehicle::addSurfaceForces(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &s, double tfrac, double dt)
@@ -769,9 +792,12 @@ void Vehicle::updateMass()
     pfmass = fmass;
     fmass = 0.0;
 
-    // for (int idx; idx < nTanks; idx++)
-    //     fmass += tanks[idx]->mass;
+    for (auto &ts : tankList)
+        fmass += ts->mass;
     mass = emass + fmass;
+
+    // ofsLogger->debug("{}: mass update - total {} vehicle {} fuel {}\n",
+    //     getsName(), mass, emass, fmass);
 }
 
 void Vehicle::updateGlobal(const glm::dvec3 &rpos, const::glm::dvec3 &rvel)
@@ -856,8 +882,8 @@ void Vehicle::update(bool force)
     camom = {};
     bActiveForce = false;
 
-    ofsLogger->debug("{}: G Thrust ({},{},{}) Angular ({},{},{})\n",
-        getsName(), flin.x, flin.y, flin.z, amom.x, amom.y, amom.z);
+    // ofsLogger->debug("{}: G Thrust ({},{},{}) Angular ({},{},{})\n",
+    //     getsName(), flin.x, flin.y, flin.z, amom.x, amom.y, amom.z);
 
     // Update mass for fuel consumption
     updateMass();

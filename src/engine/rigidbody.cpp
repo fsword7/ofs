@@ -112,7 +112,8 @@ void RigidBody::updateGlobal(const glm::dvec3 &rpos, const glm::dvec3 &rvel)
 
 void RigidBody::update(bool force)
 {
-    glm::dvec3 tau;
+    glm::dvec3 acc = {};
+    glm::dvec3 tau = {};
 
     if (bDynamicForce)
     {
@@ -147,10 +148,26 @@ void RigidBody::update(bool force)
         s1.vel = cbody->s1.vel + cvel;
         flushPosition();
         flushVelocity();
-        s1.R = glm::dmat3(1); // glm::mat3_cast(s1.Q);
-        // getIntermediateMoments(acc, tau, s1, 1, dt);
+        s1.Q = glm::normalize(s1.Q);
+        s1.R = glm::mat3_cast(s1.Q);
+        getIntermediateMoments(acc, tau, s1, 1, 0);
         bOrbitNotInitialized = false;
 
+        // arot = computeEulerInverseFull(tau, s1.omega);
+        // cpos += acc;
+        // s1.omega += arot;
+        // s1.Q = glm::rotate(s1.Q, s1.omega);
+
+        ofsLogger->debug("{}: Q = ({},{},{},{})\n",
+            getsName(), s1.Q.x, s1.Q.y, s1.Q.z, s1.Q.w);
+        ofsLogger->debug("{}: R = {},{},{}\n",
+            getsName(), s1.R[0][0], s1.R[0][1], s1.R[0][2]);
+        ofsLogger->debug("{}:     {},{},{}\n",
+            getsName(), s1.R[1][0], s1.R[1][1], s1.R[1][2]);
+        ofsLogger->debug("{}:     {},{},{}\n",
+            getsName(), s1.R[2][0], s1.R[2][1], s1.R[2][2]);
+       
+    
         // ofsLogger->info("RigidBody - updates\n");
         // ofsLogger->info("{}: cpos {},{},{} time {}\n",
         //     getsName(), cpos.x, cpos.y, cpos.z, ofsDate->getSimTime1());
