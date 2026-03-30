@@ -156,7 +156,8 @@ void RigidBody::update(bool force)
         getIntermediateMoments(acc, tau, *s1, 1, dt);
         bOrbitNotInitialized = false;
 
-        arot = computeEulerInverseFull(tau, s1->omega);
+        // arot = computeEulerInverseFull(tau, s1->omega);
+        arot = computeEulerInverseSimple(tau, s1->omega);
         cpos += acc;
         s1->omega += arot;
         s1->Q = glm::rotate(s1->Q, s1->omega);
