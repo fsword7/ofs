@@ -411,6 +411,7 @@ public:
     void setFinal();
 
     void setRCSMode(int mode);
+    inline int getRCSMode() { return rcsMode; }
     int toggleRCSMode();
 
     inline void enableWheelSteering(bool enable)       { bSteeringEnable = enable; }

@@ -35,6 +35,8 @@ void GenericPanel::initResources()
     brushOn = gc->createBrush({0, 1, 0, .5});
     hudPen = gc->createPen({0, 1, 0}, 4, 1);
     hudBarPen = gc->createPen({0, 0, 0, .5}, 4, 1);
+    hudOnPen = gc->createPen({0, 0, 0, .5}, 4, 1);
+    hudOffPen = gc->createPen({0, 0, 0, .25}, 4, 1);
 }
 
 void GenericPanel::render()
@@ -68,6 +70,7 @@ void GenericPanel::drawEngines(Sketchpad *pad, Vehicle *veh)
     double thMain = veh->getThrustGroupLevel(thgMain);
     double thRetro = veh->getThrustGroupLevel(thgRetro);
     double thHover = veh->getThrustGroupLevel(thgHover);
+    int rcsMode = veh->getRCSMode();
 
     // display engine control bar
     pad->setPen(hudBarPen);
@@ -83,4 +86,30 @@ void GenericPanel::drawEngines(Sketchpad *pad, Vehicle *veh)
     pad->drawRectangle(150, 120, 500, 170);
     pad->drawRectangle(150, 190, 500, 240);
     pad->drawRectangle(150, 260, 500, 310);
+
+    // Engine RCS buttons
+    if (rcsMode & 1) {
+        pad->setPen(hudOnPen);
+        pad->setBrush(brushOn);
+        pad->drawRectangle(150, 330, 250, 380);
+    } else {
+        // pad->setPen(hudOffPen);
+        // pad->setBrush(brushOn);
+        // pad->drawRectangle(150, 330, 250, 380);
+    }
+
+    if (rcsMode & 2) {
+        pad->setPen(hudOnPen);
+        pad->setBrush(brushOn);
+        pad->drawRectangle(270, 330, 370, 380);
+    } else {
+        // pad->setPen(hudOffPen);
+        // pad->setBrush(brushOn);
+        // pad->drawRectangle(270, 330, 370, 380);
+    }
+    
+    pad->setPen(hudPen);
+    pad->setBrush(nullptr);
+    pad->drawRectangle(150, 330, 250, 380);
+    pad->drawRectangle(270, 330, 370, 380);
 }
