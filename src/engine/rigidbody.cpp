@@ -86,17 +86,21 @@ glm::dvec3 RigidBody::computeEulerInverseFull(const glm::dvec3 &tau, const glm::
 
 void RigidBody::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const StateVectors &state, double step, double dt)
 {
-    assert(system != nullptr);
+    // assert(system != nullptr);
 
-    acc = system->addGravityIntermediate(state.pos, step, this);
+    // acc = system->addGravityIntermediate(state.pos, step, this);
+    acc = {};
 
     // Gravity Torque
     if (cbody != nullptr && !bIgnoreGravTorque) {
-        glm::dvec3 R0 = state.Q * cbody->interpolatePosition(step) - state.pos;
+        // glm::dvec3 R0 = state.Q * cbody->interpolatePosition(step) - state.pos;
+        glm::dvec3 R0 = glm::transpose(state.R) * ((cbody->s1->pos - state.pos) * M_PER_KM);
         double r0 = glm::length(R0);
         glm::dvec3 Re = R0/r0;
         double mag = 3.0 * (astro::G * cbody->getMass()) / (r0*r0*r0);
         am = glm::cross(pmi*Re, Re) * mag;
+        // ofsLogger->debug("{}: GT ({},{},{})\n",
+        //     getsName(), am.x, am.y, am.z);
     } else
         am = {};
 }
@@ -156,11 +160,11 @@ void RigidBody::update(bool force)
         getIntermediateMoments(acc, tau, *s1, 1, dt);
         bOrbitNotInitialized = false;
 
-        // arot = computeEulerInverseFull(tau, s1->omega);
-        arot = computeEulerInverseSimple(tau, s1->omega);
+        arot = computeEulerInverseFull(tau, s1->omega);
+        // arot = computeEulerInverseSimple(tau, s1->omega);
         cpos += acc;
         s1->omega += arot;
-        s1->Q = glm::rotate(s1->Q, s1->omega);
+        ofs::rotate(s1->Q, s1->omega);
 
         // ofsLogger->debug("{}: acc ({},{},{}) tau ({},{},{})\n",
         //     getsName(), acc.x, acc.y, acc.z, tau.x, tau.y, tau.z);

@@ -637,7 +637,7 @@ void Vehicle::getIntermediateMoments(glm::dvec3 &acc, glm::dvec3 &am, const Stat
     // bCollisionUpdate |= addSurfaceForces(F, M, state, tfrac, dt);
 
     // Computing with N-body gravitional pull.
-    // RigidBody::getIntermediateMoments(acc, am, state, tfrac, dt);
+    RigidBody::getIntermediateMoments(acc, am, state, tfrac, dt);
 
     // Update linear and angular moments in vehicle reference frame
     acc += state.Q * F/mass;

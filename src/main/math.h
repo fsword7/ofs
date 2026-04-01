@@ -223,6 +223,31 @@ namespace ofs
         return xRotate(rot.x) * yRotate(rot.y) * zRotate(rot.z);
     }
 
+    template <typename T, typename U> void rotate(T &q, const U &omega)
+    {
+        double dx = 0.5 * ( q.w*omega.x - q.y*omega.z + q.z*omega.y);
+        double dy = 0.5 * ( q.w*omega.y - q.z*omega.x + q.x*omega.z);
+        double dz = 0.5 * ( q.w*omega.z - q.x*omega.y + q.y*omega.x);
+        double dw = 0.5 * (-q.x*omega.x - q.y*omega.y - q.z*omega.z);
+
+        q.x += dx;
+        q.y += dy;
+        q.z += dz;
+        q.w += dw;
+
+        // Normalize
+        double arg = q.x*q.x + q.y*q.y + q.z*q.z + q.w*q.w;
+        if (arg > 0.0) {
+            double inorm = 1.0/sqrt(arg);
+            q.x *= inorm;
+            q.y *= inorm;
+            q.z *= inorm;
+            q.w *= inorm;
+        } else {
+            q.x = q.y = q.z = 0.0;
+            q.w = 1.0;
+        }
+    }
 
     // template <typename T> Eigen::Quaternion<T> lookAt(const Eigen::Matrix<T, 3, 1> &from, const Eigen::Matrix<T, 3, 1> &to,
     //     const Eigen::Matrix<T, 3, 1> &up)
